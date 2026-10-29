@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-28T17:52:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -70,6 +70,8 @@ notation registry.)
 | [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md), §6.1 | decaying (grid turbulence of Comte-Bellot & Corrsin) | not given; $U_0M_g/\nu=34{,}000$ (§6.1) | experiment | continuous Galerkin finite elements, van Cittert approximate deconvolution of order 8 with an explicit differential filter, no eddy viscosity: $64^3$ hexahedra, the same with 20% node perturbation, and a tetrahedral mesh of 64 edge segments per side | method of Kwak et al. on $512^3$, interpolated to the LES meshes; compressible at reference Mach 0.1 |
 | [Iwata et al. (2023)](/sources/iwata-2023.md), §II C, Table I | decaying, compressible, as the inflow of a detonation DNS | 240 | none (the field itself is a DNS) | DNS on a 4 µm grid in a 1.92 mm periodic cube ($480^3$); $k_{\max}\eta=2.31$ and 4.25 in the two gas mixtures | $E(k)\propto(u'^2_{\mathrm{rms}}/k_e)(k/k_e)^4\exp[-2(k/k_e)^2]$ ($k_e$ page-local, the energy-peak wavenumber), decayed until the velocity-derivative skewness lies between $-0.6$ and $-0.4$; turbulent Mach number 0.30 |
 | [Li et al. (2021)](/sources/li-2021.md), §II A, §III A, §III C, §III E | forced, incompressible | about 260 (training and main tests); 180 and 250 (generalization) | pseudo-spectral, $1024^3$ (data of Xie et al.), second-order Adams–Bashforth, 2/3 de-aliasing | pseudo-spectral LES, $128^3$, top-hat filter $\Delta=16$ DNS spacings (filter-to-grid ratio 2); also $64^3$ and $32^3$ ($\Delta=32$, 64 DNS spacings) | energy spectrum held fixed in the two lowest wavenumbers; a "high-order dissipative numerical method" carries the energy flux at the highest wavenumbers |
+| [Rajek & Pozorski (2026)](/sources/rajek-2026.md), §II A, §III, Tables I–III | forced, incompressible | 94 (DNS); LES cases measured from 152 to 10 067 | pseudo-spectral, $256^3$, $k_{\max}\eta=1.5$, spherical-truncation de-aliasing, statistics over about 100 large-eddy turnovers | pseudo-spectral LES with spectral eddy viscosities: $64^3$ ($k_c=30$) at $Re_\lambda\sim100$; $256^3$ with the viscosity of a hypothetical DNS 2 to 1024 times finer per direction | forcing proportional to the velocity of the modes in $\sqrt3\le k\le\sqrt{10}$ (after Grossmann & Lohse), box about 8 integral scales |
+| [Stone et al. (2026)](/sources/stone-2026.md), §3.2, §3.4, §4.2 | forced, isothermal MHD with a mean field (demonstrations) | not given; $Re=5\times10^4$, $Pm=1$ in the test-particle run | none | no explicit model in the $10{,}240^3$ run (WENO-Z, second-order Runge–Kutta, HLLD); $1280^3$ with explicit viscosity and resistivity; two-fluid $1200^3$ | solenoidal real-space driving at $1\le2\pi k/L_{\mathrm{box}}\le3$ as printed, rms Mach 0.5, Alfvén Mach 2 |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -165,9 +167,7 @@ $Re_\lambda\to\infty$ (§VII.C, Fig. 6);
 DG scheme at $48^3$ DOF, which stays stable (§3, Fig. 4); and, on the
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
 [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) for
-truncated Euler and no-model runs (§6.2). This is the statement of the
-benchmark that a stable, energy-conserving scheme must be supplemented by
-dissipation, explicit or numerical. [Prakash et al. (2022)](/sources/prakash-2022.md),
+truncated Euler and no-model runs (§6.2). [Prakash et al. (2022)](/sources/prakash-2022.md),
 §III.B.1, Fig. 4, find the same failure in forced HIT at effectively
 infinite Reynolds number with a stabilized finite-element solver: the
 no-model run (stabilization only) and the unclipped
@@ -565,7 +565,7 @@ use the case to set the dissipation of hybrid RANS/LES:
   scheme for [implicit LES](/definitions/implicit-les.md) in a second-order
   unstructured finite-volume code (the scheme sets the entropy and
   vorticity eigenvalues of the Roe dissipation to zero and scales the
-  acoustic ones by a coefficient $c_{\mathrm{diss}}$, page-local): box
+  acoustic ones by a coefficient $c_{\mathrm{diss}}$, registry §11): box
   side $0.09\cdot2\pi$ m, $Re=34{,}000$ on $V_0=10$ m/s and $M_g=0.0508$ m,
   initial field of 5000 random modes matching the spectrum at $tU_0/M_g=42$,
   comparison at 98 and 171 on $32^3$, $64^3$ and $128^3$ cells, against the
@@ -637,8 +637,7 @@ $C_{DES}$ is lowered when the spectrum lies below the experiment (§3.1).
 See [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 Wang et al. and Carlsson et al. agree that scheme dissipation decides the
 constant that matches this experiment; their hosts (Reynolds-stress model
-against Spalart–Allmaras and SST) and schemes differ, and neither runs the
-other's combination, so their different constants are not in conflict.
+against Spalart–Allmaras and SST) and schemes differ.
 
 [Li et al. (2022)](/sources/li-2022-k.md), §III A, Figs. 2–3, remove the
 calibration: in their RSM-DynIDDES the constant is $C_{DES}=C_kC_s$ with
@@ -666,6 +665,48 @@ counts only power within ±10% of each mode's linear frequency assigns 0.024
 to fast modes and 0.73 to 0.79 to fluctuations on no linear branch
 (§3, Fig. 2). The guide field makes the box anisotropic; see
 [compressible MHD turbulence](/results/compressible-mhd-turbulence.md).
+[Stone et al. (2026)](/sources/stone-2026.md) use driven isothermal MHD
+boxes only as demonstrations of the [AthenaK](/software/athenak.md) code:
+a $10{,}240^3$ run on 65,536 Frontier GPUs at rms Mach 0.5 with a mean
+field of Alfvén Mach 2, saturating at $\delta B/\bar B\approx3$ after four
+turnover times (§3.2, Fig. 4), a two-fluid ion–neutral box at $1200^3$
+(§3.4, Fig. 8) and test-particle transport in a $1280^3$ box (§4.2,
+Fig. 19); no spectra or statistics are analysed.
+
+**Spectral eddy viscosity up to $Re_\lambda\sim10^4$.**
+[Rajek & Pozorski (2026)](/sources/rajek-2026.md) keep the LES grid at
+$256^3$ and lower the viscosity to that of a hypothetical DNS up to 1024
+times finer per direction (Eq. 5, Table II), so that the measured
+$Re_\lambda$ rises from 152 to 10 067 (Table III). With the Chollet–Lesieur
+[spectral eddy viscosity](/methods/spectral-eddy-viscosity.md):
+
+- at $Re_\lambda\sim100$ ($64^3$ against the $256^3$ DNS) the LES keeps
+  more than 95% of the DNS kinetic energy and the sharp-filtered DNS more
+  than 98%; about 85% of the resolved shells are isotropic; the PDF of the
+  second invariant $Q$ has shortened tails, only slightly narrower than in
+  the filtered DNS, which the authors take as the limit of eddy-viscosity
+  closures (§III A, Figs. 1–3);
+- $E(k_c)$ saturates at a DNS-to-LES ratio of about 32 ($Re_\lambda\approx1000$),
+  after which the spectra of higher-$Re$ cases are statistically
+  indistinguishable; the skewness of the longitudinal velocity derivative
+  goes from $-0.52$ (DNS) to $-0.47$, $-0.40$, $-0.35$, $-0.33$, $-0.32$
+  over cases 1–5 and stays at $-0.32$, the flatness from 5.29 to 4.47
+  (§III C, Table III, Fig. 7);
+- the compensated spectrum rises for $k/k_c>0.1$ at $Re_\lambda\gtrsim1000$
+  and the energy flux equals $\varepsilon$ only in the first few shells,
+  even at $Re_\lambda\sim10\,000$ (§III C, Figs. 8–9); the authors
+  attribute this to the positive low-wavenumber plateau of the model;
+- scales outside the forced band are highly isotropic at
+  $Re_\lambda\sim10\,000$, and the ratio of longitudinal to transverse
+  integral scales lies between 1.881 and 2.065 (§III C, Table III,
+  Figs. 10–11).
+
+Their adaptively determined spectral viscosity recovers the DNS spectrum
+for $k_c/2\le k<k_c$ at $Re_\lambda\sim100$ and, at $Re_\lambda\sim10\,000$, gives the
+$\Pi(k)=\varepsilon$ range only with enough resolution; the criterion
+$k_c\lambda\approx10$ they derive is on
+[LES grid-point requirements](/results/les-grid-point-requirements.md)
+(§IV).
 
 **Not this case: decaying MHD from the Orszag–Tang vortex.**
 [Foldes et al. (2023)](/sources/foldes-2023.md) test a
@@ -735,7 +776,7 @@ dissipative range and needs visual inspection (§5).
   enstrophy-production PDF (§6.1, Figs. 13–14).
 
 A priori, all networks agree within 5% in stress and dissipation error and
-correlation (Table 2), so the filter choice shows only a posteriori; see
+correlation (Table 2); see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 and [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
 
@@ -819,7 +860,7 @@ $128^3$.
 Johnsen et al. on $256^3$) as the one turbulence test of finite-volume
 BVD schemes with an **adjustable-dissipation** stage: where both faces of
 a cell keep the polynomial reconstruction, the two face values are
-blended with a parameter $\lambda_{\mathrm{AD}}$ (page-local; not the
+blended with a parameter $\lambda_{\mathrm{AD}}$ (registry §11; not the
 Taylor microscale), $\lambda_{\mathrm{AD}}=1$ giving the upwind-biased
 scheme of order $n+1$ and $\lambda_{\mathrm{AD}}=0.5$ equal face values,
 hence no upwind term in the Riemann flux and the non-dissipative central
@@ -1244,7 +1285,8 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   and causes a slight departure of the spectrum from $k^{-5/3}$.
 - [Flad & Gassner (2017)](/sources/flad-2017.md), §1, print the large-eddy
   turnover time as "$T=\bar v(t_{\mathrm{start}})/L_{\mathrm{int}}\approx1.3$",
-  a velocity over a length; a time is length over velocity.
+  a velocity over a length; a time is length over velocity *(compiler
+  check, not in the sources)*.
 - [Vela-Martín (2022)](/sources/velamartin-2022.md) prints $Re_\lambda=320$
   in the Fig. 6 and Fig. 7 captions and in §6.4 for the $1024^3$ case, for
   which Table 1 and §5.1 give 324.
@@ -1293,8 +1335,7 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   Kurz find the RL models better than the dynamic model for $N=5$ and $N=8$,
   with the dynamic model close at 36 DOF and off at 24 DOF (§V A–B). Both
   report the dynamic model's weakness at 24 DOF and relate it to the test
-  filter leaving the scale-similar range, so they agree where their
-  configurations overlap.
+  filter leaving the scale-similar range.
 - [Kang et al. (2023)](/sources/kang-2023.md), App. A, Table 14, obtain
   $Re_\lambda=122.9$, not 164, when reproducing the forced DNS of Langford &
   Moser with the negative-viscosity forcing that paper describes, and 164.7
@@ -1411,6 +1452,22 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   solver for up to 20 steps.
 - [Cuadra et al. (2025)](/sources/cuadra-2025.md) is a review; the upstream
   states of Table I are compiled from the cited DNS.
+- Rajek & Pozorski (2026, §II A) print a Kolmogorov velocity
+  "$u_\eta\sim0.3\times10^{-2}$ m/s" for their cloud-turbulence parameters
+  $\varepsilon=6\times10^{-2}$ m²/s³ and $\nu=1.5\times10^{-5}$ m²/s; their
+  Table I gives $u'/u_\eta=4.92$ with $u'=0.15$ m/s, that is
+  $u_\eta\approx3.0\times10^{-2}$ m/s, and $(\nu\varepsilon)^{1/4}$ with the
+  printed values is $3.1\times10^{-2}$ m/s *(compiler check, not in the
+  sources)*. In §III C they write that "the ratio of $L_t/L$ asymptotically
+  approaches the value of 0.43" and then "$L_t/L_B=1/(8\times0.43)$" with
+  $L_B/L=8$ ($L_t=K^{3/2}/\varepsilon$, $L_B$ the box size; page-local);
+  the second expression follows from $L/L_t=0.43$, not from $L_t/L=0.43$
+  *(compiler check, not in the sources)*.
+  The integral scale is stated as $L\sim0.125L_B$ in §IV, while Tables I
+  and III give $L/L_B$ between 0.107 and 0.112.
+- [Stone et al. (2026)](/sources/stone-2026.md) refer in §4.2 to "the
+  $4096^3$ turbulence simulation described in Section 3.2", which §3.2 and
+  the Fig. 4 caption give as $10{,}240^3$.
 
 # Citations
 
@@ -1479,3 +1536,5 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §3.1; §4.1–4.2, Table 1, Figs. 2–5; §5.1–5.4, Tables 2–5, Figs. 7–12.
 - [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §I; §III B, Table I (review, compiled DNS).
 - [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §4.6, Fig. 9; §5.
+- [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §II A, Eqs. (3)–(5), Table I; §III A–C, Tables II–III, Figs. 1–11; §IV, Figs. 12–18.
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3.2, Fig. 4; §3.4, Fig. 8; §4.2, Fig. 19 (driven MHD boxes as code demonstrations).

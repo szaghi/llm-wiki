@@ -5,7 +5,7 @@ description: "Pressure-driven flow between two parallel walls, periodic in the w
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel, MHD channel, Hartmann flow, curved-wall channel bump]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element, mhd, lattice-boltzmann, gpu]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Turbulent channel flow
@@ -89,6 +89,7 @@ closures.
 | [Gao et al. (2025b)](/sources/gao-2025-b.md), §III A | WMLES in flux reconstruction, wall-model input at the first solution point | 2000, 5200, 10,000 | $2\pi h\times2h\times\pi h$ | $48\times24\times24$ elements, $N=2$, 3, 4; first solution point at $y^+\approx120$ at 10,000 |
 | [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md), §VI–VII, Table II | low-Mach corrections of WENO9 implicit LES in [CNS3D](/software/cns3d.md) | about 395, bulk Mach 0.2 | $6\pi\delta\times2\delta\times\pi\delta$ (text) | $64^3$ (first cell centre at $y^+=1.5$) and $128^3$ |
 | [Monteiro et al. (2026)](/sources/monteiro-2026.md), §4.3 | validation of the GPU DNS solver RHEA-X | 590 | $2\pi\delta\times2\delta\times\pi\delta$ | $384\times257\times384$; $\Delta x^+\approx9.8$, $\Delta z^+\approx5.0$ (as printed), $\Delta y^+\lesssim1$ at the wall and about 5.8 at the centre |
+| [Okano & Haga (2026)](/sources/okano-2026.md), §5, Apps. A–C | cold-wall WMLES in flux reconstruction (implicit LES) with a near-wall artificial viscosity; compressible, isothermal walls, constant mass flow | DNS 1692 ($Re_b=3.4\times10^4$, $M_b=0.8$); runs at wall-to-recovery temperature ratios 0.81 to 0.1 and $Re_b$ up to $1.4\times10^5$; 451 (wall ratio 0.18, bulk velocity three times the wall sound speed) | not printed in the text (sized by the Lozano-Durán–Jiménez criterion, as cited) | $40\times30\times20$ hexahedra at $N=3$ ($1.5\times10^6$ degrees of freedom), effective spacings (cell size over solution points per direction) $0.039\delta$ in $x$ and $z$, $0.008\delta$–$0.029\delta$ in $y$; fine grid $60\times46\times30$; $h_{\mathrm{wm}}=0.1\delta$ (0.2δ at 451) |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -785,7 +786,7 @@ $Re_\tau=5186$; the canopy raises drag 12.4-fold.
 v1), §2.1, drive a reacting V-flame that quenches at the side wall with
 inflow planes from a periodic non-reacting channel ($U_b=4.4$ m/s, bulk
 Reynolds number about 2770 on the half-width) and resolve the near-wall
-region with a 12 µm wall spacing ($y^+=0.14$) on 200 million cells; see
+region of the reacting domain with a 12 µm wall spacing ($y^+=0.14$) on 200 million cells; see
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 and [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
 
@@ -809,12 +810,12 @@ from the velocity gradient: errors fall from 1.0% to 0.025% against 6.4% to
 [Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.1, run the
 half channel at $Re_b=125{,}000$ (bulk velocity, half-height),
 $Re_\tau\approx5200$, with seven wall-normal spectral elements of growth
-ratio $1/0.35$ in [Nek5000](/software/nek5000.md), at $p=3$, 5, 7 and 9
+ratio $1/0.35$ in [Nek5000](/software/nek5000.md), at polynomial degree $N=3$, 5, 7 and 9 (their $p$)
 (first-point $y^+=1.7$, 0.73, 0.39, 0.25). With the wall condition
 $\tau_t=0$ of their [$k$-$\tau$ model](/methods/k-tau-model.md)
 ($\tau_t=1/\omega$, page-local: the turbulent time scale), velocity,
 $k^+$ and $\tau_t^+$ are insensitive to the near-wall resolution and
-indistinguishable under $p$-refinement except at $p=3$ (Figs. 1–2), and the
+indistinguishable under $p$-refinement except at $N=3$ (Figs. 1–2), and the
 profiles match the authors' regularized $k$-$\omega$, "expected since the
 $\tau$ and $\omega$ transport equations are equivalent" (Fig. 3).
 Friction velocity against the DNS of Lee & Moser (Table 1):
@@ -828,7 +829,7 @@ Friction velocity against the DNS of Lee & Moser (Table 1):
 | $k$-$\omega$ SST, OpenFOAM (104 cells across) | 0.0409 |
 | DNS | 0.0415 |
 
-The same models run a pipe at $Re_b=44{,}000$, $Re_\tau=1142$ ($p=7$,
+The same models run a pipe at $Re_b=44{,}000$, $Re_\tau=1142$ ($N=7$,
 average $y^+\approx0.8$): $u_\tau=0.0523$ ($k$-$\tau$) and 0.0528
 (low-Reynolds variant) against 0.0519 in the DNS of Wu & Moin, errors below
 1% and 2%; the low-Reynolds variant captures the near-wall peak of $k$,
@@ -1310,9 +1311,9 @@ developed channel at low Reynolds number and does not separate.
 module of [Xcompact3d](/software/xcompact3d.md) on channels under a
 wall-normal magnetic field, with the quasi-static (electric-potential)
 solver. The laminar two-dimensional Hartmann flow at $Re_b=2800$ and
-Hartmann numbers $Ha=1$, 5 and 10 ($Ha$ page-local: the Hartmann number,
-printed as $\sqrt{Re\,N_{\mathrm{St}}}$ with the Stuart number
-$N_{\mathrm{St}}=\sigma B_0^2L/(\rho_0U)$, page-local) agrees "perfectly" with the analytical profile, the
+Hartmann numbers $Ha=1$, 5 and 10 ($Ha$ the Hartmann number, registry
+§11, printed as $\sqrt{Re\,N_{\mathrm{St}}}$ with the Stuart number
+$N_{\mathrm{St}}=\sigma B_0^2L/(\rho_0U)$, registry §11) agrees "perfectly" with the analytical profile, the
 centreline velocity falling and the skin friction rising with the field at
 fixed bulk velocity (Figs. 10–11). In the turbulent channel at
 $Re_\tau=150$:
@@ -1508,6 +1509,51 @@ results; the Reynolds stresses deviate from the DNS near the wall, which
 the authors attribute to the 12 elements (48 solution points at $N=3$)
 across the half-channel (Figs. 3–5).
 
+**Cold isothermal walls as a robustness test of WMLES.**
+[Okano & Haga (2026)](/sources/okano-2026.md) use the compressible channel
+with isothermal walls far below the recovery temperature $T_r$ (wall
+temperature $T_w$; both page-local, $T_r$ from the centreline values with
+recovery factor 0.89) as the test of a stabilization of
+[wall-modelled LES](/methods/wall-modelled-les.md) in
+[flux reconstruction](/methods/flux-reconstruction.md). The flow is driven
+by a controlled momentum source holding the mass flow (gains 2 and $-0.2$
+on the current and previous mass-flow errors) and an energy source
+relaxing the bulk temperature over $0.3\delta/u_\tau$; without the latter
+the bulk temperature falls through heat loss at the cold wall, as they
+also cite from Mettu & Subbareddy (§5.1, Eqs. 17–20). Statistics are
+averaged over 20 "flow through times", each defined in the paper by
+$tu_\tau/\delta=1$. Results (§5, Tables 3–4, Apps. A–C):
+
+- at $T_w/T_r=0.81$, $M_b=0.8$, $Re_b=3.4\times10^4$, the DNS of Yao &
+  Hussain (as cited) gives $Re_\tau=1692$, $C_f\times10^3=4.47$ and wall
+  heat-flux parameter $B_q\times10^2=1.13$ ($B_q=-q_w/(c_pu_\tau T_w\rho_w)$,
+  page-local; with this sign their cooled-wall values are positive, whereas
+  [Griffin et al. (2023)](/sources/griffin-2023.md) define $B_q$ without the
+  minus sign, negative for cooled walls, and
+  [Cao et al. (2024)](/sources/cao-2024.md) above print negative values); their near-wall artificial viscosity gives 1677, 4.69,
+  1.09 and the earlier wall-normal [modal filter](/methods/explicit-modal-filtering.md)
+  1676, 4.69, 1.09;
+- at $T_w/T_r=0.4$, 0.2, 0.1 there is no reference; the filtered runs blow
+  up at 0.2 and 0.1, and $u^+$ and the Reynolds shear stress in wall units
+  rise as the wall is cooled, which the authors attribute to the smaller
+  $u_\tau$ used for normalization (no compressible transformation applied;
+  §5.2, Fig. 10);
+- at $T_w/T_r=0.1$ refining from $40\times30\times20$ to $60\times46\times30$
+  cells changes $C_f\times10^3$ from 4.02 to 4.00 and leaves
+  $B_q\times10=1.35$, which the authors take to show that the grid
+  criterion of Fukushima & Haga (as cited), derived for adiabatic walls,
+  still holds (App. B, Tables B.7–B.8);
+- in the Mach-3 cold-wall channel of Coleman et al. (as cited; the
+  conditions of [Qi et al. (2022)](/sources/qi-2022-b.md) above,
+  $T_w/T_r=0.18$) they obtain $Re_\tau=441$ and $B_q=0.142$ against 451 and
+  0.137 (App. C, Table C.10).
+
+The streamwise normal stress above $h_{\mathrm{wm}}$ hardly changes from
+$Re_b=3.4\times10^4$ to $1.4\times10^5$, which the authors explain, citing
+Maeyama & Kawai, by the inner-layer origin of its outer-layer growth,
+unresolved in WMLES (§5.3, Fig. 12; see
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md)).
+
 **Slip-wall WMLES and wall-pressure spectra.**
 [Gao et al. (2025)](/sources/gao-2025.md), §III A, run a compressible
 channel at $M=0.3$ with a [slip-wall model](/methods/slip-wall-model.md)
@@ -1619,8 +1665,7 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
   report friction errors below 5% from $Re_\tau=5200$ to $10^6$ in their
   own solver. Vadrot et al. attribute the difference to the training
   Reynolds number, the learning settings and possibly the solver
-  (§II.B.2); the two results come from different trainings of the model,
-  so they are recorded here, not as a contradiction. Their Eq. 12, presented as a rewriting of Eq. 2,
+  (§II.B.2). Their Eq. 12, presented as a rewriting of Eq. 2,
   prints $B$ where Eq. 2 with their roughness length gives $\kappa B$, and
   omits the square *(compiler check, not in the sources)*. They write $z$
   wall-normal; this page uses $y$.
@@ -1656,8 +1701,8 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
   first wall-normal cell ([Fowler et al. (2022)](/sources/fowler-2022.md)),
   $0.3\delta$ ([Griffin et al. (2023)](/sources/griffin-2023.md)), or the
   top node of the first spectral element, time-filtered over about five
-  time steps ([Gillyns et al. (2022)](/sources/gillyns-2022.md)); this is a
-  difference of practice, discussed on [log-layer mismatch](/definitions/log-layer-mismatch.md).
+  time steps ([Gillyns et al. (2022)](/sources/gillyns-2022.md)); see
+  [log-layer mismatch](/definitions/log-layer-mismatch.md).
 - The sources use different log-law constants as reference: $\kappa=0.40$,
   $B=5.5$ for the low-Reynolds-number channel
   ([Cao et al. (2022)](/sources/cao-2022.md), Eq. 8); $\kappa=0.41$, $B=5.2$
@@ -1665,8 +1710,7 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
   intercept 4.1 in Reichardt's profile
   ([Gillyns et al. (2022)](/sources/gillyns-2022.md), who note 0.383 and
   4.25 as the more recent values); $\kappa=0.38$ as the DNS value
-  ([Agrawal et al. (2022)](/sources/agrawal-2022.md)). These are reference
-  choices, not competing measurements.
+  ([Agrawal et al. (2022)](/sources/agrawal-2022.md)).
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) was read in its
   Research Square preprint (v1, June 2021); its numbers may differ from the
   published version. The text gives the 5% error of the log-law-based model
@@ -1678,7 +1722,7 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
   [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) report a
   Reynolds-number-dependent log-layer mismatch for the published log-law
   RL model and attribute the difference from Bae & Koumoutsakos's results
-  mainly to grid resolution; the disagreement is classified on
+  mainly to grid resolution; see
   [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - [Prakash et al. (2022)](/sources/prakash-2022.md) print the flow-through
   time as $T=\langle u\rangle_b/L_x$, the inverse of a time; say "fine mesh"
@@ -1981,3 +2025,4 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C–D, Eqs. 33–37; §III A, Figs. 2–5.
 - [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) — §IV–V, Eqs. 24, 34–36; §VI–VIII, Table II, Figs. 4–10.
 - [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §4.3, Figs. 3–4.
+- [Okano & Haga (2026)](/sources/okano-2026.md) — §5.1–5.4, Eqs. (17)–(20), Tables 1–4, Figs. 7–8, 10–14; Apps. A–C, Tables A.5–A.6, B.7–B.8, C.10.

@@ -5,7 +5,7 @@ description: "The near-wall closure of RANS that imposes a law of the wall at th
 status: established
 aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Wall functions for RANS
@@ -21,10 +21,11 @@ are set to their sublayer or log-layer values. The inversion is the one of the
 [equilibrium wall model](/methods/equilibrium-wall-model.md) of
 [wall-modelled LES](/methods/wall-modelled-les.md); the difference is the
 host: a steady or unsteady RANS solution of the mean flow, with no resolved
-eddies above the matching point. Page-local notation: $y_1$ the height of the
-first element or cell, $y_1^+=y_1u_\tau/\nu_w$ (the height, not the centroid,
-in [Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §1); $U_t$ the
-tangential velocity at the sampling (feeding) point; $\beta_\omega$ the
+eddies above the matching point. Notation: $y_1$ the height of the
+first element or cell and $y_1^+=y_1u_\tau/\nu_w$ (registry §11; the height,
+not the centroid, in [Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §1);
+$U_t$ the tangential velocity at the sampling (feeding) point (page-local);
+$\beta_\omega$ the
 destruction coefficient of the $\omega$ equation (registry §11; the sources'
 $\beta$, $\beta_1$).
 
@@ -97,10 +98,10 @@ page.
 
 **An explicit power law.** Ghidoni et al. (2026, §3.3, Eqs. 13–15) replace
 the implicit law by the power law of Wilhelm et al. (as cited), with
-page-local constants $A_{\mathrm{pl}}=8.3$, $m_{\mathrm{pl}}=1/7$ and
-$y_c^+=11.81$ ("non-dimensional height of the viscous sublayer"):
+constants $A_{\mathrm{pl}}=8.3$, $m_{\mathrm{pl}}=1/7$ (registry §11) and
+$y^+_{\mathrm{vs}}=11.81$ ("non-dimensional height of the viscous sublayer"; page-local):
 
-$$u^+=\begin{cases}y^+, & y^+\le y_c^+,\\ A_{\mathrm{pl}}\,(y^+)^{m_{\mathrm{pl}}}, & y^+>y_c^+,\end{cases}$$
+$$u^+=\begin{cases}y^+, & y^+\le y^+_{\mathrm{vs}},\\ A_{\mathrm{pl}}\,(y^+)^{m_{\mathrm{pl}}}, & y^+>y^+_{\mathrm{vs}},\end{cases}$$
 
 which inverts in closed form,
 
@@ -108,7 +109,7 @@ $$u_{\tau,\mathrm{vis}}=\sqrt{\frac{\nu U_t}{y}},\qquad u_{\tau,\log}=\left(\fra
 
 and the two branches are blended without a switch, after Menter et al. (as
 cited), as $u_\tau=\left(u_{\tau,\mathrm{vis}}^4+u_{\tau,\log}^4\right)^{1/4}$.
-The power law is continuous at $y_c^+$, since $8.3\times11.81^{1/7}=11.81$,
+The power law is continuous at $y^+_{\mathrm{vs}}$, since $8.3\times11.81^{1/7}=11.81$,
 and the log branch is the exact inverse of $U_t/u_\tau=A_{\mathrm{pl}}(yu_\tau/\nu)^{m_{\mathrm{pl}}}$
 *(compiler check, not in the sources)*. Despite assuming a zero pressure
 gradient, the law "remains accurate even with moderate pressure gradients"
@@ -364,9 +365,9 @@ profiles agree with a wall-resolved body-fitted Navier–Stokes zonal DES on
 attribute to the wall law imposing a zero-pressure-gradient profile in the
 recirculation (§4.2.2, Fig. 11). On the LEISA2 three-element airfoil the
 slat recirculation is slightly larger than in a wall-resolved LES and the
-experiment, "partly" because of the wall model (§4.3.2, Fig. 18). The same
-limit appears in the DG results of Ghidoni et al. (2026) above: the law of
-the wall returns a wrong $u_\tau$ in recirculation.
+experiment, "partly" because of the wall model (§4.3.2, Fig. 18). Ghidoni
+et al. (2026, §4.3, above) likewise state that the law of the wall returns
+a wrong $u_\tau$ in recirculation.
 
 ## What the wall law assumes: roughness, history, three-dimensionality
 
@@ -414,8 +415,7 @@ between plates indexed by one dimensionless shear parameter and read with
 the local wall-normal gradient (§2.8, Fig. 4), and a time-developing
 boundary-layer element indexed by that parameter and a shape index, which
 carries an enrichment stress and an enrichment wall shear into the coarse
-wall cells (§2.11; it leaves pressure-gradient effects aside). The paper
-does not call these a wall model. With them a turbulent flat-plate layer
+wall cells (§2.11; it leaves pressure-gradient effects aside). With them a turbulent flat-plate layer
 that reaches only the second row of cells gives a $C_f$ in "remarkable
 agreement" with Schlichting's solution (§2.12.2, Figs. 24–25), and a 1-D
 Poiseuille flow at $Re=1.65\times10^5$ on 4 cells matches DNS (§2.10.1,

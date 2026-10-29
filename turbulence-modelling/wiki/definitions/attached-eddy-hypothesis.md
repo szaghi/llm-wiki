@@ -5,7 +5,7 @@ description: "The attached-eddy hypothesis models the logarithmic region of wall
 status: established
 aliases: [attached eddy model, attached-eddy model, Townsend's attached eddies, wall-attached eddies, inactive motions, uniform momentum zones]
 tags: [boundary-layer, dns, compressible, hypersonic]
-timestamp: 2026-10-28T12:22:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Attached-eddy hypothesis
@@ -87,10 +87,10 @@ Mach 2 and 5.86 and report uniform **temperature** zones for the first time:
 mean counts 3.6 and 2.5 for velocity, 5.9 and 4.9 for temperature, fewer at
 the higher Mach number (84 planes per case, histogram bin $0.5u_\tau$, peak
 prominence $0.1$ of the maximum, tuned to De Silva et al.'s velocity count).
-The temperature arrangement supports Pirozzoli & Bernardini's view of
-temperature as an "attached variable"; whether the zone count grows
-logarithmically with $Re_\tau$ needs data over more than a decade of
-$Re_\tau$. No clear zones are found for the total temperature.
+Cogo et al. state that the temperature arrangement supports Pirozzoli &
+Bernardini's view of temperature as an "attached variable", and that
+whether the zone count grows logarithmically with $Re_\tau$ needs data
+over more than a decade of $Re_\tau$. No clear zones are found for the total temperature.
 
 **Eddy-size scale.** Cogo et al. (2022, §5.4, Eq. 5.9) cite an eddy-size
 scale that Pirozzoli (2012) derives from an eddy-viscosity ansatz and
@@ -178,9 +178,9 @@ scales, which the grid nominally resolves (§6.2, Fig. 22). They
 speculate (their word, "just speculation as of now") that the outer peak
 grows through the inner–outer interaction with the inner peak, which the
 modulation of the near-wall cycle by the outer motions raises with
-Reynolds number (Hutchins & Marusic 2007; Mathis et al. 2009, as cited).
-On this reading the outer peak cannot grow when the near-wall structures
-are not resolved. They set this against the conclusion of Mizuno & Jiménez
+Reynolds number (Hutchins & Marusic 2007; Mathis et al. 2009, as cited),
+so that the outer peak "does not appear alone without resolving or
+correctly reflecting the near-wall turbulence structures". They set this against the conclusion of Mizuno & Jiménez
 (2013, as cited) that log-region structures do not depend on seeding from
 the wall (§6.2). The paper does not name the attached-eddy hypothesis.
 
@@ -198,7 +198,7 @@ $h_{\mathrm{wm},i}$, with a ratio $C_{\mathrm H}$ (page-local; the source's
 $C$) that "could potentially be the same" for all matching heights. On a
 channel at $Re_\tau=1000$, Spalart's boundary layer under a rotating
 free stream and a channel with a sudden spanwise pressure gradient, the
-mean wall stress, mean velocity and mean flow direction indeed collapse
+mean wall stress, mean velocity and mean flow direction collapse
 better against $\Delta/h_{\mathrm{wm}}$ than against $\Delta/\delta$, with
 onset near $\Delta/h_{\mathrm{wm}}\approx0.3$–$0.4$ (§6.1–6.2, Figs. 3–11).
 The streamwise r.m.s. velocity does not: "the matching location has no

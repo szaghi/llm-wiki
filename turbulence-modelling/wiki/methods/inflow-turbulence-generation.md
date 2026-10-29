@@ -5,7 +5,7 @@ description: "How a scale-resolving simulation is fed with turbulence at its inf
 status: established
 aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation, turbulence fluctuation library, TFL, rescaling–reintroduction]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-28T17:50:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Inflow turbulence generation
@@ -491,7 +491,7 @@ superimposed on the mean inflow.
   of eddies crossing an element rather than with the total injected. No
   verification of the generated statistics is printed in the paper.
 - **Learned generators.** The review of
-  [Fang et al. (2026)](/sources/fang-2026.md) (a corroborating survey)
+  [Fang et al. (2026)](/sources/fang-2026.md)
   cites a machine-learning inflow generator built on an MLP and an
   autoencoder (Fukami et al.) and a transformer-based generator for
   spatially developing boundary layers trained on DNS over
@@ -862,12 +862,12 @@ compiles (§5.2).
 - The sources measure recovery differently (momentum-integral balance in
   Huang et al.; match of a measured momentum-thickness growth and of the
   free-stream decay in Morsbach et al.; integral parameters at one station
-  in Tonicello et al.), so their recovery lengths are not comparable;
-  Mukha et al. give no length for their "inflow adaptation".
-- Zhang et al.'s preference for recycling as "less noisy" and Huang et
-  al.'s longer induction length of the digital filter concern different
-  properties (the noise Zhang et al. name, against the distance to
-  equilibrium Huang et al. measure); neither source measures the other's.
+  in Tonicello et al.); Mukha et al. give no length for their "inflow
+  adaptation".
+- Zhang et al. prefer recycling as "less noisy" than the digital filter;
+  Huang et al. measure a longer induction length (distance to equilibrium)
+  for the digital filter. Zhang et al. print no induction length, and Huang
+  et al. no noise measure.
 - [Möller et al. (2024)](/sources/moller-2024.md) find the 5% upwind
   fraction best but call it a tunable parameter likely to depend on case and
   mesh; their inflow length scales with and without the generator differ
@@ -918,14 +918,13 @@ compiles (§5.2).
   $\rho'/\langle\rho\rangle=+T'/\langle T\rangle$ (overbars in the
   source); linearizing their own equation of state (Eq. 8) at fixed
   composition and $p'=0$ gives $\rho'/\langle\rho\rangle=-T'/\langle T\rangle$
-  *(compiler check, not in the sources; the condition $p'=0$ is not stated
-  by the authors)*.
+  *(compiler check, not in the sources)*; the condition $p'=0$ is not
+  stated by the authors.
 - The trip of Kang & Lee (2024), the blowing and suction of Tang et al.
   (2024) and the laminar wall jet of Wang & Xu (2024) report no recovery
   length in the sense of Huang et al. (2022); they validate the incoming
   layer at one or more stations instead.
-- Inflow generation is a boundary condition, not a closure, but it sets
-  the state that the closure is tested on; the benchmarks where it matters
+- The benchmarks on which the sources of this page test their inflows
   are [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)
   and [shock–turbulent boundary layer interactions](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 

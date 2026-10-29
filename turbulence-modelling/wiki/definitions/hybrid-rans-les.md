@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES, self-adaptive turbulence eddy simulation, SATES, very-large eddy simulation, VLES, scale-resolving hybrid model, SRH, hybrid temporal LES, HTLES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Hybrid RANS/LES
@@ -369,6 +369,17 @@ log-layer mismatch of DES-type methods, derive its Smagorinsky limit, argue
 that its fine-grid limit is LES where Speziale's VLES tends to RANS at high
 Reynolds number, and couple it to a fifth-order WCNS
 ([Wu et al. (2024b)](/sources/wu-2024-b.md), §I, §III; on the SATES page).
+[Wu et al. (2026)](/sources/wu-2026-b.md) state that SATES is built on
+the SST model, keeping its eddy-viscosity limiter (Wu et al. (2023) print
+the BSL equations above as the host), and add SATES-II, whose
+cut-off coefficient blends a WALE-type coefficient near walls with a
+σ-model coefficient in the outer flow; they read the coefficient as "a
+blending of the RANS and LES time scales" that "should be independent of
+numerical discretization", so that the grid enters only through $L_c$
+(§2.1–§2.2). They present this adaptive coefficient as "a general
+improvement strategy" for hybrid methods and carry it into IDDES as AIDDES
+(§1, §2.3, §5; formulas on the SATES and
+[DES](/methods/detached-eddy-simulation.md) pages).
 
 **Zonal and unified, in turbomachinery usage.** Sandberg & Michelassi
 (2022) divide hybrids into *zonal* approaches with predetermined RANS and
@@ -795,6 +806,31 @@ grid topologies and nearly isotropic surface meshes, and expected to worsen
 with unsteady mesh adaptation; Menter's robust shielding for two-equation
 hybrids is proprietary, and they ask for a public-domain one (details on the
 [DES page](/methods/detached-eddy-simulation.md)).
+Wu et al. (2026) name the grey area and modelled-stress depletion as the
+issues of hybrids and find SST-IDDES slow to leave RANS mode in the
+separated shear layer of a supersonic base flow, its recirculation length
+36.1% too long against 6.8% with a locally adaptive LES coefficient (§1,
+§4.1, Table 3; see
+[supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md)).
+In their review of machine-learned closures Hu & Yang (2026) call the
+question of where, in scale and in space, a solver should hand the
+dynamics to a learned component the "resolution-handoff bottleneck", link
+it to the DES grey area, cite a learned set of the RANS/LES switching
+coefficients of an explicit-algebraic-stress DES (Liu et al., as cited) as
+a first step, and state that non-zonal learned placement of the crossover
+is open ([Hu & Yang (2026)](/sources/hu-2026.md), §V C 4).
+
+**Transition and the RANS branch.** Alberti et al. (2026) argue that a
+hybrid should capture laminar–turbulent transition in RANS mode, with RANS
+transition correlations, because resolving transition in LES mode would
+need much finer grids and RANS correlations are unlikely to work in the
+LES branch; their transitional SA-IDDES forces the sequence laminar → RANS
+→ LES by keeping the shielding active wherever an algebraic intermittency
+is below one ([Alberti et al. (2026)](/sources/alberti-2026.md), §2.1.1;
+formulas and results on the [DES page](/methods/detached-eddy-simulation.md)).
+They also find that once a NACA 0012 at $11.5^\circ$ has stalled their
+solver behaves globally as wall-modelled LES even in attached phases and never
+returns to pure RANS mode (§3.3).
 
 **Numerical dissipation as a source of log-layer mismatch.** In SST-IDDES
 of channel flow at $M_b=0.15$, the same model with a second-order central
@@ -973,7 +1009,8 @@ large time steps that A-stable BDF2 allows; see
 - **Supersonic base flow and channel flow.** SA-DDES of the Herrin–Dutton
   base flow ($M_\infty=2.46$) and SST-IDDES of channels at $M_b=0.15$ and 1.5
   with low-dissipation schemes (Carlsson et al. 2023, §4.3–§4.4; on the
-  DES page).
+  DES page and
+  [supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md)).
 - **Lattice Boltzmann solvers.** Mozaffari et al. (2024) present SST-based
   IDDES and CES in the lattice Boltzmann code
   [ProLB](/software/prolb.md), on immersed-boundary Cartesian grids with an
@@ -1118,6 +1155,18 @@ large time steps that A-stable BDF2 allows; see
   $C_D=0.1843$ against 0.1868 measured (SA-RANS 0.1867) on one
   276-million-cell grid (Li et al. 2024b, §III.D; on the [DES page](/methods/detached-eddy-simulation.md)
   and [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)).
+- **Supersonic base flow and stalled high-lift airfoil, four hybrids.**
+  Wu et al. (2026) compare SATES-SM, SATES-II, SST-IDDES and AIDDES on the
+  Mach 2.46 axisymmetric base flow (recirculation length errors $+20.5\%$,
+  $+6.8\%$, $+36.1\%$, $+6.8\%$ at comparable cost) and on the 30P30N at
+  $Re_C=9\times10^6$, $21^\circ$ (§4, Table 3; on the
+  [SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md) and
+  [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)).
+- **Transitional airfoils and a supercritical sphere.** Transitional
+  SA-IDDES in high-order DG on the Eppler 387, a sphere at
+  $Re_D=420\,000$ ($C_D=0.083$ against 0.085 measured) and a NACA 0012 with
+  a bursting leading-edge bubble (Alberti et al. 2026, §3; on the
+  [DES page](/methods/detached-eddy-simulation.md)).
 - **Compressor tip-leakage flow.** Zhang et al. (2024) choose SA-DDES for the
   tip flow of a compressor tandem cascade because RANS has "inherent defects
   in predicting the strong anisotropic and unsteady characteristics", its
@@ -1238,8 +1287,7 @@ large time steps that A-stable BDF2 allows; see
   parameters, and Bose & Park (2018, §1) contrast the explicit RANS/LES
   delineation of zonal methods with DES, where it is implicit in the
   closure. The DES page holds the switch itself. The sources state their
-  taxonomies without arguing for them, and the page records the
-  difference without a verdict.
+  taxonomies without arguing for them.
 - **Which hybrids count.** Heinz (2020) counts wall-modelled LES as a
   hybrid group, Bose & Park (2018) exclude hybrids from wall-modelled LES,
   and Bae & Koumoutsakos (2022) count hybrid LES/RANS as a family of
@@ -1352,4 +1400,7 @@ large time steps that A-stable BDF2 allows; see
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I, §III (SATES as a unified model, against Speziale's VLES).
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.D–F, Figs. 10–16 (grid dependence of hybrid interfaces, feasible switching region $7<y^+<15$, interface at $y^+\approx14$).
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (motivation, DES in high-order codes); §2.2.
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §1 (grey area, modelled-stress depletion, adaptive coefficient as a general strategy); §2.1–§2.3 (SST host, SATES-II, AIDDES); §4, Table 3 (base flow and 30P30N); §5.
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §2.1.1 (transition in RANS mode, modified shielding); §3 (Eppler 387, sphere, NACA 0012); §3.3 (WMLES-like behaviour after stall).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — §V C 4 (resolution-handoff bottleneck, DES grey area, learned DES switching, as cited).
 - [Barbera et al. (2026)](/sources/barbera-2026.md) — §1 (hybrid RANS/LES mesh adaptation, as cited); §2.3, Eq. (20) (LES size between mean-flow and DNS bounds).

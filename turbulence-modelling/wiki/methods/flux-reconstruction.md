@@ -5,7 +5,7 @@ description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flu
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Flux reconstruction
@@ -202,13 +202,15 @@ the cited works), implemented in the open-source PHiLiP code on deal.II.
 On tensor-product hexahedra with a modal basis of degree $N$ and
 Gauss–Lobatto–Legendre (GLL) solution nodes, the convective volume term is
 written in split form,
-$$(\mathsf M+\mathsf K)\frac{d\hat U}{dt}=-\chi^{\mathsf T}\big[(\tilde Q-\tilde Q^{\mathsf T})\odot F^{\#}\big]\mathbf 1-(\text{surface flux term})+(\text{viscous volume and surface terms}),$$
-with $\hat U$ the modal coefficients, $\chi$ the basis evaluated at the
+$$(\mathsf M+\mathsf K)\frac{d\hat U}{dt}=-\mathsf X^{\mathsf T}\big[(\tilde Q-\tilde Q^{\mathsf T})\odot F^{\#}\big]\mathbf 1-(\text{surface flux term})+(\text{viscous volume and surface terms}),$$
+with $\hat U$ the modal coefficients, $\mathsf X$ the basis evaluated at the
 volume and face flux nodes, $\tilde Q-\tilde Q^{\mathsf T}$ Chan's
 skew-symmetric stiffness operator, $\odot$ the Hadamard product, and
 $F^{\#}$ the matrix of two-point fluxes $f^{\#}$ between all pairs of
 volume and face flux nodes, each multiplied by the average of the two
-nodes' metric cofactor matrices (page-local symbols). The two-point fluxes
+nodes' metric cofactor matrices (page-local symbols; the source writes
+$\chi$ for $\mathsf X$, which the registry keeps for the Spalart–Allmaras
+ratio). The two-point fluxes
 are evaluated on **entropy-projected variables**, which the authors call
 "key in enabling entropy stability on uncollocated solution and flux or
 integration nodes", so the flux nodes may be Gauss–Legendre (GL,
@@ -698,6 +700,31 @@ and, on curved elements, a non-constant mapping Jacobian, a
 "geometrical-aliasing source" (§2.2; see
 [geometric conservation law](/properties/geometric-conservation-law.md)).
 
+**Wall cells of wall-modelled LES on cold walls.**
+[Okano & Haga (2026)](/sources/okano-2026.md) run
+[wall-modelled LES](/methods/wall-modelled-les.md) in JAXA's hexahedral FR
+code LS-FLOW-HO, the same DG-recovering variant (Radau correction
+functions, Gauss–Legendre solution points, BR2 viscous flux) with the SLAU
+inviscid flux, SSP Runge–Kutta (4 stages, third order), $N=3$ by default
+and no explicit SGS model (§2.1). They state that in the coarse cells below
+the matching height the under-resolved Reynolds shear stress makes the
+resolved gradients too steep and the high-order polynomials oscillate
+(§1). A wall-normal [modal filter](/methods/explicit-modal-filtering.md)
+on the wall-adjacent cells, of the Hamedi–Vermeire type above (as they
+cite it), keeps a channel stable at a wall-to-recovery temperature ratio
+of 0.8 but not below 0.4; at 0.1 the run blows up within 500 steps at
+$N=3$, and at $N=1$ after a sharp near-wall temperature drop (§3,
+Figs. 2–4). A smooth
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+confined to those cells, vanishing at the wall and at the matching height,
+stabilizes the runs down to 0.1 at $N=1$, 2 and 3 with matched degrees of
+freedom; the authors make the profile smooth within each cell because, as
+they state, an artificial viscosity that oscillates inside a cell is
+amplified by the polynomial gradient (§4–5; numbers on the
+wall-modelled-LES page). A finite-volume WMLES on such walls (Mettu &
+Subbareddy, as cited) did not report such an instability; the authors
+met it with FR (§1).
+
 **Four options in one code.** Witherden et al. (2025, §3.2) state that
 PyFR is often run as under-resolved DNS, "also referred to as ILES", where
 FR is subject to aliasing-driven instabilities, and offer four remedies:
@@ -1022,3 +1049,4 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §3.3, Eqs. (23)–(27) (one-dimensional FR, correction functions, energy-stable FR, PyFR); §4.2 (limiter-assisted FR LES of the CRM, as cited).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §2, Eqs. (1)–(7), Fig. 1 (FR recap, point sets, FR as a discontinuous spectral element method); §3.2 (four stabilization strategies); §3.4 (conservative metric); §3.5–§3.6; §5.1, Figs. 11–12, Table 1 (supersonic Taylor–Green comparison); §5.2, Tables 2–3 (scaling).
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I (input point and wall condition of earlier DG/FR WMLES, as cited); §II A, Eqs. (1)–(10) (FR/CPR, LDDRK); §II B (Vreman); §II C, Eqs. (17)–(32), Fig. 1, App. A (first-solution-point input, non-iterative wall laws); §II D, Eqs. (33)–(37), Fig. 2 (no-slip wall, hybrid inviscid wall flux); §III A–B, Figs. 3–15 (channel, periodic hill, cost); printed slips in Eqs. (19), (20), (31), §III B2.
+- [Okano & Haga (2026)](/sources/okano-2026.md) — §1; §2.1 (LS-FLOW-HO: Radau FR, Gauss–Legendre points, SLAU, BR2, SSPRK(4,3), no SGS model); §3, Figs. 2–4 (wall-normal modal filter failing on cold walls); §4; §5.4, Table 4 ($N=1$–3 at matched degrees of freedom).

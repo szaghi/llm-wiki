@@ -5,7 +5,7 @@ description: "A scheme is pressure-equilibrium preserving when uniform pressure 
 status: established
 aliases: [PEP, pressure equilibrium preserving scheme, KGP-Pt, KGP-PT scheme, pressure-equilibrium-preserving split form, CDHD, central differential flux with high-order dissipation, primitive-variable hybrid scheme]
 tags: [pressure-equilibrium, kinetic-energy-preserving, compressible, real-gas, numerical-dissipation, dns]
-timestamp: 2026-10-29T05:15:00Z
+timestamp: 2026-10-29T07:42:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -247,8 +247,8 @@ baseline. For ideal gases, the KEEP scheme of Kuya & Kawai with the
 pressure-equilibrium-preserving internal-energy flux of Shima et al.
 (both cited), whose pressure–velocity part at the face between points $m$
 and $m+1$ is printed as
-$$\tilde I_j=\frac{(p_{m+1}+p_m)(u_{j,m+1}+u_{j,m})}{4(\gamma-1)},$$
-($\tilde I_j$ page-local, not a Favre-filtered quantity), stated to keep a
+$$I^{\mathrm{pe}}_j=\frac{(p_{m+1}+p_m)(u_{j,m+1}+u_{j,m})}{4(\gamma-1)},$$
+($I^{\mathrm{pe}}_j$ page-local, the source's $\tilde I_j$; the tilde is the registry's Favre filter), stated to keep a
 uniform pressure invariant and recommended for weakly compressible and
 variable-density ideal-gas DNS at low Mach number. For real fluids, the
 KGP-Pt pressure equation of Bernades et al. with $a_p=0$ (the source's

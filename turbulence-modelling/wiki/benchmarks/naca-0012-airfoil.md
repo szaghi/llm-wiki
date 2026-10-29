@@ -5,7 +5,7 @@ description: "The symmetric NACA 0012 airfoil: static RANS and DDES at chord Rey
 status: established
 aliases: [NACA0012, NACA 0012, NACA-0012]
 tags: [benchmark, rans, hybrid-rans-les, les, data-driven, immersed-boundary, dg, separated-flow, des, transition, aeroacoustics]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # NACA 0012 airfoil
@@ -74,7 +74,7 @@ High-order Spalart–Allmaras and $k$-$\tau$ discretizations
 |---|---|---|---|
 | Flow | $Re_c=2.88\times10^6$, $M=0.15$, $\alpha=15^\circ$, steady | $Re_c=6\times10^6$, $M=0.15$, $\alpha=0^\circ$, $10^\circ$, $15^\circ$, steady | $Re_c=6\times10^6$, $M=0.15$ (Ladson), $\alpha=0^\circ$, $10^\circ$ |
 | Model | standard [Spalart–Allmaras](/methods/spalart-allmaras-model.md) with the exponential-decay positivity treatment of $\tilde\nu$ | Spalart–Allmaras with a negative-$\tilde\nu$ variant and clipped diffusion coefficient | [$k$-$\tau$ model](/methods/k-tau-model.md) and the authors' regularized $k$-$\omega$ |
-| Discretization | cell-centred finite volumes with compact variational reconstruction, second order (O2) and fourth order (O4), implicit LU-SGS | entropy-stable split-form [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) (Pirozzoli flux), $N=2$–6, implicit pseudo-transient solver | [spectral elements](/methods/spectral-element-method.md) in [Nek5000](/software/nek5000.md), $p=5$ and 7 |
+| Discretization | cell-centred finite volumes with compact variational reconstruction, second order (O2) and fourth order (O4), implicit LU-SGS | entropy-stable split-form [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) (Pirozzoli flux), $N=2$–6, implicit pseudo-transient solver | [spectral elements](/methods/spectral-element-method.md) in [Nek5000](/software/nek5000.md), $N=5$ and 7 |
 | Grid | C-meshes of 11,880, 20,816 and 33,150 cells, first layer $5\times10^{-6}c$ (O2 also on 143,700 cells) | coarsest NASA TMR family-II grid ($113\times33$, 65 points on the airfoil) with quadratic edges | 5974 elements, average $y^+<1$ |
 | Reference | Gregory & O'Reilly, $C_L=1.526$ | finite-volume solution of the NASA TMR on the $897\times257$ grid | Ladson (forces), Gregory & O'Reilly and Ladson ($C_p$), CFL3D and FUN3D with SA, SST and $k$-$\omega$ |
 
@@ -111,6 +111,20 @@ unstructured triangles with cubic curved elements at the wall, far field
 about 100 chords, third-order extended BDF in time. The reference
 ("exact") mean lift comes from $N=3$ on a uniformly refined adapted mesh
 (§6.1) or a refined mesh at $N=3$ (§6.2).
+
+Low-Reynolds-number stall with a cycling bubble
+([Alberti et al. (2026)](/sources/alberti-2026.md), §3, §3.3, Table 1):
+$Re_c=130\,000$, $\alpha=11.5^\circ$, incompressible; Spalart–Allmaras
+IDDES, fully turbulent or with the algebraic SA-BCM transition model as its
+RANS branch, and steady SA-BCM RANS, in a modal DG solver at $N=3$, 4, 5; a
+circular domain of diameter $25c$ extruded $0.2c$ in span (as for their
+[Eppler 387](/benchmarks/eppler-387-airfoil.md)), 9650 elements with
+second-order edges and 13 inflated wall layers (growth 1.4), first-cell
+height in wall units divided by $N+1$ of 1.0, 0.8, 0.7 and 193,000,
+337,750, 540,400 degrees of freedom; averages over about $100c/U_\infty$;
+inflow $\tilde\nu_\infty/\nu=3$ (fully turbulent) or 0.2 with
+$Tu_\infty=0.2\%$ (SA-BCM). References: the experiment of Rinoie &
+Takemura (2004) and the LES of AlMutairi et al. (2017), as cited.
 
 The airfoil appears with less weight in three further roles: as the
 subject, cited by [Bose & Park (2018)](/sources/bose-2018.md), §4.5, of a wall-modelled LES
@@ -254,7 +268,7 @@ evolution relaxation (§6, Fig. 1); see
 **The $k$-$\tau$ model in spectral elements.** [Tomboulides et al. (2025)](/sources/tomboulides-2025.md),
 §3.4, Tables 3–4, set $k=\tau_t=0$ at the inlet ($\tau_t=1/\omega$, the turbulent time scale of registry §11) and use the free-stream
 limiter of their [$k$-$\tau$ model](/methods/k-tau-model.md), which they call
-"imperative" for external flows; $p=5$ and $p=7$ differ by less than 0.1%
+"imperative" for external flows; $N=5$ and $N=7$ differ by less than 0.1%
 in every reported value.
 
 | Solution | $C_D$, $0^\circ$ | $C_D$, $10^\circ$ | $C_L$, $10^\circ$ |
@@ -368,6 +382,53 @@ suggest recalibrating or removing $f_e$ (Figs. 24–26; see
 two massive-separation studies quote different references at
 $45^\circ$: Mozaffari et al. a lift of 1.097 and drag of 1.180 from Shur et
 al., Alberti et al. 0.98 and 1.06 from the experiment of Lee & Han.
+
+**A periodically bursting bubble near stall.** In the case of
+[Alberti et al. (2026)](/sources/alberti-2026.md), §3.3, at
+$\alpha=11.5^\circ$, $Re_c=130\,000$, the leading-edge
+[laminar separation bubble](/definitions/laminar-separation-bubble.md)
+bursts into a fully separated flow and re-forms at low frequency. Their
+two transitional IDDES variants (SA-BCM in the RANS branch, with the
+original IDDES shielding or with one that keeps RANS mode wherever the
+intermittency is below one; models on the
+[transition-model page](/methods/local-correlation-based-transition-model.md))
+give at $N=4$ an attached phase with a small bubble ($C_L\approx1$) and a
+separated phase ($C_L\approx0.5$), with Strouhal numbers 0.0077 and 0.0097
+against 0.008 (Rinoie & Takemura) and 0.0083 (AlMutairi et al.), while at
+$N=3$ the lift fluctuates "chaotically" around 0.6 (Fig. 15). Mean forces
+(Table 7):
+
+| Run | $C_L$ | $C_D$ |
+|---|---|---|
+| SA-BCM steady, $N=3$ / $N=4$ | 0.619 / 0.593 | 0.128 / 0.134 |
+| IDDES, $N=3$ | 0.713 | 0.090 |
+| transitional IDDES, original shielding, $N=3$ / $N=4$ | 0.615 / 0.726 | 0.157 / 0.129 |
+| transitional IDDES, modified shielding, $N=3$ / $N=4$ / $N=5$ | 0.635 / 0.748 / 0.756 | 0.155 / 0.127 / 0.119 |
+| LES, AlMutairi et al. | 0.714 | 0.127 |
+| experiment, Rinoie & Takemura | 0.880 | — |
+
+Fully turbulent IDDES carries too much eddy viscosity, separating mildly
+from $x/c\approx0.2$ without a proper bubble, to which the authors ascribe
+its low drag;
+steady transitional RANS separates over almost the whole suction side,
+more at $N=4$ (Fig. 14). At $N=4$ the transitional lift lies between the
+LES and the experiment and the drag matches the LES, which the authors call
+noteworthy "given that the present approach employs approximately two
+orders of magnitude fewer DOFs and a time step size roughly 50 times
+larger" (the LES figures are not printed). The modified shielding keeps the
+sequence laminar → RANS → LES at incipient transition (Fig. 13). The solver
+behaves globally as wall-modelled LES even when the flow is attached, since
+the hybrid cannot "clean" the turbulence of the stall phase and never
+returns to pure RANS mode. The authors find that its LES branch works
+"as an actual hybrid model", not as an implicit LES: an
+equivalent Smagorinsky constant $\sqrt{\nu_t/(\Delta^2\lvert\Omega\rvert)}$,
+with $\Delta$ the cube root of the cell volume, is about 0.5 where RANS
+dominates and 0.1–0.2 over most of the LES region, with a plateau of 0.14
+at $x/c=0.4$, where the modelled Reynolds stress still contributes about
+10% of the total; at $x/c=0.2$ it dominates near the wall (Fig. 16; see
+[Smagorinsky model](/methods/smagorinsky-model.md)). Alberti et al. (2025),
+above, report about 0.2 on coarse and about 0.01 on fine grids for the
+same solver family (on the [DES page](/methods/detached-eddy-simulation.md)).
 
 **Grid-count estimates and compressible dynamic stall, as surveyed.** The
 survey of concentrated-vortex aerodynamics by
@@ -686,7 +747,7 @@ on 33,150 cells against 5.74% for the second-order scheme on 143,700
 (Table 6). [Lodares et al. (2022)](/sources/lodares-2022.md) report forces
 converging toward the reference on the coarsest TMR grid as $N$ rises
 (Table 2), and [Tomboulides et al. (2025)](/sources/tomboulides-2025.md)
-forces that change by less than 0.1% between $p=5$ and 7 (§3.4). Each
+forces that change by less than 0.1% between $N=5$ and 7 (§3.4). Each
 treats the sign of its turbulence variable: Huang et al. by their
 exponential-decay procedure for negative $\tilde\nu$, which they observe
 at the outer edge of the boundary layer (§2.5), Lodares et al. by a
@@ -714,6 +775,9 @@ to McCroskey (table above).
 
 ## Qualifications
 
+- Alberti et al. (2026) print the time step of the $11.5^\circ$ case,
+  $\Delta t=4\times10^{-3}$, without units; they call the agreement good
+  "considering the limited number of snapshots".
 - The configurations differ in Reynolds number ($10^4$, $2\times10^4$, $1.35\times10^5$,
   $2\times10^5$, $10^6$, $2.88\times10^6$, $3\times10^6$,
   $4.09\times10^6$, $6\times10^6$) and reference ($C_p$ and forces of experiments, a
@@ -737,9 +801,8 @@ to McCroskey (table above).
   $933\times333$ quads per layer *(compiler check, not in the sources)*.
   The $C_L$ offset from experiment is printed as about 0.25 (§2.1) and 0.2
   (§2.2).
-- Their conclusion that turbulence modelling is not the main source of
-  discrepancy is drawn from one recorded cycle per model without phase
-  averaging (§1.2, §2.2); the URANS and SBES come from the authors' earlier
+- Their comparison of turbulence models rests on one recorded cycle per
+  model without phase averaging (§1.2, §2.2); the URANS and SBES come from the authors' earlier
   work with the same solver, and the 0.8$c$ and 1.2$c$ spans still differ
   at $10^\circ$ in the downstroke (Fig. 4).
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) caption their
@@ -806,7 +869,7 @@ to McCroskey (table above).
   SST of [Kumar et al. (2025)](/sources/kumar-2025.md) on $64\times32$
   elements at $N=11$ (Table 3), against $C_L=1.0618$, $C_D=0.01381$ with
   the $k$-$\tau$ model of [Tomboulides et al. (2025)](/sources/tomboulides-2025.md)
-  on 5974 elements at $p=5$–7 (Table 4). The measured lift they compare
+  on 5974 elements at $N=5$–7 (Table 4). The measured lift they compare
   with is under Contradictions.
 - Kumar et al. write "five" angles of attack for the DDES and list six.
 - [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) list $N=2$ as
@@ -841,6 +904,7 @@ to McCroskey (table above).
 - [Han et al. (2022)](/sources/han-2022-c.md) — §4 (blade section of the Caradonna–Tung rotor).
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2–§5, Eqs. (2), (13), (22)–(23); §6.1–6.2, Tables 1–2, Figs. 3–12; §7.
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1, Eqs. 10–12; §3.3, Table 6, Figs. 23–26.
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §3, Table 1; §3.3, Eq. (14), Table 7, Figs. 13–16 ($\alpha=11.5^\circ$, $Re_c=130\,000$, bubble-bursting cycle).
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4, Table 1; §3.1.1.2; §4.1.1 (survey, cited works).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.3, Fig. 13 (cited works, review).
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — §3.2.2, Table 3, Fig. 6; §4.2, Fig. 7 (NACA 0021); §4.3, Figs. 10–11; §4.4, Fig. 14.

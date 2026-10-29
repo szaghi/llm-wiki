@@ -9,7 +9,7 @@ year: 2023
 venue: "Astrophys. J. 953:44"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_The_Astrophysical_Journal_Adhikari_Theory_and_Transport_of_Nearly_Incompressible_Magnetohydrody.pdf"
 tags: [mhd, plasma, astrophysics, compressible]
-timestamp: 2026-10-28T07:11:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -107,7 +107,7 @@ $$\partial_t\langle|\boldsymbol Z^\pm|^2\rangle+(\boldsymbol U\mp\boldsymbol V_A
 | $\lambda^\pm$, $\lambda_D$, $\lambda_u$, $\lambda_b$ | $\ell^\pm$ (registry §11), $\ell_D$, $\ell_u$, $\ell_b$ (page-local): correlation lengths | **collision** with the perpendicular scale $\lambda$ |
 | $\beta$ | $\beta_p$ | plasma beta |
 | $\beta^0=\alpha/2$ | $\beta_{\mathrm{KT}}$ (registry §11, as on [compressible MHD turbulence](/results/compressible-mhd-turbulence.md)) | **collision** with $\beta_p$ in Table 2 |
-| $\alpha$, $\alpha_2$ | $\alpha_{\mathrm{KT}}$ (registry §11), $\alpha_2$ (page-local): von Kármán–Taylor constants, as on [compressible MHD turbulence](/results/compressible-mhd-turbulence.md)) | **collision** with the DG blending factor $\alpha$ |
+| $\alpha$, $\alpha_2$ | $\alpha_{\mathrm{KT}}$ (registry §11), $\alpha_2$ (page-local): von Kármán–Taylor constants, as on [compressible MHD turbulence](/results/compressible-mhd-turbulence.md) | **collision** with the DG blending factor $\alpha$ |
 | $\epsilon\equiv M_{s0}$ | $M_t$ | expansion parameter |
 | $\chi=L/R$ | (scale ratio, page-local) | **collision** with the SA $\chi$ |
 | $\boldsymbol U$ ($\boldsymbol U_{sw}$), $\boldsymbol V_A$, $\rho$ ($\rho_{sw}$), $\boldsymbol B_{sw}$ | $\boldsymbol U$, $\boldsymbol V_A$, $\rho_{\mathrm{sw}}$, $\boldsymbol B_{\mathrm{sw}}$ (background wind velocity, Alfvén velocity, density, field; page-local) | $\boldsymbol B_{sw}$ plays the role of $\boldsymbol B_0$ |
@@ -126,7 +126,7 @@ same-year works follow the printed a/b/c order (Adhikari 2017–2022,
 Matthaeus 1999, Telloni 2022, Zank 1992, 2012, 2018, Zhou 1990); Zank
 (2014, the book) and Zank et al. (2014, ApJ 797:87) are distinct entries.
 Wang et al. (2022, ApJ 928:176) is a work distinct from the existing `wang-2022` entry (venue check) and is keyed `wang-2022-k`. Axford (1972) is read as NASA SP-308, p. 609. No key
-collides with a planned Source slug.
+collides with an ingested Source slug.
 
 # Pages created or updated
 

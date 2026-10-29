@@ -5,7 +5,7 @@ description: "The two-bladed untwisted NACA 0012 model rotor of Caradonna and Tu
 status: established
 aliases: [C-T rotor, Caradonna-Tung rotor, Caradonna and Tung rotor, hovering model rotor]
 tags: [benchmark, hybrid-rans-les, des, immersed-boundary, numerical-dissipation, rans]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # Caradonna–Tung rotor
@@ -159,8 +159,7 @@ against 63 h *(compiler check, not in the sources)*).
   *(compiler check, not in the sources)*. Sugaya & Imamura print no
   measured $C_{\mathrm{Th}}$ and compare with the experiment only through $C_p$ and the
   trajectory; Han et al. print no definition of $C_{\mathrm{Th}}$, so whether the two
-  normalizations coincide is not established. The numbers are recorded
-  side by side, not as a contradiction.
+  normalizations coincide is not established.
 - [Han et al. (2022)](/sources/han-2022-c.md) print the per-revolution
   times of Table 5 2.0 h above 360 times their per-step times (105, 126,
   132 s give 10.5, 12.6, 13.2 h) without explaining the difference

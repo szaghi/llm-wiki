@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -132,8 +132,9 @@ on a stencil of three to nine nodes,
 
 $$\alpha_{\mathrm c}\phi''_{i-1}+\phi''_i+\alpha_{\mathrm c}\phi''_{i+1}=a_{\mathrm c}\frac{\phi_{i+1}-2\phi_i+\phi_{i-1}}{h^2}+b_{\mathrm c}\frac{\phi_{i+2}-2\phi_i+\phi_{i-2}}{4h^2}+c_{\mathrm c}\frac{\phi_{i+3}-2\phi_i+\phi_{i-3}}{9h^2}+d_{\mathrm c}\frac{\phi_{i+4}-2\phi_i+\phi_{i-4}}{16h^2}$$
 
-(page-local coefficients $\alpha_{\mathrm c},\dots,d_{\mathrm c}$; the
-source's $\alpha_f$, which is not the registry's modal-filter strength),
+(registry-§11 compact coefficients $\alpha_{\mathrm c}$, $a_{\mathrm c}$,
+$b_{\mathrm c}$, page-local $c_{\mathrm c}$, $d_{\mathrm c}$; the source's
+$\alpha_f$, which is not the registry's modal-filter strength),
 with modified square wavenumber
 
 $$k''(k)\,h^2=\frac{2a_{\mathrm c}[1-\cos(kh)]+\tfrac{b_{\mathrm c}}2[1-\cos(2kh)]+\tfrac{2c_{\mathrm c}}9[1-\cos(3kh)]+\tfrac{d_{\mathrm c}}8[1-\cos(4kh)]}{1+2\alpha_{\mathrm c}\cos(kh)} .$$
@@ -501,6 +502,20 @@ simulation of turbulent and supersonic flows", citing the group's work.
   $M=5\sqrt N$ of Karamanos & Karniadakis cited above and the fixed
   cutoffs of later SVV work. The construction and its results are on the
   [explicit modal filtering](/methods/explicit-modal-filtering.md) page.
+- **Vanishing spectral eddy viscosity in pseudo-spectral LES.**
+  [Rajek & Pozorski (2026)](/sources/rajek-2026.md) (§V) align their
+  conclusion with the SVV and numerical-dissipation literature they cite
+  (Tadmor; Karamanos & Karniadakis; Dairay et al.; Lamballais et al.):
+  accurate large scales in forced isotropic turbulence need no viscosity at
+  low wavenumbers, and a positive low-wavenumber plateau of a spectral eddy
+  viscosity is "highly undesirable". Their adaptively determined
+  [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md) is
+  zero in the forcing band and below a transition wavenumber
+  $k_t\lesssim0.1k_c$, joined to the active range by a $\tanh$ step, and is
+  regulated towards a model spectrum rather than prescribed (§IV,
+  Eqs. 18–36). Unlike the constructions above it is applied to Fourier
+  modes of a de-aliased pseudo-spectral code, not to a finite-difference or
+  element discretization.
 - [Caban et al. (2026)](/sources/caban-2026.md) (§1) list SVV among the
   ways of adding dissipation in implicit LES; their own implicit LES uses
   an explicit compact filter of approximate-deconvolution form applied to
@@ -557,3 +572,4 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §1 (semi-discrete spatial eigenanalyses of Moura et al. and Mengaldo et al., extended to fully discrete; passing).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (entropy-stable SVV of Mateo-Gabín et al. cited as a filtered form of artificial viscosity for LES; passing).
 - [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §II A 1, Eqs. (23)–(25) (entropy correction on all non-mean modes contrasted with SVV); App. A, Table VI.
+- [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §IV, Eqs. (18)–(36); §V (spectral eddy viscosity vanishing at low wavenumbers, aligned with the SVV literature).

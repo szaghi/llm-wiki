@@ -9,7 +9,7 @@ year: 2024
 venue: "Flow Turbul. Combust. 112:165–190"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Flow_Turbulence_and_Combustion_Morsbach_Large_Eddy_Simulation_of_a_Low-Pressure_Turbine_Cascade_with.pdf"
 tags: [implicit-les, dg, rans, transition, turbomachinery, anisotropy]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -50,8 +50,8 @@ practice, brings the SST loss within 2.7% by error cancellation, with an open
 separation. In the end-wall region both RANS models overpredict the peak loss
 (+34%, +48%). The Reynolds-stress model reproduces the free-stream anisotropy,
 which a [Boussinesq](/definitions/boussinesq-hypothesis.md) model cannot, but
-it underpredicts $k$ in the passage vortex. The introduction recalls the
-[grid-point scaling](/results/les-grid-point-requirements.md) of
+it underpredicts $k$ in the passage vortex. The introduction (§1) cites
+Choi & Moin (2012) for the [grid-point scaling](/results/les-grid-point-requirements.md) of
 [DNS](/definitions/direct-numerical-simulation.md) and
 [LES](/definitions/large-eddy-simulation.md).
 

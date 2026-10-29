@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Fluids 36:116119"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Physics_of_Fluids_Wang_Assessment_of_high-order_interpolation-based_weighted_essent.pdf"
 tags: [weno, shock-capturing, numerical-dissipation, compressible, taylor-green-vortex]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Summary
@@ -162,7 +162,7 @@ amplitude $\gamma M_{\mathrm{ref}}^2$ (inviscid and $Re=1600$) or 1
 printed. The list is merged complete into the
 [bibliography](/bibliography.md) with `citedby` this slug. Ref. 7 is the
 ingested [chapelier-2024](/sources/chapelier-2024.md). Five references
-carry first-author-year keys equal to planned Source slugs but are
+carry first-author-year keys equal to ingested Source slugs but are
 different works and are keyed `pereira-2021-e`, `wang-2024-m`, `wang-2023-k`, `wang-2023-l` and `xu-2023-d` respectively: ref. 24 (Pereira et al.,
 Phys. Rev. Fluids 6:054611, transitional TGV with PANS), ref. 34 (Wang Y.B.
 et al., Phys. Fluids 36:016137, compact gas-kinetic scheme), ref. 39 (Wang

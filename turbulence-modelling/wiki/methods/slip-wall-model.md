@@ -5,7 +5,7 @@ description: "Wall-modelled LES boundary conditions that let the filtered veloci
 status: established
 aliases: [slip wall, dynamic slip wall, dynamic slip-wall model, Robin slip condition, wall-slip model, slip-length model, Van Driest slip model]
 tags: [wall-model, wmles, filtering, immersed-boundary]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Slip-wall models
@@ -194,9 +194,7 @@ SGS stress (§7).
 
 ## Slip against stress: how the wall condition enters
 
-The two families agree that the slip, not the stress, is the primitive
-quantity, and they share the Robin form; they differ in where it comes
-from. In Bose & Moin's model, as Bose & Park present it, the slip length
+Both families write the wall condition in the Robin form. In Bose & Moin's model, as Bose & Park present it, the slip length
 is a free coefficient made dynamic; in Rickard & Kasbaoui's, the slip length
 is an exact function of the filter and of a gradient ratio, and only
 $\boldsymbol\Lambda$ has to be modelled. Neither source runs a posteriori
@@ -251,7 +249,7 @@ includes the immersed-boundary lattice Boltzmann solver of
 numerical integration of the boundary-layer equation.
 
 Page-local notation for this section: $s$ and $n$ the wall-tangential and
-wall-normal directions; $u^P_s$ the tangential velocity relative to the wall
+wall-normal directions; $u^{\mathrm P}_s$ (registry §11) the tangential velocity relative to the wall
 at a probe point at wall distance $h_{\mathrm{wm}}$ (the sources' probing or
 matching point); $u^{\mathrm{BR}}_s$ the slip target that replaces the wall
 velocity at the marker.
@@ -261,7 +259,7 @@ velocity at the marker.
   the wall normal, outside the region the interface forcing influences
   (§II C). The target is the probe velocity extrapolated linearly to the
   wall (Eq. 21),
-  $$u^{\mathrm{BR}}_s=u^P_s-\left.\frac{\partial u_s}{\partial n}\right|_{h_{\mathrm{wm}}}h_{\mathrm{wm}},\qquad
+  $$u^{\mathrm{BR}}_s=u^{\mathrm P}_s-\left.\frac{\partial u_s}{\partial n}\right|_{h_{\mathrm{wm}}}h_{\mathrm{wm}},\qquad
   \left.\frac{\partial u_s}{\partial n}\right|_{h_{\mathrm{wm}}}=\frac{\tau_w+h_{\mathrm{wm}}\,\partial p/\partial s}{\rho(\nu+\nu_t)}\quad(\text{Eq. 23}),$$
   the gradient coming from the thin-boundary-layer equation kept with its
   pressure-gradient term only and a van Driest mixing-length $\nu_t$, and
@@ -272,7 +270,7 @@ velocity at the marker.
   page). The wall-normal (non-penetration) component of the target is
   unchanged (Eq. 32). Two limiters bound the target between the no-slip and
   the uniform profile: when a strong favourable pressure gradient makes the
-  gradient of Eq. (23) negative, $u^{\mathrm{BR}}_s$ is reset to $u^P_s$; under
+  gradient of Eq. (23) negative, $u^{\mathrm{BR}}_s$ is reset to $u^{\mathrm P}_s$; under
   an adverse gradient its lower limit is the wall velocity, for numerical
   stability (§II C). Where the separation test of the wall function fires,
   no slip is kept at that marker (Eq. 31). The authors state that the power

@@ -9,7 +9,7 @@ year: 2021
 venue: "Phys. Fluids 33:126103"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Physics_of_Fluids_Zangeneh_Data-driven_model_for_improving_wall-modeled_large-eddy_simu.pdf"
 tags: [wmles, wall-model, data-driven, log-layer-mismatch, compressible, separated-flow]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Summary
@@ -71,8 +71,8 @@ regression targets; $\tau_w^{\mathrm{rfr}}=\tau_w^{\mathrm{wmles}}+\tau_w^e$
 the corrected value; $\upsilon_1,L_1$ and $\upsilon_2,L_2$ the two
 characteristic velocity and length scales; $\Delta$ the stencil spacing,
 $h_s=2\Delta$ the stencil-centre wall distance; $K_{\mathrm{rf}}$ the
-number of trees; $C_h$ the Stanton number (the source's $St$; the
-registry's $St$ is the Strouhal number).
+number of trees; $C_h$ the Stanton number (registry §11; the source's
+$St$; the registry's $St$ is the Strouhal number).
 
 1. Log-layer mismatch in hybrid RANS/LES and DES-type wall modelling gives skin friction "on the order of 15% too low" (citing Nikitin et al. 2000); Gieseking et al. reported about 25% under-prediction with IDDES in supersonic boundary layers (§I). **Stated**
 2. IDDES does not remove the mismatch: Peterson & Candler attributed it in supersonic boundary layers to IDDES calibration on low-speed channels, Mockett et al. found it in low-speed channel IDDES too and suggested numerical sensitivity; "a concrete explanation for the problem of the IDDES model has remained elusive" (§I). **Stated**
@@ -138,7 +138,7 @@ registry's $St$ is the Strouhal number).
 | $h(\mathbf x,\theta_k)$, $K$, $\Omega_m$, $M$ | (tree predictor), $K_{\mathrm{rf}}$, (feature-space regions) | **collision:** $\Omega_m$ is not the rotation tensor, $M$ not the Mach number |
 | $Re_\delta$, $Re_\theta$, $\delta$, $\delta_{ref}$ | $Re$ on $\delta$, $Re_\theta$, $\delta$, $\delta_r$ | |
 | $x^+$, $y^+$, $z^+$ (spacings) | $\Delta x^+$, $\Delta y^+$, $\Delta z^+$ | |
-| $C_f=\tau_w/(\frac12\rho_\infty u_\infty^2)$, $St=q_w/(\rho_\infty u_\infty C_p(T_w-T_r))$, $T_r$ | $C_f$, $C_h$ (page-local Stanton number), recovery temperature | **collision:** the source's $St$ is the Stanton number; the registry's $St$ is the Strouhal number |
+| $C_f=\tau_w/(\frac12\rho_\infty u_\infty^2)$, $St=q_w/(\rho_\infty u_\infty C_p(T_w-T_r))$, $T_r$ | $C_f$, $C_h$ (Stanton number, registry §11), recovery temperature | **collision:** the source's $St$ is the Stanton number; the registry's $St$ is the Strouhal number |
 
 # Reference list
 

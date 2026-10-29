@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Methods Appl. Mech. Eng. 395:114973"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Zheng_A_fourth-order_conservative_semi-Lagrangian_finite_volume_WE.pdf"
 tags: [weno, semi-lagrangian, finite-volume, vlasov]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -81,10 +81,10 @@ The WENO-ZQ weights (Eqs. 13–15), in the symbols of the
 [WENO](/methods/weno-scheme.md) page and registry §11, with
 $\mathrm{IS}_0$ the smoothness indicator of the cubic $q_0$,
 $\mathrm{IS}_{1..4}$ those of the linear $q_k$, $d_k$ the linear and
-$\mathsf w_k$ the nonlinear weights, and $\mathrm{IS}_{\mathrm G}$ the
-global indicator:
+$\mathsf w_k$ the nonlinear weights, and $\tau_{\mathrm U}$ the
+global smoothness indicator (registry §11):
 
-$$\mathrm{IS}_{\mathrm G}=\Big(\frac14\sum_{k=1}^4\big|\mathrm{IS}_0-\mathrm{IS}_k\big|\Big)^2,\qquad \mathsf w_k=\frac{d_k\big(1+\mathrm{IS}_{\mathrm G}/(\mathrm{IS}_k+\epsilon_W)\big)}{\sum_ld_l\big(1+\mathrm{IS}_{\mathrm G}/(\mathrm{IS}_l+\epsilon_W)\big)},$$
+$$\tau_{\mathrm U}=\Big(\frac14\sum_{k=1}^4\big|\mathrm{IS}_0-\mathrm{IS}_k\big|\Big)^2,\qquad \mathsf w_k=\frac{d_k\big(1+\tau_{\mathrm U}/(\mathrm{IS}_k+\epsilon_W)\big)}{\sum_ld_l\big(1+\tau_{\mathrm U}/(\mathrm{IS}_l+\epsilon_W)\big)},$$
 
 $$\tilde u_s=\frac{\mathsf w_0}{d_0}\Big(q_0-\sum_{k=1}^4d_kq_k\Big)+\sum_{k=1}^4\mathsf w_kq_k .$$
 
@@ -108,7 +108,7 @@ $$\tilde u_s=\frac{\mathsf w_0}{d_0}\Big(q_0-\sum_{k=1}^4d_kq_k\Big)+\sum_{k=1}^
 | $\Delta$ (Laplacian, Eqs. 60, 64) | $\nabla^2$ | **collision** with the filter width |
 | $\mu_i$, $\nu_j$ | (scaled cell coordinates, page-local) | **collision** with $\mu$, $\nu$ (viscosities) |
 | $\xi$ | $\xi$ (curve parameter) | also wavenumbers $\xi_1$, $\xi_2$ in App. C |
-| $\beta_k$, $\tau$ | $\mathrm{IS}_k$, $\mathrm{IS}_{\mathrm G}$ (smoothness indicators, registry §11 and the WENO page) | **collision** with $\beta(\boldsymbol x)$ and $\tau_{ij}$ |
+| $\beta_k$, $\tau$ | $\mathrm{IS}_k$, $\tau_{\mathrm U}$ (smoothness indicators, registry §11 and the WENO page) | **collision** with $\beta(\boldsymbol x)$ and $\tau_{ij}$ |
 | $\gamma_k$, $\omega_k$, $\epsilon$ | $d_k$, $\mathsf w_k$, $\epsilon_W$ (linear and nonlinear weights, registry §11; small number, page-local) | **collision** with $\gamma$ and $\omega$ |
 | $\tilde u^{(i,j)}$ | $\tilde u_s$ (cell reconstruction, page-local) | **collision:** not a Favre filter |
 | $\theta_{i,j}$, $m_{ij}$ | (limiter factor, cell minimum, page-local) | |

@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -301,6 +301,42 @@ because "with high order, the interfaces of the mesh have a less important
 role than for order 1" (Fig. 7; the networks are on
 [physics-informed neural networks](/methods/physics-informed-neural-network.md)).
 
+**LAD below the matching height of wall-modelled LES.**
+[Okano & Haga (2026)](/sources/okano-2026.md), §4, Eqs. (7)–(16), take the
+localized-artificial-diffusivity framework of Kawai–Lele and of Haga–Kawai
+for flux reconstruction (as they cite it) away from shocks and use it to
+stabilize the wall cells of [wall-modelled LES](/methods/wall-modelled-les.md)
+on strongly cooled isothermal walls. An artificial viscosity
+$\mu_{\mathrm{AV}}$ is added to the molecular one, and the conductivity
+becomes $(\mu+\mu_{\mathrm{AV}})c_p/Pr$, only in the line of cells between
+the wall and the matching height $h_{\mathrm{wm}}$, with the in-cell profile
+$$\mu_{\mathrm{AV}}(y)=\mu_{\mathrm{AV},0}\Big(1-\frac{y}{h_{\mathrm{wm}}}\Big)\big[1-\exp(-y^*/A^+)\big]^2,$$
+which vanishes at $h_{\mathrm{wm}}$ and at the wall ($A^+=17$, $y^*$ the
+semi-local wall distance). The amplitude, one value per line of cells and
+updated every step, comes from a temperature-curvature sensor:
+$$\mu_{\mathrm{AV},0}=\max_{\text{solution points of the line}}\Big[C_{\mathrm{AV}}\,\mathcal R_{\mathrm{rp}}\Big[\frac{\rho c}{T}\sum_{l=1}^{3}\frac{\partial^2T}{\partial\xi_l^2}\,\Delta\xi_l^2\,h_l\Big]\Big],\qquad\Delta\xi_l=\frac{2}{K_{\mathrm{ord}}+1},\quad h_l=\frac{\lvert\Delta\boldsymbol x_{l}\cdot\boldsymbol n\rvert}{K_{\mathrm{ord}}+1},$$
+with $\xi_l$ the computational coordinates of the element,
+$\Delta\boldsymbol x_l=\Delta\xi_l\,\partial\boldsymbol x/\partial\xi_l$,
+$\boldsymbol n$ the wall-normal unit vector, $K_{\mathrm{ord}}$ "the order
+of spatial accuracy", $\mathcal R_{\mathrm{rp}}$ a restriction–prolongation
+filter and $C_{\mathrm{AV}}=0.4$ (page-local; the source's $K$, overbar,
+$\Delta_l$, $C$). The maximum over the line is taken "for the numerical
+robustness"; at the first solution point the value is capped at half the
+value at the second when the wall cell is too coarse for the damping
+factor to act (Eq. 11). The authors require a profile smooth within each
+cell, because an artificial viscosity that oscillates inside a cell is, as
+they state, easily amplified by the polynomial gradient, an observation
+they credit to Haga & Kawai's shock analogue (§4). Of
+$C_{\mathrm{AV}}=0.025$ to 0.8, runs blow up at 0.05 and 0.025 for $N=3$
+and at 0.025 for $N=1$, 2; among the stable runs the wall heat-flux
+parameter $B_q$ (page-local, the non-dimensional wall heat flux) varies by
+at most 4 % and $u_\tau$ by less than 4.3 %, and the constant changes the
+mean temperature only below $h_{\mathrm{wm}}$ (App. A, Tables A.5–A.6,
+Fig. A.17). The artificial viscosity grows as the wall is cooled and as
+the Reynolds number rises (§5.2–5.3, Figs. 11, 14). The authors present
+it as compensation for the Reynolds shear stress missing in these cells,
+"a natural stabilization approach" (§3), not as shock capturing.
+
 **A survey for discontinuous schemes.** The review of high-order
 discontinuous schemes for multiphase and multicomponent flows of
 [Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.2, traces DG
@@ -578,6 +614,13 @@ dissipation measure on [numerical dissipation](/properties/numerical-dissipation
 - Lv & Ekaterinaris (2023) is a review: the scalings, groupings and the
   preference for artificial viscosity over limiting in LES are reported
   from the cited works, with no computation of the review's own.
+- **Printed forms (Okano & Haga 2026).** Eq. (12) prints
+  $\partial^2T/\partial\xi_l^2$ without an absolute value, while the
+  Kawai–Lele forms of Kang & Lee (2024) above are printed inside one;
+  §4.2 announces "the Einstein summation convention" for Eq. (12), which
+  also prints the sum over $l$ explicitly; $K_{\mathrm{ord}}$ is defined as
+  "the order of spatial accuracy", and the paper calls its $N=3$ scheme
+  "fourth-order" (§2.1).
 - Svärd's (2022) identification of upwind dissipation with a subgrid
   model is a scaling argument (§3.1), not tested against subgrid physics;
   the same paper calls the Rusanov (E-scheme) flux "very diffusive and
@@ -598,6 +641,7 @@ dissipation measure on [numerical dissipation](/properties/numerical-dissipation
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — Appendix (residual-based directional AV in modal DG RANS); §V (NLR-7301 onset errors).
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1, §4.2 (Persson–Peraire indicator driving HWENO limiting instead of AV).
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §1 (artificial viscosity among shock-capturing families).
+- [Okano & Haga (2026)](/sources/okano-2026.md) — §3; §4, Eqs. (7)–(16), Figs. 5, 9 (LAD-sized near-wall artificial viscosity in wall-modelled flux reconstruction); §5.2–5.3, Figs. 11, 14; App. A, Tables A.5–A.6, Fig. A.17.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1 (same).
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §VI, Fig. 7 (Haga–Kawai LAD in fourth-order flux reconstruction; interface fluxes at high order).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §2, Q5; §5.2; §6 (shock capturing as a pacing item; artificial viscosity against limiting).

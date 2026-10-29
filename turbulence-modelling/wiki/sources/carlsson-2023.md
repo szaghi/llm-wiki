@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 251:105741"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Carlsson_Investigation_of_low-dissipation_low-dispersion_schemes_for.pdf"
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, log-layer-mismatch]
-timestamp: 2026-10-28T07:03:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -49,8 +49,8 @@ low, as in earlier ZDES and DDES studies. The underlying RANS models are SA and
 [$k$-$\omega$ SST](/methods/k-omega-sst-model.md); the channel runs use the
 [wall-modelled LES](/methods/wall-modelled-les.md) branch of IDDES. The paper
 argues that the dissipation added by the scheme should ideally be minimal so
-that dissipation comes from the subgrid model, the opposite of the
-[implicit-LES](/definitions/implicit-les.md) position.
+that dissipation comes from the subgrid model (compare
+[implicit LES](/definitions/implicit-les.md)).
 
 # Version read
 
@@ -92,7 +92,7 @@ Page-local symbols: $a$ is the face-extrapolation parameter (the source's $\alph
 24. Reattachment: reference scheme $x/R\approx4.0$ (G1) and $\approx3.0$ (G2, G3); LD2C $x/R\approx2.7$ (G2, G3); experiment 2.67. LD2C overpredicts the reverse flow, which explains the low base pressure, and underpredicts the radial size of the bubble (§4.4, Fig. 10b–d). **Shown**
 25. LD2C agrees much better with the measured turbulent shear stress at $x/R=1.57$; the reference scheme greatly overpredicts it at $x/R=2.52$, which LD2C mitigates (§4.4, Fig. 10e,f). **Shown**
 26. "Improved numerics in the initial shear layer does not produce a better prediction of the base pressure profile"; the wavy pattern agrees with Simon et al. (ZDES, much finer grid) and Guseva et al. (blended centred/upwind-biased scheme, grid like G2) (§4.4). **Shown**/**Stated**
-27. Including vorticity in the shock sensor (Ducros) improves the resolved shear stress and contributes to grey-area mitigation in the initial shear layer, compared with the Jameson sensor (§5). **Shown** (base flow; the sensor effect is not isolated: the comparison is reference scheme against LD2C, which also differ in $\kappa^{(4)}$ and $a$)
+27. Including vorticity in the shock sensor (Ducros) improves the resolved shear stress and contributes to grey-area mitigation in the initial shear layer, compared with the Jameson sensor (§5). **Shown** (base flow; the comparison is reference scheme against LD2C, which also differ in $\kappa^{(4)}$ and $a$)
 28. In decaying turbulence the numerical dissipation of the convection term dominates the decay of turbulent kinetic energy; it is controlled by the low-Mach preconditioning and by $\kappa^{(4)}$ "in the range of 1/512 or smaller" (§5). **Shown**
 
 # Printed slips
@@ -133,7 +133,7 @@ Page-local symbols: $a$ is the face-extrapolation parameter (the source's $\alph
 | $Re_b$, $M_b$, $Re_\tau$, $u_\tau$, $\delta$ | $Re_b$, $M_b$, $Re_\tau$, $u_\tau$, $\delta$ | based on the half-height and wall viscosity; agree |
 | $M_g$, $U_0$ | (grid mesh size, tunnel speed of the decaying-turbulence experiment) | **collision:** $M_g$ is not a Mach number |
 | $M_t$ | $M_t$ | 0.1, agrees |
-| $R$, $Re_R$ | (base radius), $Re$ based on $R$ | **collision:** $R$ is not a Reynolds stress |
+| $R$, $Re_R$ | $R$ (page-local base radius, as on the [base-flow page](/benchmarks/supersonic-axisymmetric-base-flow.md)), $Re$ based on $R$ | **collision:** $R$ is not a Reynolds stress |
 | $C_p$ | $C_p$ | agrees |
 
 # Reference list
@@ -149,9 +149,10 @@ different work.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26), cited further in chunks 4, 8. This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunks 4, 8, 16. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
+- [Supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)

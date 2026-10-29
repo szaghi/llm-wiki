@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Fluids 36:055146"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Physics_of_Fluids_Chapelier_Comparison_of_high-order_numerical_methodologies_for_the_sim.pdf"
 tags: [compressible, implicit-les, numerical-dissipation, dg, high-order, dns]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -151,7 +151,7 @@ the [bibliography](/bibliography.md) with `citedby` this slug. Same-author
 same-year pairs (Lusher & Sandham 2021, Bassi & Rebay 1997, Bemis et al. 2023)
 take suffixes in printed order. Ref. 55 (Blind et al., arXiv:2306.12891, FLEXI
 exascale) is a preprint distinct from the ingested
-[Blind et al. (2023)](/sources/blind-2023.md) and is re-keyed `blind-2023-b`; ref. 21 is
+[Blind et al. (2023)](/sources/blind-2023.md) and carries the key `blind-2023-b`; ref. 21 is
 [Krais et al. (2021)](/sources/krais-2021.md). Refs. 52 and 54 are bare GitHub
 URLs, ref. 35 prints no proceedings title, ref. 62 no title, and ref. 63 is an
 arXiv preprint without identifier. No printed duplicates.

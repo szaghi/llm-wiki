@@ -5,7 +5,7 @@ description: "The pressure dilatation, the product of pressure and velocity dive
 status: established
 aliases: [pressure-dilatation, pressure–dilatation correlation, pressure dilatation work, pressure-dilatation work, pressure-dilatation term, SGS pressure dilatation, subgrid pressure dilatation, pressure dilatation dissipation rate]
 tags: [compressible, dns, les, rans, numerical-dissipation]
-timestamp: 2026-10-29T05:10:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Pressure dilatation
@@ -151,7 +151,7 @@ and the mass-flux term $\langle u_i''\rangle(\partial_j\langle\sigma_{ij}\rangle
 as written by [Yu et al. (2022)](/sources/yu-2022-e.md), Eq. (4.1), who
 call the pressure-dilatation and the mass-flux terms the "genuine
 compressibility" effects. The sources that measure it in wall turbulence
-and shock interactions agree that it is small away from shocks:
+and shock interactions report:
 
 - **Oblique shock on a supersonic boundary layer.** In a DNS of a Mach 2.28
   boundary layer ($Re_\tau=201$ at the reference station) hit by the shock
@@ -312,7 +312,7 @@ protocol on
   mass and momentum equations of their Eq. (1) gives $+\rho k\boldsymbol v$;
   the term vanishes in their periodic cases *(compiler check, not in the
   sources)*.
-- **Evidence.** All findings above are from single configurations: one
+- **Evidence.** The configurations behind the findings: one
   shock-interaction DNS each (Yu et al., whose 2023 study neglects the
   term in the recovery region by citation; Tonicello et al.), two LES of
   ramp interactions (Helm & Martín), one family of decaying runs (Cao et

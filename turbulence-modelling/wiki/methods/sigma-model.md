@@ -5,7 +5,7 @@ description: "The Sigma model of Nicoud et al. builds a static subgrid eddy visc
 status: established
 aliases: [σ model, σ-model, sigma subgrid-scale model, Nicoud model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-29T05:09:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Sigma model
@@ -16,14 +16,14 @@ $\tau^d_{ij}=-2\nu_t\bar S^d_{ij}$, whose viscosity is built from the
 singular values of the resolved velocity-gradient tensor
 $\partial_j\bar u_i$. The sources attribute it to Nicoud et al. (2011).
 Let $\varsigma_1\ge\varsigma_2\ge\varsigma_3\ge0$ denote those singular
-values and $C_\sigma$ the model constant (page-local symbols; the sources
+values and $C_\sigma$ the model constant (registry §11; the sources
 write $\sigma_1,\sigma_2,\sigma_3$, which would collide with the registry's
 viscous stress $\sigma_{ij}$). [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md)
 (§2.1, Eqs. 4–5) print the model as
 
 $$\nu_t=(C_\sigma\Delta)^2\mathcal D_\sigma,\qquad \mathcal D_\sigma=\frac{\varsigma_3(\varsigma_1-\varsigma_2)(\varsigma_2-\varsigma_3)}{\varsigma_1^2},$$
 
-with $\mathcal D_\sigma$ (page-local) the model's differential operator, in
+with $\mathcal D_\sigma$ (registry §11) the model's differential operator, in
 a compressible LES where it gives the dynamic viscosity
 $\mu_t=\bar\rho\nu_t$ (the paper writes $\mu_{SGS}=(C_m\Delta)^2\mathcal D_m$
 without the density; see Qualifications). It is a member of the
@@ -63,6 +63,7 @@ asymptote.
 | not printed | wall-resolved reacting LES of a swirl combustor (AVBP, TTGC scheme) | [Agostinelli et al. (2021)](/sources/agostinelli-2021.md), §2 |
 | not printed | incompressible unstructured finite-volume LES (YALES2) on adapted meshes of a jet, a pipe and a swirl burner | [Barbera et al. (2026)](/sources/barbera-2026.md), §3 |
 | 3.0, entering only through the ratio $(C_\sigma/C_s)^2$ with $C_s=0.1$ | enhancing factor of the SATES-σ hybrid RANS/LES model (WCNS, PHengLEI); not a stand-alone LES | [Wu et al. (2024)](/sources/wu-2024.md), §2.2, Table 1 |
+| 1.5, in the outer-flow cut-off coefficient $C_x^\sigma=(C_\sigma/\beta^*)\sqrt{\mathcal D_\sigma/\omega}\,F_{\mathrm{cor}}^{-1/2}$ of SATES-II; not a stand-alone LES | hybrid RANS/LES with a sixth-order WCNS in PHengLEI-HyOrder | [Wu et al. (2026)](/sources/wu-2026-b.md), §2.2, Eqs. 11–12 |
 
 Wu & Lele (2026, §5.1) choose it as their baseline because its "coefficient
 range works for many different flows and does not require clipping for
@@ -142,8 +143,8 @@ $\nu_t$ to zero at the wall (§II.D).
   pipe at $Re_D=5300$ and the non-reacting PRECCINSTA burner, the geometry
   of Agostinelli et al. above. The paper calls its approach "implicit
   filtering" in the sense that "the filter scale is related to the local
-  mesh size" (abstract); the subgrid model is the explicit σ model, so this is not
-  [implicit LES](/definitions/implicit-les.md). No constant is printed
+  mesh size" (abstract), with the explicit σ model as subgrid model
+  (compare [implicit LES](/definitions/implicit-les.md)). No constant is printed
   and no result is attributed to the model, which is not varied.
 - **Reference for learned closures.** Wu & Lele (2026) run Sigma
   ($C_\sigma=1.3$) and static Smagorinsky as references for
@@ -191,14 +192,31 @@ $\nu_t$ to zero at the wall (§II.D).
   vanished turbulent viscosity" (§2.2). Results are on
   [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) and
   [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md).
+- **Outer-layer coefficient of SATES-II.** [Wu et al. (2026)](/sources/wu-2026-b.md)
+  (§2.2, Eqs. 10–16) derive a second σ-based coefficient by equating the
+  SATES eddy viscosity with a RANS and a subgrid viscosity, which they read
+  as a ratio of time scales, and print
+  $C_x^\sigma=(C_\sigma/\beta^*)\sqrt{\mathcal D_\sigma/\omega}\,F_{\mathrm{cor}}^{-1/2}$,
+  floored at 0.15, with $C_\sigma=1.5$, $\beta^*=0.09$, $\omega$ the
+  specific dissipation rate and $F_{\mathrm{cor}}$ (page-local) the SST
+  limiter factor; it applies in the outer flow and is blended with a
+  [WALE](/methods/wale-model.md)-type coefficient near walls (details on
+  the [SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md)).
+  The authors credit the σ-based variant with good behaviour in free shear
+  flows and weak modelling in wall boundary layers, the reason for the
+  blend (§1, Table 1). On a Mach 2.46 base flow the blended model gives a
+  recirculation length 6.8% above experiment, against 20.5% with the
+  constant coefficient (Table 3).
 
 ## Qualifications
 
+- Wu et al. (2026) print $C_\sigma=1.5$ in a coefficient of a different
+  form (Eq. 11), inside a hybrid RANS/LES model, as Wu et al. (2024) print
+  3.0.
 - Wu et al. (2024) print $C_\sigma=3.0$ (Table 1), against 1.3–1.35 in the
-  LES sources above. In SATES-σ the constant scales $C_x$ through
-  $(C_\sigma/C_s)^2$ together with $C_{x,\mathrm{base}}$ and the floor, so
-  it is not calibrated as a stand-alone LES constant and the values are not
-  comparable *(compiler check, not in the sources)*.
+  LES sources above. In SATES-σ the constant enters $C_x$ only through
+  $(C_\sigma/C_s)^2$, together with $C_{x,\mathrm{base}}$ and the floor
+  (Eqs. 8–11).
 - Moratilla-Vega et al. (2024) print the viscosity as $\mu_{SGS}$ without
   a density factor and print neither $C_\sigma$ nor $\Delta$; the density
   in $\mu_t=\bar\rho\nu_t$ is added here to make it a dynamic viscosity
@@ -217,4 +235,5 @@ $\nu_t$ to zero at the wall (§II.D).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §II; §VI; App. B.
 - [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.2, Eqs. (8)–(11), Table 1; §3.2, Figs. 8, 11.
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §1, Table 1; §2.2, Eqs. (10)–(16) (σ-based outer coefficient of SATES-II, $C_\sigma=1.5$); §4.1, Table 3.
 - [Barbera et al. (2026)](/sources/barbera-2026.md) — §1; §2.2, Eq. (15); §3, §3.1.

@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -119,6 +119,11 @@ domain must also hold the blade passages and the gaps between rows.
 [Heinz (2020)](/sources/heinz-2020.md) (§1) states, citing the literature, that LES of wall-bounded
 flows "can become computationally extremely expensive (almost as expensive
 as DNS)", the motivation of hybrid methods.
+[Okano & Haga (2026)](/sources/okano-2026.md) (§1) quote, after Yang &
+Griffin (2021) as cited, grid points growing as $Re^{1.86}$ and time steps
+as $Re^{6/7}$ for wall-resolved LES, the motivation of their wall-modelled
+LES; $1.86+6/7=2.72$, the cost exponent of about 2.7 in the table
+*(compiler check, not in the sources)*.
 
 ## DNS
 
@@ -184,6 +189,29 @@ $Re_T^{9/4}$ of the table with $Re_\lambda\propto Re_T^{1/2}$ *(compiler check,
 not in the sources)*. They add, after Yakhot & Sreenivasan as cited, that
 scales finer than $\eta$ become more frequent as the Reynolds number grows,
 so better small-scale resolution than often practised is needed (§1).
+
+**An LES counterpart of $k_{\max}\eta$ for isotropic turbulence.**
+[Rajek & Pozorski (2026)](/sources/rajek-2026.md) propose to judge the
+small-scale resolution of a spectral LES by $k_c\lambda$, with the cutoff
+$k_c$ in place of $k_{\max}$ and the Taylor microscale $\lambda$ in place of
+$\eta$ (§III C): a first proposal $k_c\lambda>1$, by analogy with the DNS
+$k_{\max}\eta>1$, is tightened to $k_c\lambda\approx10$ (§IV), from the
+requirement that the transition wavenumber below which their adaptive
+[spectral eddy viscosity](/methods/spectral-eddy-viscosity.md) vanishes
+obeys $k_t\sim1/\lambda$ and $k_t\lesssim0.1k_c$ (Eq. 36). A range of scales
+counts as well resolved if its eddy viscosity is approximately zero. Their
+$256^3$ LES cases span $k_c\lambda$ from 28.60 (the $Re_\lambda=94$ DNS) and
+18.30 down to 0.29 at $Re_\lambda\approx10\,000$ (Table III), and with the
+Chollet–Lesieur model, which they call standard, the inertial-range
+statistics stop improving at $Re_\lambda\approx1000$ on that grid (§III C). They estimate that
+capturing almost the entire inertial subrange at $Re_\lambda\sim10\,000$
+without artificial viscosity would need about $8192^3$ to $16\,384^3$
+Fourier modes, against about $262\,144^3$ for the hypothetical DNS of the
+same case (§IV, Table II). Their target is a range where the energy flux
+spectrum $\Pi(k)$ (page-local; not the local SGS flux $\Pi$) equals
+$\varepsilon$: at $k_c\lambda=0.28$ with the transition at $0.1k_c$ the
+spectrum agrees relatively well with the reference, yet at most 15% of the
+resolved scales show $\Pi(k)=\varepsilon$ (§IV, Fig. 18).
 
 For a bluff body [Cai et al. (2022)](/sources/cai-2022.md) (§III, Tables
 I–II) estimate the scales of the Ahmed body flow at $Re_H=7.68\times10^5$
@@ -1222,3 +1250,5 @@ it, without breakdown).
 - [Gao et al. (2025)](/sources/gao-2025.md) — §I (Choi–Moin exponents as quoted); §III.A, Tables II–III, Figs. 5–11 (recommended WMLES resolution).
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I; §III A–B, Table I (element counts of flux-reconstruction WMLES).
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (infeasibility of DNS and resolved LES, cited; passing).
+- [Okano & Haga (2026)](/sources/okano-2026.md) — §1 (cited WRLES scaling of points and time steps).
+- [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §III C, Tables II–III; §IV, Eq. (36) (criterion $k_c\lambda\approx10$, LES and DNS mode estimates).

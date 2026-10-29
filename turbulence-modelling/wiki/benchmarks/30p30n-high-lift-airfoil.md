@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "30P30N three-element high-lift airfoil"
-description: "The 30P30N slat–main–flap airfoil in three forms: the modified BANC-III geometry at Mach 0.17, chord Reynolds number 1.7 million and 5.5°, where hybrid and LES approaches and scheme dissipation are compared; the workshop RANS case at Mach 0.2, 9 million and 16°; and a scale-resolving stall sweep at Mach 0.2, 9 million, 8–24°."
+description: "The 30P30N slat–main–flap airfoil in three forms: the modified BANC-III geometry at Mach 0.17, chord Reynolds number 1.7 million and 5.5°, where hybrid and LES approaches and scheme dissipation are compared; the workshop RANS case at Mach 0.2, 9 million and 16°; and hybrid runs at Mach 0.2, 9 million over 8–24°, with four hybrids compared at 21°."
 status: established
 aliases: [30P30N, 30P-30N, 30P/30N, MD 30P30N, modified 30P30N, BANC-III 30P30N, three-element high-lift airfoil]
 tags: [benchmark, hybrid-rans-les, des, separated-flow, numerical-dissipation, aeroacoustics]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # 30P30N three-element high-lift airfoil
@@ -68,7 +68,7 @@ SATES with the same scheme on the fine grid. The schemes are the
 fourth-order [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
 with Z-type weights at regularization parameter $\epsilon_{\mathrm Z}=100$,
 which makes the weights effectively linear (WCNS-L), or $10^{-6}$ (WCNS-Z)
-(page-local symbol), and a second-order blend of central and upwind
+(registry §11), and a second-order blend of central and upwind
 interpolation with upwind fraction $\sigma_b=0.02$ (BCD). Their error is
 taken against the experimental mean $C_L=2.83$:
 
@@ -235,6 +235,43 @@ Their results (Figs. 18–26):
   not be captured accurately if the computational grid resolution is
   insufficient", unlike DDES, which is closer to URANS (§4).
 
+**Four hybrids at $21^\circ$.** [Wu et al. (2026)](/sources/wu-2026-b.md),
+§4.2, return to the same conditions ($Re_C=9\times10^6$, $M=0.2$) at
+$\alpha=21^\circ$, which they call the "critical stall angle of attack",
+with the high-order branch PHengLEI-HyOrder (sixth-order WCNS with
+smooth scale-separating weights) and four models: SATES-SM, SATES-II,
+SST-IDDES and AIDDES (see
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)
+and [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
+| Item | [Wu et al. (2026)](/sources/wu-2026-b.md), §4.2 |
+|---|---|
+| Domain | circle of radius 100 chords; span 12% of the chord, periodic |
+| Grids | two-dimensional grids of about 140 000 and 330 000 cells extruded on 30 and 80 spanwise points: m1 about 4.26 M, m2 about 27 M cells |
+| Time step | printed "$\Delta tC/U_\infty$" $=2\times10^{-4}$ (m1), $1\times10^{-4}$ (m2); statistics over more than 40 000 steps |
+| Reference | experiment of Chin et al. (1993, as cited): $C_p$, $C_f$, velocity-magnitude profiles at six stations |
+
+Their results (Figs. 12–14):
+
+- *Grid.* $C_p$ agrees with the experiment on both grids; the fine grid
+  gives a more accurate $C_f$ at the main-element leading edge by
+  resolving a faster transition (Fig. 12).
+- *Models.* SATES-SM separates prematurely on the slat upper surface,
+  which the authors attribute to its lack of wall modelling; SATES-II
+  returns $F_r\to1$ near the walls; IDDES suppresses the Kelvin–Helmholtz
+  instability of the slat wake, giving a "relatively stable
+  quasi-two-dimensional" wake; AIDDES gives stronger three-dimensional
+  fluctuations than IDDES (Fig. 13).
+- *Profiles.* SATES-II improves the near-wall profiles at $x/C=0.85$–0.975
+  and in the flap boundary layer; IDDES deviates much less than SATES-SM
+  thanks to its shielding but lacks resolution of the wake turbulence;
+  AIDDES improves the downstream profiles under the varying adverse
+  pressure gradient (Fig. 14).
+
+Wu et al. (2024) print a span of 11% of the chord and grids of 12.8 M and
+26.4 M cells, Wu et al. (2026) a span of 12% and grids of 4.26 M and 27 M
+cells, each for its own runs at the same conditions.
+
 ## What the case shows
 
 - On the modified 30P30N the lift depends more on the convective scheme and
@@ -263,6 +300,10 @@ Their results (Figs. 18–26):
   form here that varies the incidence through $C_{L,\max}$; at the
   conditions of the workshop RANS case its evidence for stall prediction is
   numerical, one model family (SATES) against IDDES on two grids.
+- At $21^\circ$ the constant-coefficient SATES-SM separates prematurely
+  on the slat, which Wu et al. (2026) attribute to its lack of wall
+  modelling, and the wall-treated SATES-II improves the near-wall profiles
+  ([Wu et al. (2026)](/sources/wu-2026-b.md), §4.2).
 
 ## Qualifications
 
@@ -284,6 +325,13 @@ Their results (Figs. 18–26):
   diameter symbol of their cylinder cases. They do not print the chord
   length, so the identity of their "MD-30P30N" with the 0.5588 m workshop
   chord of Wang et al. (2013) is not established by the page.
+- [Wu et al. (2026)](/sources/wu-2026-b.md), §4.2, print the
+  non-dimensional time step as "$\Delta tC/U_\infty$"; by dimension the
+  non-dimensional step is $\Delta t\,U_\infty/C$ *(compiler check, not in
+  the sources)*.
+- [Wu et al. (2026)](/sources/wu-2026-b.md) give the 30P30N runs "three
+  compute nodes of 160 CPU cores" and the base-flow runs "10 compute nodes
+  with a total of 640 CPU cores" (§4).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) do not state the averaging
   time on the airfoil and give the sub-iteration convergence only as
   residual histories (Fig. 9); they cite "Fig. 6" for the slat-cove small
@@ -312,3 +360,4 @@ the sources)*.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.3 (cited WMLES of Bodart et al.).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §1; §3.3, Figs. 18–26; §4.
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I; §IV.C.1, Figs. 6–10; Table I.
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §3.4 (PHengLEI-HyOrder); §4.2, Figs. 12–14 (30P30N at $21^\circ$: domain, grids, time step, four hybrids, $C_p$, $C_f$, profiles).

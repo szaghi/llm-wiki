@@ -5,7 +5,7 @@ description: "DNS solves the Navier–Stokes equations with no turbulence model 
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS, DNS-like simulation, fully resolved simulation with detailed chemistry, surrogate PC DNS, principal-component DNS]
 tags: [dns, les, combustion, boundary-layer, compressible, gpu, mhd]
-timestamp: 2026-10-29T05:18:00Z
+timestamp: 2026-10-29T07:36:00Z
 ---
 
 # Direct numerical simulation
@@ -862,9 +862,8 @@ reacting case. Details and the validation of each incoming layer are on
   $\Delta y^+\approx1$, $\Delta z^+\approx15$–30), "which is exactly the
   definition of implicit LES when it comes to mesh resolution" (§3.2). Their
   average $\Delta x^+$ and $\Delta z^+$ lie below the maxima of 7.2 they
-  quote for the degree-7 finite-element DNS, with linear elements against
-  degree 7 *(compiler check, not in the sources; averages and maxima are not
-  directly comparable)*. In the other direction,
+  quote for the degree-7 finite-element DNS *(compiler check, not in the
+  sources)*. In the other direction,
   [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.1, Fig. 4b, shows that
   a model-free run on the $64^3$ LES mesh of the Comte-Bellot & Corrsin
   decaying grid turbulence fails to follow the measured spectra, which the author's
@@ -1402,6 +1401,34 @@ Further sources use DNS in the same roles and in two more:
   Cao et al. (2022) in the table above, and box-filter that DNS (eight
   cells into one) to measure the filtered subgrid energy transfer a priori
   (§IV B; see [implicit LES](/definitions/implicit-les.md)).
+  The sequel of the same group, [Wang et al. (2026)](/sources/wang-2026.md),
+  judges $64^3$ to $256^3$ LES of the same case against a $512^3$ DNS
+  computed with the same high-order gas-kinetic framework and validated, as
+  they state, in Cao et al. (2022) (§II C). They use it in two forms: box-
+  or Gaussian-filtered to the LES resolution and then differentiated
+  ("filter first, then differentiate"; filtered and differentiated DNS
+  fields at $128^3$ differ minimally, §IV A, Fig. 7), and unfiltered, with
+  its broader tails, as a second reference for the PDFs of the resolved
+  velocity gradients (§IV B, Tables I–II). The DNS resolutions of the two
+  papers are recorded as each prints them.
+- **A pseudo-spectral DNS and its hypothetical finer siblings.**
+  [Rajek & Pozorski (2026)](/sources/rajek-2026.md), §II A, set the
+  viscosity of a forced isotropic DNS from the target $k_{\max}\eta$ and the
+  injection rate, $\nu=[\varepsilon_f(k_{\max}\eta/k_{\max})^4]^{1/3}$
+  (Eq. 5, $\varepsilon_f$ the injection rate, page-local), the inverse of
+  $\eta=(\nu^3/\varepsilon)^{1/4}$ with $\varepsilon=\varepsilon_f$
+  *(compiler check, not in the sources)*, with $k_{\max}$ the radius of the
+  spherical de-aliasing truncation; their DNS has $256^3$ points,
+  $k_{\max}\eta=1.5$ and $Re_\lambda=94$ (Table I). For LES they evaluate
+  the same formula with the $N_x$ of a hypothetical DNS 2 to 1024 times
+  finer per direction, which gives the LES viscosity; the finest
+  corresponds to a $262\,144^3$ DNS at $Re_\lambda\approx10^4$ (Table II).
+  A run of their LES code with the eddy viscosity set to zero (an
+  "underresolved DNS") gives an unphysical spectrum (§III A, Fig. 1). They
+  cite the largest isotropic DNS as $Re_\lambda\sim2500$ on $32\,768^3$
+  points (Yeung et al.) and $Re_\lambda\sim2300$ on $16\,384^3$ (Ishihara
+  et al.) (§I); see
+  [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
 - **Filtered DNS of isotropic turbulence as the LES reference.**
   [Zhang et al. (2022d)](/sources/zhang-2022-h.md), §III B, filter their
   dense-gas DNS with a Gaussian of 16 DNS spacings and run the LES on $64^3$,
@@ -1503,18 +1530,16 @@ layers (§7).
   without explicit bulk viscosity a compressible run is an implicit LES for
   the compressible modes. Seta & Federrath (2022), recorded above, justify
   their explicitly viscous compressible MHD runs as DNS by the ratio of
-  explicit to numerical diffusion and do not state a bulk viscosity. Whether their runs are DNS in Beattie et al.'s sense depends
-  on that unstated choice and on a resolution study of the compressible
-  modes, so it is recorded here rather than as a contradiction.
+  explicit to numerical diffusion and do not state a bulk viscosity or a
+  resolution study of the compressible modes.
 - **Cost of a long $32\,768^3$ run.** With Yeung et al.'s figures, ten
   large-eddy times are $3\times10^6$ steps, about 1.2 years at 13 s per
   step, against "two years or more" in the text, which does not say what
   else the estimate includes *(compiler check, not in the sources)*.
 - **Two citations of Choi & Moin.** Morsbach et al. (2024) cite a DNS cost
   growing as $Re^{3.5}$, Rickard & Kasbaoui (2026) a DNS grid-point count
-  growing as $Re^{37/14}$; the two exponents are stated for different
-  quantities (cost, grid points), so they are not recorded as a
-  contradiction.
+  growing as $Re^{37/14}$; the first is stated for the cost, the second for
+  the number of grid points.
 - **Resolution not reported.** Kumar & Ghosh (2022) call their supersonic
   channel and shock-train runs DNS without giving wall-unit spacings,
   averaging time or a statistical-convergence check (§3.2); their only
@@ -1540,10 +1565,10 @@ layers (§7).
   $M_\infty=8$ case, which the text includes among the stations at
   $Re_\tau\approx650$.
 - Simonis et al.'s (2022) "UDNS" and the conjecture that their lattice
-  Boltzmann scheme acts as an implicit LES rest on one flow (the
-  Taylor–Green vortex) and one dissipation split; the authors word a
-  numerical observation on the approach to the incompressible solution as
-  "the present work proves" (§3.4).
+  Boltzmann scheme acts as an implicit LES are drawn from one flow (the
+  Taylor–Green vortex) and one dissipation split; their §3.4 states the
+  approach to the incompressible solution, observed in their runs, as
+  "the present work proves".
 
 - **Printed resolution statements.** Zhang et al.
   (2022c) state in the abstract that the grid "exceeds $5\times10^6$"
@@ -1721,3 +1746,5 @@ layers (§7).
 - [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §III A 2, Table III, Fig. 5.
 - [Sun et al. (2026)](/sources/sun-2026.md) — §7.2 (DNS reference of the TGV).
 - [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §III F (DNS reference of the TGV).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §II C; §IV A, Fig. 7; §IV B, Tables I–II ($512^3$ gas-kinetic DNS, filtered and unfiltered, as LES reference).
+- [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §I; §II A, Eq. (5), Table I; §III A, Fig. 1; Table II.

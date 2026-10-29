@@ -9,7 +9,7 @@ year: 2022
 venue: "Int. J. Heat Fluid Flow 98:109071"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_International_Journal_of_Heat_and_Fluid_Flow_De_Wall-modeled_LES_of_shock-waveboundary_layer_interaction.pdf"
 tags: [wmles, shock-boundary-layer-interaction, compressible, wall-model, les]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Summary
@@ -40,9 +40,9 @@ split convective scheme with fifth-order WENO-Z
 [WALE model](/methods/wale-model.md); the inflow is a digital filter
 ([inflow generation](/methods/inflow-turbulence-generation.md)). The
 [grid-point cost](/results/les-grid-point-requirements.md) of
-wall-resolved LES motivates the approach, and
-[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) are
-judged complex and invasive. Three wall-modelled grids are compared with a
+wall-resolved LES motivates the approach, and the authors judge
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
+complex and "frequently invasive at the implementation level" (§1). Three wall-modelled grids are compared with a
 wall-resolved LES, DNS of the incoming [boundary layer](/benchmarks/turbulent-boundary-layer.md)
 and PIV. Because no-slip is kept, the wall-modelled runs show negative
 friction in the separated region; but the bubble is oversized, which the

@@ -5,7 +5,7 @@ description: "Closures set or learned online by a policy trained with reinforcem
 status: established
 aliases: [RL closure, VYBA23, RLWM, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-28T17:40:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -233,8 +233,10 @@ Kim et al. (2022) train a neural-network SGS model for wall-resolved LES
 of incompressible [channel flow](/benchmarks/turbulent-channel-flow.md)
 with deep reinforcement learning (DRL). No filtered-DNS (fDNS) fields are
 used. The only targets are two time-averaged fDNS profiles (Abstract, §II
-B). The version read is arXiv v2. Page-local notation, in the paper's units
-of the half-height $\delta$ and $u_\tau$:
+B). The version read is arXiv v2. Notation, in the paper's units of the
+half-height $\delta$ and $u_\tau$ ($\mathcal S_1$, $\mathcal S_2$
+page-local; $\gamma_{\mathrm{RL}}$, $\Delta t_{\mathrm{RL}}$, $N_s$ registry
+§11):
 
 - $\mathcal S_1(y)=Re_\tau^{-1}\,\mathrm d\langle\bar u\rangle/\mathrm dy$ is
   the mean viscous stress and $\mathcal S_2(y)=\langle\bar u'\bar v'\rangle$
@@ -280,7 +282,7 @@ $$r_t(y)=-\sum_{i=1}^{2}c_i\left\lvert\mathcal S_i^{\mathrm{fDNS}}(y)-\mathcal S
 With $c_1=c_2=1$ the mean velocity fluctuated and learning was unstable.
 The square root, which evens out the reward scale across $y$, trained
 better than the absolute value. In the form used, the LES statistic is a
-discount-weighted time average over the next $N_s$ (page-local) action
+discount-weighted time average over the next $N_s$ (registry §11) action
 intervals.
 
 **Four modifications of DDPG/TD3 (contribution, §II B–D, Algorithm 1).**
@@ -731,8 +733,7 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
   channel (Bae & Koumoutsakos; Vadrot et al. 2023a).
 - [Wu & Lele (2026)](/sources/wu-2026.md) (arXiv v2, §1) cite Kim et al.
   (2022), Bae & Koumoutsakos (2022), Kurz et al. (2023) and Guan et al.
-  as RL closures that learn "the combined effect of solver numerics and
-  physics", hence "limited in their transferability to other solvers",
+  as RL closures "limited in their transferability to other solvers, as they learn the combined effect of solver-specific numerical effects and turbulence physics",
   and costlier to train because LES must run during training. Their own
   route is supervised training on several filter shapes (see
   [neural-network SGS models](/methods/neural-network-sgs-model.md) and

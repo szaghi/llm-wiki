@@ -5,7 +5,7 @@ description: "The Boeing Gaussian speed bump, a smooth-body separation behind a 
 status: established
 aliases: [Gaussian bump, Boeing bump, Boeing Gaussian bump, Boeing speed bump, Gaussian speed bump, spanwise-periodic Gaussian bump, 2D Gaussian bump, 3D Gaussian bump]
 tags: [benchmark, wmles, sgs-model, separated-flow, boundary-layer, uncertainty-quantification]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Gaussian (Boeing) bump
@@ -67,7 +67,7 @@ replace the no-slip wall by conditions that all impose the reference mean
 wall stress $\tau^{\mathrm{ref}}_w$ (page-local): a velocity Neumann
 condition $\partial u/\partial y|_w=\tau^{\mathrm{ref}}_w/\mu$ (Eq. 2); an
 "equilibrium" Dirichlet condition with a wall eddy viscosity
-$\nu_{t,w}$ (page-local) calibrated by a running average so that
+$\nu_{t,w}$ (registry §11) calibrated by a running average so that
 $\rho(\nu+\nu_{t,w})\breve u_{\mathrm c}/h_{\mathrm{wm}}=\tau^{\mathrm{ref}}_w$ at the first cell centre $h_{\mathrm{wm}}$ ($\breve u_{\mathrm c}$ the running time average of the first-cell-centre velocity, as on the [equilibrium wall model](/methods/equilibrium-wall-model.md) page) (Eqs. 4–7); and a
 "non-equilibrium" form that adds $\tfrac{h_{\mathrm{wm}}}{2}\partial p/\partial x$
 to the stress (Eqs. 8–9), $\nu_{t,w}$ clipped at zero (see
@@ -250,8 +250,7 @@ model.
   [Goc et al. (2021)](/sources/goc-2021.md) as a collapse of the bubble
   under refinement, [Hu et al. (2024)](/sources/hu-2024.md) as convergence
   on the medium and fine grids after a deviating coarse grid; the cited
-  work is not ingested, and the two descriptions are recorded side by
-  side.
+  work is not ingested.
 - [An et al. (2025)](/sources/an-2025.md) cite the $Re_L=10^6$ DNS as
   "Malik et al." in §3.2, while their reference list names Uzun & Malik;
   they describe the $Re_L=2\times10^6$ grids as "reducing grid points by

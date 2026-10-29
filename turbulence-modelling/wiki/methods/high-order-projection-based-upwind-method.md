@@ -5,7 +5,7 @@ description: "HOPU restricts the upwind penalty of a high-order discontinuous co
 status: established
 aliases: [HOPU, high-order projection-based upwinding, adaptive HOPU, projection-based upwind stabilization]
 tags: [implicit-les, numerical-dissipation, dg, boundary-layer, transition]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # High-order projection-based upwind (HOPU) method
@@ -25,8 +25,7 @@ high-order jump content, "in the spirit of" the variational multiscale
 method (§3.3). An adaptive variant chooses $l$ facet by facet from a jump
 indicator. The authors interpret it as "a wall model approach for standard
 DG ILES" (§6); as defined in §3.3 it prescribes no wall stress and uses
-no matching height, unlike the methods of
-[wall-modelled LES](/methods/wall-modelled-les.md).
+no matching height (see [wall-modelled LES](/methods/wall-modelled-les.md)).
 [Lederer et al. (2026)](/sources/lederer-2026.md) carry the method over
 to transitional flow on the [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)
 with a new, projection-type time integration of the host scheme, and
@@ -147,8 +146,7 @@ thresholds $r_{J,-1}=0<r_{J,0}<r_{J,1}<\dots<r_{J,N+1}=1$, local order
 $l=i$ for $r_{J,i}<r_J\le r_{J,i+1}$ when $i\ge0$, and **reversion to
 standard upwinding** when $r_J<r_{J,0}$; thresholds
 $\{0.1,0.2,0.3,0.4\}$ for $N=3$; the local order recomputed every tenth
-time step. These are settings of two versions of the method, not
-competing claims. On the transitional airfoil the velocity jumps are
+time step. On the transitional airfoil the velocity jumps are
 "significantly larger in the turbulent wall-bounded regions compared to
 the laminar and outer regions" (§4, Fig. 3), the same observation as in
 the channel and hill; the plotted mode of the local order on the coarsest

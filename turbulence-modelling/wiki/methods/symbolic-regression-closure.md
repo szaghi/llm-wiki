@@ -5,7 +5,7 @@ description: "Closures whose model terms are explicit algebraic expressions foun
 status: established
 aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS, relevance vector machine, RVM, NGM4, NGM6, equation discovery]
 tags: [symbolic-regression, rans, les, sgs-model, data-driven, separated-flow]
-timestamp: 2026-10-28T17:01:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -265,8 +265,10 @@ whose first term is the [gradient model](/methods/gradient-model.md)
 (NGM2), the first two NGM4, all three NGM6. The coefficients are those of
 the exact expansion
 $\overline{fg}-\bar f\bar g=\sum_{n\ge1}\frac1{n!}(\Delta^2/12)^n\,\partial^n\bar f\cdot\partial^n\bar g$
-for a Gaussian filter of transfer function $\hat G(k)=\exp(-k^2\Delta^2/24)$
-*(compiler check, not in the sources)*. No coefficient is fitted: only
+for a Gaussian filter of transfer function $\hat G(k)=\exp(-k^2\Delta^2/24)$,
+as printed by [Wang et al. (2022)](/sources/wang-2022-j.md) (Eq. 15; see
+[gradient model](/methods/gradient-model.md)) *(compiler check, not in the
+sources)*. No coefficient is fitted: only
 $\Delta$ enters, which is the authors' argument that NGM4 is
 "generalizable" (p. 4). The authors describe the closures as truncations of
 the non-local deconvolution operator, NGM4 "the minimal local truncation"
@@ -460,13 +462,13 @@ convention is discussed under Qualifications.
   a zero-mean Gaussian prior on each weight with its own precision
   (automatic relevance determination), and, in place of Tipping's Gamma
   hyperprior, the "demi-Bayesian LASSO" hyperprior
-  $p(\alpha_i)\propto\exp(-\lambda/(2\alpha_i))$ (page-local $\alpha_i$
-  precisions, $\lambda$ one sparsity parameter for all) of Balakrishnan &
+  $p(\alpha_i)\propto\exp(-\lambda_{\mathrm{SBL}}/(2\alpha_i))$ (page-local $\alpha_i$
+  precisions, $\lambda_{\mathrm{SBL}}$ one sparsity parameter for all, page-local) of Balakrishnan &
   Madigan, as cited, for "improved sparsity" (Eqs. 16–20). Type-II maximum
   likelihood gives fixed-point updates of the precisions and the noise;
   weights whose precision reaches a limit are pruned; the weight posterior
   is Gaussian (Eqs. 24–27).
-- **Selection.** $\lambda\in\{10^2,10^3,10^4,10^5,2\times10^5\}$ is chosen
+- **Selection.** $\lambda_{\mathrm{SBL}}\in\{10^2,10^3,10^4,10^5,2\times10^5\}$ is chosen
   a posteriori: the MAP models run in OpenFOAM, and a score sums the
   relative mean-square-error reductions over baseline SST of velocity,
   $k$, Reynolds shear stress and $C_f$, with the left-out test flow
@@ -477,14 +479,14 @@ convention is discussed under Qualifications.
   [backward-facing step](/benchmarks/backward-facing-step.md) at
   $Re=13\,700$, with full-field LES or DNS (§4.1, Table 1).
 
-**Learned models (App. A).** As $\lambda$ grows the anisotropy correction
+**Learned models (App. A).** As $\lambda_{\mathrm{SBL}}$ grows the anisotropy correction
 thins out, while the production correction reduces to one $T^{(1)}$ term
-at every $\lambda$, its coefficient decreasing (0.989, 0.982, 0.959, 0.887,
+at every $\lambda_{\mathrm{SBL}}$, its coefficient decreasing (0.989, 0.982, 0.959, 0.887,
 0.8433 in the first scenario); above $2\times10^5$ both vanish and SST is
-recovered (§4.2). At $\lambda=10^2$ the anisotropy correction has
+recovered (§4.2). At $\lambda_{\mathrm{SBL}}=10^2$ the anisotropy correction has
 invariant-dependent coefficients, e.g.
 $[(-0.496\pm0.0133)+(21.6\pm0.366)I_1+(17.4\pm0.374)I_2]\,T^{(1)}+\dots$
-(Eq. A.1). The three selected models, all at $\lambda=2\times10^5$, have
+(Eq. A.1). The three selected models, all at $\lambda_{\mathrm{SBL}}=2\times10^5$, have
 no anisotropy correction and one stochastic production coefficient,
 $0.8433\pm0.0142$, $0.382\pm0.0184$ and $0.197\pm0.0156$ (Eqs.
 A.13–A.15); the deterministic SpaRTA models of Schmelzer et al. for the
@@ -612,9 +614,10 @@ reacting LES, both trained a priori on filtered DNS of flames:
   features, and sparse regression over them gives a model "similar to
   Clark's formulation".
 
-Both searches thus land on the gradient model, as the relevance-vector
-search of Jakhar et al. (2026) does for incompressible turbulence
-(section above). The review states these results without numbers of its
+The review reports both results as close to Clark's model; the
+relevance-vector search of Jakhar et al. (2026, section above) returns the
+gradient model and its higher-order extensions for incompressible 2-D
+turbulence. The review states these results without numbers of its
 own. [Le et al. (2024)](/sources/le-2024.md) (§3.3(4), p. 20) cite
 Schoepplein et al. for gene-expression programming that optimizes the
 scalar coefficients of basis functions for subgrid stresses in
@@ -651,6 +654,47 @@ base for later ones (§1, §3.2):
 The paper itself calibrates its constants by hand on the
 [ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md) and does
 not report a learned expression.
+
+## The symbolic family in a review of machine-learning closures (Hu & Yang 2026)
+
+[Hu & Yang (2026)](/sources/hu-2026.md) (§III A, Table I) treat symbolic
+methods as one of their four philosophies of machine-learning RANS
+closure (corrective, direct, symbolic, Bayesian). The works below are
+cited by Hu & Yang, and only the Wu et al. (2025) entry is ingested here.
+
+- *SpaRTA (Schmelzer et al.).* Algebraic stress models "written as tensor
+  polynomials built from a library of candidate functions and identified
+  via elastic-net regularization that promotes sparsity". They were
+  validated on periodic hills, a converging–diverging channel and a curved
+  backward-facing step, where they improved on
+  [$k$-$\omega$ SST](/methods/k-omega-sst-model.md), including at a
+  higher-Reynolds-number prediction case. Table I gives the training data
+  as LES/DNS of three separating flows at $Re=10\,595$–$13\,700$.
+- *Gene-expression programming.* Weatheritt & Sandberg; machine-learnt
+  explicit algebraic stress and scalar-flux models for a trailing-edge
+  cooling slot (Sandberg et al.); single-case CFD-driven GEP for
+  one-equation models (Di Fabbio et al.).
+- *Multicase CFD-driven training (Fang et al.).* RANS evaluations of the
+  candidate models run on several flows at once during training, from a
+  pool of ten cases (five free-shear, five wall-bounded, Table I). The
+  resulting models improved the cases the baseline predicted poorly
+  without degrading those it predicted well (see
+  [model-consistent training](/methods/model-consistent-training.md)).
+- *Others.* Sparse regression with embedded form invariance (Beetham &
+  Capecelatro); the closed-form Spalart–Allmaras correction for separated
+  flows of Jäckel; and the conditioned field inversion with symbolic
+  regression of [Wu et al. (2025)](/sources/wu-2025.md), listed in Table I
+  with the NASA hump and the curved backward-facing step (section above).
+
+In their qualitative Table II, "a reader's guide rather than a rigorous
+benchmark", symbolic methods need about 1–10 DNS/LES training cases, have
+negligible inference cost, "Medium–high" a posteriori robustness and
+"High" interpretability, the highest interpretability grade of the
+table. On certification (§VII), they hold that symbolic and structurally
+constrained closures "tend to buy interpretability and robustness
+together rather than trading one for the other". Duraisamy (2021, §VII;
+above) states that interpretable models from symbolic regression do not
+automatically generalize beyond their training scenarios.
 
 ## Pointers in Fang et al. (2026) and Wang et al. (2024b)
 
@@ -770,7 +814,7 @@ not report a learned expression.
   dictionary set of Eq. 14 does not state $p,q\ge1$ for the mixed
   products, which the count of 25 requires *(compiler check, not in the
   sources)*; the noise standard deviation of Eq. A.9 (0.358) is ten times
-  that of the same production model at every other $\lambda$
+  that of the same production model at every other $\lambda_{\mathrm{SBL}}$
   (0.0358–0.0364); the text cites the SpaRTA models as Schmelzer et al.
   (2020b), the captions and App. B as (2020a).
 - **Attribution in Fang et al. (2026).** The parsimony argument is
@@ -803,3 +847,5 @@ not report a learned expression.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §5.2 (symbolic-regression SST enhancement of Wu & Zhang, parsimony; refs. [136], [201], [202]).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.3(4), p. 20 (GEP for premixed-flame subgrid stresses, cited).
 - [Wang et al. (2024b)](/sources/wang-2024-i.md) — §I, ref. 27 (GEP a posteriori LES of the Taylor–Green vortex, cited).
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — Eq. 15 (Gaussian-filter expansion of the subgrid stress, used for the check of the NGM coefficients).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §III A, Table I (SpaRTA, GEP, multicase CFD-driven training, other symbolic closures, as cited); Table II (qualitative ratings); §VII (interpretability and robustness).

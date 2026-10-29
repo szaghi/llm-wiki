@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 493:112477"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Bernades_Kinetic-energy-_and_pressure-equilibrium-preserving_schemes.pdf"
 tags: [kinetic-energy-preserving, pressure-equilibrium, compressible, dns, real-gas]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -146,8 +146,8 @@ total-energy conserving.
 65 printed references, numbered style ([1]–[65]) with titles. The list is
 merged complete into the [bibliography](/bibliography.md) with `citedby`
 this slug. Ref. [5] (Bernades, Capuano & Jofre, Phys. Fluids 35:015163,
-2023) is a different work from this one and needs its own key
-(`bernades-2023-b`), since `bernades-2023` is this Source. Same-author
+2023) is a different work from this one and is keyed `bernades-2023-b`,
+since `bernades-2023` is this Source. Same-author
 same-year works are keyed in printed order (three Bernades 2022, two each
 of Jofre 2023, Coppola 2019, Jameson 2008, Capuano 2017). [7] prints no
 page or article number, [30] no volume, [20] "p. 759" for a Stanford

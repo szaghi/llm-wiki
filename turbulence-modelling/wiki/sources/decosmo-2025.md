@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Fluids 295:106623"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Computers_amp_Fluids_De_Validation_of_a_low-dissipation_Finite-Volume_solver_for_imp.pdf"
 tags: [implicit-les, numerical-dissipation, finite-volume, compressible, turbomachinery, channel-flow]
-timestamp: 2026-10-28T12:42:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Summary
@@ -41,7 +41,7 @@ second-order accuracy.
 Validation is a [channel](/benchmarks/turbulent-channel-flow.md) at
 $Re_b=3173$, $Re_\tau=200$ (Banchetti, Luchini & Quadrio mesh and domain),
 against DNS at $Re_\tau=180$: centreline-to-bulk ratio 1.186 against 1.168,
-$u^+$ 2% high at $y^+=100$ (read as excess dissipation through the
+$u^+$ 2% high at $y^+=100$ (which the authors read as excess dissipation through the
 [law of the wall](/definitions/law-of-the-wall.md)), Reynolds stresses and
 kinetic-energy budgets close to DNS. The second case is the same channel
 with an asymmetric two-Gaussian bump on the lower wall (Banchetti et al.;
@@ -165,7 +165,7 @@ C"); [39] is a thesis given by an ADS URL; [42] a Zenodo service
 description. The cited works under the keys `grinstein-2007`, `li-2015`,
 `olliviergooch-1997`, `wang-2016`, `wang-2017`, `wang-2018`, `white-2019`
 and `taylor-1935` are different works from the bibliography entries already
-holding those keys and are keyed `grinstein-2007-b`, `li-2015-b`, `olliviergooch-1997-b`, `wang-2016-k`, `wang-2017-s`, `wang-2018-m`, `white-2019-b` and `taylor-1935-b`. No item is unparseable.
+holding those keys and are keyed `grinstein-2007-b`, `li-2015-b`, `olliviergooch-1997-b`, `wang-2016-k`, `wang-2017-s`, `wang-2018-m`, `white-2019-b` and `taylor-1935-b` (the entry that held `taylor-1935`, a reddy-2026 print with the Taylor–Green title, was later folded into `taylor-1937`). No item is unparseable.
 
 # Pages created or updated
 

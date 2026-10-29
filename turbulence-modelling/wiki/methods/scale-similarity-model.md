@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model, dynamic iterative approximate deconvolution, DIAD_W]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-28T17:47:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -49,10 +49,9 @@ recalls the original Bardina form, built with the grid filter applied
 twice, $\overline{\bar u_i\bar u_j}-\bar{\bar u}_i\bar{\bar u}_j$, and the
 form of Liu, Meneveau & Katz with a wider test filter,
 $c_L(\widehat{\bar u_i\bar u_j}-\hat{\bar u}_i\hat{\bar u}_j)=c_LL_{ij}$,
-tested with $c_L=1$ for the full tensor ($c_L$ page-local). Abe's
-$C_L=0.5$ multiplies the deviatoric part of $L_{ij}$ in Abe's own model,
-so the two printed coefficients scale different tensors and are not
-recorded as a disagreement. Domaradzki (§1) cites Liu et al., who found
+tested with $c_L=1$ for the full tensor ($c_L$ page-local); Abe's
+$C_L=0.5$ multiplies the deviatoric part of $L_{ij}$ in Abe's own model.
+Domaradzki (§1) cites Liu et al., who found
 good correlations with box and Gaussian filters and much weaker ones with a
 sharp spectral cutoff, and Brun, Friedrich & da Silva, who recast the
 Métais–Lesieur structure-function
@@ -202,8 +201,8 @@ coefficients are averaged in the spanwise direction (see
 [dynamic procedure](/methods/dynamic-procedure.md)). The paper prints
 these equations in curvilinear coordinates, with the strain of the
 transformed velocity and with the density of the scale-similar stress
-term written $\rho$ where the heat-flux model has $\bar\rho$. The authors' rationale (§IV F) matches the agreed
-properties above: eddy-viscosity models give only a "dissipative drain",
+term written $\rho$ where the heat-flux model has $\bar\rho$. The authors'
+rationale (§IV F): eddy-viscosity models give only a "dissipative drain",
 scale-similar models a local exchange between the smallest resolved and
 the subgrid scales but too little subgrid dissipation (citing the a
 priori study of Martín et al., in which the mixed model improves the
@@ -265,8 +264,6 @@ printed factor slip in their Eq. (9). The results are a posteriori:
 - **Temporal mixing layer.** It overestimates the momentum thickness, its
   spectrum is too high at low wavenumbers and too low at high ones, and it
   predicts larger vortical structures than filtered DNS (Figs. 16–21).
-  This matches the over-prediction of structure size reported by Wang et
-  al. (2023c).
 - **Cost.** Its cost per time node is 166.4 CPU s against 105.6 s for
   dynamic Smagorinsky in isotropic turbulence (Table I).
 
@@ -746,8 +743,8 @@ $E_{xx}$, $E_{xy}$):
 
 The authors conclude that the filter-to-grid ratio is the decisive
 parameter and that compensating for the explicit filter is "a requirement
-fulfilled exclusively by deconvolution-based approaches" (§VI). This rests
-on a priori correlation in isotropic turbulence; they defer a posteriori
+fulfilled exclusively by deconvolution-based approaches" (§VI). Their
+evidence is a priori correlation in isotropic turbulence; they defer a posteriori
 stability, wall-bounded and shock-laden flows and non-uniform grids to
 future work (§V C, §VI). A posteriori, Caban et al. (2026, above) find
 that ADM needs numerical dissipation and does not beat implicit LES; see
@@ -825,8 +822,8 @@ differ: Valencia et al. use explicitly filtered LES, a reference that
 includes the grid-truncation stress, Favre deconvolution with
 $N_{\mathrm{st}}=5$ and ADM of order 5; Zhang et al. use the filtered-DNS
 subfilter stress, density-unweighted fields, $N_{\mathrm{st}}=3$ and ADM
-of order 4. At filter-to-grid ratio 2 the gaps in Valencia et al.'s
-correlations are small (DIAD 0.9735 against ADM 0.9795 for $\tau_{xx}$).
+of order 4. At filter-to-grid ratio 2 Valencia et al. print $C_{xx}=0.9735$
+for DIAD against 0.9795 for ADM.
 
 **Dynamic mixed model in incompressible LES.** [Wang et al. (2022)](/sources/wang-2022-j.md)
 (§II B, §IV–V) use the two-coefficient DMM (Smagorinsky term plus the

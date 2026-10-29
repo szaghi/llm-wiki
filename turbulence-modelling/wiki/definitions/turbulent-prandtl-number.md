@@ -5,7 +5,7 @@ description: "The turbulent Prandtl and Schmidt numbers close the turbulent heat
 status: established
 aliases: [turbulent Prandtl number, Pr_t, turbulent Schmidt number, Sc_t, gradient-diffusion hypothesis, GDH, generalized gradient-diffusion hypothesis, GGDH, HoGGDH, eddy-diffusivity heat flux, turbulent heat-flux model]
 tags: [rans, eddy-viscosity, compressible, boundary-layer, data-driven, combustion]
-timestamp: 2026-10-28T17:45:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Turbulent Prandtl number and turbulent heat-flux models
@@ -176,10 +176,10 @@ $$-\langle u_i'T'\rangle=\sqrt k\Big[a^{\mathrm h}_1\partial_i\vartheta+\sum_{n=
 (Eq. 6), of which the GDH ($a^{\mathrm h}_1=1/Pr_t$ only, Eq. 9), the
 generalized gradient-diffusion hypothesis GGDH of Daly & Harlow (only
 $a^{\mathrm h}_2$, through the Reynolds stress, Eq. 12) and the HoGGDH of
-Abe & Suga (only $a^{\mathrm h}_4$, Eq. 13) are special cases. The
-heat-flux analogue of the stress basis of the
-[explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
-page is thus available to learned closures. Including temperature gradients
+Abe & Suga (only $a^{\mathrm h}_4$, Eq. 13) are special cases (compare
+the stress basis of the
+[explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)).
+Including temperature gradients
 in the invariants violates the linearity principle for passive scalars but is
 retained because temperature in compressible turbulence is not strictly
 passive (§3.3).
@@ -228,8 +228,8 @@ and turbulence modeling during model development" (§2.4). See
   explained.
 - Sandberg & Zhao's GGDH and HoGGDH forms (Eqs. 12–13) are dimensionally
   consistent only if the stress tensor there is the dimensional Reynolds
-  stress, not the normalized one defined after Eq. 6 (details on their Source
-  page).
+  stress, not the normalized one defined after Eq. 6 *(compiler check, not
+  in the sources; details on their Source page)*.
 
 # Citations
 

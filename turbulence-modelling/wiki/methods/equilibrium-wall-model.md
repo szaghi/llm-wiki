@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-28T17:43:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Equilibrium wall model
@@ -236,6 +236,30 @@ the wording of Goc et al. above. The semi-local damping is the
 Trettel–Larsson choice (see
 [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
 
+[Okano & Haga (2026)](/sources/okano-2026.md) (§2.2, Eqs. 1–6) use the
+Kawai–Larsson total-energy pair above on isothermal, strongly cooled walls:
+$\mu_t=\kappa\rho\sqrt{\tau_w/\rho}\,y\,[1-\exp(-y^*/A^+)]^2$ with
+$\kappa=0.41$, $A^+=17$, $Pr_t=0.9$ and the semi-local
+$y^*=\rho u_\tau^*y/\mu$, $u_\tau^*=\sqrt{\tau_w/\rho}$, the mixing length
+Maeyama & Kawai print above with the damping in $y^*$ in place of $y^+$
+*(compiler check, not in the sources)*. Okano & Haga choose the semi-local
+damping because the classical $y^+$ "fails" in boundary layers with strong
+heat transfer. The pair is solved on a one-dimensional wall-normal grid by
+second-order central differences and the Thomas algorithm, iterated until
+$\tau_w$ and $q_w$ converge, between an isothermal no-slip wall and the
+LES velocity and temperature at $h_{\mathrm{wm}}=0.1\delta$, interpolated
+from the [flux-reconstruction](/methods/flux-reconstruction.md) polynomial;
+$\tau_w$ and $q_w$ are imposed at the flux points of the wall face. For a
+supersonic cold-wall channel (App. C, Eqs. C.1–C.4; $h_{\mathrm{wm}}=0.2\delta$)
+they replace $y^*$ in the eddy viscosity by the "mixedmin2" wall distance
+of Iyer & Malik (as cited),
+$$y^+_{\mathrm{mm2}}=\min\Big(\frac{y^++y^*}{2},\,\frac{y^+_{\mathrm{loc}}+y^*}{2}\Big),\qquad y^+_{\mathrm{loc}}=\frac{\rho u_\tau y}{\mu},$$
+(page-local $y^+_{\mathrm{mm2}}$, $y^+_{\mathrm{loc}}$, the source's
+$y^+_{\mathrm{mixedmin2}}$, $y^+_{\mathrm{local}}$), because Iyer & Malik
+showed it performs better there, as Okano & Haga cite it. The numerical
+stabilization these walls required in the LES is on the
+[wall-modelled LES](/methods/wall-modelled-les.md) page.
+
 **How the stress reaches the LES.** Most sources of this page replace no
 slip by the modelled $\tau_w$ (and $q_w$). Van Noordt et al. (§2.4–2.6) apply
 $\tau_w$ and $q_w$ explicitly as the viscous fluxes at the intersections of
@@ -396,8 +420,9 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   Spalart–Allmaras variable from $\nu_t=\kappa u_\tau y\,[1-e^{-y^+/19}]$
   ($\kappa=0.41$; a quartic in $\tilde\nu$ solved by Ferrari's method),
   Crocco–Busemann temperature for adiabatic walls, and pressure equal to the
-  image-point pressure. The quartic is exactly $\nu_t=\tilde\nu f_{v1}$ of the
-  Spalart–Allmaras model solved for $\tilde\nu$ *(compiler check, not in the
+  image-point pressure. The quartic of their Eq. 8 is exactly
+  $\nu_t=\tilde\nu f_{v1}$ of the Spalart–Allmaras model, as their Eq. 2
+  prints it, solved for $\tilde\nu$ *(compiler check, not in the
   sources)*.
 - **Explicit power law** (Ghidoni et al. 2026, §3.3, Eqs. 13–17, after
   Wilhelm et al. as cited), in RANS: $u^+=y^+$ below $y^+=11.81$ and
@@ -855,7 +880,18 @@ of iterations.
   $M_b=0.7$–$4$; its log-intercept error persists under grid refinement, so
   the wall model, not numerical or SGS error, dominates (Griffin et al. 2023,
   §3–4, Figs. 5, 10, 13). Griffin et al. trace this to the van Driest-consistent
-  damping and the constant $Pr_t$.
+  damping and the constant $Pr_t$. Beside this stand the printed results
+  of Okano & Haga (2026, §5.1, App. C, Tables 3, C.10), who keep the
+  constant $Pr_t=0.9$ with semi-local (or, at $U_b/c_w=3$, mixedmin2) damping:
+  in the channel at bulk Mach 0.8 and $T_w/T_r=0.81$ ($T_w$, $T_r$ the
+  wall and recovery temperatures, page-local) they obtain $Re_\tau=1677$,
+  $C_f\times10^3=4.69$ and $B_q\times10^2=1.09$ against DNS values 1692,
+  4.47 and 1.13, and in the Coleman et al. channel ($Re_\tau=451$,
+  $T_w/T_r=0.18$, as cited) $Re_\tau=441$ and $B_q=0.142$ against 451 and
+  0.137 ($B_q=-q_w/(c_pu_\tau T_w\rho_w)$, positive on their cooled walls,
+  whereas Griffin et al. quote $-B_q$ as the cooling parameter). Both
+  cases are flux-reconstruction implicit LES with a near-wall artificial
+  viscosity (see [wall-modelled LES](/methods/wall-modelled-les.md)).
 - **Fast non-equilibrium forcing.** After a sudden spanwise pressure gradient
   the equilibrium model responds linearly in time, while DNS shows the
   $\sqrt t$ growth of a laminar Stokes layer (Fowler et al. 2022, §5.2,
@@ -919,7 +955,6 @@ of iterations.
   imposed rather than predicted; laminar surface quantities are not
   accurately predicted by the wall model and the heat transfer is sensitive
   to the numerical dissipation added at the immersed boundary (§3.2, §4).
-  This is the role of the Bodart–Larsson sensor described above.
 - **Massive separation on a bluff body.** Cai et al. (2022, §II.C.2, §IV)
   apply the explicit equilibrium model on the whole Ahmed body (a generic car
   body) with a 35° slant ($Re_H=7.68\times10^5$, $H$ the body height), including
@@ -1048,9 +1083,8 @@ of iterations.
   free-slip (zero-shear) wall gives 1.1. Dynamic, constant and no SGS model
   give the same reattachment length, so "simulations of high-speed flow over
   the cylinder are more sensitive to the wall model than the LES subgrid
-  model" (§5). The free-slip wall is not a slip-wall model in the sense of
-  [slip-wall models](/methods/slip-wall-model.md); the paper names the
-  dynamic slip condition of Bose & Moin as future work.
+  model" (§5). The paper names the dynamic slip condition of Bose & Moin
+  (see [slip-wall models](/methods/slip-wall-model.md)) as future work.
 - **Bluff-body wake without pressure gradient.** On the circular cylinder at
   $Re_D=3.9\times10^3$, Yan et al. (2024, §III A, Fig. 7) find that the
   Werner–Wengle variant without pressure-gradient term fails to reproduce
@@ -1189,9 +1223,8 @@ profile lies above the DNS).
   et al. filter only the highest mode with weight 10, settings Mukha et al.
   find "more suitable for DNS", and the reported divergence "indicates the
   need for stronger filtering"; when they test the filter as SGS model they
-  filter two modes with weight 100. Each statement concerns its own set-up
-  (wall law, sampling height, Reynolds number, SGS treatment), so the two
-  are not in conflict.
+  filter two modes with weight 100. The two set-ups differ in wall law,
+  sampling height, Reynolds number and SGS treatment.
 - **Sign of the bump exponent of Nuca et al. (2025).** Eq. (10) (checked
   on the page image) prints the correction as
   $\xi_i\,e^{\sigma_i(\log_{10}Re_y-\mu_i)^2}$ with no minus sign (the
@@ -1308,3 +1341,4 @@ profile lies above the DNS).
 - [Yan et al. (2024)](/sources/yan-2024.md) — §II C, Eqs. (26)–(27); §III A, Fig. 7.
 - [Gao et al. (2025)](/sources/gao-2025.md) — §II.B.1, Eqs. (8)–(12), Fig. 1 (compressible ODE model on a 100-point virtual mesh, second-grid-point sampling); Tables II–III, V.
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C1, Eqs. (17)–(19), (29); §II C3, Fig. 1; App. A, Eq. (A1), Table II; §III B (timing).
+- [Okano & Haga (2026)](/sources/okano-2026.md) — §2.2, Eqs. (1)–(6) (compressible ODE model with semi-local damping on isothermal cold walls); §5.1, Table 3; App. C, Eqs. (C.1)–(C.4), Table C.10 (mixedmin2 scaling, supersonic cold-wall channel).

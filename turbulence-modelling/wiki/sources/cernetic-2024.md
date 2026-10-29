@@ -9,7 +9,7 @@ year: 2024
 venue: "Mon. Not. R. Astron. Soc. 534:1963–1984"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Monthly_Notices_of_the_Royal_Astronomical_Society_Cernetic_Supersonic_turbulence_simulations_with_GPU-based_high-order.pdf"
 tags: [dg, compressible, astrophysics, numerical-dissipation, implicit-les, gpu]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -116,7 +116,7 @@ the quadratic one.
 - **§4.2:** "For doubling the Mach number, we thus need to triple our driving strength $E_{\mathrm{inj}}$", while Eq. 32 gives $M\propto E_{\mathrm{inj}}^{1/3}$, so doubling needs a factor $2^3=8$ *(compiler check, not in the sources)*.
 - **§4.1:** density-weighted Mach number printed $\langle\rho\boldsymbol v^2/(\bar\rho c_s)\rangle^{1/2}$, with $c_s$ not squared; the equivalent form $(2E_{\mathrm{kin}}/M_{\mathrm{tot}})^{1/2}/c_s$ printed next to it is consistent.
 - **Eq. 10 context:** "$L_1\propto h^{-(k+1)}$" with $h$ the cell size; elsewhere $L_1\propto N^{-(k+1)}$ with $N$ cells.
-- **§3.1.1:** Shu–Osher state "for $z<-4$" (should be $x$); the text says "ringing at $N_{\rm cell}=200$ with $p=6$" while the Fig. 1 panel is labelled "DG-5-N200".
+- **§3.1.1:** Shu–Osher state "for $z<-4$" (the coordinate is $x$ elsewhere); the text says "ringing at $N_{\rm cell}=200$ with $p=6$" while the Fig. 1 panel is labelled "DG-5-N200".
 - **Fig. 2 caption:** DG "(right panel)" and finite volume "(left panel)", while the panels are labelled DG-2 on the left and FV-2 on the right.
 - **§5:** "DG simulations of order $k=2$" (the caption says $p=2$); "the $1024^3$ runs of DG-1 and FV" (the figure and Table 1 show DG-2).
 - **Table 1** lists only DG for the $256^3$ Mach sweep, while Figs. 5 and 7 include matching finite-volume runs.

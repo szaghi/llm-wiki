@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 471:111618"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Mateo-Gabín_An_entropy_stable_spectral_vanishing_viscosity_for_discontin.pdf"
 tags: [dg, entropy-stable, sgs-model, numerical-dissipation, kinetic-energy-preserving]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Summary
@@ -61,7 +61,7 @@ the preprint.
 # Key claims
 
 1. An entropy-stable SVV for DGSEM is obtained by filtering artificial-viscosity fluxes so that the volume dissipation stays non-negative, with the filter applied between the symmetric (square-root or Cholesky) factors of the dissipation matrix (§5, Eqs. 101–102; §5.1, Eqs. 109–110). **Proved** (semi-discrete)
-2. The Navier–Stokes viscous flux in kinetic-energy entropy variables gives the artificial dissipation $D_a^{\mathcal K}=\mu_a\big(2S_{ij}S_{ij}-\tfrac23(\nabla\cdot\boldsymbol u)^2\big)\ge0$, printed as $\mu_a\big(2|\mathsf S|^2-\tfrac23(\vec\nabla\cdot\vec u)^2\big)$ (§2.2.1, Eq. 25). **Derived**
+2. The Navier–Stokes viscous flux in kinetic-energy entropy variables gives the artificial dissipation printed as $D_a^{\mathcal K}=\mu_a\big(2|\mathsf S|^2-\tfrac23(\vec\nabla\cdot\vec u)^2\big)\ge0$ (§2.2.1, Eq. 25); the paper does not state the magnitude convention of $|\mathsf S|$. **Derived**
 3. In thermodynamic entropy variables the artificial Navier–Stokes dissipation is a quadratic form with a diagonal Cholesky factor, non-negative provided $\mu_a$, the diagonal entries and $T$ are positive (§2.2.2, Eqs. 26–27, App. C; factors from Fisher & Carpenter). **Derived**
 4. The Guermond–Popov flux in thermodynamic entropy variables, $\mathcal B_{GP}=\alpha_a\rho\mathcal B^\alpha_{GP}+\mu_ap\mathcal B^\mu_{GP}$, admits a Cholesky decomposition with non-negative diagonal whenever $\rho,p\ge0$, hence entropy-stable dissipation (§2.2.3, Eqs. 28–30; App. D, Eqs. 134–137). **Derived**
 5. The Legendre nodal-to-modal and modal-to-nodal matrices on Gauss–Lobatto points are mutual inverses (Eq. 75) and satisfy $w_iB_{ij}=\|L_j\|_N^2F_{ji}$ (Eq. 76), which gives the discrete Parseval identity $\sum_iw_iU_iV_i=\sum_j\|L_j\|_N^2\hat U_j\hat V_j$ (Eqs. 77–78). **Proved**
@@ -105,7 +105,7 @@ the preprint.
 | $\overleftrightarrow f_e$, $\overleftrightarrow f_v$, $\overleftrightarrow f_a$, $\overleftrightarrow f_{GP}$ | (inviscid, viscous, artificial, Guermond–Popov fluxes) | |
 | $\mu_a$ ($\mu_\alpha$), $\alpha_a$ ($\alpha_\alpha$) | (artificial viscosity, density-diffusion coefficient) | **collision:** $\alpha_a$ is not the DG blending factor $\alpha$ |
 | $\tau_{ij}$ | $\sigma_{ij}$ | **collision:** viscous stress, not the SGS stress |
-| $\mathsf S$, $S_{ij}$, $\lvert\mathsf S\rvert$ | $S_{ij}$, $\lvert S\rvert$ | the paper does not state its magnitude convention; Eq. 25 is the Navier–Stokes dissipation only if $\lvert\mathsf S\rvert^2=S_{ij}S_{ij}$, i.e. $\lvert\mathsf S\rvert=\lvert S\rvert/\sqrt2$ *(compiler check, not in the sources)* |
+| $\mathsf S$, $S_{ij}$, $\lvert\mathsf S\rvert$ | $S_{ij}$, $\lvert S\rvert$ | the paper does not state its magnitude convention (Eq. 25 is written with $\lvert\mathsf S\rvert$ as printed) |
 | $\Delta$, $\Delta^3=$ cell volume$/(N+1)^3$ | $\Delta$ | filter width; agrees |
 | $C_S=0.2$ | $C_s$ | |
 | $\kappa=\theta\mu R$, $\theta=\gamma/((\gamma-1)Pr)$ | (thermal conductivity, its factor) | **collision:** $\kappa$ is not the von Kármán constant, $\theta$ not the momentum thickness |

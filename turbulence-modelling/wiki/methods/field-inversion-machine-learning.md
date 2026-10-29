@@ -5,7 +5,7 @@ description: "Field inversion infers a spatial correction field of a RANS model 
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-28T17:01:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # Field inversion and machine learning
@@ -197,8 +197,8 @@ critical region "with less human intervention" (§3.2.1, Table 2).
 **Where the corrections sit.** On the hills and the iced airfoil the
 inferred $\beta$ is below one at the start of the separating shear layer
 and above one downstream, so turbulent mixing is both reduced and enhanced
-(§3.2.1, §3.3.1, Figs. 18, 26). The enhanced region coincides, by visual
-comparison, with the region where the authors' earlier
+(§3.2.1, §3.3.1, Figs. 18, 26). The authors state that the enhanced
+region coincides with the region where their earlier
 $k$-$\overline{v^2}$-$\omega$ separation fix activates (where
 $P_k/\varepsilon\gg1$) and with Rumsey's fix region (Figs. 11, 18, 27). On
 S809 at $8^\circ$ and $14^\circ$ the inversion from lift alone suppresses
@@ -596,7 +596,7 @@ multiplier with baseline 1):
 | Paper's name | Correction | Corresponds to Cato et al.'s |
 |---|---|---|
 | DA-$\boldsymbol f$ | source $\rho\boldsymbol f$ in momentum, with its power $\boldsymbol u\cdot\boldsymbol f$ plus a heat-flux correction in energy | $\boldsymbol f_u$ |
-| DA-$\chi$ | multiplier $(1+\chi)$ of $\mu_t$ in the Reynolds stress, kept positive by a smooth limiter | $\varphi$ |
+| DA-$\chi$ | multiplier $(1+\varphi)$ of $\mu_t$ in the Reynolds stress (the paper's $\chi$, not the SA ratio), kept positive by a smooth limiter | $\varphi$ |
 | DA-$f_{\tilde\nu}$ | source $\rho\tilde\nu f_{\tilde\nu}$ in the SA equation | $g_{\tilde\nu}$ |
 | DA-$\beta$ | multiplier $\beta$ of the SA production (the paper's $1+\beta$) | $\beta$ |
 
@@ -625,11 +625,11 @@ to Cato et al. as a source term in the SA equation.)
   | Data | Correction | velocity | $C_p$ | $C_f$ |
   |---|---|---|---|---|
   | dense velocity, wall-weighted | momentum source | 0.049 | 0.1825 | 0.0998 |
-  | | $\chi$ | 0.250 | 0.5788 | 0.5689 |
+  | | $\varphi$ | 0.250 | 0.5788 | 0.5689 |
   | | $f_{\tilde\nu}$ | 0.257 | 0.2076 | 0.8920 |
   | | $\beta$ | 0.339 | 0.2829 | 1.1450 |
   | wall $C_p$ only | momentum source | 0.488 | 0.00106 | 0.8540 |
-  | | $\chi$ | 0.458 | 0.17357 | 1.657 |
+  | | $\varphi$ | 0.458 | 0.17357 | 1.657 |
   | | $f_{\tilde\nu}$ | 0.542 | 0.04961 | 1.700 |
   | | $\beta$ | 0.427 | 0.05982 | 1.559 |
 
@@ -1090,8 +1090,8 @@ is used:
 
 ## FIML in later reviews and supersonic applications
 
-Le et al. (2024), Fang et al. (2026), An et al. (2025) and Luckring &
-Rizzi (2024) mention field inversion; none runs it.
+Le et al. (2024), Fang et al. (2026), An et al. (2025), Luckring &
+Rizzi (2024) and Hu & Yang (2026) mention field inversion; none runs it.
 
 - **Two routes and supersonic cases (Le et al. 2024).**
   [Le et al. (2024)](/sources/le-2024.md) (§3.1.2, pp. 12–13) separate two
@@ -1142,14 +1142,44 @@ Rizzi (2024) mention field inversion; none runs it.
   machine-learning turbulence modelling of Singh et al. and Duraisamy et
   al. (as cited) "does not include concentrated vortex flow assessments"
   (see [delta-wing vortex flows](/benchmarks/delta-wing-vortex-flow.md)).
+- **The corrective philosophy (Hu & Yang 2026).**
+  [Hu & Yang (2026)](/sources/hu-2026.md) (§III A–B, Tables I–II), a
+  review that runs no model, make FIML the example of the "corrective"
+  philosophy: keep an established closure and learn a correction of it.
+  As they cite them, Singh et al. inferred augmentations of
+  Spalart–Allmaras from measured airfoil lift coefficients. Reconstructed
+  by a network and embedded in a standard solver, these augmentations
+  improved lift and surface pressure for geometries and conditions not
+  used in training, and their portability across CFD solvers was shown.
+  Singh & Duraisamy supplied the earlier use of field inversion to
+  quantify functional errors. Hu & Yang list as extensions the
+  conditioned inversion "for improved boundary-layer preservation" of
+  [Wu et al. (2025)](/sources/wu-2025.md) (above), the online
+  optimization oRANS with embedded DNS (Dehtyriov et al., preprint) and
+  the closed-form Spalart–Allmaras correction for separated flows of
+  Jäckel. Their explanation of the robustness of the family (§III B) is
+  their own interpretation: a scalar multiplier on the eddy viscosity or
+  on the production "effectively project[s] the learned object onto a
+  one-dimensional subspace" that the solver tolerates. Direct substitution
+  of a learned Reynolds stress is ill-conditioned (Poroseva et al.; Wu et
+  al. 2019, as cited; see
+  [tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
+  In their qualitative Table II, which they call "a reader's guide rather
+  than a rigorous benchmark", corrective methods need about 1–10 DNS/LES
+  training cases. They have low inference cost, "High" a posteriori
+  robustness and "Medium" interpretability. The generalization limit they
+  accept from Mandler & Weigand (2025) concerns eddy-viscosity models with
+  learned variable coefficients trained a priori. One of the three
+  loopholes they name is changing the learned object to a multiplicative
+  correction or to the Reynolds force vector (§VII A; see
+  [model-consistent training](/methods/model-consistent-training.md)).
 
 ## Qualifications
 
 - **Le et al. (2024), a caption reference.** The caption of Fig. 11, "the
   FIML process for turbulence modeling [115]", cites a reference whose
   printed title is "African vultures optimization algorithm"; the text
-  cites Heo et al. [155] for the figure. The review is used here only as a
-  corroborating account of the cited works.
+  cites Heo et al. [155] for the figure.
 
 - **Diez Sanhueza et al. (2023), printed values.** §2.2 gives the
   baseline maximum error of the hardest case as 22.8%, while Table 3, the
@@ -1266,7 +1296,7 @@ Rizzi (2024) mention field inversion; none runs it.
   magnitude, but Table 1 gives the production multiplier a $C_f$ error of
   1.1450, above the baseline. §4.3.4 says the penalty degrades the
   velocity and wall-pressure errors; against Table 2, Table 3 shows the
-  velocity error improving for the $\chi$, $f_{\tilde\nu}$ and (at one
+  velocity error improving for the $\varphi$, $f_{\tilde\nu}$ and (at one
   weight) $\beta$ corrections *(compiler check, not in the sources)*. Tables
   3 and 4 print different penalty weights for the $f_{\tilde\nu}$ and
   $\beta$ runs. The correction space is written $(\mathcal V_h^p)^{d+2}$
@@ -1350,3 +1380,4 @@ Rizzi (2024) mention field inversion; none runs it.
 - [An et al. (2025)](/sources/an-2025.md) — §3.2, ref. [16] (field-inversion and symbolic-regression SST correction cited, in passing).
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §5 (ML turbulence modelling not yet assessed for concentrated vortex flows).
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.2, Eqs. 2–8, Table 1 (baseline, data); §3.1–3.1.2, Eqs. 9–18, Algorithm 1 (inversion, optimizer, adjoint); §3.2–3.3, Eqs. 19–30, Figs. 2–4 (network, weighted relaxation, feedback loop); §4, Figs. 5–7; §5–6, Table 3, Figs. 9–10.
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §III A–B, Tables I–II (corrective philosophy, Singh et al. and extensions as cited, one-dimensional-subspace reading, ratings); §VII A (Mandler & Weigand loopholes).

@@ -5,7 +5,7 @@ description: "Domaradzki's autonomous LES derives the eddy viscosity at every st
 status: established
 aliases: [autonomous LES, autonomous large-eddy simulation, similarity-derived eddy viscosity]
 tags: [les, sgs-model, eddy-viscosity, backscatter]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T07:22:00Z
 ---
 
 # Autonomous eddy-viscosity model
@@ -164,6 +164,30 @@ observed effects are those of the model (§3.3; see
   $k$-independent one: in practice a time-dependent, spatially near-uniform
   viscosity (§3.3, Fig. 10).
 
+## Assessment by later work
+
+[Rajek & Pozorski (2026)](/sources/rajek-2026.md) cite Domaradzki's
+spectral (2021a,b, 2022) and physical-space (2024) autonomous closures as
+recent pseudo-spectral LES that recover the inertial-range spectrum, and
+state that they rely on a computationally intensive evaluation of the
+nonlinear transfers at every time instant (§I). They call any closure that
+does not vanish as $k$ tends to the lowest wavenumber possibly ill-suited,
+and write that in low-resolution LES "deficient resolution is compensated
+by the spectral eddy-viscosity, thus leading to spurious conclusions
+regarding its optimal functional form" (§I, §V). Their own evidence is
+for the Chollet–Lesieur model, not for the autonomous model: on $256^3$ at
+$Re_\lambda\sim10\,000$ the energy flux equals $\varepsilon$ only in the
+first few shells (§III C, Fig. 9). Domaradzki (2024, §3.1) reports, for the
+autonomous model at $64^3$ and nominal $Re_\lambda$ above $10^4$, a
+compensated Kolmogorov function between 1.4 and 2.1 outside the forcing
+band. The two statements concern different closures and diagnostics
+(compensated spectrum against energy flux) and are recorded side by side;
+see [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md). Rajek
+& Pozorski's own adaptively determined spectral viscosity, which needs the
+Kolmogorov constant as its one extra input, could become "fully
+autonomous" if that constant were read on the fly from the compensated
+spectrum (§V).
+
 ## Qualifications
 
 - The physical-space method is not universal: it must depend on filter
@@ -181,3 +205,4 @@ observed effects are those of the model (§3.3; see
 # Citations
 
 - [Domaradzki (2024)](/sources/domaradzki-2024.md) — §2.2, Eqs. (2.24)–(2.27); §2.3, Eqs. (2.28)–(2.41); §2.4, Eqs. (2.42)–(2.47); §3.1, Figs. 1–6, Tables 1–2; §3.2, Eq. (3.3), Figs. 7–9; §3.3, Eqs. (3.4)–(3.7), Fig. 10; §4.
+- [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §I; §III C, Fig. 9; §V (assessment of autonomous and plateau closures).

@@ -5,7 +5,7 @@ description: "The small-scale (fluctuation) dynamo amplifies magnetic fields by 
 status: hypothesis
 aliases: [fluctuation dynamo, turbulent dynamo, saturated dynamo, tearing-limited dynamo, reconnection-limited dynamo]
 tags: [dynamo, mhd, astrophysics, reconnection, dns, compressible]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Small-scale turbulent dynamo
@@ -341,7 +341,7 @@ $\propto\rho^{4/3}$); Beattie et al. (2025) split the growth rate itself
 [Beattie et al. (2025)](/sources/beattie-2025.md) (read in arXiv v4) run
 the dynamo in forced, isothermal, visco-resistive MHD at $M_t\approx0.90$–$0.96$
 (kinematic stage) with a modified FLASH finite-volume code, $Re=Rm=1000$,
-$Pm=1$, Ornstein–Uhlenbeck forcing at $\ell_0=L/2$ with a 2:1
+$Pm=1$, Ornstein–Uhlenbeck forcing at $\ell_0$, half the box size, with a 2:1
 solenoidal-to-compressive energy ratio, a seed magnetic energy of
 $10^{-10}\rho_0c_s^2$ ($\rho_0$ the mean density), grids $128^3$–$1024^3$, and an explicit
 [bulk viscosity](/definitions/bulk-viscosity.md) with
@@ -470,8 +470,8 @@ large-scale shape and can mask the peak migration (App. B).
   non-asymptotic and would become Kolmogorov-like with scale-by-scale
   equipartition at higher resolution (§13.2); the review cites Grete et al. (2021)
   and Bian & Aluie (2019) as disagreeing on magnetic control of the
-  small-scale cascade. These are disagreements among un-ingested works reported by the
-  review, not a bundle contradiction.
+  small-scale cascade. None of these works is ingested; the disagreements
+  are recorded as the review reports them.
 - The theory revises the author's earlier result (Schekochihin et al. 2002,
   2004) that the reversal scale is resistive, $L\,Rm^{-1/2}$.
 - **Regime of the simulations.** The four simulation sources run

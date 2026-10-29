@@ -5,7 +5,7 @@ description: "ONERA's compressible cell-centred finite-volume solver for structu
 status: established
 aliases: [elsA solver, ONERA elsA]
 tags: [software, rans, des, turbomachinery, hybrid-rans-les]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # elsA
@@ -75,7 +75,7 @@ solution near the endwalls (§8.2.4, Fig. 31). The authors attribute the
 efficiency gap to the "lack of resolution of the non-adapted meshes"; their
 total-pressure and total-temperature characteristics lie above the experimental data, against the
 literature they cite, which they attribute mainly to computing the cold
-instead of the hot blade geometry (§8.2.4). The paper tests neither attribution.
+instead of the hot blade geometry (§8.2.4).
 
 **URANS of transonic buffet, as cited** (Petrocchi & Barakos 2024). In
 the compilation of earlier URANS of the OAT15A buffet at $M_\infty=0.73$,
@@ -83,8 +83,7 @@ $Re_c=3\times10^6$, $\alpha=3.5^\circ$, the elsA computations of Thiery &
 Coustols and of Sartor et al. are among the entries, Thiery & Coustols
 reporting a self-sustained shock oscillation with
 [SST](/methods/k-omega-sst-model.md), whereas the authors' own SST URANS in
-the HMB3 solver gives none; the table documents a wide scatter between
-models and solvers
+the HMB3 solver gives none
 ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md), App. A, Table
 A.4; see [PANS](/methods/partially-averaged-navier-stokes.md)). The
 authors also motivate their 1% inlet–outlet pressure drop in the confined

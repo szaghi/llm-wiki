@@ -5,7 +5,7 @@ description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subce
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
 tags: [shock-capturing, dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -507,8 +507,7 @@ on the right.
 
 - Krais et al. (2021) print two statements on the hybrid cost: "almost no
   additional computational cost compared to pure DG" (§2.2.3, §4.1) and "about
-  15–20% worse than for the pure DG method" (§5.8, measured). The measured
-  value is the quantitative one.
+  15–20% worse than for the pure DG method" (§5.8, measured).
 - Krais et al. (2021, Eq. 64) print the flux at face $i+\tfrac12$ with arguments
   $(U^{FV-},U^{FV-})$ while the three other faces carry $(U^{FV-},U^{FV+})$.
 - Beck & Kurz (2023, Eq. 17) admit $0\le\alpha\le1$ but map the RL action to

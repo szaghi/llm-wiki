@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Fluids 288:106495"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Computers_amp_Fluids_Akbarzadeh_Parallel_large_eddy_simulations_with_curvilinear_immersed_bo.pdf"
 tags: [immersed-boundary, compressible, wmles, weno, shock-capturing, numerical-dissipation]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -75,10 +75,10 @@ Equation, figure, table and section numbers are those of this version.
 Page-local symbols: $u^n$, $u^t$ normal and tangential velocity at the wall
 point $a$, the boundary node $b$ and the fluid point $c$ on the normal
 through $b$ (Fig. 1), with $y^+_b$, $y^+_c$ their wall distances in wall
-units; $\sigma_b$ the WENO fraction of the hybrid flux (the source writes
-$\sigma$ for the central fraction, $\sigma_b=1-\sigma$); $r_{\mathrm p}$ the
-pressure smoothness indicator and $r_{\mathrm{th}}$ its threshold (the
-source's $r_i$, $r_d$); $\nu_t^{\mathrm{wm}}$ the wall-model eddy viscosity;
+units; $\sigma_b$ the WENO fraction of the hybrid flux (registry §11; the
+source writes $\sigma$ for the central fraction, $\sigma_b=1-\sigma$);
+$r_{\mathrm p}$ the pressure smoothness indicator and $r_{\mathrm{th}}$ its
+threshold (registry §11) (the source's $r_i$, $r_d$); $\nu_t^{\mathrm{wm}}$ the wall-model eddy viscosity;
 $\alpha_{\mathrm E}$ the SGS term of the energy equation; $M_s$ the moving
 shock Mach number; $x_b$ the bow-shock stand-off.
 

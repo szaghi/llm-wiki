@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Laminar separation bubble
@@ -94,6 +94,20 @@ shedding raises the mean lift by 22.8% over the steady solution, and near
 bubble bursting the RANS either settles or keeps shedding whose time
 average is a closed bubble (Carreño Ruiz & D'Ambrosio 2022, §5, Table 11).
 
+**A low-frequency bursting cycle.** On the NACA 0012 at $11.5^\circ$ and
+$Re_c=130\,000$ the bubble bursts into a fully separated flow and
+re-forms periodically: Alberti et al. (2026, §3.3, Fig. 15) cite the
+Strouhal numbers 0.008 (experiment of Rinoie & Takemura) and 0.0083 (LES of
+AlMutairi et al.) for this cycle, and obtain 0.0077 and 0.0097 with their
+two transitional IDDES variants at $N=4$, with $C_L\approx1$ in the attached
+phase with a small leading-edge bubble and $C_L\approx0.5$ in the separated
+phase; at $N=3$ the lift fluctuates "chaotically" around 0.6 with no
+distinct frequency. They judge the agreement good given the limited number
+of snapshots (sampling every 100 steps of $\Delta t=4\times10^{-3}$, units
+not printed); the Strouhal number's reference scales are not printed. They
+relate the case to dynamic simulations, in which the separation point
+moves.
+
 **Wake passing.** In turbomachinery the incoming wakes of the upstream row
 make the bubble periodic. Sandberg & Michelassi (2022) cite the LES of a
 low-pressure-turbine stage by Pichler et al. (2017a) at an isentropic exit
@@ -108,8 +122,8 @@ blade loss by up to 30% (citing Wheeler et al. 2009; §3.3.2). See
 ## Prediction with RANS transition models
 
 Correlation-based transition models size the bubble through the production
-of $k$ in the separated shear layer. The RANS sources find this the
-weak point; details of the models are on the
+of $k$ in the separated shear layer. The RANS sources below report
+mispredicted bubbles; details of the models are on the
 [transition-model page](/methods/local-correlation-based-transition-model.md).
 
 - **Separation-induced corrections.** The $\gamma$-$Re_\theta$ model lets
@@ -239,6 +253,29 @@ airfoils.
   (§III.B.3, Fig. 19; see [DES](/methods/detached-eddy-simulation.md),
   [numerical dissipation](/properties/numerical-dissipation.md) and
   [compressor cascades](/benchmarks/compressor-cascade.md)).
+- **Hybrid RANS/LES with an algebraic transition model on airfoils.**
+  [Alberti et al. (2026)](/sources/alberti-2026.md) couple the algebraic
+  SA-BCM model to Spalart–Allmaras IDDES in a high-order modal DG solver,
+  with a shielding function that keeps RANS mode wherever the intermittency
+  is below one (see the
+  [transition-model page](/methods/local-correlation-based-transition-model.md)).
+  On the [Eppler 387](/benchmarks/eppler-387-airfoil.md) at
+  $Re_c=3\times10^5$, $0^\circ$, fully turbulent IDDES predicts fully
+  attached flow without a bubble, while the transitional hybrid overlaps
+  transitional RANS, which the authors want there, since switching to LES
+  without massive separation gives a dissipative deficit on DES grids; the
+  recalibrated onset constant ($C_{\mathrm{BC}2}=1000$ instead of 50, the
+  source's $\chi_2$) slightly suppresses the
+  bubble through early transition, and the original value promotes
+  instabilities downstream of it (§3.1, Fig. 2, Table 3). At $14^\circ$ the
+  leading-edge bubble is treated in RANS mode, with turbulent reattachment
+  and trailing-edge separation, and the hybrid approaches the experiment as
+  the degree rises from $N=3$ to 5 (§3.1, Figs. 6–7). On the
+  [NACA 0012](/benchmarks/naca-0012-airfoil.md) at $11.5^\circ$,
+  $Re_c=130\,000$, fully turbulent IDDES has too much eddy viscosity and
+  gives a mild separation from $x/c\approx0.2$ without a proper bubble, and
+  steady transitional RANS separates over almost the whole suction side
+  (§3.3, Fig. 14).
 - **Transonic compressor cascade.** Klose et al. (2025) find that URANS
   with SST and the $\gamma$-$Re_\theta$ model predicts a mainly laminar
   suction side, with a substantially lower $C_f$ than the implicit LES, in
@@ -309,7 +346,7 @@ see [dynamic stall](/definitions/dynamic-stall.md)):
   precede the vortex formation, as in the experiment of Lorber & Carta,
   which the authors cite (§4.2.5, Fig. 16).
 
-The two pitching studies agree that the bubble's bursting triggers the
+Both pitching studies report that the bubble's bursting triggers the
 dynamic-stall vortex, at different motions and Reynolds numbers
 ($22^\circ$ in Baldan & Guardone's sinusoidal cycle at $1.35\times10^5$,
 about $17^\circ$ in Batther & Lee's ramp at $2\times10^5$).
@@ -470,7 +507,7 @@ downstream (§5.2, Fig. 18), and improves $C_f$ further (Fig. 19); see the
 [SD7003 airfoil](/benchmarks/sd7003-airfoil.md).
 
 **A bubble in a hybrid model without a transition model.** On the MD-30P30N
-three-element airfoil at $Re_C=9\times10^6$, Wu et al. (2024) read a plunge in
+three-element airfoil at $Re_c=9\times10^6$, Wu et al. (2024) read a plunge in
 $C_p$ at $x/c\approx0.15$ at $8^\circ$ as a large recirculation bubble, i.e. as
 laminar–turbulent transition captured, weakening as the incidence rises
 ([Wu et al. (2024)](/sources/wu-2024.md), §3.3, Fig. 23). Their
@@ -562,6 +599,8 @@ surfaces (§5.1, Figs. 9–12); details on
   the LES, not of the experiment, so that LES–RANS differences can be
   attributed to modelling (§3.3); the LES itself decays faster than the
   experiment by design (reduced length scale).
+- Alberti et al. (2026) note the limited number of snapshots behind their
+  NACA 0012 Strouhal numbers; no uncertainty is printed for them.
 - Baldan & Guardone describe the dynamic-stall phase of bubble formation
   with transition "initiating at the trailing edge and progressing
   downstream" (Introduction); from the trailing edge the progression is
@@ -591,3 +630,4 @@ surfaces (§5.1, Figs. 9–12); details on
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.2, §3.3, Fig. 23, §4 (bubble on the MD-30P30N at $8^\circ$ in SATES-σ).
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.3.1.2, Figs. 28–29; §3.1.1.2, Figs. 63–65 (bubbles at the origin of blunt-leading-edge vortex separation, as a survey of cited work).
 - [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §5.2, Table 4, Figs. 18–19 (SD7003 bubble by finite-volume implicit LES with adaptive dissipation adjustment).
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §3.1, Figs. 2, 6–7, Table 3 (Eppler 387 bubble in transitional IDDES); §3.3, Figs. 14–15 (NACA 0012 bubble bursting cycle, Strouhal numbers).

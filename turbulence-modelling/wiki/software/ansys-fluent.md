@@ -5,7 +5,7 @@ description: "ANSYS Fluent is the commercial cell-centred finite-volume code in 
 status: established
 aliases: [Fluent, ANSYS-Fluent, Ansys Fluent, ANSYS FLUENT]
 tags: [software, rans, des, hybrid-rans-les, les, transition]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # ANSYS Fluent
@@ -145,9 +145,6 @@ and [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 - Menter et al. (2022) are ANSYS authors validating their own model in the
   vendor's code; the other four sources are users. Vignat et al. (2024)
   only cite a Fluent study.
-- Cost and accuracy statements on this page are those of each study's
-  set-up (mesh, schemes, model); none isolates the code from its
-  configuration.
 
 # Citations
 

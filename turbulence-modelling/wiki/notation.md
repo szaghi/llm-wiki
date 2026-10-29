@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: averaging and filtering, stresses and closures, RANS, wall, element-discretization, data-driven, spectral, MHD and shared page-local symbols, with the sign and normalization conventions fixed here; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-28T17:07:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Notation registry
@@ -182,7 +182,11 @@ N_y\times N_z$).
 
 Symbols defined on a page for one family of methods and reused on a few
 others. They are listed so that every page writes them the same way; a page
-that uses one still says what it means.
+that uses one still says what it means. A §11 symbol is reserved only on the
+pages its row lists: elsewhere the same letter may carry a meaning that the
+page defines, provided that page does not also use the §11 meaning (for
+example $\mathcal R$ as a residual operator, $\mathcal T_{ij}$ as the
+Germano test-filter stress). Sections 1–10 are reserved bundle-wide.
 
 | Symbol | Meaning | Pages |
 |---|---|---|
@@ -337,3 +341,13 @@ that uses one still says what it means.
 | $R_k$, $R_\varepsilon$, $\Delta_c$, $\Delta_I$, $Re^u_\Delta$, $u^<$ | subgrid-to-total ratios of turbulent kinetic energy and dissipation; filter and current mesh sizes; cell Reynolds number of the unresolved velocity $u^<$ (Barbera et al.) | mesh adaptation, LES grid-point requirements, turbulent round jet |
 | $W_i$, $f_{\mathrm{ref}}$ | NURBS weights; percentage of elements flagged for refinement | isogeometric analysis, mesh adaptation |
 | $\tau_{\mathrm H}$ | dimensionless bubble-based parameter of the time-dependent VMS subgrid velocity (Sun et al.) | variational multiscale method |
+| $\chi_{\mathrm m}$ | solid mask of volume penalization ($1$ in the solid, $0$ in the fluid; never bare $\chi$, the Spalart–Allmaras ratio) | immersed boundary methods, discontinuous Galerkin and flux reconstruction with penalization |
+| $C_v$, $c$ | Vreman constant in $\nu_t=(C_v\Delta)^2\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ and the prefactor $c=C_v^2$ ($c=2.5C_s^2$ in several sources); a prefactor with the filter width inside the tensor is page-local (Gao et al.'s $c_v$) | Vreman model, implicit LES, wall-modelled LES |
+| $\gamma_{\mathrm{BC}}$, $C_{\mathrm{BC}1}$, $C_{\mathrm{BC}2}$ | algebraic intermittency of the SA-BCM transition model and its two constants (the sources' $\chi_1$, $\chi_2$; never bare $\chi$) | local-correlation transition models, detached-eddy simulation, Spalart–Allmaras model, laminar separation bubble, Eppler 387, NACA 0012 |
+| $\phi_{\mathrm R}$, $\phi_1$, $\phi_2$, $\epsilon_1$, $\epsilon_2$ | Roe-dissipation scaling of Wu et al. ($\phi_{\mathrm R}=\phi_1+\phi_2-\phi_1\phi_2$), its Ducros and total-variation parts and their regularization constants | weighted compact nonlinear schemes, shock sensors, numerical dissipation |
+| $F_{\mathrm{cor}}$, $C_x^\sigma$, $C_x^{\mathrm{EWT}}$, $C_{x,\mathrm{II}}$ | SST limiter factor in the SATES eddy viscosity; σ-model, enhanced-wall-treatment and SATES-II filter-length coefficients | self-adaptive turbulence eddy simulation, detached-eddy simulation, 30P30N airfoil |
+| $K_{\mathrm{acc}}$ | acceleration parameter $(\nu/U_e^2)\,\mathrm dU_e/\mathrm dx$ of a boundary layer | adverse-pressure-gradient wall law, turbine cascades |
+| $T_w$, $T_r$ | wall and recovery temperature | equilibrium wall model, wall-modelled LES, turbulent channel flow |
+| $\theta_d$ | velocity divergence (dilatation) $\partial u_k/\partial x_k$ | STREAmS, compressible boundary-layer pages |
+| $\mathcal Z_{\mathrm{ST}}$ | STITCH helicity-condensation parameter (never bare $\mathcal Z$, the enstrophy) | STITCH helicity-condensation model |
+| $\lambda_{\mathrm{SBL}}$ | sparsity weight of sparse Bayesian learning (Cherroud et al.) | tensor-basis neural networks, symbolic-regression closures |

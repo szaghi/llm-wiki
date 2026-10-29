@@ -5,7 +5,7 @@ description: "Wall-stress models for wall-modelled LES learned by supervised reg
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
 tags: [wall-model, wmles, data-driven, neural-network, reinforcement-learning]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Machine-learning wall models
@@ -443,6 +443,28 @@ they report as more accurate than equilibrium models in separation and
 shedding. They call these approaches promising for complex
 non-equilibrium flows and use none of them.
 
+The review of machine-learning closures by
+[Hu & Yang (2026)](/sources/hu-2026.md) (§IV C, Table III) sorts
+data-driven wall models into two main families:
+direct regression, with the
+[building-block-flow model](/methods/building-block-flow-wall-model.md)
+as its example, and reinforcement learning, with SciMARL. They describe
+SciMARL as treating the discretization points as cooperating agents. They
+report it as generalizing by itself to extreme Reynolds numbers and unseen
+geometries, at a cost "several orders of magnitude" below that of a fully
+resolved simulation. They cite as its precursor the multi-agent RL SGS
+model of Novati et al. for isotropic turbulence, rewarded by recovering
+DNS statistics (see
+[reinforcement-learning closures](/methods/reinforcement-learning-closure.md)).
+The tests of Bae & Koumoutsakos (2022) recorded above are channel flows
+from $Re_\tau=5200$ to $10^6$ and one zero-pressure-gradient flat plate.
+Hu & Yang also mention, without reviewing
+them, PINN wall models, CNN wall models for the periodic hill and
+equilibrium models with a learned correction. Finally, they list
+super-resolution of near-wall fields as a way to supply wall-model
+inputs (§IV B; see
+[super-resolution SGS models](/methods/super-resolution-sgs-model.md)).
+
 ## Position: preserve the law of the wall
 
 Vadrot et al. (2023b, §V) conclude that a learned wall model must preserve the
@@ -492,10 +514,8 @@ $h^+_{\mathrm{wm}}=520$, $10^4$, $10^5$ at $Re_\tau=5200$, $10^5$, $10^6$.
 and $-0.9$ at $10^6$, with $h_{\mathrm{wm}}=dz=\delta/(N_z-1)$ (§II.A, §II.B.4),
 so that on their $48^3$ grid $h^+_{\mathrm{wm}}\approx111$, 2100 and 21 000
 at the same three $Re_\tau$, about a factor 4.7 below Bae &
-Koumoutsakos's values *(compiler check, not in the sources)*. The two
-papers measure different quantities under different conditions in the very
-variable the policy's behaviour depends on: Vadrot et al.'s own analysis
-ties the mismatch to $h^+_{\mathrm{wm}}$ relative to training (Eq. 12,
+Koumoutsakos's values *(compiler check, not in the sources)*. Vadrot et
+al.'s own analysis ties the mismatch to $h^+_{\mathrm{wm}}$ relative to training (Eq. 12,
 §IV.C), they print Bae & Koumoutsakos's profiles beside their own (Fig. 5d),
 and they attribute the difference "mainly" to grid resolution without
 disputing those results (§III.A). Bae & Koumoutsakos's "regardless of
@@ -585,3 +605,4 @@ mismatch as the published policy in LESGO.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §3.2 (multi-agent wall models); §5.2 (GNN wall-stress prediction coupled to LES; passing).
 - [Gao et al. (2025)](/sources/gao-2025.md) — §I.A (supervised CNN, LSTM and data-driven non-equilibrium wall models, cited; passing).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §IV B (super-resolution as wall-model input); §IV C, Table III (direct-regression and RL families, SciMARL claims as stated, other wall models named).

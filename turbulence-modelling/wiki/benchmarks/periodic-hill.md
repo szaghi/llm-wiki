@@ -5,7 +5,7 @@ description: "The streamwise-periodic channel with a hill constriction, a smooth
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic, wmles, wall-model]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Periodic hill
@@ -842,8 +842,7 @@ or, with the budget terms, depend on the grid and the scheme
   streamwise–wall-normal one; their figures normalize by $U_\infty$ and $H$
   while the text defines the bulk velocity and $h$.
 - The two coarse-grid studies use different reference data (LES of
-  Fröhlich et al. against experiment plus the LES of Breuer et al.), so their
-  error levels are not directly comparable.
+  Fröhlich et al. against experiment plus the LES of Breuer et al.).
 - [Haering et al. (2022)](/sources/haering-2022.md), §V B, print the
   domain as "a single peak-to-peak period of the periodic hill in the
   streamwise direction of dimensions $9.5h\times3.035h\times4.5h$" for
@@ -858,8 +857,7 @@ or, with the budget terms, depend on the grid and the scheme
 - The parametrized hills of [Yan et al. (2022)](/sources/yan-2022.md)
   ($Re=5600$ on crest height and crest bulk velocity, variable hill width)
   are a family distinct from the $Re_h\approx10{,}600$ configuration of
-  Haering et al. and Dzanic et al.; results are not comparable across the
-  two. Yan et al. were read in an accepted manuscript, which names the
+  Haering et al. and Dzanic et al. Yan et al. were read in an accepted manuscript, which names the
   training geometries $\alpha_h=0.5$ and 0.8 in the text (§3.2.2) while
   Figs. 19–21 show 0.8 and 1.2 as the training cases and call 0.5 an
   extrapolation; only training at 0.8 and 1.2 is consistent with the

@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Phys. Commun. 287:108700"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computer_Physics_Communications_Ferrer_A_high-order_discontinuous_Galerkin_solver_for_flow_simulat.pdf"
 tags: [software, dg, les, implicit-les, mesh-adaptation, entropy-stable]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -135,7 +135,7 @@ page are those of arXiv v1.
 | $\beta$ (§4.5) | (particles per parcel) | **collision:** not the field-inversion correction $\beta$ |
 | $St$ (Fig. 11) | (Stokes number) | **collision:** the registry's $St$ is the Strouhal number |
 | $T_{ij}$, $Q_i$, $L_{ij}$ | $T^{\mathrm L}_{ij}$, $Q_i$, $\ell_{ij}$ (Lighthill tensor, thickness and loading terms, page-local as on the [FW-H page](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)) | **collision:** $L_{ij}$ is not the Leonard stress, $T_{ij}$ not a temperature |
-| $\chi$, $\eta$ (§4.7) | (immersed-boundary mask), $\eta_p$ (permeability, registry §11) | **collision:** $\chi$ is not the SA ratio $\tilde\nu/\nu$; $\eta$ is not the Kolmogorov length |
+| $\chi$, $\eta$ (§4.7) | $\chi_{\mathrm m}$ (volume-penalization solid mask, registry §11), $\eta_p$ (permeability, registry §11) | **collision:** $\chi$ is not the SA ratio $\tilde\nu/\nu$; $\eta$ is not the Kolmogorov length |
 
 # Reference list
 

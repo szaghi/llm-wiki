@@ -5,7 +5,7 @@ description: "Several RANS models, each trained for one flow class, are combined
 status: established
 aliases: [model aggregation, space-dependent model aggregation, XMA, mixture of experts, model blending, internal model blending, M_blend, expert models]
 tags: [rans, data-driven, symbolic-regression, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # Aggregation and blending of data-driven turbulence models
@@ -192,13 +192,47 @@ certain cases" surpasses the best individual expert.
 
 ## Related ways of protecting attached flow
 
-Aggregation keeps the baseline where the regressor detects attached flow.
-[Wu et al. (2025)](/sources/wu-2025.md) reach the same goal with a fixed
-mask instead of a learned weight: the field-inversion correction of the
+In the blend of Oulghelou et al. the SST expert takes the largest weight
+in attached regions (above). [Wu et al. (2025)](/sources/wu-2025.md) keep
+the SST solution in attached flow with a fixed mask instead of a learned
+weight: the field-inversion correction of the
 SST $\omega$ equation is multiplied by the DDES shielding function, so it
 vanishes inside attached boundary layers (see
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
 Neither paper compares the two routes.
+
+## Place in the reviews
+
+[Hu & Yang (2026)](/sources/hu-2026.md) (§III C, Table I) class
+aggregation with the Bayesian family of ML-RANS closures, one of their
+four "philosophies" (corrective, direct, symbolic, Bayesian), which they
+state are not mutually exclusive. As cited by Hu & Yang, the family runs
+from physics-informed Bayesian inference of Reynolds-stress discrepancies
+with realizability (Xiao et al.), Bayesian networks trained by Stein
+variational gradient descent (Geneva & Zabaras), and Bayesian
+model-scenario averaging and MAP-based predictions (Edeling et al.) to the
+space-dependent stochastic aggregation of SBL-SpaRTA experts with a
+mixture of experts (Cherroud et al., 2025), the machine-learning-assisted
+blending of [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) and a
+multi-fidelity DeepONet (Howard et al.). They read this as a move away
+from seeking one universal closure toward aggregating specialized ones
+(§III C). Their qualitative Table II, which the authors call "a reader's
+guide rather than a rigorous benchmark", gives the Bayesian family
+about 5–20 training cases with priors, a posteriori robustness "High"
+and interpretability "Medium–high".
+
+Hu & Yang (§VII A) cite the generalization study of Mandler & Weigand
+(2025): tailoring a data-driven eddy-viscosity augmentation to one
+phenomenon reduces its generalization, and systematic data mismatch, not
+extrapolation, dominates the generalization error; Oulghelou et al.
+(2025, §1), for their part, argue that one model trained on many flows
+"may lead to a soft compromise solution". Hu & Yang accept the Mandler &
+Weigand result only within the class of eddy-viscosity
+models with variable coefficients trained a priori (see
+[model-consistent training](/methods/model-consistent-training.md)). The
+Bayesian side of the family is treated on
+[Bayesian closure calibration](/methods/bayesian-closure-calibration.md)
+and [model-form uncertainty](/definitions/model-form-uncertainty.md).
 
 ## Qualifications
 
@@ -236,4 +270,5 @@ Neither paper compares the two routes.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §1, Fig. 1 (external aggregation, internal blending, related approaches); §2, Eqs. 1–10 (augmented SST, tensor basis, frozen-RANS targets); §2.1, §3, Table 1 (SBL-SpaRTA experts); §3, Eqs. 11–13, Algorithms 1–2 (blending, Gaussian weights, random forest); §3.1, Fig. 3, Table 2; §4.1–4.2, Tables 3–7, Figs. 4–9 (training flows); §5, Tables 9–11, Figs. 10–16 (unseen flows, latent-space coverage); §6; App. A, Table 12 (features); App. B (SST constants).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — classifier of flow similarity in the building-block-flow wall model, as cited by Oulghelou et al. (2025, §1).
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.1, Eqs. 5–6 (shielding-function mask on the field-inversion correction).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §III C, Tables I–II (Bayesian and aggregation family, qualitative ratings); §VII A (Mandler & Weigand generalization limits and the authors' scope restriction).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1 (Bayesian model-scenario averaging and its limit); App. A, Eqs. A.13–A.15 (single-scenario SBL-SpaRTA models).

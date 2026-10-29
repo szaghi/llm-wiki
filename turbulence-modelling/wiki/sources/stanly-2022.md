@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Wind Eng. Ind. Aerodyn. 222:104868"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Wind_Engineering_and_Industrial_Aerodynamics_Stanly_Large-Eddy_Simulation_of_a_wind_turbine_using_a_Filtered_Act.pdf"
 tags: [actuator-line, wind-energy, implicit-les, numerical-dissipation, mpi]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -107,7 +107,7 @@ $\Omega_{\mathrm{rot}}$.
 
 | Stanly et al. | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
-| $\epsilon$, $\epsilon^{LES}$, $\epsilon^{opt}$ | $\epsilon_{\mathrm G}$, $\epsilon_{\mathrm G}^{\mathrm{LES}}$, $\epsilon_{\mathrm G}^{\mathrm{opt}}$ | page-local Gaussian kernel (spreading) width; **collision** with the dissipation rate $\varepsilon$ |
+| $\epsilon$, $\epsilon^{LES}$, $\epsilon^{opt}$ | $\epsilon_{\mathrm G}$, $\epsilon_{\mathrm G}^{\mathrm{LES}}$, $\epsilon_{\mathrm G}^{\mathrm{opt}}$ | Gaussian kernel (spreading) width (registry §11); **collision** with the dissipation rate $\varepsilon$ |
 | $\Delta$, $dx$ | $h$ | grid spacing, not a filter width |
 | $\eta_\epsilon(d)$ | $g_\epsilon(d)$ | page-local Gaussian regularization kernel; **collision** with the Kolmogorov length $\eta$ |
 | $\mathbf f_\epsilon(\mathbf x)$, $N_{blades}$ | $\boldsymbol f_{\mathrm{ALM}}(\boldsymbol x)$, $N_{\mathrm b}$ | page-local regularized load per unit volume; number of blades |

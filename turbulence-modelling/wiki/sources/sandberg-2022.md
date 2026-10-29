@@ -9,7 +9,7 @@ year: 2022
 venue: "Annu. Rev. Fluid Mech. 54:255-285"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Annual_Review_of_Fluid_Mechanics_Sandberg_Fluid_Dynamics_of_Axial_Turbomachinery_Blade-_and_Stage-Leve.pdf"
 tags: [turbomachinery, review, rans, transition, les, data-driven]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -110,7 +110,7 @@ programming.
 
 # Printed slips
 
-- **Eq. (2) against p. 259:** $\tau^R_{ij}$ is defined as $-\overline{\rho u''_iu''_j}$, but Eq. (2) writes $\tau^R_{ij}-\frac23\bar\rho k\delta_{ij}=-2\mu_t[\tilde S_{ij}-\frac13\tilde S_{kk}\delta_{ij}]+\dots$. *(Compiler check, not in the sources: with the p. 259 definition the trace of $\tau^R_{ij}$ is $-2\bar\rho k$, so the printed left side has trace $-4\bar\rho k$, while the Boussinesq term $-2\mu_t[\tilde S_{ij}-\frac13\tilde S_{kk}\delta_{ij}]$ is traceless; with $\tau^R_{ij}=+\overline{\rho u''_iu''_j}$ the left side is traceless too.)*
+- **Eq. (2) against p. 259:** $\tau^R_{ij}$ is defined as $-\overline{\rho u''_iu''_j}$, but Eq. (2) writes $\tau^R_{ij}-\frac23\bar\rho k\delta_{ij}=-2\mu_t[\tilde S_{ij}-\frac13\tilde S_{kk}\delta_{ij}]+\dots$. with the p. 259 definition the trace of $\tau^R_{ij}$ is $-2\bar\rho k$, so the printed left side has trace $-4\bar\rho k$, while the Boussinesq term $-2\mu_t[\tilde S_{ij}-\frac13\tilde S_{kk}\delta_{ij}]$ is traceless; with $\tau^R_{ij}=+\overline{\rho u''_iu''_j}$ the left side is traceless too *(compiler check, not in the sources)*.
 - **Fig. 1:** the URANS equation prints "$\partial(\bar\rho\tilde u_i)/Dt$".
 - **§3.3.3.3:** "Kelvin–Helmhotlz".
 - **§4.3:** "Duraisamy 2020" in the text, "Duraisamy K. 2021" in the list.

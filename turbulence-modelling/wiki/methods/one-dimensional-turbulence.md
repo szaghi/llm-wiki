@@ -5,7 +5,7 @@ description: "One-dimensional turbulence is Kerstein's stochastic multi-scale mo
 status: established
 aliases: [ODT, one-dimensional turbulence model, stochastic ODT, LES-ODT, ODTLES, conservative compressible ODT, triplet map]
 tags: [les, sgs-model, compressible, wall-model, boundary-layer]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # One-dimensional turbulence (ODT)
@@ -31,15 +31,16 @@ compressible variant below; it presents no new computations.
 ## Eddy sampling
 
 An eddy occupies the interval $[y_0,y_0+l_e]$ of the line ($l_e$ the eddy
-size, $y_0$ its lower end; page-local). Chen et al. (2024b, §2.2.2,
+size, registry §11; $y_0$ its lower end, page-local). Chen et al. (2024b, §2.2.2,
 Eqs. 1–3) print the acceptance probability and the eddy rate density as
 
 $$P_a=\frac{\lambda_e(y_0,l_e,t)\,\Delta t_s}{g_1(l_e)\,g_2(y_0)},\qquad \lambda_e=\frac{C_e}{l_e^2\,\tau_e},\qquad \tfrac12\rho\,l_e\Big(\frac{l_e}{\tau_e}\Big)^2\sim E_{\mathrm{kin}}+E_{\mathrm{pe}}-E_{\mathrm{visc}},$$
 
-with page-local symbols: $\lambda_e\,dy_0\,dl_e$ the number of eddy events
-per unit time in $[y_0,y_0+dy_0]\times[l_e,l_e+dl_e]$, $\Delta t_s$ the
+with $\lambda_e\,dy_0\,dl_e$ the number of eddy events
+per unit time in $[y_0,y_0+dy_0]\times[l_e,l_e+dl_e]$ and $\tau_e$ the
+eddy time scale (registry §11), and page-local symbols: $\Delta t_s$ the
 sampling interval, $g_1g_2$ a presumed joint PDF of eddy size and
-position, $\tau_e$ the eddy time scale and $E_{\mathrm{kin}}$,
+position, and $E_{\mathrm{kin}}$,
 $E_{\mathrm{pe}}$, $E_{\mathrm{visc}}$ the kinetic, potential and viscous
 contributions to the eddy energy. A random number $r\in[0,1]$ is drawn
 and the eddy is accepted if $r<P_a$. The form of $g_1g_2$ "will not affect
@@ -55,8 +56,8 @@ sources)*.
 $C_e=1$ implicitly in Kerstein 1999), the energy-redistribution constant
 $\alpha_e$ (the second; the fraction of the removable kinetic energy
 moved from the dominant component to the two others) and the viscous
-penalty $Z_e$ (the third), all page-local (§2.2.2). The original model has
-one free parameter $A_e$ instead.
+penalty $Z_e$ (the third), all in registry §11 (§2.2.2). The original model has
+one free parameter $A_e$ (page-local) instead.
 
 ## Eddy-energy models
 
@@ -82,7 +83,7 @@ shock–turbulence term to the Richtmyer–Meshkov problems recorded on
 ## Eddy implementation
 
 **Triplet map.** Chen et al. (2024b, §2.2.3, Eq. 9, Fig. 3), after
-Kerstein (1999), print the map $\mathcal M$ (page-local) that each
+Kerstein (1999), print the map $\mathcal M$ (registry §11) that each
 accepted eddy applies to the profiles:
 
 $$\mathcal M(y)=y_0+\begin{cases}3(y-y_0), & y_0\le y<y_0+\tfrac13l_e,\\ 2l_e-3(y-y_0), & y_0+\tfrac13l_e\le y\le y_0+\tfrac23l_e,\\ 3(y-y_0)-2l_e, & y_0+\tfrac23l_e<y\le y_0+l_e,\\ y-y_0, & \text{otherwise},\end{cases}$$
@@ -215,11 +216,11 @@ single-board computer, in close agreement with DNS.
 
 ## Qualifications
 
-- The review is a self-assessment for the conservative compressible
-  variant; the comparisons with the Lagrangian model and with DNS are
-  figures reproduced from the authors' earlier papers.
-- The review applies "top-down" inconsistently to LES-ODT: §2.4.1 says the
-  traditional top-down strategy is abandoned in LES-ODT, §3.3 calls
+- Chen et al. (2024b) review the conservative compressible variant of
+  their own group; the comparisons with the Lagrangian model and with DNS
+  are figures reproduced from the authors' earlier papers.
+- The review prints two statements on "top-down" and LES-ODT: §2.4.1 says
+  the traditional top-down strategy is abandoned in LES-ODT, §3.3 calls
   LES-ODT a top-down strategy and contrasts it with bottom-up ODTLES.
 - §4.2 attributes its ref. 52 to Gao, whose first author is Chen (as §2.3.2
   and Table 2 of the review attribute it).
@@ -229,7 +230,8 @@ single-board computer, in close agreement with DNS.
   the potential-energy term: substituting the printed Eq. (11) into the
   first line gives a prefactor $16/(27\rho l_e)$, the second line carries
   $8l_e^2/(27\rho)$ ($\rho$ standing for the source's kernel density), a ratio of
-  $l_e^3/2$ *(compiler check, not in the sources)*.
+  $l_e^3/2$ *(compiler check, not in the sources)*; both lines are joined
+  by "$\sim$".
 
 # Citations
 

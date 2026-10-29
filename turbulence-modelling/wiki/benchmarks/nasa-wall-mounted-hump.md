@@ -5,7 +5,7 @@ description: "The NASA wall-mounted hump at chord Reynolds number 936,000 and Ma
 status: established
 aliases: [wall-mounted hump, NASA hump, WMH]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, hybrid-rans-les, wmles]
-timestamp: 2026-10-28T12:25:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # NASA wall-mounted hump
@@ -239,9 +239,7 @@ non-baseline experts; see
   value as the measured reattachment of the same hump flow at
   $Re_c=936{,}000$, from two different reports on that experiment (a skin-friction
   report and Part 1 of the separation-control study); neither discusses the
-  other value. Each source cites a different report of the experiment, so
-  the two values are set side by side here rather than recorded as a
-  contradiction between the sources.
+  other value.
 
 # Citations
 

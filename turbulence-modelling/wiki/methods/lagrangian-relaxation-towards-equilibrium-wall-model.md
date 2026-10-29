@@ -5,7 +5,7 @@ description: "A wall-stress model that transports the friction-velocity vector a
 status: established
 aliases: [LaRTE, LaRTE wall model, relaxation-towards-equilibrium wall model, quasi-equilibrium wall model]
 tags: [wall-model, wmles, boundary-layer]
-timestamp: 2026-10-28T07:03:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Lagrangian relaxation towards equilibrium (LaRTE) wall model
@@ -187,12 +187,11 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
   wall-model input, and adopt the simplest version of the idea: an
   exponential moving average of the sampled LES velocity with a fixed time
   constant of $0.0025\,\delta/u_\tau$, ahead of an algebraic
-  [equilibrium wall model](/methods/equilibrium-wall-model.md). Their time
-  constant is tuned, not derived; LaRTE's $T_s$ follows from the momentum
-  balance of the layer below $h_{\mathrm{wm}}$ and is $T_su_\tau/\delta\approx0.45$
-  at $Re_\tau=1000$ in Fowler et al.'s channel, about 180 times longer
-  *(compiler check, not in the sources)*. The two filters serve different
-  purposes: Gillyns et al. need theirs to keep the model from diverging (§5).
+  [equilibrium wall model](/methods/equilibrium-wall-model.md). LaRTE's
+  $T_s$, $T_su_\tau/\delta\approx0.45$ at $Re_\tau=1000$ in Fowler et al.'s
+  channel, is about 180 times that constant *(compiler check, not in the
+  sources)*. Gillyns et al. use their filter to keep the model from
+  diverging (§5).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) (§I) cite Fowler et al.
   (2022) twice: as evidence that the equilibrium model's "ability to
   accurately capture strong non-equilibrium effects in certain flow scenarios

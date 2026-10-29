@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Phys. Commun. 302:109236"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Computer_Physics_Communications_Liang_A_new_high-order_shock-capturing_TENO_scheme_combined_with_s.pdf"
 tags: [shock-capturing, kinetic-energy-preserving, numerical-dissipation, implicit-les, compressible, weno]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:07:00Z
 ---
 
 # Summary
@@ -45,8 +45,7 @@ conserved.
 
 The tests are the 1D entropy wave (sixth order), Sod, Lax, Shu–Osher,
 blast waves, three 2D Riemann problems, double Mach reflection, a
-single-mode inviscid Rayleigh–Taylor instability (a shock-capturing test, not
-the mixing-layer turbulence of
+single-mode inviscid Rayleigh–Taylor instability (compare
 [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md)),
 Kelvin–Helmholtz, a 2D implosion, the inviscid
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $64^3$ to $t=100$,
@@ -113,7 +112,7 @@ and enstrophy (page-local; Notation map).
 - **§2.2.1:** the stencil union is printed $\bigcup_{K=0}^{K-3}S_k$; the running index should be lower-case $k$ (p. 3).
 - **Refs. [8] and [10]** are the same work (von Neumann & Richtmyer, J. Appl. Phys. 21, 1950); [10] prints the first author as "N.J. Von" and is cited in the text as a TVD reference ("total variation diminishing (TVD) schemes [10][11]").
 - **Cost percentages** of §4.5–4.6 are truncated, not rounded, from Tables 8–9 (e.g. $1-17.42/29.42=40.79\%$, printed 40.78%) *(compiler check, not in the sources)*.
-- Gaps, not slips: the Rayleigh–Taylor final time is printed only in the Fig. 14 caption ($t=1.95$); the isotropic-turbulence $k_0$ and final time are delegated to Johnsen et al. [78]; the viscous Taylor–Green Mach number and Reynolds-number definition are not printed.
+- Not printed in the text: the Rayleigh–Taylor final time is printed only in the Fig. 14 caption ($t=1.95$); the isotropic-turbulence $k_0$ and final time are delegated to Johnsen et al. [78]; the viscous Taylor–Green Mach number and Reynolds-number definition are not printed.
 
 # Notation map
 

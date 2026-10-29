@@ -5,7 +5,7 @@ description: "CharLES is Cascade Technologies' compressible, low-dissipation, se
 status: established
 aliases: [charLES, Cascade charLES]
 tags: [software, les, wmles, kinetic-energy-preserving, gpu]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # CharLES
@@ -185,7 +185,7 @@ second-order scheme above:
   turbulence–chemistry closure) and third-order strong-stability-preserving
   Runge–Kutta for advection and diffusion, with a typical convective time
   step of 4.3 ns (§3.4);
-- the [Vreman model](/methods/vreman-model.md) with $C=0.07$, "as
+- the [Vreman model](/methods/vreman-model.md) with prefactor $c=0.07$ (the $c$ of that page), "as
   specified in the original paper", and turbulent Prandtl and Schmidt
   numbers of 0.7 ([turbulent Prandtl number](/definitions/turbulent-prandtl-number.md));
   no-slip adiabatic walls without a wall model, boundary layers unresolved

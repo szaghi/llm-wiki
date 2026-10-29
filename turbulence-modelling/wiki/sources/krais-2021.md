@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Math. Appl. 81:186-219"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Computers_amp_Mathematics_with_Applications_Krais_FLEXI_A_high_order_discontinuous_Galerkin_framework_for_hype.pdf"
 tags: [software, dg, kinetic-energy-preserving, implicit-les, aeroacoustics]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -37,8 +37,7 @@ reports strong scaling on a Cray XC40. Reproducibility rests on a hierarchy of
 regression tests and on a "userblock", appended to every state file, that
 records the parameter file, git revision, local patch and build configuration.
 
-For turbulence modelling the paper is peripheral: it lists, without formulas
-or constants, implicit LES through the discretization, explicit
+On turbulence modelling the paper lists, without formulas or constants, implicit LES through the discretization, explicit
 [Smagorinsky](/methods/smagorinsky-model.md), $\sigma$ and [Vreman](/methods/vreman-model.md)
 models, a Larsson-type [wall-stress model](/methods/equilibrium-wall-model.md)
 and [Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS initialisation.

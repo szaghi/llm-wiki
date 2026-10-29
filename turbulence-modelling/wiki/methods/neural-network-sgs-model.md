@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-28T17:42:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -154,8 +154,8 @@ tests on idealized problems (§6).
 generative super-resolution closure of premixed flames in this line,
 against the a priori successes of earlier network closures of reacting
 LES (their refs. 6–10) and the a posteriori convergence problems they
-cite; their own study is a priori only. Its finding bears on any
-supervised network: trained on one flame, the closure generalizes across
+cite; their own study is a priori only. They report that, trained on one
+flame, the closure generalizes across
 Reynolds and Karlovitz numbers while the filter-to-Kolmogorov ratio
 $\Delta/\eta$ stays near its training value and degrades on a hydrogen
 flame where it does not (§4.1–4.2, §4.4); the method and the printed
@@ -406,7 +406,7 @@ Kim et al. (2024) build pointwise fully connected SGS models for LES of
 flow over a [circular cylinder](/benchmarks/circular-cylinder-wake.md),
 which the authors present as a first step toward networks for complex
 geometries (§1). Page-local: $D$ is the cylinder diameter, $U$ the
-free-stream velocity, $L_r$ the mean recirculation length.
+free-stream velocity; $L_r$ is the mean recirculation length (registry §11).
 
 **Data (§2.2).** Box-filtered DNS at $Re_D=3900$ ($1025\times501\times128$
 points, immersed boundary, second-order central differences), filtered to
@@ -442,8 +442,8 @@ components (Eq. 3.2).
 
 The entries are $L_r/D$ at $Re_D=3900$; a dash marks a value not quoted
 here. The nFU networks fail
-($L_r/D=0.79$ and 1.28 on the training grid), consistent with their
-wrong-signed a priori shear stress (§4.1–4.2; see
+($L_r/D=0.79$ and 1.28 on the training grid), which the authors explain by
+their wrong-signed a priori shear stress and SGS dissipation (§4.1–4.2; see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 Trained at $Re_D=3900$, the fusion networks predict $Re_D=5000$
 ($L_r/D=1.45$ and 1.47 against 1.39 in DNS, dynamic model 1.35) and
@@ -473,8 +473,8 @@ cited) and feeds two branches of $1\times1$ convolutions that return the
 coefficients of an eight-term tensor basis for the full $\tau_{ij}$ (see
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
 Inputs are either "complex", the three invariants of the resolved
-velocity-gradient tensor $\bar A_{ij}=\partial_j\bar u_i$ (page-local: its
-trace $P_A$, $Q_A=\tfrac12[P_A^2-\operatorname{tr}(\bar A^2)]$ and
+velocity-gradient tensor $\bar A_{ij}=\partial_j\bar u_i$ ($\bar A_{ij}$
+page-local; registry §11: its trace $P_A$, $Q_A=\tfrac12[P_A^2-\operatorname{tr}(\bar A^2)]$ and
 $R_A=\det\bar A$, with $P_A$ masked to zero in incompressible flow) plus
 $\lvert\bar S\rvert$ and $\lvert\bar\Omega\rvert$, or "simple",
 $P_A$, $\lvert\bar S\rvert$, $\lvert\bar\Omega\rvert$. Inputs are max–min
@@ -690,8 +690,8 @@ over long horizons or under extrapolation to higher Reynolds number, and
 cite Guan et al. (their ref. [55], 2-D turbulence) for transfer learning
 and explicit backscatter modelling as remedies (see
 [energy backscatter](/definitions/energy-backscatter.md)). Elsewhere
-(§2.2, §5.1) the same review relays, without qualification of the test,
-that convolutional closures (Beck et al., ref. [67]) outperform classical
+(§2.2, §5.1) the same review relays that convolutional closures (Beck et
+al., ref. [67]) outperform classical
 closures and that a deep network trained on DNS of the atmospheric
 boundary layer predicts subgrid stresses "with higher relevance than the
 traditional Smagorinsky model" across grid resolutions (ref. [184]).
@@ -706,6 +706,79 @@ their fusion networks without such fixes on the training grid and on
 untrained grids (Table 3), and clip the stresses where backscatter occurs
 only on still coarser grids, where the dynamic model and no model also
 diverge (App. C).
+
+## The ML-LES pillar in a review (Hu & Yang 2026)
+
+[Hu & Yang (2026)](/sources/hu-2026.md) (§IV A, Table III) review
+network SGS models as one "pillar" of machine-learning closure. They run
+no model; every work below is cited by them, and none is ingested here.
+
+- *Early pointwise networks.* Gamahara & Hattori, a fully connected
+  network in channel flow whose correlation equals or beats similarity
+  models but stays below two-parameter dynamic mixed models. Park & Choi,
+  from the resolved velocity gradient or strain to the SGS stress in
+  channel flow, a priori and a posteriori. Maulik et al., two-dimensional
+  Kraichnan turbulence, from vorticity and streamfunction stencils to the
+  subgrid vorticity forcing.
+- *Beck et al.* Convolutional networks learn the "perfect LES" closure
+  from DNS of decaying isotropic turbulence. A naive direct application
+  is unstable, and stable forms are constructed, including a
+  data-informed, adaptive eddy-viscosity closure. Table III gives cross
+  correlations "up to 47%/73%". [Bezgin et al. (2025)](/sources/bezgin-2025.md)
+  (§1, above) describe the same work in the same terms: the network "had
+  to be recast into a data-driven eddy-viscosity formulation".
+- *Mixed and deconvolution networks.* The ANN mixed model of Xie et al.
+  supplies the coefficients of a gradient-plus-Smagorinsky form for the
+  SGS anisotropy stress, SGS energy and SGS heat flux of compressible
+  isotropic turbulence. Zhou et al. feed the velocity-gradient tensor and
+  the filter width, with a priori correlations mostly above 0.9. The
+  deconvolutional network (DANN) of Yuan et al. reconstructs the
+  unfiltered velocity. A posteriori it outperforms implicit LES, dynamic
+  Smagorinsky and the dynamic mixed model, and Table III gives
+  correlation above 99%, relative error below 15% and a cost of about
+  1.3 times the dynamic mixed model. Kang et al. (2023) and Xu et al.
+  (2023) cite the same Yuan et al. (2020) at 2.4 times the dynamic
+  Smagorinsky model (cost table below).
+
+**Filter-width dependence.** Because turbulence has no scale separation
+(see [spectral gap](/definitions/spectral-gap.md)), Hu & Yang state that
+learned SGS models depend on the grid or filter width. They name three
+routes in the literature: supply $\Delta$ as an input (Zhou et al.; Beck
+et al.); embed scale and symmetry invariances (Frezat et al.; Bose &
+Roy); and transfer learning (Guan et al., whose two-dimensional CNN
+generalizes to higher Reynolds number while staying stable and
+reproducing both forward scatter and backscatter). Prakash et al. report
+generalization across filter-anisotropy ratios, which the authors call
+"empirical generalization rather than provable scale-invariance". Their
+conclusion: "a closure that is demonstrably scale-invariant and
+grid-independent across the range of $\Delta$ encountered in engineering
+LES has not been established". The multi-filter training of Wu & Lele
+(2026, above) is another route to the same end.
+
+**Why a priori success fails a posteriori.** Models with a priori
+correlation coefficients "often > 0.9" "routinely fail a posteriori" in
+one of three ways: instability from locally injected energy (mis-modelled
+backscatter), systematic over- or under-dissipation that distorts the
+large-scale spectrum, and drift out of the training distribution. The
+authors give three structural reasons. First, pointwise losses are not
+aligned with spectra and dissipation statistics and average out
+intermittent backscatter. Second, the SGS stress is "an extremely small
+signal compared to the resolved stress", so a low relative $L_2$ error on
+$\tau_{ij}$ can still mean a large error on $\partial_j\tau_{ij}$; they
+call this the LES counterpart of RANS ill-conditioning. Third, the a
+posteriori state is partly generated by the closure itself, which shifts
+the distribution between training and deployment. Duraisamy (2021,
+§III.A, quoted at the top of this page) writes that small errors in the
+subgrid stresses can generate large errors in the momentum equation.
+Hu & Yang's four mitigations are
+dissipativity constraints (non-negative $\nu_t$, or blending with a
+classical model), statistical or spectral losses, model-consistent
+training in the loop, and adaptive hybrid closures (Yuan et al.; Xie et
+al.). They identify the third as "the key determinant of robust a
+posteriori performance" (see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md),
+[energy backscatter](/definitions/energy-backscatter.md) and
+[model-consistent training](/methods/model-consistent-training.md)).
 
 ## Adjoint-trained network for bluff-body LES (Sirignano & MacArt 2023)
 
@@ -836,6 +909,9 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
   interpretability, poor out-of-distribution generalization) and obtain
   their closure from 100 filtered-DNS snapshots by sparse regression (see
   [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+- **Printed label in Hu & Yang (2026).** Table III labels the row of
+  Zhou et al. "Channel LES NN" while the same row and the text describe a
+  priori and a posteriori tests in isotropic turbulence.
 - **Notation.** Kang et al. write the third filter level of their
   two-parameter models as a tilde, which this bundle reserves for the
   Favre filter. Sirignano & MacArt write the adjoint variables with a
@@ -872,3 +948,4 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Fang et al. (2026)](/sources/fang-2026.md) — §2.2 (CNN closures and combustion extrapolation, cited); §4.2.4 (a posteriori instability, Guan et al. cited); §5.1 (atmospheric-boundary-layer network, cited). Review, citation only.
 - [Posch et al. (2025)](/sources/posch-2025.md) — §6.4.2 (CNN closures of subgrid flame-surface density and progress-variable terms, cited; transfer to engines). Review, citation only.
 - [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1 (explicit network closures against learned discretizations); §3.1, Eqs. (19)–(20) (weight networks); §5.4, Table 5 (cost).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §IV A, Table III (network SGS models as cited, filter-width dependence, failure modes and structural reasons, mitigations). Review, citation only.

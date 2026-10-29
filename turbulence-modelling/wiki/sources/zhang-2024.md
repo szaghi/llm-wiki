@@ -9,7 +9,7 @@ year: 2024
 venue: "Chin. J. Aeronaut. 37(8):63–78"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Chinese_Journal_of_Aeronautics_ZHANG_Complicated_flow_in_tip_flow_field_of_a_compressor_tandem_ca.pdf"
 tags: [des, hybrid-rans-les, spalart-allmaras, turbomachinery, separated-flow]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -19,7 +19,7 @@ built on the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) to
 study the tip region of a linear tandem
 [compressor cascade](/benchmarks/compressor-cascade.md) with tip clearance,
 against a single-row datum with the same clearance. The datum is the NACA
-65-K48 cascade (inlet $M_1=0.67$, $Re_c=5.6\times10^5$, chord 40 mm),
+65-K48 cascade (inlet $M_{\mathrm{in}}=0.67$, $Re_c=5.6\times10^5$, chord 40 mm),
 lengthened to an aspect ratio of 1.3 with a clearance of 1% of span; the
 tandem keeps the overall chord and camber with equal front and rear blades,
 percent pitch 0.9 and zero axial overlap. The solver is
@@ -112,7 +112,7 @@ $\sqrt{V_{i,j}V_{j,i}}$, called the "traditional" representation of $S$.
 | $r_d$, $f_d$, $C_{DES}$, $\Delta$ | $r_d$, $f_d$, $C_{\mathrm{DES}}$, $\Delta$ (registry §11 and the DES page) | $\Delta$ the maximum cell size |
 | $\tilde d$ | $d_{\mathrm{DDES}}$ (registry §11) | **collision:** the tilde is not a Favre filter |
 | $x$ (spanwise), $y$ (normal to blade), $z$ (streamwise) | $z$, $y$, $x$ | **collision:** $\Delta x^+$, $\Delta z^+$ swap |
-| $Ma_1$, $Re$ | $M_1$, $Re_c$ | inlet Mach number; chord-based Reynolds number |
+| $Ma_1$, $Re$ | $M_{\mathrm{in}}$ (page-local), $Re_c$ | inlet Mach number (not the pre-shock $M_1$ of registry §11); chord-based Reynolds number |
 | $\omega$ (loss coefficient, Eq. 9) | (total-pressure loss coefficient, page-local) | **collision** with $\omega$ |
 | $C_p$ (Eq. 10) | $C_p$ | based on inlet total minus static pressure |
 | $k_{res}$, $V'$ | $k_{\mathrm{res}}$, resolved fluctuation | time average over snapshots |

@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -100,6 +100,7 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Qi et al. (2022)](/sources/qi-2022-b.md), §4.1 | compressible DSM (Germano et al.; Lilly) and the dynamic $k_{\mathrm{sgs}}$-equation model of Chai & Mahesh (cited), baselines of a test-filter-free model (below) | box test filter, $\hat\Delta=2\Delta$, $\Delta=(\Delta x\Delta y\Delta z)^{1/3}$ |
 | [Wang et al. (2022)](/sources/wang-2022-j.md), §II B | DSM (Lilly's least squares) and a two-coefficient dynamic mixed model, baselines of a constant-coefficient spatial gradient model in forced isotropic turbulence and a temporal mixing layer | Gaussian, $\hat\Delta=2\Delta$; average over homogeneous directions |
 | [Cao et al. (2022b)](/sources/cao-2022-c.md), §III, Eqs. (12)–(13), App. A | DSM inside a gas-kinetic finite-volume scheme (eddy viscosity through the collision time), coefficient $C_d$ multiplying $\bar\Delta^2$, i.e. $C_s^2$ | discrete 27-point top-hat test filter, the tensor product of the weights $(\tfrac14,\tfrac12,\tfrac14)$, width $2\bar\Delta$; average over the whole domain, so one value per time step |
+| [Wang et al. (2026)](/sources/wang-2026.md), §II B, Eqs. (16)–(17) | the same gas-kinetic DSM, run on $64^3$, $128^3$ and $256^3$ | discrete top-hat test filter of width $2\bar\Delta$; average over the computational domain |
 | [Zhang et al. (2022b)](/sources/zhang-2022-f.md), App., Eqs. (A1)–(A24) | density-unweighted DSM with dynamic coefficients for the deviatoric stress, the Yoshizawa trace, the subgrid mass flux, heat flux and density–temperature correlation; density-unweighted two-coefficient dynamic mixed model for the same terms | $\hat\Delta=2\Delta$ (a filter of width $4\Delta$ for the mixed model's test-level structural terms); averages over the domain |
 | [Zhang et al. (2022d)](/sources/zhang-2022-h.md), Eqs. (33)–(36) | Favre DSM with a dynamic Yoshizawa coefficient $C_I$ for the isotropic part, thermodynamic subgrid terms of a dense gas neglected; baseline of iterative deconvolution | $\hat\Delta=2\Delta$; averages over the domain |
 | [Li et al. (2022)](/sources/li-2022-k.md), §II C, Eqs. (10)–(15) | compressible DSM of Moin et al. (cited) with Lilly's least squares, used to make the constant of a Reynolds-stress-model-based IDDES dynamic (below) | volume-weighted average over the direct face neighbours of a cell on hybrid unstructured meshes, $\hat\Delta=a\Delta$ with $a=2$ "in general"; the same neighbour average for numerator and denominator; negative $C_s^2$ clipped to zero |
@@ -231,6 +232,27 @@ filter-width question.
   is the most accurate model of the paper in the channel ($C_f=0.0053$,
   0.0055) but decays too fast and under-predicts the resolved dissipation in
   the Taylor–Green vortex, significantly even on $128^3$.
+- **Gas-kinetic Taylor–Green vortex across grids.**
+  [Wang et al. (2026)](/sources/wang-2026.md) (§III B, §IV B) find the
+  domain-averaged DSM closest of the three explicit closures to no-model
+  [implicit LES](/definitions/implicit-les.md) at $Re=1600$: it gives less
+  modelled dissipation than static Smagorinsky and Vreman on every grid, a
+  more pronounced drop of its peak with refinement ("better adaptability
+  to grid refinement"), and a lower share of the total subgrid dissipation
+  on $256^3$ (Figs. 1, 5–6); yet the authors write that even DSM "does not
+  provide fully consistent dissipation behavior across scales". By PDFs
+  of the resolved velocity gradients it ties with implicit LES on $128^3$
+  against filtered DNS (time-averaged Jensen–Shannon divergence
+  $7.90\times10^{-4}$ against $8.01\times10^{-4}$, equal Wasserstein-1
+  $1.32\times10^{-2}$) and is second elsewhere on $64^3$ and $128^3$
+  (Tables I–II).
+- **Backscatter in principle, not in practice.** The review of
+  [Hu & Yang (2026)](/sources/hu-2026.md) (Sec. II C) states that the
+  dynamic model can represent backscatter through a locally negative eddy
+  viscosity, but that the averaging and clipping used in practice suppress
+  some or all of it, and that the model keeps the scalar eddy-viscosity
+  form and an explicit dependence on the grid and test-filter widths (see
+  [energy backscatter](/definitions/energy-backscatter.md)).
 - **Smooth-body separation.** On the Gaussian bump, DSM and Vreman show
   non-monotonic grid convergence of $C_f$ (separation on the coarse grid,
   lost on the medium one, back on the fine one), whereas the tensor-coefficient
@@ -809,8 +831,7 @@ squares from a 6×4 system; see the
   fine grids of Agrawal et al. (2022, compressible charLES, Voronoi grids)
   and on none of the grids of Zhou & Bae (2024, incompressible finite
   volume, hybrid grids, imposed reference wall stress). Zhou & Bae
-  attribute the difference to solver and set-up without isolating a cause,
-  so it is recorded here as a set-up difference, not as a contradiction.
+  attribute the difference to solver and set-up without isolating a cause.
 - Zhang et al. (2022d) print the dynamic Smagorinsky stress and its
   isotropic part (Eqs. 33–34) without $\bar\rho$, while their subgrid stress
   (Eq. 19) and the Germano terms of Eq. (36) carry it; with Eq. (36) as
@@ -840,8 +861,7 @@ squares from a 6×4 system; see the
   model at 32–48 degrees of freedom, while Beck & Kurz (2023, §V A) report
   it beaten by their learned models at $N=5$ and 8; the policies, inputs
   and resolutions differ between the two papers of the same group, and
-  both find the DSM weakest at 24 degrees of freedom, so the statements are
-  not recorded as a contradiction.
+  both find the DSM weakest at 24 degrees of freedom.
 - Li et al. (2024, arXiv v2) print the dynamic mixed model as
   $\tau_{ij}=C_1\Delta^2\lvert\bar S\rvert\bar S_{ij}+C_2(\cdots)$ (Eq. 9).
   Their Germano tensors (Eqs. 10–11) use
@@ -888,6 +908,13 @@ squares from a 6×4 system; see the
   the registry's $L_{ij}$ (see the table). They also describe the same LES
   as "the implicit filtered LES approach" of the code (§III.A), see
   [implicit LES](/definitions/implicit-les.md).
+- Wang et al. (2026, Eqs. 16–17) print $\mu_t=\bar\rho C_d\Delta^2\lvert\bar S\rvert$,
+  $L_{ij}$ in the registry sign, the same $M^{\mathrm Z}_{ij}$ as Zhao et al.
+  above ($-\Delta^2$ times the $M_{ij}$ of this page), and
+  $C_d=+\tfrac12\langle L_{ij}M^{\mathrm Z}_{ij}\rangle/\langle M^{\mathrm Z}_{ij}M^{\mathrm Z}_{ij}\rangle$,
+  in the velocity (not density-weighted) form with no trace removal; the
+  paper prints no sign convention for the model stress at the two filter
+  levels.
 
 # Citations
 
@@ -951,3 +978,5 @@ squares from a 6×4 system; see the
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — §II.B, Eqs. (12)–(13) (dynamic Smagorinsky–Yoshizawa model, dynamic $Pr_t$).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §2.2 (Germano identity as analogue of conditional source-term estimation; filter ratios).
 - [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 3, Eq. (39); §IV A 3 (DSM in shock–turbulence LES, Garnier et al. cited). Review, citation only.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §II B, Eqs. (16)–(17); §III B, Figs. 1, 5–6; §IV B, Tables I–II.
+- [Hu & Yang (2026)](/sources/hu-2026.md) — Sec. II C, Eqs. (4)–(5) (review; backscatter, clipping and averaging).

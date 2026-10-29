@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 448:110737"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Svärd_Large_Eddy_Simulations_by_approximate_weak_entropy_solutions.pdf"
 tags: [implicit-les, entropy-stable, finite-volume, weak-solutions, compressible, taylor-green-vortex]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -64,7 +64,7 @@ Equation, section and table numbers are those of this version.
 
 # Key claims
 
-Page-local symbols: $\kappa_h$ the heat conductivity; $\mathcal U=-\rho s/(\gamma-1)$
+Page-local symbols: $\kappa_h$ the heat conductivity; $\mathcal E=-\rho s/(\gamma-1)$
 the entropy function with $s=\log(p/\rho^\gamma)$, $\boldsymbol W$ the
 entropy variables; $\beta_{\mathrm C}=1/(2RT)$; $\{\!\{a\}\!\}$, $a^{\ln}$,
 $[\![a]\!]=a_{i+1}-a_i$ the arithmetic mean, logarithmic mean and jump of a two-point
@@ -132,7 +132,7 @@ $\mathcal Z$ the normalized enstrophy.
 | $\bar u$ (§2.2) | $\bar u$ | LES filter $\Phi_\Delta*u$ |
 | $\bar a_{i+1/2}$, $\hat a_{i+1/2}$, $\check a_{i+1/2}$ (§4) | $\{\!\{a\}\!\}$, $a^{\ln}$, geometric mean | **overbar and hat are two-point means here, not filters** |
 | $\lambda_{i+1/2}$, $\lambda^\rho_{i+1/2}$ | $a_{i+1/2}$, $a^\rho_{i+1/2}$ (page-local) | **$\lambda$ is the Taylor microscale in the registry** |
-| $U$, $S$, $\mathbf w$, $F$, $\Psi$ | $\mathcal U$, $s$, $\boldsymbol W$, entropy flux, potential | **$S$ is not the strain rate**; $U_h$ also denotes the numerical solution |
+| $U$, $S$, $\mathbf w$, $F$, $\Psi$ | $\mathcal E$ (as on [entropy conservation](/properties/entropy-conservation.md)), $s$, $\boldsymbol W$, entropy flux, potential | **$S$ is not the strain rate**; $U_h$ also denotes the numerical solution |
 | $\Delta a_{i+1/2}$ (§4) | $[\![a]\!]$ | jump; **$\Delta$ is the filter width in the registry** |
 | $\beta=1/(2RT)$ | $\beta_{\mathrm C}$ | **not the field-inversion multiplier $\beta(\boldsymbol x)$** |
 | $N$ | $N_x$ | points per direction |

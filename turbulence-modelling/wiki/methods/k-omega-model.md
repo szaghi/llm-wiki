@@ -5,7 +5,7 @@ description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended 
 status: established
 aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Wilcox k-ω model
@@ -468,7 +468,7 @@ than the $k$-$\omega$ RANS of Heft et al. (§8.2).
 - Bulgarini et al. (2025) attribute the model constants to "Wilcox [30]",
   whose reference [30] is Bassi, Crivellini, Rebay & Savini (2005); no
   Wilcox publication is in their list (§2).
-- The two high-order sources disagree on method, not on a fact:
+- The two high-order sources take different routes:
   Elzaabalawy et al. reject the $k$-$\ln\omega$ form for its non-conservative
   term in an implicit DG setting (§1), while Ghidoni et al. use it with an
   implicit DG solver up to $N=6$ (§2–§3). Elzaabalawy et al. require

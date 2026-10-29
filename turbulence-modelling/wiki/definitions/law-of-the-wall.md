@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Law of the wall
@@ -203,8 +203,7 @@ How much the constants matter is quantified by Lozano-Durán et al. (2022,
 §IV.C, Eq. 12): a 10 % error in $\kappa$ or in $B$ produces about 6 % or 3 %
 error in $u_\tau$, less than a 10 % error in the LES velocity at the matching
 point; their fuselage WMLES errors saturate at about 2 %, which they attribute
-to a 3 % deviation in $\kappa$ (§V.C). The constants therefore set an accuracy
-floor of wall-modelled LES that grid refinement does not remove (details on the
+to a 3 % deviation in $\kappa$ (§V.C) (details on the
 [equilibrium wall model](/methods/equilibrium-wall-model.md) page). Vadrot et
 al. (2023a, §III.B) quote a comparable sensitivity, after Yang et al. (2019)
 as they cite it: a 2.5 % uncertainty in $\kappa$ gives about a 5 % error in
@@ -391,21 +390,21 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   [equilibrium wall model](/methods/equilibrium-wall-model.md) page).
 - **Power law with a closed-form inverse** (Ghidoni et al. 2026, §3.3,
   Eqs. 13–15, after Wilhelm et al. as cited): $u^+=y^+$ for
-  $y^+\le y_c^+=11.81$ and $u^+=8.3\,(y^+)^{1/7}$ above, which is continuous
-  at $y_c^+$ ($8.3\times11.81^{1/7}=11.81$ *(compiler check, not in the
+  $y^+\le y^+_{\mathrm{vs}}=11.81$ and $u^+=8.3\,(y^+)^{1/7}$ above, which is continuous
+  at $y^+_{\mathrm{vs}}$ ($8.3\times11.81^{1/7}=11.81$ *(compiler check, not in the
   sources)*). Each branch inverts explicitly for $u_\tau$ given the velocity
   at a distance $y$, and the two friction velocities are blended as
   $(u_{\tau,\mathrm{vis}}^4+u_{\tau,\log}^4)^{1/4}$ after Menter et al. (as
   cited), so no Newton iteration is needed; the law assumes zero pressure
   gradient. Formulas, cost and accuracy are on the
   [RANS wall function](/methods/rans-wall-function.md) page.
-  The same Werner–Wengle constants ($8.3$, $1/7$, $y_c^+=11.81$) appear in
+  The same Werner–Wengle constants ($8.3$, $1/7$, $y^+_{\mathrm{vs}}=11.81$) appear in
   the LES wall model of [Yan et al. (2024)](/sources/yan-2024.md) (§II C,
   Eqs. 26–27), inverted explicitly for $u_\tau$ branch by branch without
   blending, and extended by an adverse-pressure-gradient correction (see
   the [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
   Yan et al. state that the power law cannot supply the velocity gradient
-  at the probe, because its derivative is discontinuous at $y_c^+$, and take
+  at the probe, because its derivative is discontinuous at $y^+_{\mathrm{vs}}$, and take
   the gradient from a boundary-layer equation instead (see
   [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
 - **Linear/log switch inside an immersed-boundary reconstruction**
@@ -649,8 +648,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   wall; registry §11 $\varphi_f$ evaluated at the wall), and a fitted correction makes it accurate within 1 %
   for $\Delta_f^+\ge100$. The slip grows logarithmically with the filter
   width, $6.93u_\tau$ at $\Delta_f^+=50$ and $13.5u_\tau$ at $\Delta_f^+=300$
-  in filtered channel DNS at $Re_\tau=5200$ (§3.2). The law of the wall
-  thus survives filtering as a law for the slip; see
+  in filtered channel DNS at $Re_\tau=5200$ (§3.2); see
   [wall-modelled LES](/methods/wall-modelled-les.md).
 - **Low Reynolds number.** [Kim et al. (2022)](/sources/kim-2022.md) (§III D,
   Fig. 12) state, citing the channel DNS of Moser, Kim & Mansour, that the
@@ -883,7 +881,7 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   large $y^+$ their Eq. (17) tends to $\kappa^{-1}\ln y^++D+\kappa^{-1}\ln\kappa$,
   an intercept of $9.8+\ln(0.41)/0.41\approx7.63$ against $B=5.2$ of their
   Eq. (14); at $y^+=0.224\times550\approx123$, their matching point at $Re_\tau=550$, Eq. (17)
-  gives $u^+\approx19.4$ and Eq. (14) $u^+\approx16.9$, a gap of about 2.4
+  gives $u^+\approx19.4$ and Eq. (14) $u^+\approx16.9$, a gap of about 2.5
   *(compiler check, not in the sources)*. The printed constants thus do not
   support the statement that the two laws coincide in the log region.
 - **Clauser–Rotta thickness of Devenport & Lowe (2022).** Eq. (2.33)

@@ -5,7 +5,7 @@ description: "Turbulent flow over a sudden expansion with fixed separation at th
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, A3C step, curved backward-facing step, CBFS]
 tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg, lattice-boltzmann, spectral-element]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # Backward-facing step
@@ -14,7 +14,7 @@ A turbulent channel or boundary-layer flow passes a downward step of height
 $H$ (page-local symbol) into a wider duct. The flow separates at the step
 edge, so the separation point is fixed by the geometry, and the shear layer
 that leaves the edge rolls up, grows and reattaches on the lower wall at a
-distance $x_R$ (page-local, measured from the step) that is the main
+distance $x_R$ (registry §11, measured from the step) that is the main
 quantity of interest; a secondary corner bubble sits at the foot of the step.
 The expansion ratio is the downstream over the upstream duct height, and the
 Reynolds number $Re_H$ is built on $H$ and a reference velocity of the
@@ -136,8 +136,8 @@ free-stream velocity), inlet at $x/H=-4$, outlet at $40H$, channel heights
 $8H$ upstream and $9H$ downstream, inlet profiles from 2D RANS channel runs
 fitted to the measured inlet profile. The [$k$-$\tau$ model](/methods/k-tau-model.md)
 and the authors' regularized $k$-$\omega$ run in [Nek5000](/software/nek5000.md)
-at $p=7$ (2553 elements, 125,840 unique points, mean first-point
-$y^+=0.21$; $p=2$ to 9 checked), the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)
+at $N=7$ (2553 elements, 125,840 unique points, mean first-point
+$y^+=0.21$; $N=2$ to 9 checked), the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)
 in [OpenFOAM](/software/openfoam.md) on meshes up to 165,072 cells (mean
 $y^+=0.49$):
 
@@ -152,7 +152,7 @@ $y^+=0.49$):
 All models under-predict the downstream velocity; OpenFOAM SST
 under-predicts $C_f$, "a known behavior of the SST model"; at comparable
 resolution the Nek5000 $C_f$ profiles are more consistent than OpenFOAM's,
-and $p=4$ and $p=7$ give indistinguishable $C_f$ (Figs. 9–12). The
+and $N=4$ and $N=7$ give indistinguishable $C_f$ (Figs. 9–12). The
 turbulent kinetic energy downstream departs from SST, which the authors
 explain by the absence of blending functions in their $k$-$\tau$ model and
 by different model parameters (§3.3). On the same step
@@ -499,8 +499,7 @@ steps at a cost "up to 1/16" of conventional CFD, both as cited works.
 - The configurations of [Abe (2021)](/sources/abe-2021.md) and
   [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) differ in expansion ratio (1.5 against 1.25),
   Reynolds number ($Re_H\approx5700$ against 28,000), inflow and modelling
-  level (wall-resolved LES against IDDES), so their reattachment errors are
-  not comparable with each other.
+  level (wall-resolved LES against IDDES).
 - Three sources at $Re_H=28{,}000$ print different channel geometries:
   [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) and Alberti et
   al. (2025) an expansion ratio of 5/4 and a domain from $-4H$ to $20H$,
@@ -528,16 +527,14 @@ steps at a cost "up to 1/16" of conventional CFD, both as cited works.
   models trained on the step showed "a high level of uncertainty" on the
   hill (as cited by Duraisamy et al., §5.3), while the closure of Tang et al.,
   trained on the hill, improved the step profiles. The two concern different
-  model families and opposite directions of transfer, so they do not
-  contradict each other.
+  model families and opposite directions of transfer.
 - The step-to-hill transfer of gene-expression-programming models is
   described in two ways: "a high level of uncertainty"
   ([Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.3) and
   "excellent" a posteriori predictions, with some unstable, non-realizable
   individuals ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md),
   §4.1). Both are accounts of cited work, not the sources' own
-  computations, so the two are recorded side by side, not as a
-  contradiction.
+  computations.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) and
   [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) run the CBFS on the
   same $140\times150$ grid against the same LES. Cherroud et al. print the
@@ -557,7 +554,7 @@ steps at a cost "up to 1/16" of conventional CFD, both as cited works.
   velocity at $x/H=-4$) by [Ghidoni et al. (2026)](/sources/ghidoni-2026.md)
   and $Re=37{,}425$ (incoming free-stream velocity) by
   [Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.3; neither
-  comments on the other value, and the two are recorded side by side.
+  comments on the other value.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) call their
   OpenFOAM meshes coarse, medium and fine but write that "the coarse and
   fine meshes … show good agreement, however the coarsest mesh profile

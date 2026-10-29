@@ -5,7 +5,7 @@ description: "Flamelet-based tabulated chemistry stores the thermochemical state
 status: established
 aliases: [eddy dissipation concept, EDC, representative interactive flamelet, RIF, combustion regime diagram, Borghi–Peters diagram, Karlovitz number, coherent flame model, CFM, G-equation, direct chemistry integration, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model, neural-network tabulation, stretch factor, extended Takeno flame index, principal-component transport, PC transport, counterflow flamelet database, partially premixed flamelet tabulation]
 tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction, hybrid-rans-les]
-timestamp: 2026-10-29T05:12:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Flamelet-based tabulated chemistry
@@ -827,7 +827,7 @@ case and non-premixed burning the jet-wake-stabilized case (§6.6, Fig. 12).
 Tang et al. (2022), above, find diffusion burning over almost the whole
 reacting zone of their two scramjet combustors and take it as support for
 a non-premixed flamelet table; the combustors, injection and operating
-points differ, so the two findings are recorded side by side.
+points differ.
 
 **Detailed chemistry without a table in a detonation code.**
 [Sun et al. (2023)](/sources/sun-2023.md), §2.1–2.2, integrate detailed
@@ -946,7 +946,7 @@ needed, one for temperature or enthalpy, seem to be sufficient in most
 cases" (§4.1–4.3).
 
 The review of artificial intelligence for supersonic combustion by
-[Le et al. (2024)](/sources/le-2024.md) (a corroborating survey) lists
+[Le et al. (2024)](/sources/le-2024.md) lists
 flamelet-generated manifolds and in-situ adaptive tabulation among the
 classical accelerations of chemistry, which it states takes "over 85 % of
 the total computational cost" of engine-combustion simulations (§3, §3.2);
@@ -963,8 +963,8 @@ perceptrons (§3.3, Table 5).
 
 ## Qualifications
 
-- **Printed forms in Mardani & Nazari (2022)** *(compiler checks, not in
-  the sources, from the paper's own definitions)*. The root of
+- **Printed forms in Mardani & Nazari (2022)**, from the paper's own
+  definitions *(compiler check, not in the sources)*. The root of
   $\gamma_{\mathrm{fs}}^2=1-\gamma_{\mathrm{fs}}^3$ is 0.7549, which with
   $C_{\mathrm{vf}}=2.1377$ gives the printed $Re_T>64.31$ and matches the
   clipping value 0.7548 printed for their code (§6.3); the printed 0.7568
@@ -1003,8 +1003,7 @@ perceptrons (§3.3, Table 5).
   flame–vortex mechanism is "not restricted to the equivalence ratio or
   even fuel" (§3) from one stoichiometric methane simulation and
   qualitative agreement with dimethyl-ether experiments. Böttler et al.'s
-  configuration is laminar; it bears on turbulence modelling only through
-  the tabulation method and the a priori/a posteriori protocol.
+  configuration is laminar.
 - **Flame thickness.** Böttler et al. ($l_f$) and Steinhausen et al.
   ($\delta_L$) both define the thermal thickness
   $l_{\mathrm F}=(T_b-T_u)/\max|\mathrm dT/\mathrm dx|$ (Böttler §3.2;

@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 255:105835"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Sanhueza_Machine_learning_for_RANS_turbulence_modeling_of_variable_pr.pdf"
 tags: [rans, data-driven, field-inversion, neural-network, compressible, channel-flow]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -145,8 +145,8 @@ its authors "Rodriguez GJO … S. RD" and is the Otero Rodriguez et al.
 (2018) work already in the bibliography under the Otero Rodriguez key;
 ref. [27] (the RANS channel code) prints the same author forms. Cited works
 sharing a first-author-year key with different works already in the
-bibliography (He 2008, Chang 2018, Jiménez 2008, Singh 2017) are keyed
-apart at the merge. Ref. [9] (Morkovin 1961) is printed without a book
+bibliography (He 2008, Chang 2018, Jiménez 2008, Singh 2017) carry
+suffixed keys of their own. Ref. [9] (Morkovin 1961) is printed without a book
 title. No printed duplicate, no unparseable item.
 
 # Pages created or updated

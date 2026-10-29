@@ -5,7 +5,7 @@ description: "Decaying MHD turbulence is a selective decay whose power laws foll
 status: established
 aliases: [selective decay, Orszag–Tang vortex, Orszag-Tang decay, decaying Hall MHD, Saffman invariant, Hosking invariant, Saffman helicity invariant, Loitsyansky invariant, reconnection-controlled decay, inverse transfer]
 tags: [mhd, astrophysics, plasma, isotropic-turbulence, reconnection]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Decaying MHD turbulence and its invariants
@@ -282,7 +282,7 @@ Eqs. 12–13, which the paper attributes to the divergence cleaning of
 Dedner et al.) on two- and three-dimensional
 Orszag–Tang decays in periodic boxes of side $2\pi$, in a non-dimensional
 form whose Lorentz force carries the Stuart number $N_{\mathrm{St}}$
-(page-local; the source's $N$, not the polynomial degree), and with
+(registry §11; the source's $N$, not the polynomial degree), and with
 $Re=Rm=N_{\mathrm{St}}$ (§2.1, §3.1–3.2, Eqs. 17, 20; $Pm=1$):
 
 - **2D**, $\boldsymbol u=2(-\sin y,\ \sin x,\ 0)$,

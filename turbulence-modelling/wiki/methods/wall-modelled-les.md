@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -360,7 +360,8 @@ to the SGS viscosity in separated boundary layers, which makes the method a
 form of [hybrid RANS/LES](/definitions/hybrid-rans-les.md) near the wall;
 how the return to the SGS viscosity is enforced is not printed. The SGS model
 is the [Vreman model](/methods/vreman-model.md) with $C_s\approx0.1$ in
-$\nu_t=2.5C_s^2\Delta^2\sqrt{B_\beta/A_\beta}$ (§II.A).
+$\nu_t=2.5C_s^2\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$, $\beta_{ij}$
+weighted by $\Delta^2$, in the symbols of that page (§II.A).
 
 Fowler et al. (2022, §1) and [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md)
 (§I, §II.A) also cite zonal two-layer models on a separate RANS mesh (whose
@@ -1178,13 +1179,90 @@ same under-resolved first cells.
   effective; a highly dissipative Riemann solver (Rusanov) is called
   unsuitable at the wall because the extrapolated tangential velocity at
   the wall flux point does not vanish (§II D3). The SGS model is
-  [Vreman's](/methods/vreman-model.md) with the constant 0.07 multiplying $\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ (the form of Agrawal et al. there) and an isotropic
+  [Vreman's](/methods/vreman-model.md) with the constant 0.07 multiplying $\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ (the prefactor $c_v$ of that page, index order of Kim et al.) and an isotropic
   filter width whose definition per element is not printed. Shi et al.'s
   finding, as Gao et al. cite it, that an even polynomial degree in the
   wall element is preferable ("quadratic polynomials in the first off-wall
   element yields noticeably better results than cubic polynomials") stands
   beside their own periodic-hill errors, which fall monotonically from
   $N=2$ to $N=4$ (Figs. 8–13).
+- **Cold isothermal walls in flux reconstruction: a near-wall artificial
+  viscosity.** [Okano & Haga (2026)](/sources/okano-2026.md) (§1, §3) state
+  that in WMLES with discontinuous finite-element methods the cells below
+  $h_{\mathrm{wm}}$ are coarse and carry too little resolved Reynolds shear
+  stress, so the resolved velocity gradient, and on a cooled wall the
+  temperature gradient, is over-predicted to satisfy the stress balance, and
+  the high-order polynomial in these cells oscillates. The earlier
+  stabilization of their group (Fukushima & Haga, as cited: an auxiliary
+  boundary condition for the gradients plus a
+  [modal filter](/methods/explicit-modal-filtering.md) applied only in the
+  wall-normal direction of the wall-adjacent cells) runs at a wall-to-recovery
+  temperature ratio $T_w/T_r=0.8$ but, with their numerics, diverges below
+  0.4 ($T_w$, $T_r$ page-local). At $T_w/T_r=0.1$ with $N=3$ near-wall
+  temperature oscillations appear after about 250 steps and the run blows up
+  by 500 steps with a large local temperature rise; with $N=1$ the near-wall
+  temperature instead drops sharply before blow-up (§3, Figs. 2–4). The
+  regime is that of liquid-rocket combustion chambers,
+  $0.1<T_w/T_r<0.2$ (§1). A low-dissipation finite-volume WMLES at
+  extremely cold walls (Mettu & Subbareddy, as cited) is the study in
+  which, the authors write, the instability "was not reported" (§1). Their remedy, "a natural stabilization approach" to
+  compensate for the missing Reynolds shear stress (§3), is an
+  [artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+  $\mu_{\mathrm{AV}}$ (page-local) added to the molecular viscosity, and
+  through the molecular Prandtl number to the conductivity, only in the
+  cells between the wall and $h_{\mathrm{wm}}$ (§4, Eqs. 7–11):
+  $$\mu_{\mathrm{AV}}(y)=\mu_{\mathrm{AV},0}\Big(1-\frac{y}{h_{\mathrm{wm}}}\Big)\big[1-\exp(-y^*/A^+)\big]^2,\qquad0\le y\le h_{\mathrm{wm}},$$
+  with $A^+=17$ and the semi-local $y^*$ of the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md). The linear
+  factor removes the viscosity at $h_{\mathrm{wm}}$, where "there is
+  originally no AV"; the van Driest factor removes it at the wall, "because
+  the viscous flux at the wall is provided by the wall model". The profile
+  is smooth inside the cells on purpose: an artificial viscosity that
+  oscillates within a cell is, the authors state, easily amplified by the
+  polynomial gradient (§4, an observation not shown in a figure). The
+  amplitude $\mu_{\mathrm{AV},0}$, one value per wall-normal line of cells
+  and updated every step, is the maximum over that line of a
+  localized-artificial-diffusivity expression in the second derivative of
+  temperature, with constant 0.4 (formula on the
+  [artificial-viscosity](/methods/artificial-viscosity-shock-capturing.md)
+  page); on very coarse wall cells the value at the first solution point is
+  capped at half that at the second (Eq. 11). No SGS model is used: the
+  solver (JAXA's LS-FLOW-HO, [flux reconstruction](/methods/flux-reconstruction.md)
+  with $N=3$ by default) runs as [implicit LES](/definitions/implicit-les.md)
+  (§2.1). Results in compressible [channel flow](/benchmarks/turbulent-channel-flow.md)
+  at bulk Mach 0.8 with $h_{\mathrm{wm}}=0.1\delta$ (§5, Tables 3–4, A.5–A.6,
+  B.8, C.10):
+  - at $T_w/T_r=0.81$ (Table 1; "0.8" in the text), $Re_b=3.4\times10^4$,
+    the artificial viscosity and the filter give the same
+    $Re_\tau=1677$/1676, $C_f\times10^3=4.69$ and wall heat-flux parameter
+    $B_q\times10^2=1.09$ against 1692, 4.47 and 1.13 in the DNS of Yao &
+    Hussain (as cited), errors below 5 % ($B_q=-q_w/(c_pu_\tau T_w\rho_w)$,
+    page-local, positive for the cooled wall);
+  - at $T_w/T_r=0.4$, 0.2 and 0.1 on the same grid only the artificial
+    viscosity runs; the filter blows up at 0.2 and 0.1 (§5.2, Fig. 10), and
+    the averaged artificial viscosity grows as the wall gets colder (Fig. 11);
+  - at $T_w/T_r=0.1$ it stays stable at $Re_b=6.8\times10^4$ and
+    $1.4\times10^5$ (same grid, larger half-width), where the first-point
+    cap is active, and the WMLES temperature–velocity relation matches the
+    Walz relation (§5.3, Figs. 12–14; see
+    [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
+    for that relation);
+  - at matched degrees of freedom $N=3$, 2, 1 ($h_{\mathrm{wm}}$ in the
+    third, fourth and sixth cell) give $C_f\times10^3=4.02$, 4.01, 3.99 and
+    $B_q\times10=1.35$, 1.36, 1.33 (§5.4, Table 4); runs blow up for a
+    constant below 0.1 at $N=3$ (at 0.05 and 0.025) and at 0.025 for $N=2$,
+    1, and otherwise $B_q$ varies by at most 4 % and $u_\tau$ by less than
+    4.3 % between 0.05 and 0.8, the mean temperature changing only below
+    $h_{\mathrm{wm}}$ (App. A);
+  - in the supersonic cold-wall channel of Coleman et al. (as cited;
+    $Re_\tau=451$, bulk velocity three times the wall sound speed,
+    $T_w/T_r=0.18$, $h_{\mathrm{wm}}=0.2\delta$) $Re_\tau=441$ and 442 and
+    $B_q=0.142$ on the baseline and fine grids against 451 and 0.137, below
+    2.5 % and 4 % (App. C, Table C.10).
+
+  Validation against reference data covers $T_w/T_r=0.81$ and 0.18 only;
+  at 0.4 to 0.1 and bulk Mach 0.8 the evidence is stability, the
+  grid-refinement check (App. B) and the Walz consistency.
 
 Low numerical dissipation is a precondition: Goc et al. (2021, §2.3) call
 [numerical dissipation](/properties/numerical-dissipation.md) "extremely
@@ -1364,7 +1442,7 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   authors attribute to the moving resolved/modelled interface and to the
   interaction of WENO dissipation with the wall model (§4.3). The
   interaction length $L_{\mathrm{int}}/\delta_r$ (nominal impingement to the
-  reflected-shock foot, page-local) is 7.0, 5.2 and 5.0 against 3.3
+  reflected-shock foot, registry §11) is 7.0, 5.2 and 5.0 against 3.3
   wall-resolved and 4.18 measured (§4.6): the bubble is "systematically
   overestimated in size but consistently described in shape and
   morphology", the latter judged in coordinates scaled by each run's own
@@ -1674,8 +1752,7 @@ implicit-LES coupling.
   different solvers (compressible CharLES on Voronoi grids against an
   incompressible finite-volume code) and different wall treatments (Zhou &
   Bae impose the reference mean wall stress); Zhou & Bae attribute the
-  difference to such factors without testing them, so it is recorded as a
-  set-up difference, not as a contradiction.
+  difference to such factors without testing them.
 - Heinz (2020, §3.1) states, citing the literature, that adequate
   resolution of the boundary layer makes WM-LES "orders of magnitude more
   expensive than original DES"; no figures are given.
@@ -1773,6 +1850,12 @@ implicit-LES coupling.
 - Gao et al. (2025b) call the hill references "DNS or LES" in the
   abstract and conclusions; only $C_f$ is compared with DNS (Krank et al.,
   as cited), the profiles with PIV and LES.
+- **Printed items of Okano & Haga (2026).** §1 prints "WMLRS" for WMLES
+  and "Fukushima et al. [24]" for a two-author reference; the validation
+  case is $T_w/T_r=0.8$ in the §5.1 text and 0.81 in Table 1. Their
+  artificial viscosity is set for stability (constant 0.4, with a
+  sensitivity study in App. A), and its amount grows with Reynolds number
+  and with wall cooling (Figs. 11, 14).
 
 # Citations
 
@@ -1839,3 +1922,4 @@ implicit-LES coupling.
 - [Yan et al. (2024)](/sources/yan-2024.md) — §II C; §III A–C, Table V.
 - [Gao et al. (2025)](/sources/gao-2025.md) — §I.B; §II.B (slip-velocity coupling); §III.A–III.B, Tables II–VI, Figs. 5–19 (channel and flat plate, wall-pressure spectra), Eq. (25); §IV.
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I; §II C3–D, Eqs. (33)–(37), Fig. 2 (input location, no slip, hybrid wall flux); §III A–B, Table I, Figs. 3–15.
+- [Okano & Haga (2026)](/sources/okano-2026.md) — §1; §2.1; §3, Figs. 2–4; §4, Eqs. (7)–(11); §5.1–5.4, Tables 3–4, Figs. 10–14; Apps. A–C, Tables A.5–A.6, B.8, C.10 (near-wall artificial viscosity for cold-wall WMLES in flux reconstruction).

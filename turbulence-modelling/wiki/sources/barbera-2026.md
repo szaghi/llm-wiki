@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Fluids 320:107273"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Computers_amp_Fluids_Barbera_Mesh_adaptation_for_DNS_and_LES_of_turbulent_flows_Applicati.pdf"
 tags: [mesh-adaptation, grid-requirements, les, dns, sgs-model]
-timestamp: 2026-10-29T05:09:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -65,7 +65,8 @@ Equation, figure, table and section numbers are those of this version.
 
 # Key claims
 
-Page-local symbols: $\mathsf H(\cdot)$ the Hessian; $\mathsf D$ the
+Registry §11 symbols: $R_k$, $R_\varepsilon$, $\Delta_c$, $\Delta_I$,
+$Re^u_\Delta$, $u^{<}$, as defined below. Page-local symbols: $\mathsf H(\cdot)$ the Hessian; $\mathsf D$ the
 second-order moment of a control volume and $c_1$ its constant ($\mathsf D=c_1\Delta^2\mathsf I$
 for a sphere of radius $\Delta$); $u^{<}$ the characteristic subgrid
 velocity and $\langle u\rangle^{<}$ its mean-flow analogue;
@@ -130,12 +131,12 @@ $K_{\mathrm{sgs}}\propto\Delta^{2/3}$ and hence Eq. (19).
 |---|---|---|
 | $\vec u$, $u_i$ | $\boldsymbol u$, $u_i$ | incompressible |
 | $\bar{\vec u}$ (Eq. 2) | $\bar{\boldsymbol u}$ | box filter over the control volume; also the resolved LES field |
-| $u^<$, $\langle u\rangle^<$ | $u^{<}$, $\langle u\rangle^{<}$ (page-local magnitudes) | unresolved part as in the registry, here a scalar estimate |
+| $u^<$, $\langle u\rangle^<$ | $u^{<}$ (registry §11), $\langle u\rangle^{<}$ (page-local; both magnitudes) | unresolved part as in the registry, here a scalar estimate |
 | $\langle\cdot\rangle$ | $\langle\cdot\rangle$ | time average |
 | $\bar u_i'$, $\bar S'_{ij}$ | $\bar u_i'$, $\bar S'_{ij}$ | resolved fluctuations |
 | $\langle e\rangle$, $e_{sgs}$ | $K$, $K_{\mathrm{sgs}}$ | **the source keeps $k$ for the wavenumber** |
 | $\langle\epsilon\rangle$, $\epsilon_{sgs}$ | $\varepsilon$, $\varepsilon_{\mathrm{sgs}}$ | $\epsilon$ is also the forcing amplitude of Eq. (22) |
-| $R_e$, $R_\epsilon$ | $R_k$, $R_\varepsilon$ (page-local, as on the concept pages) | scalar ratios, not the Reynolds stress $R_{ij}$ |
+| $R_e$, $R_\epsilon$ | $R_k$, $R_\varepsilon$ (registry §11) | scalar ratios, not the Reynolds stress $R_{ij}$ |
 | $C$ | $C_{\mathrm K}$ (page-local) | Kolmogorov constant, no value printed |
 | $C_m=0.1$, $C_\epsilon=0.85$ | $c_k$, $c_\varepsilon$ | one-equation subgrid constants |
 | $\nu_{sgs}$, $\nu_T$ | $\nu_t$ | subgrid (σ model) and RANS or LES eddy viscosity |

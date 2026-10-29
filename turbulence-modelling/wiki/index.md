@@ -20,8 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–15 ingested (300 of the 307 sources planned in 16
-chunks; the archive is still growing). Chunk 1 holds the reviews and the
+**Corpus:** all 307 sources of the archive ingested in 16 chunks. Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
 [Duraisamy (2021)](/sources/duraisamy-2021.md), the MHD turbulence review of
@@ -177,6 +176,13 @@ compressible round jets, half-explicit Runge–Kutta integrators for the
 variational multiscale method, the GPU solver RHEA-X, mesh adaptation for
 DNS and LES, and reviews of shock–turbulence interaction and of combustion
 modelling for engine CFD.
+Chunk 16 (2026 papers, completing the archive): robust wall-modelled LES
+with flux reconstruction under cold walls, IDDES coupled with an algebraic
+transition model in high-order DG, SATES-II and adaptive IDDES with
+high-order finite differences, a review of machine-learning turbulence
+closures, adaptive spectral eddy viscosity for pseudo-spectral LES of
+isotropic turbulence, the role of grid resolution in implicit LES with a
+gas-kinetic scheme, and the AthenaK code.
 
 ## Reading guide
 
@@ -315,7 +321,8 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [COOLFluiD](/software/coolfluid.md), [hpMusic](/software/hpmusic.md),
 [ANSYS Fluent](/software/ansys-fluent.md), [PHengLEI](/software/phenglei.md),
 [PyFR](/software/pyfr.md), [CaLES](/software/cales.md),
-[Xcompact3d](/software/xcompact3d.md), [CNS3D](/software/cns3d.md);
+[Xcompact3d](/software/xcompact3d.md), [CNS3D](/software/cns3d.md),
+[AthenaK](/software/athenak.md);
 [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md),
@@ -357,6 +364,7 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [SD7003 airfoil](/benchmarks/sd7003-airfoil.md),
 [square cylinder](/benchmarks/square-cylinder-flow.md),
 [turbulent round jet](/benchmarks/turbulent-round-jet.md),
+[supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md),
 [temporal mixing layer](/benchmarks/temporal-mixing-layer.md);
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md).
 

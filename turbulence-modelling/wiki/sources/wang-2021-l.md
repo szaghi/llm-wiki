@@ -9,7 +9,7 @@ year: 2021
 venue: "Aerosp. Sci. Technol. 119:107207"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Aerospace_Science_and_Technology_Wang_IDDES_method_based_on_differential_Reynolds-stress_model_and.pdf"
 tags: [des, reynolds-stress-model, hybrid-rans-les, numerical-dissipation, bluff-body]
-timestamp: 2026-10-26T20:34:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -97,7 +97,7 @@ gives $\nu_t=\sqrt{C_{\phi1}/(C_{\ell\varepsilon}C_{\phi2})}\,\ell^2|S|$ (Eq.
 $$\varepsilon=\begin{cases}\dfrac{k^{3/2}}{C_{\mathrm{DES}}\Delta},\quad C_{\mathrm{DES}}=C_s\Big[\dfrac{C_{\phi1}}{C_{\ell\varepsilon}C_{\phi2}}\Big]^{3/4} & \text{LES region},\\ \dfrac{k^{3/2}}{l_{\mathrm{RANS}}},\quad l_{\mathrm{RANS}}=\dfrac{\sqrt k}{C_\mu\omega} & \text{RANS region (SST, RSM)},\end{cases}$$
 with $C_{\mathrm{DES}}=F_1C_{\mathrm{DES,LRR}}+(1-F_1)C_{\mathrm{DES,SSG}}$ (Eqs. 16–18).
 In the RSM the dissipation tensor becomes $\tfrac23\bar\rho k^{3/2}/l_{\mathrm{IDDES}}\,\delta_{ij}$
-with $k=\tfrac12R_{ii}$, $l_{\mathrm{IDDES}}=\tilde f_d(1+f_e)l_{\mathrm{RANS}}+(1-\tilde f_d)C_{\mathrm{DES}}\Delta$
+with $k=\tfrac12R_{ii}$, $l_{\mathrm{IDDES}}=\hat f_d(1+f_e)l_{\mathrm{RANS}}+(1-\hat f_d)C_{\mathrm{DES}}\Delta$
 and $\Delta=\min[\max(C_wd,C_w\Delta_{\max},d_{wn}),\Delta_{\max}]$, $C_w=0.15$ (Eq. 20).
 
 # Printed slips
@@ -125,7 +125,7 @@ and $\Delta=\min[\max(C_wd,C_w\Delta_{\max},d_{wn}),\Delta_{\max}]$, $C_w=0.15$ 
 | $\phi$ (§2.3) | $\phi_\ell$ (page-local) | **collision** with the source's own adaptive-dissipation factor |
 | $\ell$, $C_\ell$, $C_{\ell\varepsilon}$, $C_{\phi1}$, $C_{\phi2}$, $m$, $n$ | same (page-local) | |
 | $C_S$ | $C_s$ | 0.18 |
-| $C_{DES}$, $l_{RANS}$, $l_{LES}$, $l_{IDDES}$, $\tilde f_d$, $f_e$, $C_w$, $\Delta_{\max}$, $d_{wn}$ | $C_{\mathrm{DES}}$, $l_{\mathrm{RANS}}$, … | as on the [DES](/methods/detached-eddy-simulation.md) page |
+| $C_{DES}$, $l_{RANS}$, $l_{LES}$, $l_{IDDES}$, $\tilde f_d$, $f_e$, $C_w$, $\Delta_{\max}$, $d_{wn}$ | $C_{\mathrm{DES}}$, $l_{\mathrm{RANS}}$, $l_{\mathrm{LES}}$, $l_{\mathrm{IDDES}}$, $\hat f_d$, $f_e$, $C_w$, $\Delta_{\max}$, $d_{wn}$ | as on the [DES](/methods/detached-eddy-simulation.md) page (the tilde is not a Favre filter) |
 | $d$ | $d$ | wall distance |
 | $F_1$ | $F_1$ | blends LRR (near wall) and SSG |
 | $C_K$, $C_\Delta$ | (Kolmogorov constant, filter-ratio constant, page-local) | |

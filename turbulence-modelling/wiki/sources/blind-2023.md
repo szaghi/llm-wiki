@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 254:105796"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Blind_Residual_estimation_for_grid_modification_in_wall-modeled_la.pdf"
 tags: [les, wmles, mesh-adaptation, dg, grid-requirements]
-timestamp: 2026-10-27T15:59:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -114,7 +114,7 @@ Page-local symbols, as on the [mesh adaptation](/methods/mesh-adaptation.md) pag
 | $\tau^{\mathrm{mod}}_{ij}(\rho,u_i,\Delta)$ | $\tau_{ij}$ (modelled) | enters the momentum flux with $+$ beside $p\delta_{ij}$: positive-trace convention, agrees |
 | $\sigma_{ij}$ | $\sigma_{ij}$ | agrees |
 | $G(\vec x,\vec n)$, $g$, $\alpha$ | $\mathcal G$, $\varrho_r$, $a$ (page-local) | **collision:** $G$ is the filter kernel, $\alpha$ the DG/FV blending factor in the registry |
-| $\langle\cdot\rangle$ | $\langle\cdot\rangle$ | time, homogeneous-direction and here element average |
+| $\langle\cdot\rangle$ | $\langle\cdot\rangle$ (time and homogeneous-direction average); $\{\cdot\}_e$ (element average, registry §11) | the source uses one symbol for both |
 | $\lambda$, $\Lambda$, $\beta$, $\mathcal J$ | (Lagrange multiplier, equidistribution constant, norm exponent, cost functional) | **collision:** $\lambda$ is not the Taylor microscale, $\beta$ not the field-inversion correction |
 | $\mathcal V$ | $V_e$ (page-local, element volume) | |
 | $h$ | $\delta$ | channel half-height |

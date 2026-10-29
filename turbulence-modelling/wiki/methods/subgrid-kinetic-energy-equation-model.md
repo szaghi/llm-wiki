@@ -5,7 +5,7 @@ description: "Eddy-viscosity LES closures that transport the subgrid kinetic ene
 status: established
 aliases: [k-equation model, one-equation SGS model, subgrid kinetic energy equation model, LDKM, localized dynamic k-equation model, dynamic k-equation model, DKSGS, dk-equation model, Yoshizawa one-equation model, quasi-dynamic SGS kinetic energy equation model, QKM]
 tags: [les, sgs-model, eddy-viscosity, compressible, combustion]
-timestamp: 2026-10-28T17:41:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # One-equation subgrid kinetic-energy models
@@ -201,8 +201,8 @@ CPUs, Table 5).
   of the modelled stresses, $k$ the modelled kinetic energy, plays the role
   of the $c_\varepsilon$ sink; under
   equilibrium the branch is "Smagorinsky-like", with
-  $C_{\mathrm{DES}}=C_kC_s$ ($C_k$ page-local there, fixed by the
-  length-scale equation), which they make dynamic (see
+  $C_{\mathrm{DES}}=C_kC_s$ ($C_k$ the DES length-scale factor of registry
+  §11, fixed by the length-scale equation), which they make dynamic (see
   [detached-eddy simulation](/methods/detached-eddy-simulation.md) and the
   [dynamic procedure](/methods/dynamic-procedure.md)).
 - **Engine LES.** [Posch et al. (2025)](/sources/posch-2025.md) (§3.2.3)

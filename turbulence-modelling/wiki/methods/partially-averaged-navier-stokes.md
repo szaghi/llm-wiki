@@ -5,7 +5,7 @@ description: "Girimaji's bridging hybrid model that solves RANS-form transport e
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-28T12:24:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -305,11 +305,6 @@ does not follow the prescribed $f_k^2$, which the authors attribute to the
 transient flow's sensitivity to accumulated modelling errors (Fig. 13). See
 [numerical dissipation](/properties/numerical-dissipation.md).
 
-S3 is the strategy whose parameters come from a priori filtering of DNS of
-a different, fully developed flow; inside the solver, on the transitional
-flow, it is the one that fails (see
-[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
-
 ## Other uses cited
 
 Cai et al. (2022) list PANS (Rao et al.) among the "advanced turbulence
@@ -467,8 +462,7 @@ and build theirs on DES instead
   the mixing-layer *half-width* (App. A, Eq. A9), with $h$ the full 5%–95%
   height and $At$ the Atwood number; for $h=\alpha\,At\,g\,t^2$ the formula
   returns $\alpha$, the coefficient of the full height *(compiler check, not
-  in the sources)*. The convention matters when comparing with other
-  $\alpha_b$ values.
+  in the sources)*.
 - Pereira et al. state that accuracy improves "monotonically" as $f_k$
   decreases with S1, judged on the height $h(t)$ (Fig. 8a); the S1 values of
   $\alpha_b$ in Table II (0.027, 0.012, 0.016 at $f_k=0.50$, 0.35, 0.25) are

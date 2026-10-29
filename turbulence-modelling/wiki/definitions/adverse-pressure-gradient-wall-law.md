@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -23,7 +23,7 @@ the inner-scaled parameter
 $$\Delta p_s^+=\frac{\nu}{\rho u_\tau^3}\frac{dP}{ds}\qquad\text{(Eq. 2)},$$
 
 with $P$ the mean pressure and $s$ the wall-tangential coordinate along the
-mean velocity as $y\to0$ (page-local symbols $\Delta p_s^+$, $s$). The law is
+mean velocity as $y\to0$ ($\Delta p_s^+$ registry §11; $s$ page-local). The law is
 aimed at RANS turbulence models and [wall functions](/methods/rans-wall-function.md); the paper itself is an
 analysis of experimental mean-velocity profiles at $Re_\theta>8000$ and
 implements no model.
@@ -231,8 +231,7 @@ in the predicted temperature and heat flux.
 Two sources, both using an equilibrium wall law without any
 pressure-gradient term on non-body-fitted Cartesian grids, point to the
 missing term where their results fail; neither implements or tests an
-APG-aware law, so the evidence is the failure of the equilibrium law, not
-the success of a replacement.
+APG-aware law.
 
 - **Strong incidence in RANS.** [Constant et al. (2024)](/sources/constant-2024.md)
   impose Musker's equilibrium wall function at the target points of a
@@ -289,9 +288,7 @@ $y_1^+>80$, and at degree 6 the skin-friction error grows for $y_1^+=160$ and
 authors attribute to a wall law that "refers only to ZPG" layers (§4.2,
 Fig. 8; their reference solution there is the SSG/LRR-$\omega$
 [Reynolds-stress model](/methods/reynolds-stress-model.md) of Knopp et al.,
-as cited). The evidence is again the failure of a law without
-pressure-gradient term, now quantified by the first-element height at which
-it appears.
+as cited).
 
 ## An adverse-pressure-gradient power law as an explicit wall function
 
@@ -334,8 +331,7 @@ uncorrected branches gives $y_c^+=8.3^{7/6}=11.81$.)*
 Yan et al. test it only inside a combined model (the wall stress feeds a
 slip target velocity through a pressure-gradient-only boundary-layer
 equation; see [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
-and [slip-wall models](/methods/slip-wall-model.md)), so the evidence
-concerns the combination, not the law alone. On the
+and [slip-wall models](/methods/slip-wall-model.md)). On the
 [circular cylinder](/benchmarks/circular-cylinder-wake.md) at
 $Re_D=3.9\times10^3$ the combined model reproduces separation, shear-layer
 transition and shedding, while the variant without pressure-gradient terms

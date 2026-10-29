@@ -157,7 +157,7 @@ item is unparseable.
 
 # Pages created or updated
 
-Chunk 11 (2026-10-27). This source is cited on:
+Chunk 11 (2026-10-27), cited further in chunk 16. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Temporally developing mixing layer](/benchmarks/temporal-mixing-layer.md)
@@ -171,3 +171,4 @@ Chunk 11 (2026-10-27). This source is cited on:
 - [Neural-network subgrid-scale models](/methods/neural-network-sgs-model.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
+- [Symbolic-regression turbulence closures](/methods/symbolic-regression-closure.md)

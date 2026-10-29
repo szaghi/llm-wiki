@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Phys. Commun. 306:109364"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Computer_Physics_Communications_Yeung_GPU-enabled_extreme-scale_turbulence_simulations_Fourier_pse.pdf"
 tags: [dns, isotropic-turbulence, gpu, software]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Summary
@@ -45,9 +45,8 @@ effective bandwidths of the row and column communicators, which degrade at
 the largest scales with small peer-to-peer messages and dragonfly
 inter-group limits. The code is the one behind the exascale DNS of
 [Yeung et al. (2025)](/sources/yeung-2025.md) (§6 announces that work). The
-paper holds no turbulence modelling and no flow statistics (bundle fit:
-peripheral, HPC of a DNS code); the algorithms are recorded inline on the
-DNS page.
+paper holds no turbulence modelling and no flow statistics; the algorithms
+are recorded inline on the DNS page.
 
 # Version read
 
@@ -137,7 +136,7 @@ are printed without normalization.
 | $k_{max}=\sqrt2N/3$ | $k_{\max}=\sqrt2N_x/3$ | truncation wavenumber |
 | $\epsilon=2\nu s_{ij}s_{ij}$ | $\varepsilon$ | |
 | $\Omega=\omega_i\omega_i$ | $\omega_i\omega_i$ | enstrophy density without $\tfrac12$; **collision** with $\Omega_{ij}$ |
-| $s_{ij}$, $\boldsymbol\omega$ | $S_{ij}$ (of the fluctuating field), $\omega_i$ | zero mean velocity |
+| $s_{ij}$, $\boldsymbol\omega$ | $s_{ij}$ (the fluctuating strain of registry §3), $\omega_i$ | zero mean velocity |
 | $C$ | Courant number | not a model constant |
 | $R_\lambda$ | $Re_\lambda$ | §6 only |
 | $P$ | $N_{\mathrm{MPI}}$ (page-local) | MPI processes, 8 per Frontier node |

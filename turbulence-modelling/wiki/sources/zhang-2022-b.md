@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Fluid Mech. 946:A14"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Fluid_Mechanics_Zhang_Wall-cooling_effects_on_pressure_fluctuations_in_compressibl.pdf"
 tags: [dns, compressible, wall-cooling, pressure-fluctuations, hypersonic]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -65,8 +65,8 @@ problem. Numbering on this page is that of this version.
 The source's overbar (Reynolds average, thermodynamic variables) is
 $\langle\cdot\rangle$, its tilde (Favre average, velocities)
 $\langle\cdot\rangle_\rho$; its viscous stress $\tau_{ij}$ is $\sigma_{ij}$;
-its dilatation $\theta$ is written $\vartheta_d=\partial_ku_k$ (page-local,
-not the momentum thickness); the pressure components $p_r$, $p_s$,
+its dilatation $\theta$ is written $\theta_{\mathrm d}=\partial_ku_k$ (page-local,
+as on [STREAmS](/software/streams.md); not the momentum thickness); the pressure components $p_r$, $p_s$,
 $p_\tau$, $p_c$, $p_h$ are page-local.
 
 1. Wall cooling suppresses $p'_{\mathrm{rms}}/\tau_w$ in the subsonic ($M_\infty=0.5$) and supersonic ($M_\infty=2.0$) cases but enhances it near the wall in the hypersonic ($M_\infty=8.0$) case; wall values 2.56 (M05T100), 2.03 (M05T025), 2.88 (M20T100), 2.60 (M20T050), 3.00 (M80T100), 3.41 (M80T050) (Abstract, §3, §5, Table 3, Fig. 13). **Shown**
@@ -123,7 +123,7 @@ $p_\tau$, $p_c$, $p_h$ are page-local.
 | $T_r$, $r$, $T_{rg}$, $r_g$ | (recovery temperature and factor; generalized ones) | page-local |
 | $\delta_i$ | (inlet boundary-layer thickness) | domain lengths in $\delta_i$ |
 | $M_t=\sqrt{\overline{u''_iu''_i}}/\bar c$ | $M_t$ | defined with the full trace |
-| $\theta'$, $\theta^+_{\mathrm{rms}}$ | $\vartheta_d'$ (page-local dilatation) | **collision** with the momentum thickness $\theta$ |
+| $\theta'$, $\theta^+_{\mathrm{rms}}$ | $\theta_{\mathrm d}'$ (page-local dilatation) | **collision** with the momentum thickness $\theta$ |
 | $\omega^+_{\mathrm{rms}}$ | (vorticity r.m.s. in wall units) | |
 | $p_r$, $p_s$, $p_\tau$, $p_c$, $p_h$ | (rapid, slow, viscous, compressible, harmonic pressure) | page-local |
 | $\sigma$, $\phi$ | (Laganelli model constants; page-local $\sigma_L$, $\phi_L$ on [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)) | **collision:** $\sigma$ is not the viscous stress |

@@ -5,7 +5,7 @@ description: "Second-moment RANS closures that transport the six Reynolds stress
 status: established
 aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM, RSM-IDDES, RSM-DynIDDES]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-28T17:01:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -146,8 +146,9 @@ not distinguished by the source) *(compiler check, not in the sources)*:
 $$\partial_tR_{ij}+\langle u_k\rangle\partial_kR_{ij}=\mathcal P_{ij}+\phi_{ij}-\varepsilon_{ij}+\mathcal D_{ij},\qquad
 \mathcal P_{ij}=-R_{ik}\partial_k\langle u_j\rangle-R_{jk}\partial_k\langle u_i\rangle,$$
 
-with $\mathcal P_{ij}$, $\phi_{ij}$, $\varepsilon_{ij}$, $\mathcal D_{ij}$ the
-page-local production, pressure–strain, dissipation and diffusion tensors
+with $\mathcal P_{ij}$, $\phi_{ij}$, $\mathcal D_{ij}$ the production,
+pressure–strain and diffusion tensors (registry §11) and $\varepsilon_{ij}$
+the dissipation tensor (page-local)
 (the source's $P_{ij}$, $\Pi_{ij}$, $\varepsilon_{ij}$, $D_{ij}$; renamed
 because the registry gives $\Pi$ to the SGS energy flux and $D_{ij}$ to the
 differentiation matrix). $k=\tfrac12R_{kk}$ and the anisotropy is the
@@ -437,9 +438,8 @@ none. See the [turbulent Prandtl number](/definitions/turbulent-prandtl-number.m
   blending.
 - In their Table 1 the caption defines $c_2^{(\mathrm{LRR})}=0.52$, while the
   LRR row lists $c_2=0$ and the expressions in $c_2^{(\mathrm{LRR})}$ for
-  $c_4$, $c_5$ sit in the SSG row; judged from the table's own labels the
-  row assignment of some columns is inconsistent (Table 1). The table above
-  is transcribed as printed.
+  $c_4$, $c_5$ sit in the SSG row (Table 1). The table above is transcribed
+  as printed.
 - Liu et al. write that production, pressure–strain "and dissipation term"
   are multiplied "by the factor $\gamma$", while their Eq. 20 multiplies the
   dissipation by $\max(\gamma,0.1)$; the equation is given above. Their

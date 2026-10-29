@@ -5,7 +5,7 @@ description: "Linear turbine cascades as transition, loss, vortex and mesh-adapt
 status: established
 aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106A, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, Pack B, L2F, tip-leakage turbine cascade, Arts transonic turbine cascade]
 tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des, mesh-adaptation]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Turbine cascades (T106, T161, VKI LS89)
@@ -86,9 +86,8 @@ Against the experiment of Stieger and the DNS of Michelassi et al.:
   WCNS-E, with differences remaining on the front half of the suction side
   (Fig. 11);
 - the early separation near the leading edge is not captured by nonlinear
-  WCNS-E, whereas WCNS-E(linear) gives a qualitatively correct behaviour,
-  so the nonlinear weighting of the explicit interpolation itself degrades
-  the prediction (Fig. 12); see
+  WCNS-E, whereas WCNS-E(linear) gives a qualitatively correct behaviour
+  (Fig. 12); see
   [numerical dissipation](/properties/numerical-dissipation.md);
 - both schemes capture transition, with finer vortical structures for
   WCNS-T, especially far downstream (Fig. 13).
@@ -271,7 +270,7 @@ from the works the review names.
   work on phase 5) but fail on others (trained on phase 10, they fail on
   phase 18); the linear coefficient and the non-linear contribution follow
   the wake–wake interaction, so two models trained on two representative
-  phases suffice (§4.4.1, Fig. 10), in agreement with the summary of
+  phases suffice (§4.4.1, Fig. 10), as in the summary of
   [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) above.
 - *No spectral gap.* When the deterministic unsteadiness overlaps the
   turbulence spectrum (see [spectral gap](/definitions/spectral-gap.md)),
@@ -377,9 +376,8 @@ refinement indicators by the same authors on the
 [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) is set
 there beside that of Ims & Wang (2023) on T106c and T106a.
 
-**What the sources share.** Steady RANS with transition models captures
-the onset of separated-flow and bypass transition on these blades but not
-its extent: transition develops too quickly on LS89 and sets in too early
+**What the sources share.** In the steady RANS runs with transition
+models, transition develops too quickly on LS89 and sets in too early
 on T106C at $Re_{2,is}=0.8\times10^5$
 ([Pacciani et al. (2025)](/sources/pacciani-2025.md)), and the T161 bubble
 is missed with γ-$Re_\theta$ ([Morsbach et al. (2024)](/sources/morsbach-2024.md)).

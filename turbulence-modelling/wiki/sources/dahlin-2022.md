@@ -9,7 +9,7 @@ year: 2022
 venue: "Astrophys. J. 941:79"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_The_Astrophysical_Journal_Dahlin_STITCH_A_Subgrid-scale_Model_for_Energy_Buildup_in_the_Solar.pdf"
 tags: [mhd, astrophysics, sgs-model, mesh-adaptation, reconnection]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Summary
@@ -25,10 +25,10 @@ accumulates as large-scale shear (a filament channel). Resolving the cells
 explicitly ("full helicity condensation", FHC) is costly.
 
 STITCH replaces the cells by one term in the induction equation, taken from
-Mackay et al. (2014): $\partial_t\boldsymbol B=-\nabla\times\nabla_s(\mathcal ZB_n)$,
-with the single parameter $\mathcal Z=\langle a_c^2\Omega_c\rangle/2$. The term is
+Mackay et al. (2014): $\partial_t\boldsymbol B=-\nabla\times\nabla_s(\mathcal Z_{\mathrm{ST}}B_n)$,
+with the single parameter $\mathcal Z_{\mathrm{ST}}=\langle a_c^2\Omega_c\rangle/2$. The term is
 divergence-free, leaves the normal field unchanged and injects relative
-helicity at the rate $-2\iint \mathcal ZB_n^2\,d\sigma$. Its finite-volume form is
+helicity at the rate $-2\iint \mathcal Z_{\mathrm{ST}}B_n^2\,d\sigma$. Its finite-volume form is
 a difference of vertex values on the side faces of the bottom cell layer,
 which is a discrete Gauss law. The paper's "subgrid-scale model" is a
 parametrized boundary source term, which the authors read as a modified
@@ -40,10 +40,10 @@ closes a filtered electromotive force in the volume.
 All runs use the [adaptive-mesh](/methods/mesh-adaptation.md) code ARMS in
 spherical geometry, with ideal MHD and an adiabatic temperature equation.
 Against an FHC run with 107 cells (about two months of computing), STITCH
-with uniform $\mathcal Z$ reproduces filament-channel formation and a breakout
+with uniform $\mathcal Z_{\mathrm{ST}}$ reproduces filament-channel formation and a breakout
 eruption with a fast coronal mass ejection in about four days, a factor 15
 in cost. It stores about 20% more free energy, releases less of it, and
-releases it faster. A localized $\mathcal Z$ confines energization to one PIL
+releases it faster. A localized $\mathcal Z_{\mathrm{ST}}$ confines energization to one PIL
 segment, and a synthetic active region with a corrugated PIL is energized
 with no geometry-specific driver. The evidence is numerical, from single
 runs without a resolution study.
@@ -59,35 +59,35 @@ equation numbers on this page are those of the preprint.
 
 # Key claims
 
-Page-local symbols: $\mathcal Z$ the STITCH helicity-injection parameter (the
+Page-local symbols: $\mathcal Z_{\mathrm{ST}}$ the STITCH helicity-injection parameter (the
 source's $\zeta$, renamed because the registry's $\zeta^\pm$ are the
 Elsasser potentials), $B_n$ and $\boldsymbol B_s$ the normal and horizontal
 field at the surface, $\nabla_s$, $\nabla_n$ the horizontal and normal
 gradients, $H_r$ the relative magnetic helicity, $a_c$ and $\Omega_c$
 the radius and rotation rate of a cyclonic cell.
 
-1. STITCH is the extra induction-equation term $\partial_t\boldsymbol B=\nabla\times\partial_t\boldsymbol A_s=-\nabla\times\nabla_s(\mathcal ZB_n)$ of Mackay et al. (2014, Eq. A1); the authors name it STITCH (§2, Eq. 1). **Stated** (derivation cited)
-2. The single parameter is $\mathcal Z=\langle a_c^2\Omega_c\rangle/2$, with $\langle\cdot\rangle$ a local space–time average (§2, Eq. 2). **Stated**
+1. STITCH is the extra induction-equation term $\partial_t\boldsymbol B=\nabla\times\partial_t\boldsymbol A_s=-\nabla\times\nabla_s(\mathcal Z_{\mathrm{ST}}B_n)$ of Mackay et al. (2014, Eq. A1); the authors name it STITCH (§2, Eq. 1). **Stated** (derivation cited)
+2. The single parameter is $\mathcal Z_{\mathrm{ST}}=\langle a_c^2\Omega_c\rangle/2$, with $\langle\cdot\rangle$ a local space–time average (§2, Eq. 2). **Stated**
 3. Assumptions: the cyclonic cells are small, numerous and nominally identical (their properties may vary on large scales), and reconnection between cells is efficient enough that opposite twist fields cancel algebraically (§2). **Stated**
-4. The term preserves $\nabla\cdot\boldsymbol B=0$, "subject only to the requirement that [$\mathcal ZB_n$] be sufficiently smooth (i.e., differentiable) everywhere" (§2, Eq. 3). **Derived**
-5. It leaves the normal field unchanged, $\partial_tB_n\equiv0$, and changes the horizontal field as $\partial_t\boldsymbol B_s=+\nabla_s\times\nabla_n(\mathcal ZB_n)$, in spherical and Cartesian coordinates (§2, Eqs. 4–5). **Derived**
-6. The relative-helicity injection rate is $dH_r/dt=-2\iint \mathcal ZB_n^2\,d\sigma$, as required by helicity conservation through reconnection and twist-flux transport (§2, Eq. 6). **Stated** (details in Mackay et al. 2014)
-7. Discretization: on the faces normal to the horizontal coordinates $s_1$, $s_2$, the flux change rates are $\partial_t\Phi_{s_1}=-\mathrm D_{s_2}(\mathcal ZB_n|_{n_0})$ and $\partial_t\Phi_{s_2}=+\mathrm D_{s_1}(\mathcal ZB_n|_{n_0})$, with $\mathcal Z$ vanishing at the top of the first cell layer; the field update divides by the face areas (§2, Eqs. 7–14). **Derived**
+4. The term preserves $\nabla\cdot\boldsymbol B=0$, "subject only to the requirement that [$\mathcal Z_{\mathrm{ST}}B_n$] be sufficiently smooth (i.e., differentiable) everywhere" (§2, Eq. 3). **Derived**
+5. It leaves the normal field unchanged, $\partial_tB_n\equiv0$, and changes the horizontal field as $\partial_t\boldsymbol B_s=+\nabla_s\times\nabla_n(\mathcal Z_{\mathrm{ST}}B_n)$, in spherical and Cartesian coordinates (§2, Eqs. 4–5). **Derived**
+6. The relative-helicity injection rate is $dH_r/dt=-2\iint \mathcal Z_{\mathrm{ST}}B_n^2\,d\sigma$, as required by helicity conservation through reconnection and twist-flux transport (§2, Eq. 6). **Stated** (details in Mackay et al. 2014)
+7. Discretization: on the faces normal to the horizontal coordinates $s_1$, $s_2$, the flux change rates are $\partial_t\Phi_{s_1}=-\mathrm D_{s_2}(\mathcal Z_{\mathrm{ST}}B_n|_{n_0})$ and $\partial_t\Phi_{s_2}=+\mathrm D_{s_1}(\mathcal Z_{\mathrm{ST}}B_n|_{n_0})$, with $\mathcal Z_{\mathrm{ST}}$ vanishing at the top of the first cell layer; the field update divides by the face areas (§2, Eqs. 7–14). **Derived**
 8. The four side-face flux changes of every cell sum to zero (each vertex value enters twice with opposite signs): a discrete Gauss law (§2). **Derived**
 9. The FHC run uses 107 tessellated $B_r$-conserving cyclonic flows, maximum $|V_\perp|\approx50$ km s⁻¹ after a 1,000 s ramp; energy builds up for about 90,000 s, "approximately two continuous months of computational time". The uniform STITCH run builds up in about 6,000 s, "approximately four days" (§3). **Shown**
 10. With $\mathcal Z_0=1.4\times10^{16}$ cm² s⁻¹ the horizontal field is injected at up to about 1 G s⁻¹; Alfvén waves spread it along the channel field lines, and the maximum tangential field is about 100 G (about twice the peak radial field of the minority polarity); the injected tangential flux is about the normal flux of the minority polarity (§3). **Shown**
 11. The cost of STITCH is lower by "a factor of 15", matching the reduction in driving time; the saving comes from sub-Alfvénic flux injection replacing subsonic vortical driving; the saving from coarser grids was "not exploited" (§4, §7). **Shown** (one comparison)
 12. Both FHC and STITCH form a low-lying, highly sheared filament channel under weakly sheared overlying field, and the whole channel erupts with $V>1000$ km s⁻¹ (§4, Fig. 3). **Shown**
-13. The overlying loops acquire shear under FHC but stay nearly shear-free under STITCH, because uniform-$\mathcal Z$ STITCH injects field in a zone of width $w=|B_r|/|\nabla_sB_r|$ next to the PIL, while the FHC channel is at least a cell diameter $2a_c$ wide; here $2a_c\approx w$ (§4). **Shown**/**Stated**
+13. The overlying loops acquire shear under FHC but stay nearly shear-free under STITCH, because uniform-$\mathcal Z_{\mathrm{ST}}$ STITCH injects field in a zone of width $w=|B_r|/|\nabla_sB_r|$ next to the PIL, while the FHC channel is at least a cell diameter $2a_c$ wide; here $2a_c\approx w$ (§4). **Shown**/**Stated**
 14. Magnetic energy: $E_M/E_{M0}\approx1.24$ (STITCH) against 1.20 (FHC), "some 20% higher" free energy; release $\Delta E_M/E_{M0}\approx0.04$ against 0.10; after the eruption 1.20 against 1.10 (§4, Fig. 4a). **Shown**
 15. Release time $\approx1{,}000$ s (STITCH) against $\approx4{,}000$ s (FHC), a release rate higher "by a factor of 0.4*4.0 = 1.6"; the storage rate of STITCH is "just over 15× faster" (§4, Fig. 4b). **Shown**
 16. Kinetic energy $E_k/E_{M0}=\langle V^2\rangle/\langle V_A^2\rangle=\langle M_A^2\rangle$ is about $10^{-4}$ in the slow driving and a few $10^{-2}$ in the eruption; the FHC kinetic-energy peak is about 50% above that of STITCH (§4, Fig. 4c). **Shown**
 17. The shear proxy $|B_\phi|_{\max}$ rises, declines as the arcade inflates, and peaks again in the flare loops: STITCH 110/80 G, FHC 70/70 G, with a minimum of about 40 G at eruption onset in both (§4, Fig. 4d). **Shown**
 18. Injected at the slow FHC rate, STITCH would take longer than FHC to build up; in the true subgrid regime $2a_c\ll w$ the two should agree better and the time-scale disparity grow (§4). **Stated** (not simulated)
-19. A localized cosine profile of $\mathcal Z$ (Eq. 15) weakens injection on the eastern, northern and western PIL segments, spreads some injection into the minority-polarity interior through $\mathcal Z$ gradients and gives reversed shear near the centre; only the southern channel is primed to erupt (§5, Figs. 5–6). **Shown**
-20. The uniform-$\mathcal Z$ curves halved track the localized curves through the buildup and into the eruption, so the northern and southern PIL segments store roughly equal energy under uniform $\mathcal Z$ (§5, Fig. 7). **Shown**
+19. A localized cosine profile of $\mathcal Z_{\mathrm{ST}}$ (Eq. 15) weakens injection on the eastern, northern and western PIL segments, spreads some injection into the minority-polarity interior through $\mathcal Z_{\mathrm{ST}}$ gradients and gives reversed shear near the centre; only the southern channel is primed to erupt (§5, Figs. 5–6). **Shown**
+20. The uniform-$\mathcal Z_{\mathrm{ST}}$ curves halved track the localized curves through the buildup and into the eruption, so the northern and southern PIL segments store roughly equal energy under uniform $\mathcal Z_{\mathrm{ST}}$ (§5, Fig. 7). **Shown**
 21. A synthetic active region of 30 subsurface dipoles with a corrugated PIL, driven with $\mathcal Z_0=5\times10^{15}$ cm² s⁻¹, erupts after some 15,000 s with no change to the driving procedure (§6, Figs. 8–9). **Shown**
-22. A five-step recipe (assign $\mathcal Z$; evaluate $\mathcal ZB_n$ at the base; difference along the horizontal coordinates; divide by the face areas; multiply by $\Delta t$) applies to "any of the MHD codes presently used by the space science community"; smoothness requires $\mathcal ZB_n\to0$ smoothly at the boundary of a tailored region (§7). **Stated**
+22. A five-step recipe (assign $\mathcal Z_{\mathrm{ST}}$; evaluate $\mathcal Z_{\mathrm{ST}}B_n$ at the base; difference along the horizontal coordinates; divide by the face areas; multiply by $\Delta t$) applies to "any of the MHD codes presently used by the space science community"; smoothness requires $\mathcal Z_{\mathrm{ST}}B_n\to0$ smoothly at the boundary of a tailored region (§7). **Stated**
 23. STITCH avoids the difficulties of flux emergence, shear flows, flux cancellation and flux-rope insertion, can be halted at any time to study marginal stability, and can be combined with those methods (§7). **Stated**
 24. STITCH represents generically the outcome of an inverse helicity cascade from any helicity-injecting mechanism, not only convective vortices (§1, §7). **Stated**
 
@@ -105,7 +105,7 @@ the radius and rotation rate of a cyclonic cell.
 | $\mathbf B$, $\mathbf A$, $\mathbf A_s$ | $\boldsymbol B$, $\boldsymbol A$, (surface-parallel vector potential) | Gaussian units (G) |
 | $B_n$, $\mathbf B_s$; subscripts $n$, $s$ | $B_n$, $\boldsymbol B_s$ (page-local) | normal and horizontal to the surface; $B_n=B_r$ in the runs |
 | $\nabla_s$, $\nabla_n$ | (page-local) | horizontal and normal gradients |
-| $\zeta$, $\zeta_0$ | $\mathcal Z$, $\mathcal Z_0$ (page-local) | **collision** with the registry's Elsasser potentials $\zeta^\pm$; units cm² s⁻¹ |
+| $\zeta$, $\zeta_0$ | $\mathcal Z_{\mathrm{ST}}$, $\mathcal Z_0$ (page-local) | **collision** with the registry's Elsasser potentials $\zeta^\pm$; units cm² s⁻¹ |
 | $\ell$, $\omega_l$ ($\omega_\ell$) | $a_c$, $\Omega_c$ (page-local) | cell radius and angular rotation rate; **collision** with the specific dissipation rate $\omega$ |
 | $\langle\cdot\rangle$ | (local space–time average; volume average in §4) | not a Reynolds average |
 | $H_r$ | $H_r$ (page-local) | relative helicity, not the density $H_m$ |

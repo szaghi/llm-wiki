@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 539:114238"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Computational_Physics_Bilocq_Comparison_of_stabilization_strategies_applied_to_scale-reso.pdf"
 tags: [dg, entropy-stable, shock-capturing, numerical-dissipation, implicit-les, compressible]
-timestamp: 2026-10-29T05:09:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -112,7 +112,7 @@ The budget of §2.1 in registry notation (Eq. 4, as printed):
 $$-\underbrace{\frac{\mathrm d}{\mathrm dt}\int_\Omega\tfrac12\rho u_iu_i\,\mathrm dV}_{\epsilon_1}=\underbrace{\int_\Omega\mu\,\omega_i\omega_i\,\mathrm dV}_{\epsilon_2}+\underbrace{\tfrac43\int_\Omega\mu(\partial_ju_j)^2\,\mathrm dV}_{\epsilon_3}-\underbrace{\int_\Omega p\,\partial_ju_j\,\mathrm dV}_{\epsilon_4}+\underbrace{\oint_{\partial\Omega}\big(pu_j-\sigma_{ij}u_i-\tfrac12\rho u_iu_iu_j\big)n_j\,\mathrm dS}_{\epsilon_5},$$
 with $\Delta\epsilon=\epsilon_2+\epsilon_3+\epsilon_4+\epsilon_5-\epsilon_1$
 the "indicator of the *instantaneous* numerical error" (after
-[Wang et al. 2024](/sources/wang-2024.md)); $\epsilon_2$ and $\epsilon_3$
+[Wang et al. (2024)](/sources/wang-2024.md)); $\epsilon_2$ and $\epsilon_3$
 are the unnormalized $\varepsilon_s$ and $\varepsilon_d$. The entropy is
 $\mathcal E=-\rho s$, $s=\log\big((p/p_{\mathrm{ref}})/(\rho/\rho_{\mathrm{ref}})^\gamma\big)$,
 "the only admissible entropy function for the compressible Navier–Stokes

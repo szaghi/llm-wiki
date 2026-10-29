@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 467:111458"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Huang_High-order_compact_finite_volume_schemes_for_solving_the_Rey.pdf"
 tags: [rans, spalart-allmaras, high-order, numerical-dissipation, high-lift]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Summary
@@ -70,14 +70,14 @@ identity problem. Numbering on this page is that of this version.
 # Key claims
 
 1. A three-step optimization (derivative weights in 1-D, the geometric weight on uniform 2-D rectangles, then generalization to unstructured grids) makes the variational reconstruction more accurate on large-aspect-ratio quadrilaterals; the authors call the approach "of course not rigorous" but necessary, because direct optimization on general grids is "impossible" (§2.4). **Stated**
-2. The derivative weights depend only on $p+q$, $\omega^D_f(p,q)=\varpi_{p+q}d_{ij}^{p+q}$ (Eq. 26), with $\varpi_0=1$ and $\varpi_{p_1+q_1}\le\varpi_{p_2+q_2}$ when $p_1+q_1\ge p_2+q_2$ (Eq. 27); violating Eq. 27 "is likely" to cause instability "according to our experience" (§2.4). **Stated**
+2. The derivative weights depend only on $p+q$, $\mathcal W^D_f(p,q)=\varpi_{p+q}d_{ij}^{p+q}$ (Eq. 26), with $\varpi_0=1$ and $\varpi_{p_1+q_1}\le\varpi_{p_2+q_2}$ when $p_1+q_1\ge p_2+q_2$ (Eq. 27); violating Eq. 27 "is likely" to cause instability "according to our experience" (§2.4). **Stated**
 3. Optimized derivative weights (Table 1): cubic constrained $\varpi_1=0.5295$, $\varpi_2=\varpi_3=0.2117$; cubic unconstrained $0.1407$, $0.0402$, $0.0804$; quadratic constrained $0.4643$, $0.1559$; quadratic unconstrained $0.0812$, $0.0201$; against Pan et al. ($1$, $1/2$, $1/6$), Cheng et al. ($1$, $1/2$) and Li et al. ($1/2$, $1/4$) (§2.4.1). **Shown**
 4. The unconstrained weights give better dispersion and dissipation curves but schemes that are "not robust", which the authors attribute to their much smaller dissipation (leading term $-3.23\times10^{-3}\theta_w^8\,at/\Delta x$ against $-2.24\times10^{-2}\theta_w^8\,at/\Delta x$ constrained) (§2.4.1, Fig. 4). **Shown** (robustness asserted, not displayed)
 5. The 1-D scheme with cubic variational reconstruction is fourth order: $\lim\mathrm{Im}(\theta_w')\,at/\Delta x\approx-\tfrac12\varpi_3^2\theta_w^8\,at/\Delta x=O(\Delta x^7)$ and $\lim\mathrm{Re}(\theta_w')/\theta_w\approx1+\theta_w^4/720$; the optimization does not change the order (§2.4.1). **Derived**
 6. The optimal weights of a higher-degree reconstruction are not the extension of the lower-degree ones; each degree is optimized separately (§2.4.1). **Shown**
-7. For the 2-D linear reconstruction the normalized objective is minimized for $\alpha_{\mathrm{gw}}\ge1/2$ at every aspect ratio and advection angle tested; $\alpha_{\mathrm{gw}}=1/2$ is chosen (§2.4.2, Fig. 7). **Shown**
-8. For the 2-D quadratic reconstruction at aspect ratio 1000, $\alpha_{\mathrm{gw}}=1/2$ is optimal for horizontal advection and $\alpha_{\mathrm{gw}}=3/2$ for inclined advection; since the objective varies slowly for $\alpha_{\mathrm{gw}}\ge0$, $\alpha_{\mathrm{gw}}=1/2$ is taken as "near-optimal", "even for the cubic reconstruction" (§2.4.2, Fig. 8). **Shown** (cubic extrapolated, tested in claim 10)
-9. Final weights for unstructured 2-D grids: $\omega^G_f=(S_{i,j}/d_{ij})^{1/2}$ (Eq. 51) and $\omega^D_f(p,q)=\varpi_{p+q}d_{ij}^{p+q}$ (Eq. 50) with Table 2 values; two 3-D variants are proposed, not verified (§2.4.3). **Stated**
+7. For the 2-D linear reconstruction the normalized objective is minimized for $a_g\ge1/2$ at every aspect ratio and advection angle tested; $a_g=1/2$ is chosen (§2.4.2, Fig. 7). **Shown**
+8. For the 2-D quadratic reconstruction at aspect ratio 1000, $a_g=1/2$ is optimal for horizontal advection and $a_g=3/2$ for inclined advection; since the objective varies slowly for $a_g\ge0$, $a_g=1/2$ is taken as "near-optimal", "even for the cubic reconstruction" (§2.4.2, Fig. 8). **Shown** (cubic extrapolated, tested in claim 10)
+9. Final weights for unstructured 2-D grids: $\mathcal W^G_f=(S_{i,j}/d_{ij})^{1/2}$ (Eq. 51) and $\mathcal W^D_f(p,q)=\varpi_{p+q}d_{ij}^{p+q}$ (Eq. 50) with Table 2 values; two 3-D variants are proposed, not verified (§2.4.3). **Stated**
 10. Static cubic reconstruction of a manufactured boundary-layer profile, $L_2$ error of $\partial u/\partial y$ on mesh 1 (uniform, aspect ratio 500) / mesh 2 (curved, about 1000) (Table 3): Pan et al. $3.49\times10^{-3}$ / $6.84\times10^{-2}$; Cheng et al. $5.22\times10^{-3}$ / $1.38\times10^{-3}$; optimal derivative weights with the geometric weight of Pan et al. divergent / $1.50\times10^{-1}$; with that of Li et al. $1.39\times10^{-3}$ / $8.04\times10^{-4}$; fully optimized $1.39\times10^{-3}$ / $7.33\times10^{-4}$ (§2.4.3). **Shown**
 11. Optimal derivative weights combined with the geometric weight of Pan et al. give very poor results, so the geometric weight must be optimized too (§2.4.3). **Shown**
 12. Negative eddy viscosity in high-order SA solutions comes from Gibbs oscillations where the grid is too coarse, typically at the boundary-layer edge, and can make the computation diverge (§2.5, Fig. 12). **Stated** (cited)
@@ -124,8 +124,8 @@ identity problem. Numbering on this page is that of this version.
 | $\tilde R^n_0$ | $r_0$ (page-local) | frozen decay rate; **collision** with the registry tilde |
 | $\delta=10^{-6}$ | $\delta_{\mathrm{EDP}}$ (page-local) | positivity threshold; **collision** with the boundary-layer thickness |
 | $k$ (reconstruction degree) | (linear, quadratic, cubic) | **collision** with the TKE |
-| $\omega^G_f$, $\omega^D_f(p,q)$, $\varpi_n$ | (geometric and derivative weights; weight parameters) | page-local |
-| $\alpha$ (§2.4) | $\alpha_{\mathrm{gw}}$ (page-local) | exponent of the geometric weight; $\alpha$ also the angle of attack |
+| $\omega^G_f$, $\omega^D_f(p,q)$, $\varpi_n$ | $\mathcal W^G_f$, $\mathcal W^D_f(p,q)$, $\varpi_n$ (geometric and derivative weights; weight parameters; page-local, as on [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md)) | **collision:** $\omega$ is the specific dissipation rate |
+| $\alpha$ (§2.4) | $a_g$ (page-local, as on the boundary-layer-conforming-grid page) | exponent of the geometric weight; $\alpha$ also the angle of attack |
 | $\lambda$, $\lambda_{ij}=S_{i,j}/d_{ij}$ | (aspect ratio; face-length to centroid-distance ratio) | **collision** with the Taylor microscale |
 | $\kappa$, $\kappa'$ (§2.4) | $\theta_w$, $\theta_w'$ (page-local) | non-dimensional and modified wavenumber; $\kappa$ is also the conductivity (§2.1) and the von Kármán constant (Eq. 52) |
 | $\upsilon$ (Eq. 52), $u^+$, $y^+$, $u_\tau$ | $\nu$, $u^+$, $y^+$, $u_\tau$ | $\upsilon$ also an objective-function parameter |
@@ -139,7 +139,7 @@ identity problem. Numbering on this page is that of this version.
 [bibliography](/bibliography.md) with `citedby` this slug. Ref. [1]
 (Wang et al. 2013, Int. J. Numer. Methods Fluids 72) is the same work as
 the ingested [Wang et al. (2013)](/sources/wang-2013.md). Ref. [67] (Li, Chen & Ren, J. Comput. Phys.
-448:110770) is a different work from the ingested [Li et al. (2022)](/sources/li-2022.md) and is keyed `li-2022-c`; ref. [37] (Wang L. et al. 2013, AIAA) is keyed `wang-2013-e`. Ref. [65], the NASA Turbulence Modeling Resource web page,
+448:110770) is a different work from the ingested [Li & Liu (2022)](/sources/li-2022.md) and is keyed `li-2022-c`; ref. [37] (Wang L. et al. 2013, AIAA) is keyed `wang-2013-e`. Ref. [65], the NASA Turbulence Modeling Resource web page,
 is undated. Same-author same-year works take suffixes in printed order
 (Wang 2016, [2], [3]; Bassi 1997, [14], [15]; Zhang 2012, [23], [24];
 Wang 2013, [1], [37]). Refs. [37] and [39] print only a place and an AIAA

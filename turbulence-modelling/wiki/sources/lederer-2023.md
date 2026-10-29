@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 493:112492"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Lederer_High-order_projection-based_upwind_method_for_implicit_large.pdf"
 tags: [implicit-les, numerical-dissipation, les, sgs-model, incompressible-flow]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-29T10:06:00Z
 ---
 
 # Summary
@@ -46,8 +46,8 @@ at the coarsest resolutions; adaptive HOPU markedly improves the $N=3$
 channel mean velocity and the near-wall spectrum, and the coarse-mesh hill
 statistics near reattachment, while $N=6$ results are unaffected. The
 authors read adaptive HOPU as "a wall model approach for standard DG ILES";
-as defined in §3.3 it prescribes no wall stress and uses no matching height,
-unlike the methods of [wall-modelled LES](/methods/wall-modelled-les.md). The paper lists the drawbacks of explicit
+as defined in §3.3 it prescribes no wall stress and uses no matching height
+(see [wall-modelled LES](/methods/wall-modelled-les.md)). The paper lists the drawbacks of explicit
 [LES](/definitions/large-eddy-simulation.md) filtering as motivation, and
 cites DG-based implicit LES in the
 [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) family

@@ -1,18 +1,18 @@
 ---
 type: Software
 title: "PHengLEI"
-description: "PHengLEI is the compressible multi-block structured-grid solver of the China Aerodynamics Research and Development Center; this page records the finite-difference numerics, nonlinear weights, time integration and turbulence treatments (SATES, SATES-σ, SST-IDDES, Smagorinsky LES) with which three bundle sources run high-lift airfoils, cylinders and a supersonic base flow in it."
+description: "PHengLEI is the compressible multi-block structured-grid solver of the China Aerodynamics Research and Development Center; this page records the finite-difference numerics, nonlinear weights, time integration and turbulence treatments (SATES variants, SST-IDDES and AIDDES, Smagorinsky LES) with which four bundle sources run high-lift airfoils, cylinders and a supersonic base flow in it."
 status: established
 aliases: [PHengLEI solver, CARDC PHengLEI]
 tags: [software, hybrid-rans-les, numerical-dissipation, compressible, separated-flow]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-29T07:36:00Z
 ---
 
 # PHengLEI
 
 **PHengLEI** is the compressible flow solver of the China Aerodynamics
-Research and Development Center (CARDC), described by both bundle sources
-that use it as "a cell-central finite differencing formulation based on
+Research and Development Center (CARDC), described by the first two bundle
+sources that use it as "a cell-central finite differencing formulation based on
 multi-block structured grids" ([Wu et al. 2023](/sources/wu-2023-b.md),
 §2.2; [Wu et al. 2024](/sources/wu-2024.md), §2.4, both citing the code's
 own reference), and in the same words by the group's third paper,
@@ -22,18 +22,24 @@ own reference), and in the same words by the group's third paper,
 [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
 (WCNS) on the [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
 and on canonical validation flows, and of the smooth TENO-type weights of
-Wu et al. (2024b) for the same closure. None of the sources gives the
-code's parallelization, licence or absolute performance figures.
+Wu et al. (2024b) for the same closure. The group's fourth paper,
+[Wu et al. (2026)](/sources/wu-2026-b.md), §3.4, runs the high-order
+branch PHengLEI-HyOrder, described there as a cell-centred finite
+differencing solver on multi-block structured grids and cited to a 2025
+paper of the group in the Aeronautical Journal that the bundle has not
+ingested. None of the sources gives the code's parallelization or licence;
+cost is reported as CPU hours relative to one scheme (Wu et al. 2024b) or as wall-clock hours on stated core counts (Wu et al. 2026; below).
 
 ## Numerics as the sources configure them
 
-**Convective terms: WCNS.** Both papers use the fourth-order explicit WCNS
+**Convective terms: WCNS.** Wu et al. (2023) and Wu et al. (2024) use the fourth-order explicit WCNS
 of Deng & Zhang (2000, which they cite): an explicit flux difference
 
-$$f'_j=\frac{a_{\mathrm c}}{h}\big(f^*_{j+1/2}-f^*_{j-1/2}\big)+\frac{b_{\mathrm c}}{h}\big(f^*_{j+3/2}-f^*_{j-3/2}\big),\qquad a_{\mathrm c}=\tfrac98,\ b_{\mathrm c}=-\tfrac1{24},$$
+$$f'_j=\frac{\alpha_{\mathrm W}}{h}\big(f^*_{j+1/2}-f^*_{j-1/2}\big)+\frac{b_{\mathrm W}}{h}\big(f^*_{j+3/2}-f^*_{j-3/2}\big),\qquad \alpha_{\mathrm W}=\tfrac98,\ b_{\mathrm W}=-\tfrac1{24},$$
 
-with $a_{\mathrm c}$, $b_{\mathrm c}$ page-local names of the flux-difference
-coefficients, $f^*_{j+1/2}$ the Roe flux of interpolated interface states
+with $\alpha_{\mathrm W}$, $b_{\mathrm W}$ the flux-difference coefficients
+of weighted compact nonlinear schemes (registry §11), $f$ the convective
+flux (page-local), $f^*_{j+1/2}$ the Roe flux of interpolated interface states
 and $h$ the grid spacing (Wu et al. 2023, Eq. 12; Wu et al. 2024, Eq. 14).
 The interpolation is fifth order:
 
@@ -45,7 +51,7 @@ The interpolation is fifth order:
   $\hat u^L_{j+1/2}=(3u_{j-2}-20u_{j-1}+90u_j+60u_{j+1}-5u_{j+2})/128$ and its
   mirror for the right state.
 
-*(Compiler check, not in the sources: $a_{\mathrm c}+3b_{\mathrm c}=1$, the
+*(Compiler check, not in the sources: $\alpha_{\mathrm W}+3b_{\mathrm W}=1$, the
 consistency condition of the flux difference, and the five interpolation
 weights sum to one.)* Both papers state that the WCNS satisfies the
 [geometric conservation law](/properties/geometric-conservation-law.md) on
@@ -75,6 +81,23 @@ normalized by the Jiang–Shu weights (Table I): linear 0.97, Z 1.03,
 TENO-type 1.51, smooth 1.52, adaptive smooth 1.68 on the 30P30N; Z 1.02,
 TENO-type 1.58, smooth 1.55, adaptive smooth 1.54 on the base flow.
 
+**PHengLEI-HyOrder: a sixth-order WCNS with adaptive Roe dissipation.**
+Wu et al. (2026, §3.1–§3.4) interpolate primitive variables with a
+sixth-order WCNS of multi-order candidates (MOC6): three third-order
+candidates and one sixth-order optimized linear candidate on
+a six-point stencil, with linear weights $d_k=(1/16,\,10/16,\,5/16,\,100)$,
+indicators "given by Ma et al. (2024)" (not printed) and
+$\epsilon_{\mathrm Z}=10^{-40}$, and they add the smooth tanh cut-off of
+Wu et al. (2024b) with an adaptive $C_T$ (MOC6-STA, Eqs. 22–25; on the
+[WCNS page](/methods/weighted-compact-nonlinear-scheme.md)). The Roe flux
+carries a dissipation coefficient built per variable from a
+total-variation indicator and the Ducros factor (Eqs. 27–28; see
+[shock sensors](/definitions/shock-sensor.md)). Viscous terms are
+fourth-order central, the turbulence-model equations use a "classical
+second-order upwind scheme", time integration is second-order backward
+differentiation with LU-SGS and Newton-like sub-iterations, and DES, DDES
+and IDDES are available in their SST versions (§3.4).
+
 **Lower-order alternatives** used to show the effect of
 [numerical dissipation](/properties/numerical-dissipation.md):
 
@@ -100,7 +123,11 @@ RANS solution (Wu et al. 2023, §2.2; Wu et al. 2024, §2.4).
   [σ-model](/methods/sigma-model.md) factor (Wu et al. 2024, Eqs. 8–11).
 - **SST-IDDES** of Gritskevich et al. (2012) as the
   [detached-eddy simulation](/methods/detached-eddy-simulation.md)
-  comparator (both papers).
+  comparator (Wu et al. 2023, 2024).
+- **SATES-II** and **AIDDES**: a two-layer cut-off coefficient, WALE-type
+  near walls and σ-model-based outside, used in SATES on an SST host and as
+  the LES coefficient of SST-IDDES (Wu et al. 2026, §2.2–§2.3; see
+  [SATES](/methods/self-adaptive-turbulence-eddy-simulation.md)).
 - **Smagorinsky LES** with $C_s=0.1$, $\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$
   and no wall damping mentioned ([Smagorinsky model](/methods/smagorinsky-model.md);
   Wu et al. 2023, Eq. 8).
@@ -113,8 +140,11 @@ RANS solution (Wu et al. 2023, §2.2; Wu et al. 2024, §2.4).
 | Wu et al. (2024), §3.1a | [channel flow](/benchmarks/turbulent-channel-flow.md), $Re_\tau=395$ | $64\times96\times64$, $128\times120\times64$ | mean velocity agrees with DNS on the finer grid |
 | Wu et al. (2024), §3.1b | [square cylinder](/benchmarks/square-cylinder-flow.md), $Re_D=2.2\times10^4$ | 0.66M, 1.73M cells | mean and resolved normal stresses agree with DNS and LDV |
 | Wu et al. (2024), §3.2 | [circular cylinder](/benchmarks/circular-cylinder-wake.md), $Re_D=3\times10^6$ | about 6.7M cells | SATES-σ with WCNS gives $C_D=0.55$, $St=0.24$; with MUSCL $C_D=1.26$ (Table 3) |
-| Wu et al. (2024), §3.3 | MD-30P30N, $Re_C=9\times10^6$, $M=0.2$, $\alpha=8$–$24^\circ$ | 12.8M, 26.4M cells | total lift error of SATES-σ "always less than 6.5%, even at post-stall conditions" |
+| Wu et al. (2024), §3.3 | MD-30P30N, $Re_c=9\times10^6$, $M=0.2$, $\alpha=8$–$24^\circ$ | 12.8M, 26.4M cells | total lift error of SATES-σ "always less than 6.5%, even at post-stall conditions" |
 | Wu et al. (2024b), §IV.C.1 | modified 30P30N, $Re_c=1.71\times10^6$, $M=0.17$, $\alpha=5.5^\circ$, SATES | about 27M cells | Jiang–Shu weights deviate in flap $C_p$ and suppress the slat-cove shear-layer instability; TENO-type and smooth weights agree with experiment and with the linear WCNS (Figs. 7–10) |
+| Wu et al. (2026), §2.4 | zero-pressure-gradient flat plate, $M=0.2$, $Re=5\times10^6$ per unit length | $137\times97\times97$ | SATES-II and AIDDES recover the SST skin friction, SATES-SM under-predicts it (Fig. 1) |
+| Wu et al. (2026), §4.1 | [supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md), $M_\infty=2.46$ | $5.07$ M and $9.5$ M cells, four grids | recirculation length $L_r/R$: SATES-SM 3.17, SATES-II 2.81, IDDES 3.58, AIDDES 2.81, experiment 2.63; 45–52 wall-clock hours on 640 cores (Table 3) |
+| Wu et al. (2026), §4.2 | MD-30P30N, $Re_c=9\times10^6$, $M=0.2$, $\alpha=21^\circ$ | about 4.26 M and 27 M cells | SATES-SM separates prematurely on the slat; SATES-II and AIDDES improve the near-wall and downstream profiles (Figs. 12–14) |
 | Wu et al. (2024b), §IV.C.2 | supersonic axisymmetric base flow of Herrin & Dutton, $M_\infty=2.46$, SATES | about 7M and 42M cells | on the coarse grid the adaptive smooth weights give the best resolved-TKE peaks, against Jiang–Shu weights on the fine grid as numerical reference (Fig. 14) |
 
 Both groups of results lead the authors to the same conclusion on the
@@ -125,7 +155,7 @@ separation of the supercritical regime (Wu et al. 2024, §3.2, Figs. 13–17).
 
 ## Qualifications
 
-- The descriptions of the code come from three papers of the same group,
+- The descriptions of the code come from four papers of the same group,
   all users of SATES with WCNS; the code's own reference is cited but not
   ingested.
 - Wu et al. (2024b, Table I) give the adaptive smooth weights a lower
@@ -145,4 +175,5 @@ separation of the supercritical regime (Wu et al. 2024, §3.2, Figs. 13–17).
 
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2 (solver, WCNS, BCD, time integration), Eqs. 4–8, 12–15, §3, Table 2.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.3–§2.4 (WCNS-E-4, MUSCL, solver), Eqs. 8–17, §3, Table 3, §4.
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §2.2–§2.4 (SATES-II, AIDDES, flat plate); §3.1–§3.4, Eqs. (22)–(28) (MOC6-STA, adaptive Roe dissipation, PHengLEI-HyOrder configuration); §4.1–§4.2, Tables 2–3 (base flow and 30P30N runs, cost).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §II.B–§II.D, Eqs. (10)–(23) (sixth-order flux difference, nonlinear weights); §IV.C.1–§IV.C.2, Figs. 7–14 (30P30N and base flow in PHengLEI, sub-iteration convergence); Table I, Appendix (cost).

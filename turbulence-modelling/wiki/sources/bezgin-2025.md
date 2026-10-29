@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 522:113560"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Computational_Physics_Bezgin_ML-ILES_End-to-end_optimization_of_data-driven_high-order_Go.pdf"
 tags: [implicit-les, data-driven, model-consistent-training, weno, isotropic-turbulence, compressible]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -167,7 +167,7 @@ $\langle\cdot\rangle$ the volume average.
 the [bibliography](/bibliography.md) with `citedby` this slug. Two items
 are bundle sources: [8] [Duraisamy et al. (2019)](/sources/duraisamy-2019.md)
 and [15] [Beck & Kurz (2023)](/sources/beck-2023.md). No cited work falls
-on the key of a different planned or ingested source. [7], [12] and [15]
+on the key of a different ingested source. [7], [12] and [15]
 print no article number (for [12] and [15] it appears only inside the
 printed URLs), [24] prints no volume, [27] (Shu 1998) prints no book title
 or publisher, [39] is the Optax software (2020, GitHub URL). No item is

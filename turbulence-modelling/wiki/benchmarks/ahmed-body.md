@@ -5,7 +5,7 @@ description: "The Ahmed body, a bluff car-like body with a slanted rear whose an
 status: established
 aliases: [Ahmed car body, Ahmed reference model, 25° Ahmed body, 35° Ahmed body]
 tags: [benchmark, separated-flow, hybrid-rans-les, des, wmles, immersed-boundary, lattice-boltzmann, field-inversion]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # Ahmed body
@@ -290,7 +290,7 @@ in fully separated flows (lines 149–152).
 
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) were read in the
   HAL accepted manuscript. Their no-slip runs impose a zero velocity at
-  $y^+\approx100$–$150$, an under-resolved wall condition. The conclusion
+  $y^+\approx100$–$150$. The conclusion
   (lines 557–558) calls it a "non-zero Dirichlet velocity", while §3.3
   (lines 475–476) and the caption of Table 3 call it "zero-velocity" and
   "zero-Dirichlet". Lines 535–536 call the "lift and drag coefficients"

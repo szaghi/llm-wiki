@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Fluid Mech. 1039:A17"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Journal_of_Fluid_Mechanics_Rickard_Modelling_the_wall_slip_in_large_eddy_simulations_with_immer.pdf"
 tags: [les, wall-model, wmles, immersed-boundary, filtering, a-priori-a-posteriori]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -104,9 +104,9 @@ the fit constants.
 # Printed slips
 
 - **Eq. (2.18):** the third term is printed $(2/3)(\nabla\alpha\cdot\overline{\boldsymbol u}_f)\boldsymbol I$, without the subscript $f$ used elsewhere.
-- **Eq. (2.25):** the bracket multiplied by $\rho_f\alpha_{f,w}/\Sigma_w$ adds $\frac{d}{dt}(\boldsymbol u_w+\boldsymbol u_{slip})$ to $\nabla\cdot(\overline{\boldsymbol\tau}^R_f+\boldsymbol R_\mu-\boldsymbol\tau_{sfs})$. *(Compiler check, not in the sources: the first is an acceleration, $\nabla\cdot\boldsymbol\tau_{sfs}$ is an acceleration because the subgrid stress is kinematic, but $\nabla\cdot(\overline{\boldsymbol\tau}^R_f+\boldsymbol R_\mu)$ is a force per unit volume; the terms agree only with a factor $1/\rho_f$ on the dynamic stresses, which elsewhere in the paper carry $\rho_f\boldsymbol\tau_{sfs}$.)*
-- **Fig. 6 caption:** "Streamwise slip velocity fluctuations are approximately 10 % or less of mean slip values", while the text gives r.m.s. $\approx1.5u_\tau$ and mean $6.93u_\tau$ at $\Delta_f^+=50$. *(Compiler check, not in the sources: $1.5/6.93\approx22\%$ at $\Delta_f^+=50$ and $1.5/13.5\approx11\%$ at $\Delta_f^+=300$.)*
-- **§4.1 against Fig. 11(b), Eqs. (5.4), (7.1):** the text says approximation (4.5) "provides accurate results for filter sizes $\delta^+_f\geqslant50$", while the figure and the summary equations state validity for $\Delta_f^+\ge100$. *(Compiler check, not in the sources: Eq. (4.5) with $\varphi_{f,w}=1/2$, $\kappa=0.41$ and the natural logarithm gives $6.32$ at $\Delta_f^+=50$, against the filtered-DNS $6.93$, and $13.53$ at $\Delta_f^+=300$, against $13.5$.)*
+- **Eq. (2.25):** the bracket multiplied by $\rho_f\alpha_{f,w}/\Sigma_w$ adds $\frac{d}{dt}(\boldsymbol u_w+\boldsymbol u_{slip})$ to $\nabla\cdot(\overline{\boldsymbol\tau}^R_f+\boldsymbol R_\mu-\boldsymbol\tau_{sfs})$. the first is an acceleration, $\nabla\cdot\boldsymbol\tau_{sfs}$ is an acceleration because the subgrid stress is kinematic, but $\nabla\cdot(\overline{\boldsymbol\tau}^R_f+\boldsymbol R_\mu)$ is a force per unit volume; the terms agree only with a factor $1/\rho_f$ on the dynamic stresses, which elsewhere in the paper carry $\rho_f\boldsymbol\tau_{sfs}$ *(compiler check, not in the sources)*.
+- **Fig. 6 caption:** "Streamwise slip velocity fluctuations are approximately 10 % or less of mean slip values", while the text gives r.m.s. $\approx1.5u_\tau$ and mean $6.93u_\tau$ at $\Delta_f^+=50$. $1.5/6.93\approx22\%$ at $\Delta_f^+=50$ and $1.5/13.5\approx11\%$ at $\Delta_f^+=300$ *(compiler check, not in the sources)*.
+- **§4.1 against Fig. 11(b), Eqs. (5.4), (7.1):** the text says approximation (4.5) "provides accurate results for filter sizes $\delta^+_f\geqslant50$", while the figure and the summary equations state validity for $\Delta_f^+\ge100$. Eq. (4.5) with $\varphi_{f,w}=1/2$, $\kappa=0.41$ and the natural logarithm gives $6.32$ at $\Delta_f^+=50$, against the filtered-DNS $6.93$, and $13.53$ at $\Delta_f^+=300$, against $13.5$ *(compiler check, not in the sources)*.
 - **Typos:** "elongated and titled upwards" (§4.2, for tilted); a missing semicolon in "Lozano-Durán et al. 2022 Mani & Dorgan 2023" (§1).
 - **Table 1 caption:** writes $(1/\alpha_w)$ for $(1/\alpha_{f,w})$ and lists the kernels in an order (cosine, triweight, triangle, parabolic) different from the rows (cosine, triangle, parabolic, triweight).
 - **Citations:** in-text "Hoyas, Oberlack & Laux 2022" names three of the five authors of the listed reference; the reference "M., GERMANO, R., MOREAU & W., RODI 2002" has inverted names, and its co-authors coincide with the volume editors.

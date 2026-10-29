@@ -5,7 +5,7 @@ description: "A turbulent boundary layer meeting a shock from a compression or s
 status: established
 aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet, shock train, pseudo-shock, expansion–compression corner, compression/expansion ramp, IUSTI interaction, Bachalo–Johnson bump]
 tags: [benchmark, compressible, hypersonic, boundary-layer, shock-boundary-layer-interaction, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg, wmles, data-driven, flux-reconstruction]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -653,9 +653,9 @@ downstream (§IV.C, Figs. 28–32). On the ramp $P_k$ does not weaken
 markedly against the flat plate, as in Tong et al., whereas downstream
 production is much weaker in the impinging-shock case of Fang et al.; the
 authors read this as a physical difference between the two
-configurations (§IV.C). This agrees with the "deceleration first"
-sequence that [Yu et al. (2022)](/sources/yu-2022-e.md) find in the
-integrated budget of their impinging shock. The wall-pressure spectrum
+configurations (§IV.C). [Yu et al. (2022)](/sources/yu-2022-e.md) find a
+"deceleration first" sequence in the integrated budget of their impinging
+shock. The wall-pressure spectrum
 moves from a characteristic $St=f\delta/U_\infty\approx1$ upstream to
 $St\approx0.01$ near separation and in the separation shock (§IV.B,
 Figs. 17–18), a Strouhal number on $\delta$, not on $L_{\mathrm{sep}}$ or
@@ -1426,8 +1426,8 @@ fin (Figs. 20, 27, 31, 35–40). Each case is one SST URANS run of about
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) announce two grids
   for the Mach 6 interaction in §3.3 and list three in Table 10, so the
   "fine mesh" of Fig. 19 is ambiguous; their "separation bubble thickness
-  of approximately $50\delta_0$" exceeds the $26\delta_0$ domain height
-  and must be a length. They print the blending sensor (Eq. 9) as
+  of approximately $50\delta_0$" exceeds the $26\delta_0$ domain height.
+  They print the blending sensor (Eq. 9) as
   $\big((\nabla\cdot\boldsymbol u)^2+|\nabla\times\boldsymbol u|^2\big)/\big((\nabla\cdot\boldsymbol u)^2+(u_\infty/\delta_0)^2\big)$;
   where $\nabla\cdot\boldsymbol u\approx0$ this reduces to
   $|\nabla\times\boldsymbol u|^2/(u_\infty/\delta_0)^2$, which exceeds 1

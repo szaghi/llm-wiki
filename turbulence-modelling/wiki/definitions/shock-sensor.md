@@ -5,7 +5,7 @@ description: "A shock sensor or troubled-cell indicator is the switch that decid
 status: established
 aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator, extremum-property sensor, EP sensor, Ren discontinuity indicator]
 tags: [shock-capturing, numerical-dissipation, compressible, dg, implicit-les, boundary-layer]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Shock sensors and troubled-cell indicators
@@ -22,8 +22,8 @@ shock-capturing [numerical dissipation](/properties/numerical-dissipation.md)
 reaches the resolved turbulence: a sensor that fires on vortical or
 under-resolved turbulent structures turns a low-dissipation scheme into a
 dissipative one there, a sensor that misses a shock lets the scheme
-oscillate. The sources agree on this role and differ on which quantity
-separates shocks from turbulence.
+oscillate. The sources differ on which quantity separates shocks from
+turbulence.
 
 Symbols: $\Psi_i$ the Jameson pressure sensor and $\Phi_i$ the Ducros
 factor of registry §11; $s_e$ the Persson–Peraire indicator of an element
@@ -176,6 +176,22 @@ uses in the sources:
   three-dimensional flow information enters dimension-by-dimension
   finite-volume schemes today only through such sensors (§1, §6; see
   [implicit LES](/definitions/implicit-les.md)).
+- as one factor of the coefficient that scales the upwind term of the Roe
+  flux in the sixth-order WCNS of PHengLEI-HyOrder: for each primitive
+  variable $U$,
+  $$\phi_{\mathrm R}=\phi_1+\phi_2-\phi_1\phi_2,\qquad \phi_1=\Big|\frac{U^{\mathrm R}-U^{\mathrm L}}{\min(U^{\mathrm R},U^{\mathrm L})}\Big|+\epsilon_1,\qquad \phi_2=\frac{(\nabla\cdot\boldsymbol u)^2}{(\nabla\cdot\boldsymbol u)^2+\nabla\times\boldsymbol u+\epsilon_2},$$
+  a total-variation (relative-jump) indicator of the interface states
+  combined with the Ducros ratio as printed, $\epsilon_1$, $\epsilon_2$
+  without values (page-local $\phi_{\mathrm R}$, $\phi_1$, $\phi_2$,
+  $\epsilon_1$, $\epsilon_2$); on the two-dimensional Riemann problem
+  (configuration 3 of Lax & Liu) the coefficient stays close to one in most
+  regions and decreases near shear layers, which the authors read as shock
+  capturing kept and dissipation lowered in the shear layers
+  ([Wu et al. 2026](/sources/wu-2026-b.md), §3.3, Eqs. 27–28, Fig. 4;
+  scheme on [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md)).
+  The combination $\phi_1+\phi_2-\phi_1\phi_2$ is one minus the product of
+  $1-\phi_1$ and $1-\phi_2$, so it equals one when either factor does
+  *(compiler check, not in the sources)*.
 
 The same switch between an energy-preserving central flux and WENO runs
 two further STREAmS DNS: [Yu et al. (2022)](/sources/yu-2022-e.md),
@@ -210,7 +226,7 @@ A dilatation–vorticity sensor of Fernandez et al., with time and space
 relaxation factors 0.7, selects the elements of the DG/FV blend of
 [Klose et al. (2025)](/sources/klose-2025.md), §2 (formula not printed).
 
-**Regularized and signed variants.** Gao et al. (2022, §3.2) recall
+**Regularized and signed variants.** Gao et al. (2022, §3.2) cite
 Pirozzoli's choice $\epsilon=(U_\infty/\delta_0)^2$, which filters
 small-amplitude dilatation outside the boundary layer, and write two
 variants that flag compressions only (Eqs. 16–17, idea credited to Larsson
@@ -803,6 +819,14 @@ the hybrid scheme is central" (§IV A 3). See [shock-generated turbulence](/resu
 
 ## Qualifications
 
+- **The Wu et al. (2026) sensor as printed.** In $\phi_2$ the vorticity
+  enters the denominator as the vector $\nabla\times\boldsymbol u$ added to
+  scalars, where the Ducros factor above uses $|\nabla\times\boldsymbol u|^2$;
+  and $\phi_1$, a relative jump plus $\epsilon_1$, is not bounded by one as
+  printed, so $\phi_{\mathrm R}$ can exceed one *(compiler check, not in the
+  sources)*. The paper calls the coefficient $\phi$ in Eq. (27) and
+  $\phi_k$, "of kth's variable", in the text.
+
 - **What separates a shock from turbulence.** Carlsson et al. (2023) state
   that the product $\Psi_i\Phi_i$ separates shocks from compressible
   turbulence and support it with channel and base-flow runs in which the
@@ -942,6 +966,7 @@ the hybrid scheme is central" (§IV A 3). See [shock-generated turbulence](/resu
 - [Wang et al. (2024b)](/sources/wang-2024-i.md) — Abstract, §I; §II.D, Eqs. (21)–(23) (extremum-property sensor); §III.E, Table III (cost).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §II.D, Eqs. (20)–(22) (Ren-type discontinuity measure setting an adaptive TENO cut-off).
 - [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §3.5, Eqs. (29)–(31) (Hennemann-calibrated modal-energy sensor); §3.6 (sensor-selected entropy-stable cells); §4.1.5, Figs. 3–4, Table 4 (Persson–Peraire, Hennemann and Fernandez detectors compared); §4.2.2, Table 6 (troubled-cell fractions); §4.3.2–4.3.3, Eq. (39) (sensor widening).
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §3.3, Eqs. (27)–(28), Fig. 4 (total-variation and Ducros factors scaling the Roe dissipation of a sixth-order WCNS; Riemann problem).
 - [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1, §5, §6 (Ducros sensor of compressible ALDM; sensors as the only 3-D information of dimension-by-dimension schemes).
 - [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §2, Eq. (9) (artificial viscosity without a shock sensor).
 - [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §3.4, Eqs. (27)–(31) (jump-residual artificial viscosity); §4.2–4.3, Eqs. (39)–(43), Figs. 9–10 (spectral-decay and other refinement indicators).

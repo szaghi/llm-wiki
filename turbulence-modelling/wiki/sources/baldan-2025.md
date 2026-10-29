@@ -9,7 +9,7 @@ year: 2025
 venue: "Phys. Fluids 37:024112"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Physics_of_Fluids_Baldan_Wall-resolved_large_eddy_simulations_of_a_pitching_airfoil_i.pdf"
 tags: [les, airfoil, dynamic-stall, transition, hybrid-rans-les, sgs-model]
-timestamp: 2026-10-28T11:47:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -82,7 +82,7 @@ over from another manuscript. The introduction is unnumbered; sections are 1
 15. LES, SST-intermittency URANS and SBES agree in attached flow within 0.1 in $C_L$ (§2.2, Fig. 9). **Shown**
 16. Peak lift is at $22°$ in all three models against $24°$ in the experiment: all simulations, wall-resolved LES included, anticipate the angle at which the vortex convects downstream (§2.2, Fig. 9). **Shown**
 17. In the early stalled downstroke ($24°$–$18°$) the three models diverge somewhat, then converge as incidence falls; a 0.2 $C_L$ offset from experiment persists (§2.2, Fig. 9). **Shown**
-18. The key numerical–experimental discrepancies "are not primarily due to turbulence models, as commonly reported", but seem linked to wind-tunnel effects or the unreproduced surface roughness of the model (§3, Introduction). **Stated** (inferred from claims 15–17, not tested)
+18. The key numerical–experimental discrepancies "are not primarily due to turbulence models, as commonly reported", but seem linked to wind-tunnel effects or the unreproduced surface roughness of the model (§3, Introduction). **Stated** (not tested in the paper)
 19. Most URANS and hybrid dynamic-stall studies attribute the discrepancies to the turbulence model (Introduction). **Stated**
 20. Much of the LES literature on dynamic stall uses spans of 5–20% of the chord (Introduction). **Stated**
 21. DES best practice (Shur et al. 1999) requires a span of at least one chord to reproduce the dynamic-stall vortex, whose size is of chord order in deep stall (McCroskey 1981) (Introduction). **Stated**

@@ -9,7 +9,7 @@ year: 2025
 venue: "Flow Turbul. Combust. 115:1095-1132"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Flow_Turbulence_and_Combustion_Oulghelou_Machine-Learning-Assisted_Blending_of_Data-Driven_Turbulence.pdf"
 tags: [rans, data-driven, symbolic-regression, separated-flow, uncertainty-quantification]
-timestamp: 2026-10-26T15:38:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -73,8 +73,8 @@ equation, table and figure numbers on this page are those of arXiv v2.
 
 # Key claims
 
-Page-local symbols: $b^\Delta_{ij}$ is the additive anisotropy correction.
-$b^R_{ij}$ is the tensor of the $k$-equation correction $R_k=2k\,b^R_{ij}\partial_j\langle u_i\rangle$.
+Symbols: $b^\Delta_{ij}$ is the additive anisotropy correction and
+$b^R_{ij}$ the tensor of the $k$-equation correction (both registry §11), with $R_k=2k\,b^R_{ij}\partial_j\langle u_i\rangle$. Page-local:
 $\mathcal M=\{M_{SST},M_{SEP},M_{ANSJ}\}$ is the set of experts and $M_{blend}$
 the blended model. $w_M$ is the weight of expert $M$, and $\sigma$ the
 bandwidth of the Gaussian kernel. $L$ is the reference length of each case
@@ -138,7 +138,7 @@ $\{1,\dots,10^{-4}\}$.
 | $\tau_{ij}=2k(b_{ij}+\tfrac13\delta_{ij})$, $\overline{u_i'u_j'}$ | $R_{ij}$ | positive semi-definite, kinematic; **collision:** $\tau_{ij}$ is the SGS stress in the registry |
 | $a_{ij}=2kb_{ij}$, $b_{ij}$ | $2kb_{ij}$, $b_{ij}$ | agree |
 | $b^0_{ij}=-\frac{\nu_t}{k}S_{ij}$ | $b_{ij}=-\nu_t\langle S_{ij}\rangle/k$ | Boussinesq anisotropy; agrees |
-| $b^\Delta_{ij}$, $R_k$, $b^R_{ij}$ ($b^\Delta_R$ in Table 1) | (page-local) | additive corrections |
+| $b^\Delta_{ij}$, $R_k$, $b^R_{ij}$ ($b^\Delta_R$ in Table 1) | $b^\Delta_{ij}$, $b^R_{ij}$ (registry §11); $R_k$ (page-local) | additive corrections |
 | $\alpha^\Delta_n$, $\alpha^R_n$ | $g^{(n)}$ | basis coefficients |
 | $T^{(n)}_{ij}(S^*,\Omega^*)$, $I_1$, $I_2$ | $T^{(n)}$, invariants | normalized by $\omega$ ($S^*=S/\omega$), not $k/\varepsilon$; three tensors and two invariants in 2D |
 | $S_{ij}$, $\Omega_{ij}=\tfrac12(\partial_jU_i-\partial_iU_j)$ | $\langle S_{ij}\rangle$, $\langle\Omega_{ij}\rangle$ | agree |
@@ -166,7 +166,7 @@ is the ingested [duraisamy-2019](/sources/duraisamy-2019.md), ref. [18]
 [lozanoduran-2023](/sources/lozanoduran-2023.md), printed as "963, 35".
 Ref. [80] (Liu Z. et al., "Kan: Kolmogorov-arnold networks", arXiv:2404.19756)
 received the printed key `liu-2024`, which belongs to a different ingested
-work, and is re-keyed `liu-2024-b`. Odd printings are recorded as printed:
+work, and is keyed `liu-2024-b`. Odd printings are recorded as printed:
 - [46] Menter 1992 "Technical report, A";
 - [74] has the author "Resource, N.T.M." (the NASA TMR website);
 - [57] has the corporate author OpenFOAM Foundation;

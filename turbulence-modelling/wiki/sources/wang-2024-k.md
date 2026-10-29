@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Fluids 36:035167"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Physics_of_Fluids_Wang_Wall-modeled_large_eddy_simulation_in_the_immersed_boundary-.pdf"
 tags: [wmles, immersed-boundary, lattice-boltzmann, bluff-body, gpu]
-timestamp: 2026-10-28T12:25:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Summary
@@ -168,7 +168,7 @@ bulk Reynolds number set from a Dean correlation (Eqs. 23–24).
 75 printed references, numbered AIP style with titles, no DOIs printed.
 The list is merged complete into the [bibliography](/bibliography.md) with
 `citedby` this slug. Ref. 30 is the ingested
-[cai-2022](/sources/cai-2022.md). Two references carry keys of planned
+[cai-2022](/sources/cai-2022.md). Two references carry keys of ingested
 Source slugs but are different works and are keyed `huang-2022-b` and `wang-2023-d` respectively: ref.
 58 (Huang Q. et al., "Streamline penetration, velocity error, and
 consequences of the feedback immersed boundary method", Phys. Fluids

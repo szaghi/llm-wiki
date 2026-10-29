@@ -9,7 +9,7 @@ year: 2022
 venue: "Shock Waves 32:69-102"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Shock_Waves_Kumar_Application_of_bandwidth-optimized_WENO_schemes_to_DNS_of_sh.pdf"
 tags: [weno, shock-capturing, numerical-dissipation, dns, compressible]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -136,7 +136,7 @@ with `citedby` this slug. Ref. [28] (Fiévet et al., AIAA J. 2017) prints
 no volume or pages; ref. [35] is a chapter of "Upwind and High-Resolution
 Schemes" (Springer 1989, pp. 328–374); ref. [17] prints "supersonic
 turbulent boundary interaction" in its title. No cited key collides with a
-planned Source slug, and no item is unparseable.
+bundle Source slug, and no item is unparseable.
 
 # Pages created or updated
 

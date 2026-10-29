@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 454:110991"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Simonis_Temporal_large_eddy_simulation_with_lattice_Boltzmann_method.pdf"
 tags: [lattice-boltzmann, temporal-les, approximate-deconvolution, taylor-green-vortex, sgs-model]
-timestamp: 2026-10-28T11:47:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -103,9 +103,9 @@ convergence.
 
 # Printed slips
 
-- Eq. (25): $\epsilon_{res}(t)=2\pi\nu\zeta$. *(Compiler check, not in the sources: multiplying the paper's incompressible momentum equation by $\boldsymbol u$ and averaging over the periodic box, the viscous term gives $-dK/dt=\nu|\Omega|^{-1}\int|\nabla\boldsymbol u|^2dx=\nu|\Omega|^{-1}\int(\nabla\times\boldsymbol u)^2dx$ for a divergence-free periodic field; with $K$ of Eq. (22) and $\zeta$ of Eq. (23) this is $\nu\zeta$, with no factor $2\pi$.)*
-- Eq. (14) relaxes with $\Delta t/(\tau+\frac{\Delta t}{2})$, while Eq. (15) gives $\nu=c_s^2(\tau-\Delta t/2)$. *(Compiler check, not in the sources: Table 1's $\tau=0.50217$ for $N=64$, $Ma=0.1$, $Re=800$ equals $0.5+3\nu_L$ with the lattice viscosity $\nu_L=\Delta t/(Re\,\Delta x^2)=0.00576/(800\times0.09973^2)=0.000724$ and $c_s^2=1/3$ (the lattice sound speed $1/\sqrt3$ printed by the sources of the [lattice Boltzmann page](/methods/lattice-boltzmann-method.md)), the form of Eq. (15); the $Ma=0.2$ row, $\Delta t=0.01154$, gives $0.50435$ against the printed $0.50434$.)*
-- Table 1, $N=128$: $\Delta t=0.00288$ at $Ma=0.1$ and $0.00144$ at $Ma=0.05$. *(Compiler check, not in the sources: $u^L\Delta x$ gives $0.05776\times0.04947=0.002857$ and $0.02887\times0.04947=0.001428$, the rule the other $N=128$ rows follow and the values that reproduce the printed $\tau$; Table 2 prints 0.00285 for the same setting.)*
+- Eq. (25): $\epsilon_{res}(t)=2\pi\nu\zeta$. multiplying the paper's incompressible momentum equation by $\boldsymbol u$ and averaging over the periodic box, the viscous term gives $-dK/dt=\nu|\Omega|^{-1}\int|\nabla\boldsymbol u|^2dx=\nu|\Omega|^{-1}\int(\nabla\times\boldsymbol u)^2dx$ for a divergence-free periodic field; with $K$ of Eq. (22) and $\zeta$ of Eq. (23) this is $\nu\zeta$, with no factor $2\pi$ *(compiler check, not in the sources)*.
+- Eq. (14) relaxes with $\Delta t/(\tau+\frac{\Delta t}{2})$, while Eq. (15) gives $\nu=c_s^2(\tau-\Delta t/2)$. Table 1's $\tau=0.50217$ for $N=64$, $Ma=0.1$, $Re=800$ equals $0.5+3\nu_L$ with the lattice viscosity $\nu_L=\Delta t/(Re\,\Delta x^2)=0.00576/(800\times0.09973^2)=0.000724$ and $c_s^2=1/3$ (the lattice sound speed $1/\sqrt3$ printed by the sources of the [lattice Boltzmann page](/methods/lattice-boltzmann-method.md)), the form of Eq. (15); the $Ma=0.2$ row, $\Delta t=0.01154$, gives $0.50435$ against the printed $0.50434$ *(compiler check, not in the sources)*.
+- Table 1, $N=128$: $\Delta t=0.00288$ at $Ma=0.1$ and $0.00144$ at $Ma=0.05$. $u^L\Delta x$ gives $0.05776\times0.04947=0.002857$ and $0.02887\times0.04947=0.001428$, the rule the other $N=128$ rows follow and the values that reproduce the printed $\tau$; Table 2 prints 0.00285 for the same setting *(compiler check, not in the sources)*.
 - App. B: "The corresponding discretization parameters are summarized in Table 1", while the Fig. 10 caption refers to Table 2.
 - §3.3 and Fig. 6 caption: "$\Theta=10$" for the dimensionless $\tilde\Theta=10$ of Eq. (28).
 - Typographical: "where set to", "wheres the LBM", "looses its model effectiveness", "Therefor".

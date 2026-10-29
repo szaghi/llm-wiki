@@ -5,7 +5,7 @@ description: "A neural network that predicts the scalar coefficients of Pope's t
 status: established
 aliases: [Lund–Novikov basis, nonlinear algebraic SGS model, MANA, TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
 tags: [neural-network, data-driven, rans, symbolic-regression]
-timestamp: 2026-10-28T17:01:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -84,7 +84,7 @@ Boussinesq closure *(compiler check, not in the sources)*. The authors
 state that the linear model restricts the anisotropy to the plane-strain
 line of the barycentric map and, citing Kaandorp & Dwight, that the TBNN
 can reach other realizable states (§2.2.1). Their $k$ and $\varepsilon$
-come from the standard transport equations (App. A).
+come from the transport equations of the $k$-$\varepsilon$ model (App. A).
 
 **A TBNN trained a posteriori.** Unlike the a priori TBNNs surveyed above,
 their network (8 hidden layers of 30 nodes, Leaky ReLU, as in Ling et al.;
@@ -170,7 +170,7 @@ are represented.
 | neural network (TBNN, Ling et al. 2016) | network of the invariants; no explicit expression | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A); Sandberg & Zhao (2022, §4.1); He et al. (2022, §1); Cherroud et al. (2022, §1) |
 | random forests (Kaandorp & Dwight) | tree ensemble on the same basis | Duraisamy (2021, §III.A) |
 | gene-expression programming (Weatheritt & Sandberg 2016, 2017) | explicit algebraic expressions in the invariants | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A); Sandberg & Zhao (2022, §4.1) |
-| sparse regression, SpaRTA (Schmelzer et al.) | sparse linear combination of tensor-polynomial candidate functions of the invariants | Duraisamy (2021, §III.A, §IV.A); Sandberg & Zhao (2022, §3.4, Eq. 8); Cherroud et al. (2022, App. B, which print three SpaRTA models) |
+| sparse regression, SpaRTA (Schmelzer et al.) | sparse linear combination of tensor-polynomial candidate functions of the invariants | Duraisamy (2021, §III.A, §IV.A); Sandberg & Zhao (2022, §3.4, Eq. 8); Cherroud et al. (2022, App. B, which print three SpaRTA models); Hu & Yang (2026, §III A: "tensor polynomials" over "a library of candidate functions", elastic-net sparse regression, no model printed) |
 | deep symbolic regression (an LSTM expression generator trained by a risk-seeking policy gradient) | explicit polynomial-type expressions in two normalized invariants, on the 2D three-tensor basis | read directly: Tang et al. (2023) |
 | gene-expression programming for the LES subgrid stress | constant coefficients of $T^{(1)}$–$T^{(4)}$ of the $\lvert\bar S\rvert$-normalized basis | read directly: Li et al. (2021) |
 | neural network for the compressible LES stress and heat flux (Xu et al. 2023) | network of four (heat flux: six) invariants and a local Reynolds number, on the Lund–Novikov five-tensor basis plus four trace terms and a four-vector heat-flux basis | read directly: Xu et al. (2023) |
@@ -519,6 +519,89 @@ a priori and a posteriori results are on
   (Hamlington & Dahm), could extend predictive capability (Duraisamy et al.
   2019, §5.3).
 
+## Two limits stated by a review (Hu & Yang 2026)
+
+[Hu & Yang (2026)](/sources/hu-2026.md) (§II A, Eq. 3) restate Pope's
+expansion in the registry's form, $b_{ij}=\sum_{n=1}^{10}g^{(n)}T^{(n)}_{ij}$
+with coefficients depending on up to five invariants. They print neither
+the individual tensors nor the invariants. For their invariant features
+(§III B) they normalize the mean strain by its own norm,
+$\langle S_{ij}\rangle/(\langle S_{kl}\rangle\langle S_{kl}\rangle)^{1/2}$,
+not by $k/\varepsilon$. They state two limits of direct anisotropy
+learning.
+
+**The local-equilibrium bound.** The representation is a purely
+algebraic identity, the authors write. The limitation arises only when it
+is used as a *local* algebraic closure, a function
+$b_{ij}=\mathcal G(\langle S_{ij}\rangle,\langle\Omega_{ij}\rangle)$ of
+the local mean gradient ($\mathcal G$ page-local). Such a closure imposes
+an assumption of the local-equilibrium type and cannot represent history
+or non-local transport of anisotropy. In strongly non-equilibrium
+turbulence (adverse pressure gradient, separation and reattachment, rapid
+distortion, strong curvature) "no local algebraic function of the strain
+and rotation rates can be exact, however expressive the function". The bound
+covers any closure of that form, TBNNs included (§II A, §III A); the
+paper states it without a derivation. Duraisamy et al. (2019, §5.3) and
+Agrawal & Koutsourelakis (2024, §2.2.1) state locality caveats (Assessment
+in the sources, above). Hu & Yang name two responses, as cited there: enlarging
+the feature and tensor set beyond Pope's basis (Fang et al., multicase
+CFD-driven training), and transport equations for the correction that
+carry non-local information (Wu et al., nonlocal effects in separated
+flows).
+
+**Ill-conditioning of the injected stress.** Hu & Yang (§II D, §III B)
+cite Poroseva et al.: DNS Reynolds stresses with relative errors below
+0.5%, put into the RANS mean-momentum equations of a plane channel, give
+mean-velocity errors of up to 35%. They also cite Wu et al. (2019), who
+explained this by a local condition number of the mean-momentum operator.
+In the authors' words, the operator acting on the divergence of the
+Reynolds stress "has a very large condition number at high Reynolds
+number", and "any near-cancellation in the stress field becomes a large
+relative error in the mean flow". They list four consequences for the
+learning target:
+
+- learn scalar multipliers on the eddy viscosity or the production (the
+  corrective route of
+  [field inversion and machine learning](/methods/field-inversion-machine-learning.md));
+- learn the Reynolds force vector, the divergence of $R_{ij}$, which
+  avoids one differentiation in the solver and amplifies high-wavenumber
+  errors less (Cruz et al., as cited);
+- train with the solver in the loop (CFD-driven training and online
+  RANS, see [model-consistent training](/methods/model-consistent-training.md));
+- correct through transport equations, which are smoother and better
+  conditioned.
+
+Tang et al. (2023, above) keep the linear part implicit and call this
+split "necessary" because explicit injection of the whole learned stress
+is ill-conditioned.
+
+**What the review rates.** In Hu & Yang's qualitative Table II, which
+the authors call "a reader's guide rather than a rigorous benchmark",
+direct anisotropy methods (TBNN, PIML, tensor-basis random forests) need
+about 5–30 training cases. Their a posteriori robustness is "Low–medium"
+and their interpretability "Low", against "High" robustness for
+corrective and CFD-driven methods. They summarize (§III A, Table I), as
+cited, that the TBNN beat a generic network of similar capacity, and that
+propagated to the velocity it beat linear and nonlinear eddy-viscosity
+RANS on duct and wavy-channel flows (Ling et al.). The tensor-basis
+random forest of Kaandorp & Dwight is reported as comparable in accuracy
+to the TBNN on a square duct and a backward-facing step. The
+physics-informed framework of Wang et al. and Wu et al. explains
+Reynolds-stress discrepancies by Galilean- and rotation-invariant
+mean-flow features. They report from Wu et al. that larger feature sets
+do not necessarily generalize better. Their own reading, which they call
+empirical, is that "a small set of physically meaningful features—
+typically on the order of ten to a few tens—is often sufficient" for
+engineering geometries (§III B). On constraints (§III C, §VII B), they
+state that closures embedding Galilean invariance, realizability or
+transport structure "tend to outperform generic black-box approaches" in
+solver-coupled, out-of-distribution settings. They add that the margin
+depends on configuration, data and metric: in data-rich a priori tests an
+unconstrained network can match or exceed a constrained one, and strict
+realizability can trade a priori accuracy for a posteriori robustness.
+They call the consensus "a qualified tendency rather than a universal
+law".
+
 ## Relation to perturbation approaches
 
 The integrity basis fixes the representation and learns the coefficients.
@@ -532,15 +615,13 @@ eigen-decomposition, or the integrity basis itself. See
 
 ## Qualifications
 
-- **Convention difference between the two reviews.** Duraisamy (2021,
+- **Two forms of the expansion in the two reviews.** Duraisamy (2021,
   Eq. 4) expands the anisotropy, with the isotropic part
   $\tfrac23k\delta_{ij}$ written separately, as on this page. Duraisamy et
   al. (2019, Eqs. 11–12) print the expansion
   $\boldsymbol\tau=\sum_{n=1}^{10}c^{(n)}\mathbf T^{(n)}$ for the full
   Reynolds stress, with no separate isotropic term. That review does not
-  say whether one of the basis tensors is taken as the identity. Neither
-  review presents the difference as a disagreement; it is recorded here as
-  a difference of writing.
+  say whether one of the basis tensors is taken as the identity.
 - Duraisamy (2021, §III.A) credits the TBNN to "Ling and Templeton [28]";
   the cited work has three authors (Ling, Kurzawski & Templeton). The same
   paragraph credits a random-forest variant to Kaandorp & Dwight, but the
@@ -621,6 +702,12 @@ eigen-decomposition, or the integrity basis itself. See
   $\boldsymbol T^m$ (labelled $\lambda_i$, $T^i$ in their Fig. 11); this page
   writes $G^m$, $T^{(m)}$. Their $\boldsymbol R$ is the normalized rotation
   tensor, written $\mathsf W_{ij}$ here.
+- **Printed items in Hu & Yang (2026).** Table I names the TBNN target
+  "Reynolds stress anisotropy $a_{ij}$" while Eq. (3) and the text use
+  $b_{ij}$. The Fig. 2 caption states that "an ~0.5% Reynolds-stress error
+  can yield an ~35% mean-velocity error", while the text gives the cited
+  numbers as bounds: stress errors "below 0.5%" and mean-velocity errors
+  "up to 35%" (§II D, §III B). The figures above follow the text.
 
 ## Contradictions
 
@@ -647,7 +734,7 @@ eigen-decomposition, or the integrity basis itself. See
   sparse Bayesian models with invariant-dependent coefficients at small
   sparsity, e.g.
   $[(-0.496\pm0.0133)+(21.6\pm0.366)I_1+(17.4\pm0.374)I_2]\,T^{(1)}$ in the
-  anisotropy correction at $\lambda=10^2$ (Eq. A.1). The models selected by a posteriori
+  anisotropy correction at sparsity parameter $\lambda_{\mathrm{SBL}}=10^2$ (page-local; Eq. A.1). The models selected by a posteriori
   cross-validation are constant ($0.8433\,T^{(1)}$, $0.382\,T^{(1)}$,
   $0.197\,T^{(1)}$ for the production correction; Eqs. A.13–A.15), and the
   three deterministic SpaRTA models of Schmelzer et al. that they reprint
@@ -675,4 +762,5 @@ eigen-decomposition, or the integrity basis itself. See
 - [Shan et al. (2023)](/sources/shan-2023.md) — §I (TBNN variants reviewed); §II.C (scalar eddy-viscosity network instead); §IV (linear representation left as an uncertainty).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §1 (Ling et al. cited, in passing).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.3, p. 15 (tensor-based anisotropy network mentioned; ref. [177] as printed).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §II A, Eq. 3 (basis restated; local-equilibrium bound, argued); §II D, §III B (ill-conditioning cited from Poroseva et al. and Wu et al.; consequences; features, normalization); §III A, §III C, Tables I–II (TBNN, TBRF, PIML as cited; qualitative ratings; constraints); §VII B.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §3.1, Eqs. 3.1–3.18, Table 1 (Lund–Novikov basis, trace terms, heat-flux basis, invariants); §3.2, Eqs. 3.27–3.43, Table 2 (grid-width normalization); §3.3; §4.1 (MDNA unstable).

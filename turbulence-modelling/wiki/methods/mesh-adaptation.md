@@ -5,7 +5,7 @@ description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an e
 status: established
 aliases: [unsteady residual indicator, smoothness indicator, adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE, automatic mesh convergence, AMC, cell-Reynolds-number criterion, spectral decay indicator, knot-insertion refinement, dynamic load balancing, vortex indicator]
 tags: [mesh-adaptation, hybrid-rans-les, rans, les, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-29T05:10:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -41,7 +41,7 @@ The models and codes have their own pages:
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) (the
 DDES, IDDES and ZDES of Mozaffari et al. and Basile et al.), the
 [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) (Alauzet et
-al., Basile et al.), [RAMSES](/software/ramses.md) and the
+al., Basile et al.), [RAMSES](/software/ramses.md), [AthenaK](/software/athenak.md) (Stone et al.) and the
 [small-scale dynamo](/results/small-scale-dynamo.md) (Martin-Alvarez et
 al.); Mozaffari et al.'s calibration case is the
 [backward-facing step](/benchmarks/backward-facing-step.md); Blind et al.
@@ -456,9 +456,7 @@ analogous effect for implicit dissipation on octree meshes: multi-level
 refinement introduces numerical viscosity and resistivity at one scale per
 level, energy is "dissipated significantly more than expected for the
 $\Delta x_{\max}$ employed", and small-scale structure is lost when gas
-crosses into coarser levels. The two sources reach the same design
-conclusion from different flows: avoid changing the cell size along the
-path of the turbulence. [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
+crosses into coarser levels. [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
 see a third effect in immersed-boundary WMLES on block-structured octree
 grids: coarse–fine interfaces (from $\Delta x$ to $2\Delta x$) partly
 reflect the acoustic radiation of the transition region back toward the
@@ -583,6 +581,28 @@ Boltzmann solver ProLB, [Mozaffari et al. (2024)](/sources/mozaffari-2024.md),
 §2.2, state that refining enough to resolve the boundary layer at high
 Reynolds number is "too expensive" (see
 [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)).
+
+**Octree block AMR on GPUs (Stone et al. 2026).**
+[Stone et al. (2026)](/sources/stone-2026.md) describe the block-based AMR
+of the astrophysical code [AthenaK](/software/athenak.md), carried over
+from Athena++ (§2, §5): an octree of fixed-size MeshBlocks in Z-order,
+communication between levels only at block boundaries, flux correction at
+level boundaries (after any first-order positivity fallback, §3), one time
+step for all levels, and load balance by a per-block cost proportional to
+cells and physics modules, keeping the Z-order. The GPU-specific changes
+are packing all blocks of a device into one kernel launch, keeping the
+data on the device and the tree on the host, and doing prolongation,
+restriction and buffer packing in device kernels. Refinement criteria in
+the demonstrations are thresholds on density or pressure (a density 1.1
+times the background for a 2-D MHD blast; half the wave amplitude for a
+sound wave; pressure for relativistic blasts). Measured on one A100, the
+2-D MHD blast with a $1024^2$ root and two levels runs at 141 against
+181 million cell updates per second on a uniform $4096^2$ grid, "roughly
+20%" overhead, yet takes 18% of the uniform run's wall-clock time with
+essentially the same density field (§5.1, Fig. 20). AMR weak scaling of a
+diagonal sound wave to 4096 Frontier GCDs is super-linear when the block
+size grows from $16^3$ to $128^3$ and nearly perfect at fixed $32^3$, with
+over five million blocks migrated for load balance (§5.2, Fig. 22).
 
 **Adaptation as a requirement for concentrated vortices (Luckring & Rizzi
 2024).** The survey of vortex-dominated aircraft aerodynamics by
@@ -1398,3 +1418,4 @@ see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
 - [Valvo & Abbà (2025)](/sources/valvo-2025.md) — §2.2, Eqs. (4)–(5) (structure-function p-adaptation indicator); §3–4, Tables 2–7, Figs. 5–13 (weights, Zoltan partitioners, hierarchical partitioning, vortex); §5.2, Tables 10–11 (square cylinder).
 - [Zou et al. (2025)](/sources/zou-2025-b.md) — §II D, §III B, Table II, Figs. 8–9 (vorticity-threshold refinement on a moving mesh, fixed-cylinder check); §III C (laminar VIV runs called DNS).
 - [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.3; §5.1.4, Table 6; §5.1.5 (adaptive refinement in engine combustion CFD, commutation errors; passing mention).
+- [Stone et al. (2026)](/sources/stone-2026.md) — §2; §3; §5.1, Fig. 20; §5.2, Fig. 22 (octree block AMR on GPUs).

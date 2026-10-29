@@ -5,7 +5,7 @@ description: "The supercritical RAE 2822 airfoil in transonic flow, case 9 of Co
 status: established
 aliases: [RAE2822, RAE 2822, RAE-2822, RAE 2822 case 9, ADIGMA MTC5]
 tags: [benchmark, rans, compressible, dg, mesh-adaptation, boundary-layer]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # RAE 2822 airfoil
@@ -171,8 +171,7 @@ sources)*.
 - [Wang et al. (2013)](/sources/wang-2013.md) print no force values for
   the workshop entries in the text; their comparison is the error against
   degrees of freedom and work units of Fig. 23. Their statement on smooth
-  turbulence models is worded as a belief ("believe"), with no
-  demonstration in the paper.
+  turbulence models is worded as a belief ("believe").
 - [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) print the case
   at $M=0.725$, $\alpha=2.92^\circ$ (§7.2), against the corrected
   $M=0.734$, $\alpha=2.79^\circ$ of the workshop definition and of the two

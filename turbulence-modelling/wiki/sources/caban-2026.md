@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Fluids 312:107015"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Computers_amp_Fluids_Caban_Analysis_of_the_impact_of_numerically_induced_high-order_fil.pdf"
 tags: [les, sgs-model, filtering, implicit-les, numerical-dissipation, discretization-consistent-closure]
-timestamp: 2026-10-27T15:59:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -92,7 +92,7 @@ published article.
 
 - Eq. 16, middle rows: "$\sum_{l=0}^N j^2b_l$" and so on, with summation index $l$ but $j$ in the summand.
 - Eq. 23, first row, printed $1+2\sum_ka_k=2\sum_ll^rb_l$ for $r=1,2$. Taylor expansion of Eq. 22's stencil $f_{j+l}-2f_j+f_{j-l}\approx l^2h^2f''$ gives $1+2\sum a_k=\sum l^2b_l$ for $r=2$, without the factor 2, and Table 2 satisfies that form (sixth-order: $\tfrac{12}{11}+4\cdot\tfrac{3}{44}=\tfrac{15}{11}=1+2\cdot\tfrac{2}{11}$) *(compiler check, not in the sources)*.
-- Eq. 32, second row, printed exponent $(2l-1)^{2l}$; the exponent must be the order index $2j$: with $2j$, Table 3's 6th-order interpolation satisfies the $j=1$ row ($2^3\cdot\tfrac{3}{10}=2.4=\tfrac32+9\cdot\tfrac1{10}$), with $2l$ it does not ($\tfrac32+81\cdot\tfrac1{10}=9.6$) *(compiler check, not in the sources)*.
+- Eq. 32, second row, printed exponent $(2l-1)^{2l}$; with the order index $2j$ as exponent, Table 3's 6th-order interpolation satisfies the $j=1$ row ($2^3\cdot\tfrac{3}{10}=2.4=\tfrac32+9\cdot\tfrac1{10}$), with $2l$ it does not ($\tfrac32+81\cdot\tfrac1{10}=9.6$) *(compiler check, not in the sources)*.
 - Eq. 43 prints $w(t=0)=\frac{2}{\sqrt3}\sin\theta\cos x\sin y\cos z$; the field is solenoidal only with $\cos x\cos y\sin z$, since $\partial_xu+\partial_yv=-\frac{2}{\sqrt3}\sin\theta\cos x\cos y\cos z$ *(compiler check, not in the sources)*; harmless here because $\theta=0$.
 - §5.1 prints $E_{d,a}(t)=\exp(-6T_v^2t/Re)/E_0$ although $E_d=E/E_0$ is already normalized, and Eq. 42 divides $E_d$ by $E_0$ again inside the logarithm.
 - §5.3.1 and §5.4.1 point to "Table 7" for the ILES and eddy-viscosity errors, which are in Table 4.

@@ -5,7 +5,7 @@ description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span tra
 status: established
 aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL, HLPW-4 case 2]
 tags: [benchmark, wmles, wall-model, rans, des, immersed-boundary, data-driven, mesh-adaptation, dg]
-timestamp: 2026-10-28T12:28:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # NASA CRM high-lift configuration
@@ -418,8 +418,7 @@ two runs.
 - The Reynolds numbers $5.49\times10^6$ (HLPW-4, on the mean aerodynamic
   chord) and $5.6\times10^6$ ([Schotte et al. (2026)](/sources/schotte-2026.md),
   HLPW-5 wing-body, on the root chord) refer to different reference
-  lengths and different configurations of the same model; they are not
-  competing values for one case. [Schotte et al. (2026)](/sources/schotte-2026.md)
+  lengths and different configurations of the same model. [Schotte et al. (2026)](/sources/schotte-2026.md)
   print no force coefficients for the case (Figs. 20–21 only) and compare
   with other RANS solutions, not with experiment.
 - The 30P/30N and Common Research Model results of

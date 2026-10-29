@@ -5,7 +5,7 @@ description: "The JAXA Standard Model, a half-span civil transport in landing co
 status: established
 aliases: [JSM, JAXA high-lift model, HLPW3 JSM]
 tags: [benchmark, wmles, separated-flow, gpu, software]
-timestamp: 2026-10-28T01:51:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # JAXA Standard Model high-lift configuration
@@ -181,8 +181,8 @@ grids and codes, and neither source compares them.
   (1994)", the time-step paper, and later in the same section to Choi &
   Moin (2012).
 - The case is wind-tunnel-specific: the free-air and in-tunnel results
-  differ in drag, pitching moment and inboard separation, so comparisons
-  must say which variant and which (corrected or uncorrected) data they use.
+  differ in drag, pitching moment and inboard separation, and the drag is
+  compared with corrected (free air) or uncorrected (in tunnel) data.
 
 # Citations
 

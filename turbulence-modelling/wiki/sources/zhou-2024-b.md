@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 506:112948"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Computational_Physics_Zhou_Sensitivity_analysis_of_wall-modeled_large-eddy_simulation_f.pdf"
 tags: [wmles, sgs-model, separated-flow, wall-model, grid-requirements, anisotropy]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -66,12 +66,13 @@ Page-local symbols: $L$ the bump width (reference length, not the
 integral scale), $h_b=0.085L$ and $x_0=0.195L$ the bump height and width
 parameter; $L_s$ the horizontal separation length; $\Delta_c=V_c^{1/3}$
 the characteristic cell size; $\nu_{t,w}$ the effective wall eddy
-viscosity; $\breve u_{1,c}$ the running time average of the first-cell
-velocity (the source's overbar); $T_r$ its averaging time; $c_{\mathrm V}$
-the Vreman constant; $s_a$ the SGS activity; $\varepsilon_\nu=2\nu\bar S_{ij}\bar S_{ij}$
-the resolved viscous dissipation.
+viscosity and $\breve u_{1,c}$ the running time average of the first-cell
+velocity (the source's overbar), both registry §11; $T_r$ its averaging
+time; $c$ the Vreman prefactor (as on the [Vreman](/methods/vreman-model.md)
+page); $s_a$ the SGS activity and $\varepsilon_\nu=2\nu\bar S_{ij}\bar S_{ij}$
+the resolved viscous dissipation (registry §11).
 
-1. On the baseline isotropic mesh with the Neumann condition, mean separation occurs only with AMD, Vreman ($c_{\mathrm V}=0.025$) and the mixed model; the Vreman 0.025 bubble is "similar to the DNS", the mixed-model one "significantly larger"; no model, dynamic Smagorinsky and Vreman 0.07 stay attached (§3.1, Fig. 4). **Shown**
+1. On the baseline isotropic mesh with the Neumann condition, mean separation occurs only with AMD, Vreman ($c=0.025$) and the mixed model; the Vreman 0.025 bubble is "similar to the DNS", the mixed-model one "significantly larger"; no model, dynamic Smagorinsky and Vreman 0.07 stay attached (§3.1, Fig. 4). **Shown**
 2. The mean SGS viscosity in the turbulent boundary layer is of the order of the molecular viscosity; AMD gives the largest and Vreman 0.025 the smallest; the mixed model raises it in the shear layer downstream of the peak (§3.1, Fig. 5). **Shown**
 3. Wall $C_p$ agrees upstream of the peak and on the downstream flat wall but differs around the peak and on the leeward side; Vreman 0.025 agrees best with the DNS (§3.1, Fig. 6). **Shown**
 4. Because the Neumann condition imposes the DNS mean wall stress, $L_s$ cannot be read from $C_f$; it is measured from the sign of $\langle u_1\rangle$ at the first off-wall cell centre ($x_2/L=2.38\times10^{-4}$ on the baseline mesh) (§3.1, Fig. 7). **Stated** (method choice)
@@ -140,17 +141,17 @@ keep the cell volume)*. Text: "Whitmore et al. [15] delves" (§1). Ref.
 | $\langle\cdot\rangle$ | $\langle\cdot\rangle$ | time and spanwise average |
 | $\tau_{ij}$ | $\tau_{ij}$ | positive-trace convention (eddy part $-2\nu_t\bar S_{ij}$) |
 | $S_{ij}$, $\lvert S\rvert=(2S_{ij}S_{ij})^{1/2}$ | $\bar S_{ij}$, $\lvert\bar S\rvert$ | factor two included |
-| $c$ (Vreman) | $c_{\mathrm V}$ (page-local) | 0.025 or 0.07; formula not printed |
+| $c$ (Vreman) | $c$ (prefactor, as on the Vreman page) | 0.025 or 0.07; formula not printed |
 | AMD constant | $C_{\mathrm{AMD}}$ | 0.3 |
 | $C_s$ | $C_s$ | 0.13 in the mixed model |
 | $\Delta$, $\Delta_c=\sqrt[3]{V_c}$, $\Delta_1,\Delta_2,\Delta_3$ | $\Delta$, $\Delta_c$ (page-local), $\Delta_k$ | |
 | $x_1,x_2,x_3$; $u_1,u_2,u_3$ | wall-local streamwise, wall-normal, spanwise | the global frame is $x,y,z$ |
 | $h_c$, $u_{i,c}$ | $h_{\mathrm{wm}}$, $U_{\mathrm{LES}}$ components | first off-wall cell centre |
-| $\nu_{t,w}$ | $\nu_{t,w}$ (page-local) | kinematic counterpart of the wall-model viscosity $\mu^w_{\mathrm{sgs}}$ (§11) |
+| $\nu_{t,w}$ | $\nu_{t,w}$ (registry §11) | kinematic counterpart of the wall-model viscosity $\mu^w_{\mathrm{sgs}}$ (§11) |
 | $\tau^{\rm DNS}_{w,1}$, $\tau_{w,i}$ | $\tau_w$ (DNS mean), wall-stress components | |
 | $T$ (Eq. 6) | $T_r$ (page-local) | **collision** with the temperature $T$ |
 | $\epsilon_t=-\tau_{ij}S_{ij}$ | $\Pi$ | SGS energy flux |
-| $\epsilon_\nu$, $s_a$ | $\varepsilon_\nu$, $s_a$ (page-local) | activity parameter of Geurts & Fröhlich |
+| $\epsilon_\nu$, $s_a$ | $\varepsilon_\nu$, $s_a$ (registry §11) | activity parameter of Geurts & Fröhlich |
 | $f_b=h\exp[-(x/x_0)^2]$, $h$, $L$ | $h_b$, $x_0$, $L$ (page-local) | **collision:** $h$ is the cell size, $L$ the integral length |
 | $Re_L$, $L_s$, $C_p$, $C_f$ | $Re_L$, $L_s$ (page-local), $C_p$, $C_f$ | based on $\tfrac12\rho U_\infty^2$ |
 | $\delta_{in}$, $Re_\theta$, $Re_\tau$ | $\delta_{\mathrm{in}}$, $Re_\theta$, $Re_\tau$ | precursor inflow boundary layer |

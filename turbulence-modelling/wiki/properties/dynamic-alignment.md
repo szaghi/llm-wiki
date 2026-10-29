@@ -5,7 +5,7 @@ description: "Dynamic alignment is the scale-dependent alignment of Elsasser inc
 status: hypothesis
 aliases: [Boldyrev alignment, scale-dependent alignment, aligned MHD turbulence, refined critical balance, three-dimensional anisotropy]
 tags: [mhd, astrophysics, plasma, intermittency, anisotropy]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Dynamic alignment and intermittency in MHD turbulence
@@ -176,9 +176,7 @@ et al. (2020) that turbulent resistivity prevents alignment.
   $k_\perp^{-1.7}$, Beresnyak 2014, Fig. 10b) for an asymptotic $-5/3$, while
   Perez et al. (2012, 2014) report $-3/2$ (Fig. 10a). The review's synthesis
   is that "both are right, in a sense": an aligned $-3/2$ inertial range and a
-  Kolmogorov cutoff produced by tearing (§1, §7.2.2). Both sides are
-  un-ingested works cited by the review, so no bundle contradiction is
-  opened here.
+  Kolmogorov cutoff produced by tearing (§1, §7.2.2).
 - Solar-wind conditional structure functions that the review cites from
   Wicks et al. (2013) give a Goldreich–Sridhar-like $-5/3$ for a balanced sub-population and
   $-3/2$ for imbalanced or aligned intervals (Fig. 16).

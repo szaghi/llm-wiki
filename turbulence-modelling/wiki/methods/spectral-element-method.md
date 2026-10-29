@@ -5,7 +5,7 @@ description: "The continuous-Galerkin spectral-element method expands the soluti
 status: established
 aliases: [SEM, CG-SEM, continuous Galerkin spectral element method, spectral/hp continuous Galerkin, direct stiffness summation, SEM TLES]
 tags: [spectral-element, les, wmles, sgs-model, numerical-dissipation]
-timestamp: 2026-10-29T05:18:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Continuous-Galerkin spectral-element method
@@ -218,8 +218,8 @@ $12\times6\times10$ elements at "polynomial order $N_p=7$" and
 $14\times8\times12$ elements at $N_p=6$, as printed. Mean velocities agree
 with DNS on both, while the r.m.s. fluctuations and the Reynolds shear
 stress are better with fewer, higher-degree elements; the authors call
-this a preference for "p-type refinement", in line with the cited Wang et
-al. (2021) on higher order resolving finer scales. With the same mesh the
+this a preference for "p-type refinement", citing Wang et al. (2021) on
+higher order resolving finer scales. With the same mesh the
 wall-modelled run is reported "as high as seven times" cheaper than the
 wall-resolved one at $Re_\tau=550$ (§III A; no timings printed).
 

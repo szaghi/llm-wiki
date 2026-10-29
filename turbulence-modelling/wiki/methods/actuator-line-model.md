@@ -5,7 +5,7 @@ description: "Actuator line and actuator disk models replace rotor blades in an 
 status: established
 aliases: [actuator line model, ALM, actuator line method, filtered actuator line model, F-ALM, actuator disk model, actuator disc model, ADM, filtered actuator disk model, actuator-line tower model, actuator surface method]
 tags: [les, implicit-les, wmles, numerical-dissipation, software]
-timestamp: 2026-10-28T12:23:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Actuator line and actuator disk models
@@ -197,7 +197,7 @@ resolved vorticity differs little between the line and its filtered form
   lift distribution is independent of the kernel width "even for widths
   exceeding the optimum by a factor of 16", matching an actuator line run
   with $\epsilon_{\mathrm G}=\epsilon_{\mathrm G}^{\mathrm{opt}}=0.25c$.
-  This agrees with Stanly et al.'s illustration, where a kernel of $2c$
+  Stanly et al.'s illustration likewise uses a kernel of $2c$ that
   recovers the optimal induced velocity. The accuracy rests on the
   numerically differenced lift gradient: $N_{\mathrm{fp}}=300$ points were
   needed, and the authors suggest clustering the points at the tips.
@@ -247,9 +247,7 @@ and subscript 0 the flat-terrain case (page-local); the actuator-disk runs
 collapse on this curve (Fig. 11a).
 
 Stanly et al. (2022, §1) state the disk's drawback: it sheds a vortex sheet
-instead of distinct tip vortices. The two sources thus sit at the two ends
-of the trade-off: blade-level loads and tip vortices with the line, wake
-and power at wind-farm scale with the disk.
+instead of distinct tip vortices.
 
 ## Host LES and results
 

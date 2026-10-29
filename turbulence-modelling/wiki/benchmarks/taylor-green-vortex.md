@@ -5,7 +5,7 @@ description: "Triply periodic vortex flow that transitions from a single-mode fi
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, compressible Taylor–Green vortex, MHD Taylor–Green vortex, TGV-MHD, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving, mhd]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Taylor–Green vortex
@@ -118,6 +118,7 @@ to the fully turbulent state.
 | [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) | [flux reconstruction](/methods/flux-reconstruction.md) recovering nodal DG, $N=3$, 4, 5, Gauss points, Rusanov and BR2; time-step-independent optimized exponential modal filters of five strengths against no filter; Mach 0.1, also on a sinusoidally perturbed curved mesh; inviscid runs (Mach 0.1–0.5) for the filter optimization | $Re=1600$: nominally $64^3$ DOF; inviscid: $16^3$ DOF | DNS of van Rees et al., extended in time with the workshop data |
 | [Svärd (2022)](/sources/svard-2022.md) | finite volumes, Chandrashekar's entropy-conservative flux with artificial diffusion on the mass flux only (entropy stable, positivity preserving), first-order viscous terms, forward Euler; Mach 0.1, zero bulk viscosity | $32^3$, $64^3$, $128^3$ | second-order energy-stable finite differences of van der Weide et al. ($65^3$, $129^3$), as quoted; reference enstrophy peak about 10.3 |
 | [Cao et al. (2022b)](/sources/cao-2022-c.md) | fourth-order two-stage [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md), no model against Smagorinsky ($C_s=0.1$), Vreman and dynamic Smagorinsky imposed through the collision time; Mach 0.1, $Pr=1$ | $256^3$ cells; $128^3$ and $384^3$ (App. B) | the $1024^3$ DNS of [Cao et al. (2022)](/sources/cao-2022.md) |
+| [Wang et al. (2026)](/sources/wang-2026.md) | the same fourth-order gas-kinetic scheme (fifth-order WENO-Z, two-stage fourth-order time stepping, CFL 0.4), no model against Smagorinsky ($C_s=0.1$), Vreman and dynamic Smagorinsky; Mach 0.1, $\gamma=1.4$, $Pr=1$ | $64^3$, $128^3$, $256^3$ | a $512^3$ DNS of the same framework, box- or Gaussian-filtered to the LES grid, and unfiltered |
 | [Cheng et al. (2023)](/sources/cheng-2023-b.md) | OpenFOAM finite volumes, AUSM+-up flux, ROUND reconstructions (two parameter sets) against the van Leer and MUSCL limiters, no model; inviscid, $p_\infty=100$, to $t=10$ | $128^3$ | a solution taken from a cited work |
 | [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) | continuous Galerkin finite elements (hexahedra, linear tetrahedra), RK4, van Cittert approximate deconvolution of order 5 to 10 with an explicit differential filter, no eddy viscosity; Mach 0.1; DNS at $Re=200$ | LES: $64^3$ and $128^3$ hexahedra, $64^3$ with 10% and 20% node perturbation, a tetrahedral mesh with 64 edge segments per side; DNS: $256^3$ and a mesh of 29.6 million tetrahedra | $Re=1600$: DNS of Jammy et al. ($512^3$, fourth-order finite differences); $Re=200$: Brachet et al.; LES of Bull & Jameson |
 | [Shi & Yan (2023)](/sources/shi-2023.md) | [flux reconstruction](/methods/flux-reconstruction.md) (in-house NFR), $N=3$, Roe flux, BR2, Mach 0.1 | $32^3$, $64^3$, $96^3$ elements (128 to 384 degrees of freedom per direction) | $512^3$ spectral solution |
@@ -298,6 +299,35 @@ depend on the shock-capturing scheme, to future work (§V). See
 [implicit LES](/definitions/implicit-les.md) and
 [numerical dissipation](/properties/numerical-dissipation.md).
 
+**The same comparison over three grids, with velocity-gradient PDFs.**
+[Wang et al. (2026)](/sources/wang-2026.md), the sequel, run the four
+closures on $64^3$, $128^3$ and $256^3$ against a $512^3$ DNS of the same
+framework, separate the modelled from the numerical part of the subgrid
+dissipation, and judge the resolved field by PDFs of the velocity
+gradients against filtered and unfiltered DNS (§III–IV):
+
+- on $64^3$ all runs give similar total subgrid dissipation; with
+  refinement the total falls and the models separate, the dynamic one
+  staying near the no-model run while Smagorinsky and Vreman, nearly
+  identical, give more (Fig. 1); the modelled dissipation of the
+  Smagorinsky run is localized at $t=4$, strongest and widest at $t=8$
+  and more homogeneous at $t=12$–16 (Fig. 4), and its share of the total
+  rises with refinement (Fig. 6);
+- the discrepancy of the gradient PDFs is small for $t\lesssim5$, grows
+  during transition ($t\approx5$–8) and, for Smagorinsky and Vreman,
+  around the dissipation peak ($t\approx8$–10), and decreases in the decay
+  (Figs. 9–10);
+- the no-model run is closest to DNS on $64^3$ and, with the dynamic
+  model, on $128^3$; on $256^3$ the static models are closer to filtered
+  DNS in late decay ($t=14$–16) (Tables I–II; values on
+  [implicit LES](/definitions/implicit-les.md));
+- box- and Gaussian-filtered DNS give nearly identical gradient PDFs at
+  $128^3$, and the ranking is the same with either (§IV A, App. C).
+
+Times are non-dimensional; the paper does not print the reference time
+scale or the initial condition, which it takes from Cao et al. (2022) and
+Cao et al. (2022b).
+
 **A database closure on coarse meshes.**
 [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.4, Fig. 13,
 run [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md)
@@ -433,10 +463,9 @@ excessively dissipative; $P\approx0.1$ is best, with a spectrum close to
 $k^{-5/3}$ over most resolved wavenumbers at $t=20$. The filtered viscosity
 acts mainly at low and medium wavenumbers and prevents high-wavenumber
 pile-up. For the first five time units the scheme dissipates less than the
-viscous reference, then reaches a comparable level. Two sources thus agree
-that a plain Smagorinsky viscosity over-dissipates the TGV (this source and
-[Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) above),
-and [Prakash et al. (2022)](/sources/prakash-2022.md) find the converse
+viscous reference, then reaches a comparable level. This source and
+[Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) above both
+find a plain Smagorinsky viscosity over-dissipative on the TGV, and [Prakash et al. (2022)](/sources/prakash-2022.md) find the converse
 failure, a pile-up at the cutoff, for a model with too little dissipation,
 the unclipped gradient model, in forced
 [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
@@ -747,7 +776,8 @@ Vreman against implicit LES on compact differences
 and dynamic Smagorinsky against filtered implicit LES on central
 differences ([Volpiani (2024)](/sources/volpiani-2024.md)); static and
 dynamic Smagorinsky and Vreman against the no-model fourth-order
-gas-kinetic scheme ([Cao et al. (2022b)](/sources/cao-2022-c.md)). In two of them the
+gas-kinetic scheme ([Cao et al. (2022b)](/sources/cao-2022-c.md); on three grids,
+[Wang et al. (2026)](/sources/wang-2026.md)). In two of them the
 eddy-viscosity runs are also compared with alternatives that win: the
 no-model scheme in Brillon & Nadarajah, implicit LES and the
 Layton–Lewandowski model in Caban et al.
@@ -1341,8 +1371,7 @@ sources)*.
   is "well predicted at all grid levels"; their implicit-LES conclusion
   rests on the second statement. Read in the arXiv v1 preprint.
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) compare an
-  inviscid run with a viscous $Re=1600$ reference, so the dissipation
-  agreement is qualitative; they print the time as "seconds" and the
+  inviscid run with a viscous $Re=1600$ reference; they print the time as "seconds" and the
   Smagorinsky viscosity (Eq. 125) without a density factor, although it is
   used as a dynamic viscosity. Read in arXiv v3.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) were read in arXiv v1;
@@ -1469,8 +1498,7 @@ sources)*.
   reference dissipation peak is "close to 0.0013" (§5.3) is a factor ten
   below the author's own Table 5 and below the van der Weide et al. value
   quoted next (0.0115). The scheme's viscous terms are first order and the
-  time stepping is forward Euler, so the comparison with a second-order
-  scheme is of peak values at matching resolution, not of formal order.
+  time stepping is forward Euler, against the second-order reference scheme.
   The abstract announces a "turbulent Rayleigh-Taylor problem" as third
   test; the paper runs this Taylor–Green vortex instead.
 - [Ma et al. (2022)](/sources/ma-2022.md) print neither the Reynolds
@@ -1591,3 +1619,4 @@ sources)*.
 - [Sun et al. (2026)](/sources/sun-2026.md) — §4; §7.2, Table 6, Figs. 10–16.
 - [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §4.2, Eqs. 33–36, Tables 6–8, Figs. 7–11.
 - [Monteiro et al. (2026)](/sources/monteiro-2026.md) — App. B, Fig. B.1 (2D TGV, verification).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §II C; §III B, Figs. 1–6; §IV A–B, Tables I–II, Figs. 7–10; App. A–C, Table III, Figs. 11–12.

@@ -5,7 +5,7 @@ description: "A neural operator (Fourier, implicit Fourier or transformer-based)
 status: established
 aliases: [neural operator, Fourier neural operator, FNO, IFNO, implicit Fourier neural operator, transformer-based neural operator, TNO, LESnets, LESnets-I, physics-informed neural operator, PINO, data-driven LES surrogate]
 tags: [neural-network, data-driven, les, sgs-model]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Neural-operator surrogates of large-eddy simulation
@@ -141,7 +141,7 @@ about 74% at $T=0.5$ on 2-D turbulence.
 | Rollout tests | 10 new initial fields; isotropic to $t/T_E\approx40$; mixing layer to $650$ momentum-thickness times | 5 new initial fields; 250 network steps (5000 DNS steps, about $5T_E$ in isotropic turbulence) |
 
 (Li et al. §V; Zhao et al. §3, Tables 1, 3. $T_E$ is the large-eddy
-turnover time, page-local, both papers' $\tau=L/u^{\mathrm{rms}}$. The value $\sqrt{0.001}\approx0.032$ is
+turnover time (registry §11), both papers' $\tau=L/u^{\mathrm{rms}}$. The value $\sqrt{0.001}\approx0.032$ is
 a *compiler check, not in the sources*.)
 
 ## Results
@@ -157,7 +157,7 @@ a *compiler check, not in the sources*.)
 - *Mixing layer, data-driven (§V B 2).* The TNO is the most accurate of all
   in momentum thickness, directional kinetic energies, spectra and vortex
   structures and stays stable to $t/\tau_\theta\approx650$
-  ($\tau_\theta$ page-local, the initial momentum thickness over the
+  ($\tau_\theta$ of registry §11, the initial momentum thickness over the
   velocity difference). The FNO momentum thickness "becomes unreliable"
   after $400\,\tau_\theta$ and its kinetic energies diverge after
   $200\,\tau_\theta$ (Figs. 16–17). The two dynamic LES under- then
@@ -229,8 +229,8 @@ spectra are too high; 3000 fields are needed.
   boundaries need other discretizations of the loss.
 
 [Fang et al. (2026)](/sources/fang-2026.md), a review that runs no test,
-list further neural operators for LES, all quoted without
-verification: the transformer-based operator of
+list further neural operators for LES, all as cited by them: the
+transformer-based operator of
 [Li et al. (2024)](/sources/li-2024.md), said to be "outperforming
 traditional LES closures" (§3.3.2, Table 1, their ref. [82]); an earlier
 FNO approach to LES of three-dimensional turbulence (ref. [206]; §2.1, §5.3); an

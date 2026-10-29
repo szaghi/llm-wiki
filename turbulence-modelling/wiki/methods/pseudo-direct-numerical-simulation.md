@@ -5,7 +5,7 @@ description: "Idelsohn et al.'s two-scale method replaces the subgrid model of a
 status: established
 aliases: [P-DNS, pseudo-DNS, RVE-based subgrid closure, representative-volume-element DNS closure]
 tags: [les, sgs-model, data-driven, dns]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Pseudo-direct numerical simulation (P-DNS)
@@ -49,9 +49,8 @@ coarse momentum equation (Eqs. 19–23), the **inertial stress**
 $$\mathcal T_{ij}=\rho\,u^{<}_iu^{<}_j ,$$
 
 ($\mathcal T_{ij}$ registry §11), which enters next to the viscous stress as
-$-\mathcal T_{ij}$: a fine-scale Reynolds-stress product with positive trace
-and density included, the analogue of $\rho\tau_{ij}$ without its trace
-removed. For linear finite elements or finite volumes, replacing
+$-\mathcal T_{ij}$: a fine-scale velocity product with positive trace
+and density included. For linear finite elements or finite volumes, replacing
 $\mathcal T_{ij}$ by its average over the nodal domain is exact; the
 approximation enters when that average is replaced by the average over an
 RVE (Eqs. 24–27). The RVE size lies between the local coarse mesh size and
@@ -75,8 +74,7 @@ twice that value, and RVEs of neighbouring cells may overlap (§2.6–2.7).
 - **Equilibrium wall RVEs** (§2.8, Fig. 4). A Couette-like flow between
   plates at distance $2H$, averaged over the lower half, with one index
   from the wall-parallel shear; it supplies the first layer of wall cells,
-  assuming a nearly wall-parallel coarse velocity. The paper does not
-  relate it to [RANS wall functions](/methods/rans-wall-function.md).
+  assuming a nearly wall-parallel coarse velocity.
 - **Time-developing boundary-layer RVE** (§2.11, Eqs. 45–61). A DNS of a
   boundary layer growing in time over an infinite flat plate at zero
   pressure gradient, solved once in dimensionless form; a triple split
@@ -109,7 +107,7 @@ consistent with the current stress, by
 $W_\tau=C_1b^3+C_2(1-b^3)$, $b$ the normalized shear jump, with
 $C_1=6.8$, $C_2=4.0$ calibrated on decaying isotropic turbulence, and
 freezes it below a perturbation Reynolds number $Re^*=15$ (Eqs. 38–40;
-$W_\tau$, $b$, $C_1$, $C_2$, $Re^*$ page-local). Its constants come from RVE runs, not from a learned regression.
+$W_\tau$, $b$, $C_1$, $C_2$, $Re^*$ page-local).
 
 ## Results reported
 
@@ -170,10 +168,8 @@ fluxes (§3.3–3.4). The multiphase material is on the
   P-DNS recirculation length as 1.04, "again, closer to the DNS reference",
   while Table 2 prints 1.04 for the DNS and 1.108 for P-DNS (§2.10.6); the
   table is quoted above. The coarse kinetic energy of the isotropic case is
-  printed $u^{>}_iu^{>}_i$ without the factor $\tfrac12$, while the
-  initialization of the inertial stress from the fine energy and the
-  energy sums of Eqs. (42)–(44) are consistent only with the factor
-  $\tfrac12$ *(compiler check, not in the sources)*.
+  printed $u^{>}_iu^{>}_i$ without the factor $\tfrac12$ in step 2(a) of
+  §2.10.3, while Eq. (42) prints $u^{>}_iu^{>}_i/2$.
 - **Approximations stated by the authors.** The neglected fine-scale
   acceleration term, the replacement of the cell average by the RVE
   average, the equilibrium databases with a scalar relaxation time, and

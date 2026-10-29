@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, a-priori-a-posteriori, sgs-model, les, rans]
-timestamp: 2026-10-29T05:18:00Z
+timestamp: 2026-10-29T07:36:00Z
 ---
 
 # A priori and a posteriori testing
@@ -77,7 +77,7 @@ the similarity models) use the pair in the same sense;
 their RANS transition model in the solver "a posteriori".
 [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) do not use the
 words for their own experiments, which are all run in the coarse solver,
-but recall a priori and a posteriori results of other closures (§1).
+but cite a priori and a posteriori results of other closures (§1).
 Six further sources use the pair in the same sense.
 [Maejima & Kawai (2025)](/sources/maejima-2025.md) (§5–6) test their
 [super-resolution SGS model](/methods/super-resolution-sgs-model.md) a
@@ -253,7 +253,18 @@ and scale-separation arguments, and that new DNS databases at high
 Reynolds and Mach numbers "can facilitate" the development and
 evaluation of subgrid models for high-enthalpy flows "via a priori
 analysis" (see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
-The words carry ten further meanings that must be kept apart:
+Two papers of 2026 use the pair in the same sense.
+[Hu & Yang (2026)](/sources/hu-2026.md) (§IV A), a review of
+machine-learning closures, define an a priori test as an offline
+comparison of the learned closure with the filtered-DNS subgrid stress,
+and an a posteriori test as running the closure "inside a coupled LES",
+asking whether it "produces stable, accurate long-time statistics". They
+call the gap between the two "the central open problem of ML-LES"
+(below). [Wang et al. (2026)](/sources/wang-2026.md) do not use the
+words; they compare implicit and explicit LES runs of the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) with filtered and
+unfiltered DNS (§III–IV; below).
+The words carry eleven further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
   Sanderse (2025, §4.3) speak of *a priori training* (the loss compares the
@@ -346,6 +357,19 @@ The words carry ten further meanings that must be kept apart:
   statistics and spectra (§5.2). They state that the short-horizon results
   "are meant to demonstrate the training fit … rather than indicate their
   potential to comprehensively reproduce turbulence dynamics" (§5.1).
+- **Filtered DNS as "a priori LES".** [Rajek & Pozorski (2026)](/sources/rajek-2026.md)
+  (§II C, Eq. 15) call the statistics of a DNS explicitly filtered by a
+  sharp spectral cutoff $k_c$ "either filtered DNS (FDNS) or a priori
+  LES", which they describe as LES "devoid of (subgrid-scale) modeling
+  errors". The DNS resolves all scales; only the statistics use the
+  filtered field. Their "theoretical", a priori spectral eddy viscosity
+  is a second use (§II D, Eq. 16): it is computed from the transfer
+  across $k_c$ in the DNS. They then run it as the closure
+  of an actual LES at $Re_\lambda\approx100$, which recovers the DNS
+  spectrum but needs DNS data and so has no predictive value beyond
+  DNS-attainable Reynolds numbers (§III B; see
+  [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md) and
+  [energy backscatter](/definitions/energy-backscatter.md)).
 - **Filtering before or after solving.** [Svärd (2022)](/sources/svard-2022.md)
   (§1, §6) uses "a priori" for a filter applied to the equations and "a
   posteriori filtering" for local averages of a computed weak entropy
@@ -589,6 +613,65 @@ higher-wavenumber, dissipative range": it can rate a dissipative spectrum
 worse than a spectrum with high-wavenumber pile-up, so visual inspection
 of the spectra stays necessary (§5).
 
+**A posteriori metric: distances between velocity-gradient PDFs.**
+[Wang et al. (2026)](/sources/wang-2026.md) argue that global
+dissipation metrics alone cannot show whether an explicit SGS model
+improves or distorts the resolved structures. They propose the statistics
+of the resolved velocity gradients as "a more stringent test", because
+the SGS dissipation depends on them (§III B, §IV A). With $s$ the value of
+one gradient component and $p_{\mathrm D}$, $p_{\mathrm L}$ its PDFs in
+the DNS reference and in the LES (cumulative distributions
+$F_{\mathrm D}$, $F_{\mathrm L}$; all page-local), they score the two
+PDFs by the Jensen–Shannon divergence and the Wasserstein-1 distance
+(Eqs. 33–34):
+
+$$\begin{aligned}\mathrm{JSD}&=\tfrac12\int p_{\mathrm D}\ln\frac{2p_{\mathrm D}}{p_{\mathrm D}+p_{\mathrm L}}\,ds+\tfrac12\int p_{\mathrm L}\ln\frac{2p_{\mathrm L}}{p_{\mathrm D}+p_{\mathrm L}}\,ds,\\ W_1&=\int\lvert F_{\mathrm D}(s)-F_{\mathrm L}(s)\rvert\,ds.\end{aligned}$$
+
+JSD is chosen as the symmetric and bounded counterpart of the
+Kullback–Leibler divergence. The PDFs are histograms of 100 equal bins
+over a common range per component, time and grid: the global minimum and
+maximum of the DNS, implicit-LES and explicit-LES samples, padded by 2%
+on each side. The bin number is stated not to change "the main trends or
+relative ranking". "Mean JSD" and "Mean $W_1$" average the three
+diagonal gradients (§IV A; App. B uses the six off-diagonal ones). The
+reference is $512^3$ DNS from the same gas-kinetic framework. It is used
+unfiltered or box-filtered to the LES resolution, and Gaussian-filtered
+in App. C (the Gaussian width is not printed). The DNS is filtered first
+and then differentiated. The authors note that filtering and
+differentiation commute in the continuum for a homogeneous constant-width
+filter on a periodic domain, and that discretely the two orders differ
+"minimally" on their data (Fig. 7c).
+
+Their time-averaged values, Taylor–Green vortex at $Re=1600$, $M=0.1$
+(Tables I–II; iLES the scheme without explicit model, S, V, D the static
+Smagorinsky ($C_s=0.1$), Vreman and dynamic Smagorinsky models):
+
+| Grid | Reference | iLES | D | S | V |
+|---|---|---|---|---|---|
+| $64^3$ | box-filtered DNS | $4.16\times10^{-3}$ / $2.07\times10^{-2}$ | $4.20\times10^{-3}$ / $2.21\times10^{-2}$ | $5.17\times10^{-3}$ / $3.38\times10^{-2}$ | $4.77\times10^{-3}$ / $3.06\times10^{-2}$ |
+| $128^3$ | box-filtered DNS | $8.01\times10^{-4}$ / $1.32\times10^{-2}$ | $7.90\times10^{-4}$ / $1.32\times10^{-2}$ | $9.95\times10^{-4}$ / $1.98\times10^{-2}$ | $9.39\times10^{-4}$ / $1.80\times10^{-2}$ |
+| $256^3$ | box-filtered DNS | $2.39\times10^{-4}$ / $9.09\times10^{-3}$ | $2.43\times10^{-4}$ / $7.76\times10^{-3}$ | $2.01\times10^{-4}$ / $7.18\times10^{-3}$ | $1.95\times10^{-4}$ / $6.94\times10^{-3}$ |
+| $64^3$ | unfiltered DNS | $9.13\times10^{-3}$ / $9.30\times10^{-2}$ | $1.01\times10^{-2}$ / $1.01\times10^{-1}$ | $1.31\times10^{-2}$ / $1.21\times10^{-1}$ | $1.21\times10^{-2}$ / $1.17\times10^{-1}$ |
+| $128^3$ | unfiltered DNS | $1.49\times10^{-3}$ / $3.12\times10^{-2}$ | $1.73\times10^{-3}$ / $3.72\times10^{-2}$ | $2.37\times10^{-3}$ / $4.72\times10^{-2}$ | $2.32\times10^{-3}$ / $4.52\times10^{-2}$ |
+| $256^3$ | unfiltered DNS | $3.25\times10^{-4}$ / $9.61\times10^{-3}$ | $3.89\times10^{-4}$ / $1.23\times10^{-2}$ | $3.02\times10^{-4}$ / $1.29\times10^{-2}$ | $3.53\times10^{-4}$ / $1.45\times10^{-2}$ |
+
+Each cell is Mean JSD / Mean $W_1$. The two metrics do not always rank
+alike. On $256^3$ against unfiltered DNS the static Smagorinsky model has
+the smallest Mean JSD and implicit LES the smallest Mean $W_1$. The
+discrepancies are small up to $t\approx5$, grow during transition, and
+grow most for S and V around the dissipation peak ($t\approx8$–10)
+(§IV B, Figs. 9–10). The abstract states that implicit LES "provides
+consistently robust agreement with DNS across the tested grid
+resolutions". §IV B reports, as in the table, that on $256^3$ the S and V
+models give the smaller values against filtered DNS, mainly in the late
+decay ($t=14$–16), which the authors read as "a modest regularizing
+benefit". Their conclusion that the explicit closures "show no
+systematic advantage over iLES" is restricted to this scheme, this flow
+and the standard, non-recalibrated coefficients (§V). The integral
+dissipation side of the same study is on
+[implicit LES](/definitions/implicit-les.md) and
+[numerical dissipation](/properties/numerical-dissipation.md).
+
 ## A priori tests on the DNS grid or on the LES grid
 
 Valencia et al. (2026, §I) state that classical a priori tests, run on the
@@ -758,7 +841,7 @@ can disagree).
   similarity models correlate highly with filtered-DNS stresses a priori
   and are insufficiently dissipative a posteriori; eddy-viscosity models do
   the reverse.
-- van Gastelen et al. (2024, §1) recall networks with good a priori
+- van Gastelen et al. (2024, §1) cite networks with good a priori
   correlation that were unstable a posteriori (Beck et al.; Kurz & Beck;
   Park & Choi). In their own 1D tests a vanilla convolutional closure
   trained by derivative fitting alone was unstable and inaccurate,
@@ -800,7 +883,7 @@ can disagree).
   (§5.1.1, §5.2.1). Two-filter training removes most of the gap (4.0 and
   11.93) at no a priori cost (see
   [neural-network SGS models](/methods/neural-network-sgs-model.md)).
-- Jakhar et al. (2026, pp. 1, 4) recall that the second-order
+- Jakhar et al. (2026, pp. 1, 4) cite results showing that the second-order
   [gradient model](/methods/gradient-model.md) reaches a priori pattern
   correlations "above 0.9" with filtered DNS, and find that in forced 2-D
   turbulence its LES is unstable "for any case and any LES resolution".
@@ -860,8 +943,6 @@ runs stably a posteriori when the LES resolves more than 80% of the DNS
 enstrophy. The authors call it "the first closure to simultaneously excel
 in both a priori and a posteriori tests" (p. 4); see
 [symbolic-regression closures](/methods/symbolic-regression-closure.md).
-The two verdicts agree here once the a priori score contains the energy
-transfer; the stress correlation alone did not discriminate.
 
 **An a priori fit selected a posteriori.** Cherroud et al. (2022, §3–4,
 Eqs. 29–32, Table 2) regress the coefficients of
@@ -1229,6 +1310,11 @@ dissipation that is not needed (§IV B–C, §V). The a priori number is a
 filtered-DNS transfer at the a priori filter width (Eq. 18), the a
 posteriori one a residual of the LES energy budget (Eq. 22). See
 Qualifications for how the printed statements fit the tables.
+Wang et al. (2026), extending Cao et al.'s study (their ref. 32), keep the a posteriori residual budget,
+split it into modelled and numerical parts on three grids, and add the
+velocity-gradient PDF distances above. Their DNS reference is $512^3$ from
+the same gas-kinetic framework (§II), while Cao et al. print $1024^3$
+for theirs (above).
 
 **An a priori error budget of a combustion closure.** For
 [conditional source-term estimation](/methods/conditional-source-term-estimation.md)
@@ -1326,7 +1412,7 @@ calls the run "our modification"). No error norms are printed (see
    trained to compensate systematic DNS–LES discrepancies or compounding
    errors, and, since "wall models are more sensitive than SGS models"
    (citing their ref. 22), compounding errors are expected to hurt
-   more in wall-modelled LES. They recall a posteriori studies that exposed
+   more in wall-modelled LES. They cite a posteriori studies that exposed
    ill-conditioning of data-driven SGS models. Kim et al. (2022, §III C)
    make the same point for SGS models: their training succeeds "through the
    online learning process in which the temporal reaction of the SGS model
@@ -1345,7 +1431,7 @@ calls the run "our modification"). No error norms are printed (see
    $\varepsilon$ in the eddy viscosity of one- and two-equation models did not improve
    predictions (Raiesi et al.), and substituting DNS Reynolds stresses did
    not give satisfactory velocity fields (Thompson et al.). Duraisamy et
-   al. (2019, §6) recall the same Thompson et al. result, with Poroseva et
+   al. (2019, §6) cite the same Thompson et al. result, with Poroseva et
    al., and attribute it partly to ill-conditioning of the RANS equations
    (Wu et al.). Agrawal & Koutsourelakis (2024, §1, §2.2) make the same
    argument against "model regression": small errors in the stress can be
@@ -1460,6 +1546,78 @@ calls the run "our modification"). No error norms are printed (see
    gradient model in 2-D turbulence and repair the selection score by
    adding the correlations of the energy transfer and of its forward and
    backscatter parts (above).
+
+**The mechanisms as a review groups them (Hu & Yang 2026).**
+[Hu & Yang (2026)](/sources/hu-2026.md) (§IV A) report that learned SGS
+models with a priori correlation coefficients "often > 0.9" "routinely
+fail a posteriori" in at least one of three ways: numerical instability
+from locally injected energy (mis-modelled backscatter), systematic over-
+or under-dissipation that distorts the large-scale spectrum, and drift out
+of the training distribution. They give three structural reasons. (i) A
+pointwise loss is not aligned with spectra and dissipation statistics and
+averages out intermittent backscatter (see
+[energy backscatter](/definitions/energy-backscatter.md)). (ii) The SGS
+stress is "an extremely small signal compared to the resolved stress", so
+a low relative $L_2$ error on $\tau_{ij}$ can hide a large error on its
+divergence. They call this the LES counterpart of the RANS
+ill-conditioning in which DNS Reynolds stresses with errors below 0.5%
+give mean-velocity errors of up to 35% (Poroseva et al., as cited; see
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
+(iii) The a posteriori state is partly generated by the closure itself,
+so the training and deployment distributions differ.
+Their remedy is to align the training objective with deployment (see
+[model-consistent training](/methods/model-consistent-training.md)). They
+present this, and the claim that the same objective–deployment mismatch
+causes the RANS, LES and PINN failures alike, as their own interpretive
+synthesis, "not an established conclusion of the field" (§I, Fig. 2).
+They argue that benchmarks ranking models by the mean-field $L_2$ error
+alone "would reward exactly the objective–deployment mismatch". They ask
+benchmarks to score spectral and dissipation fidelity, a posteriori
+stationarity and coupled stability (§VII E).
+
+**Proposed tests for generated fields (Hu & Yang 2026).** For
+diffusion-type generative models of turbulence, Hu & Yang (§VI D,
+Table V) separate three kinds of consistency: statistical (the ensemble
+reproduces one- and two-point statistics), dynamical plausibility of
+each sample, and consistency with the PDE residual. They state that
+current evaluations mostly establish the first, reach the second only
+qualitatively and rarely report the third. They propose three protocols,
+not applied in the paper. Let $\boldsymbol u_{\mathrm g}$ be a generated
+velocity field, $\lambda_L$ a Lyapunov exponent of the flow and
+$\langle\cdot\rangle$ here the domain average (all page-local).
+
+- **E1, one-step solver forwarding.** Advance $\boldsymbol u_{\mathrm g}(\cdot,t)$
+  with a reference DNS or LES solver over a resolvable $\Delta t$. Compare
+  the result with $\boldsymbol u_{\mathrm g}(\cdot,t+\Delta t)$ in $L^2$
+  and in a spectral norm weighted by $w(k)\propto k^{a}$, $a\in[1,2]$, or
+  by the inverse of an assumed inertial-range spectrum,
+  $w(k)\propto k^{5/3}$ ($w$, $a$ page-local). A large high-wavenumber
+  error marks a dynamically "too smooth" sample.
+- **E2, PDE-residual consistency.** With the momentum residual
+  $\boldsymbol r=\partial_t\boldsymbol u+(\boldsymbol u\cdot\nabla)\boldsymbol u+\nabla p-\nu\nabla^2\boldsymbol u$
+  ($p$ kinematic, recovered from the pressure Poisson equation, and
+  $\partial_t\boldsymbol u$ a difference of two generated snapshots), report
+  the enstrophy-weighted RMS residual and its dimensionless form
+  $$r_\omega=\left(\frac{\langle\lvert\boldsymbol\omega\rvert^2\lvert\boldsymbol r\rvert^2\rangle}{\langle\lvert\boldsymbol\omega\rvert^2\rangle}\right)^{1/2},\qquad \mathcal E_r=\frac{u_{\mathrm{rms}}\,r_\omega}{\varepsilon_{\mathrm{ref}}},$$
+  with $\varepsilon_{\mathrm{ref}}=2\nu\langle S_{ij}S_{ij}\rangle$ for an
+  unfiltered DNS field. For filtered or LES fields the reference is a
+  total dissipation that includes the SGS part ($\boldsymbol r$, $r_\omega$,
+  $\mathcal E_r$, $\varepsilon_{\mathrm{ref}}$ page-local). The authors
+  state that the value is to be compared across models, with "no
+  universal threshold". Here $r_\omega$ is an acceleration and
+  $u_{\mathrm{rms}}r_\omega$ has the units of $\varepsilon$, so
+  $\mathcal E_r$ is dimensionless *(compiler check, not in the sources)*.
+- **E3, trajectory predictability.** Seed a solver with
+  $\boldsymbol u_{\mathrm g}(\cdot,t_0)$ and track $D(t)/e^{\lambda_Lt}$,
+  with $D$ the pointwise divergence of the generated and solver
+  trajectories (page-local). A dynamically consistent generator should
+  track the reference until $t\sim\lambda_L^{-1}$.
+
+Hu & Yang (§VI, Table VI) state that none of the
+emerging-paradigm studies they tabulate (neural operators, graph
+networks, transformers, diffusion and foundation models) learns or
+replaces a closure term of the averaged or filtered equations (see
+[neural-operator surrogates of LES](/methods/neural-operator-les-surrogate.md)).
 
 ## Testbeds that allow both tests
 
@@ -1614,9 +1772,7 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   as each is run in practice: the algebraic models with averaging and
   clipping, the network without clipping and without averaging of its
   output, though its normalization factors are volume averages (§2.4,
-  §3.3). The a posteriori ranking is
-  therefore one of models with their stabilization, not of the stress
-  forms alone.
+  §3.3).
 - Kim et al. (2024) report the networks "better than" the dynamic
   Smagorinsky model on the training grid and on a coarser one; on the
   finer untrained grid they find the dynamic model in good agreement with
@@ -1692,6 +1848,15 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   19-term network are printed as $\mp1.6\times10^{-2}$ in Table I and as
   $\mp0.0016$ in Table II; the text's statement that the local
   coefficient (0.18) is "one order larger" matches Table I.
+- **Printed items in Hu & Yang (2026).** Table V, row E1, gives only the
+  weight $w(k)\propto k^{5/3}$, while §VI D also allows
+  $w(k)\propto k^{a}$ with $a\in[1,2]$. The table printed before Table V
+  is labelled Table VI; the text cites both by their printed labels.
+- **Wang et al. (2026): scope of the gradient-PDF ranking.** One scheme
+  (a fourth-order gas-kinetic scheme with WENO-Z reconstruction), one flow,
+  three uniform grids and standard model coefficients; mixed and
+  structural models were not tested (§V). The Gaussian filter width of
+  App. C is not printed.
 
 # Citations
 
@@ -1782,3 +1947,6 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1, §4.1–4.2 (reference resolution, end-to-end training); §5.1, Table 2 ("a priori evaluation" as short rollouts); §5.2, Table 3 (full-decay spectral errors).
 - [Posch et al. (2025)](/sources/posch-2025.md) — §6.1, Fig. 17 (validation pyramid combining a priori and a posteriori evaluation; Proch et al. cited). Review, citation only.
 - [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 3 (subgrid viscous closures neglected on a priori grounds, cited); §IV (DNS databases for a priori development of high-enthalpy subgrid models).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §I, Fig. 2 (thesis, attributed); §IV A (definitions, failure modes, structural reasons, remedy); §VI, §VI D, Tables V–VI (consistency notions, protocols E1–E3, emerging paradigms); §VII E (benchmarks).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §II (DNS reference, derivatives); §III B (global dissipation insufficient); §IV A–B, Eqs. 30–34, Figs. 7–10, Tables I–II (filter-then-differentiate, JSD and $W_1$, rankings); App. B, Table III; App. C; §V (scope); abstract.
+- [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §II C, Eq. 15 (FDNS as "a priori LES"); §II D, Eq. 16; §III B (theoretical eddy viscosity run as an LES closure).

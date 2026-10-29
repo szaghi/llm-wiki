@@ -5,7 +5,7 @@ description: "A strong shock crossing order-one density fluctuations generates t
 status: established
 aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale, detonation–turbulence interaction, canonical shock–turbulence interaction, STI, wrinkled and broken shocks]
 tags: [compressible, hypersonic, implicit-les, les, dg, numerical-dissipation, plasma, astrophysics, combustion, shock-turbulence-interaction]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Shock-generated turbulence and turbulent shock jump relations
@@ -23,9 +23,7 @@ into several shocks. They give scaling laws for the generated velocity
 dispersion and turbulent Mach number, and Favre-averaged jump relations in
 which the post-shock Reynolds stress lowers the mean post-shock pressure and
 density. The application is the controlled generation of compressible
-turbulence in laser-driven high-energy-density shock tubes; the paper is
-peripheral to closure modelling, and its "model" content is the scaling and
-jump relations. The converse process, shocks formed by the turbulence itself,
+turbulence in laser-driven high-energy-density shock tubes. The converse process, shocks formed by the turbulence itself,
 is the subject of the last section: driven supersonic turbulence and the
 supersonic [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), used
 by three further sources as tests of shock-capturing discretizations. A
@@ -191,7 +189,7 @@ representation of turbulence interacting with a shock wave", isolating the
 physics from the walls, cross-flows and pressure waves of
 [shock/boundary-layer interactions](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
 (§I, Fig. 1). With solenoidal upstream turbulence it is set by the
-pre-shock Mach number $M_1$ (page-local, relative to the shock), the
+pre-shock Mach number $M_1$ (registry §11, relative to the shock), the
 turbulent Mach number $M_t=\sqrt{R_{kk}}/\tilde c=\sqrt3\,u_{\mathrm{rms}}/\tilde c$
 on the Favre-averaged sound speed, $Re_\lambda$ and the spectrum shape;
 upstream entropic and acoustic content and a temperature-dependent
@@ -246,14 +244,14 @@ or it is fitted as a discontinuity, costlier but free of added
 dissipation and used only at low Reynolds number (§III A 1). The
 Kolmogorov scale across the shock scales as
 $\eta_2/\eta_1\sim\mathcal P\mathcal T^{11/8}$ ($\mathcal P$, $\mathcal T$
-the pressure and temperature jumps, page-local; Eq. 40, from Larsson et
+the pressure and temperature jump ratios, registry §11; Eq. 40, from Larsson et
 al.), making the hypersonic border near $M_1=5$ the costliest for DNS, and a
 small $M_t/M_1$ needs many flow-through times per eddy turnover (§IV A 2).
 See [direct numerical simulation](/definitions/direct-numerical-simulation.md).
 
 **LES of the case** (§III A 3, Eq. 39). The authors write the filtered
 momentum equation with a subgrid stress and a subgrid viscous stress,
-the latter usually neglected, and an eddy-viscosity closure of the
+the latter, they note, usually neglected, and an eddy-viscosity closure of the
 deviatoric subgrid stress (in the registry's sign convention
 $\tau^d_{ij}=-2\mu_t\tilde S^d_{ij}$ with the density-weighted $\tau_{ij}$). From the studies they review:
 
@@ -589,10 +587,6 @@ hydrogen–air flame (§II A–B); the turbulence comes from the post-shock
 jets, not from the shock–inhomogeneity interaction of the first sections.
 The flow measurements and the combustion results are on the Source page.
 
-Unlike the shock-tube runs of the first sections, none of the turbulence-generated
-flows has a single mean shock, so the Favre-averaged jump relations do not apply to them; their
-shocks are the dissipative structures of the turbulence, and the sources
-judge discretizations by how they resolve or smear them.
 
 ## Qualifications
 
@@ -615,7 +609,7 @@ judge discretizations by how they resolve or smear them.
   $\sigma_\rho/\langle\rho\rangle=1.07$ that App. A describes as about 1.03,
   and the main 3D cases as 0.9 against about 0.87 in App. A (labelled
   approximate). The abstract calls $\sigma_\rho/\langle\rho\rangle$ a
-  "normalized variance" although it is a normalized standard deviation, and
+  "normalized variance" while the paper defines it as the standard deviation over the mean, and
   §II B calls the transverse directions "shock-normal".
 - The turbulent Mach number here is the volume-weighted dispersion over the
   mean post-shock sound speed, which the authors note equals the mean local

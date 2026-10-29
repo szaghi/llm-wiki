@@ -5,7 +5,7 @@ description: "Flow past circular cylinders, chiefly at Re_D=3900, with separatio
 status: established
 aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark, drag crisis, critical cylinder flow, supercritical cylinder]
 tags: [benchmark, separated-flow, les, implicit-les, neural-network, pans, immersed-boundary, field-inversion, des, hybrid-rans-les, aeroacoustics]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Circular-cylinder wake
@@ -18,7 +18,7 @@ up through a Kelvin–Helmholtz instability and become turbulent, and vortices
 shed into a turbulent wake. The case is a bluff body without a geometric
 separation point, so a model must get the separation, the transition in
 the shear layers and the shedding together. The quantities compared are the
-mean recirculation length $L_r$ (page-local: distance from the base point
+mean recirculation length $L_r$ (registry §11: distance from the base point
 of the cylinder to the end of the mean recirculation on the centreline),
 the base pressure coefficient $C_{pb}$ (page-local), the largest mean
 backflow velocity on the centreline $U_{\min}$ (page-local), the drag
@@ -85,7 +85,8 @@ Germano identity of the [dynamic procedure](/methods/dynamic-procedure.md);
 | T-SR-nFU / T-VG-nFU | 0.79 / 1.28 | — | — | — | — |
 | T-SR-FU / T-VG-FU | 1.59 / 1.56 | 1.55 / 1.49 | 1.62 / 1.57 | 1.45 / 1.47 | 0.85 / 0.70 |
 
-T-SR-nFU is thus worse than no model on the training grid (§4.2.1). $-C_{pb}$ on the training grid is 0.90, 0.88, 0.88
+T-SR-nFU is thus farther from the DNS than no model on the training grid
+*(compiler check, not in the sources)*. $-C_{pb}$ on the training grid is 0.90, 0.88, 0.88
 and 0.86 for G-SR, G-VG, T-SR-FU and T-VG-FU, against 0.94 for dynamic
 Smagorinsky and 0.87 for the DNS; at $Re_D=10{,}000$ T-SR-FU gives
 $-C_{pb}=1.17$ and $C_D=1.10$ against 1.13 and 1.14 measured (Table 3).
@@ -454,7 +455,7 @@ one-bubble asymmetric, two-bubble asymmetric and two-bubble symmetric
 The model is the scale-resolving hybrid (SRH) of Duffal et al., a
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md) obtained by formally
 applying a temporal filter: the dissipation term of the modelled
-$k$ equation is multiplied by a factor $\psi_H\ge1$ (page-local) that
+$k$ equation is multiplied by a factor $\psi_H\ge1$ (registry §11) that
 depends on the time-averaged total turbulent kinetic energy, modelled plus
 resolved, and on a theoretical modelled-to-total energy ratio computed from
 the cell size and time step, with a shielding function of wall distance
@@ -741,7 +742,7 @@ both lean on Parnaudeau et al. for reference data.
   same tandem spacing $3.7D$ the Reynolds number is printed
   $1.66\times10^5$ by Ghidoni et al. (§6.3) and $1.6\times10^5$ by
   [Wang et al. (2021)](/sources/wang-2021-l.md) (§3.2); neither comments on
-  the other's value, and the two are recorded side by side.
+  the other's value.
 - [Ma et al. (2022)](/sources/ma-2022.md) and
   [Kang & Masud (2022)](/sources/kang-2022.md) both print the cylinder
   results only as figures; neither gives a wall resolution in wall units,

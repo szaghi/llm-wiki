@@ -5,7 +5,7 @@ description: "The bulk (volume) viscosity multiplies the velocity divergence in 
 status: established
 aliases: [volume viscosity, dilatational viscosity, second viscosity, bulk viscous Reynolds number, viscous Prandtl number, Stokes hypothesis]
 tags: [compressible, dns, implicit-les, numerical-dissipation, mhd]
-timestamp: 2026-10-29T05:10:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Bulk viscosity
@@ -285,7 +285,7 @@ shock-capturing dissipation (see
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.2, Eqs.
   (2.6)–(2.10), App. B, regularize the shocks of a Mach 2.91
   compression/expansion-ramp DNS in a spectral-difference code with an
-  artificial bulk viscosity $\mu_{b,\mathrm{AV}}$ (page-local; the source's
+  artificial bulk viscosity $\mu_{b,\mathrm{AV}}$ (registry §11; the source's
   $\beta_{AV}$) in the stress $\sigma_{ij}=2\mu S^d_{ij}+\mu_{b,\mathrm{AV}}\,\partial_ku_k\,\delta_{ij}$,
   constant in each element, $\mu_{b,\mathrm{AV}}=\rho f$ with $f$ rising
   smoothly from 0 to $\varepsilon_0\propto\lambda_{\max}h/(N+1)$
@@ -298,7 +298,7 @@ shock-capturing dissipation (see
   vanish at a wall (Eq. 2.10; see [shock sensors](/definitions/shock-sensor.md)).
   An artificial conductivity $\mu_{b,\mathrm{AV}}c_p/Pr_{\mathrm{AV}}$
   accompanies it, with $Pr_{\mathrm{AV}}=Pr\{1+\exp[-4(M-3)]\}$
-  (page-local; $M$ the local Mach number), chosen to avoid unnecessary
+  (registry §11; $M$ the local Mach number), chosen to avoid unnecessary
   thermal dissipation at low Mach number (Eqs. 2.8–2.9). The mean
   $\mu_{b,\mathrm{AV}}/\mu$ is nonzero only near the shock (Fig. 12). In
   the resolved kinetic-energy budget the artificial term,

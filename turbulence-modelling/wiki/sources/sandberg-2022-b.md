@@ -9,7 +9,7 @@ year: 2022
 venue: "Int. J. Heat Fluid Flow 95:108983"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_International_Journal_of_Heat_and_Fluid_Flow_Sandberg_Machine-learning_for_turbulence_and_heat-flux_model_developm.pdf"
 tags: [review, data-driven, rans, heat-flux, symbolic-regression, earsm]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -124,10 +124,10 @@ $a^{\mathrm h}_4$, Eq. 13) as special cases.
 
 # Printed slips
 
-- **Eq. (1) against §3.2:** $\tau_{ij}$ is defined as $-\overline\rho\,\overline{u''_iu''_j}$, but Eq. (1) writes $\tau_{ij}-\frac23\overline\rho k\delta_{ij}=-2\mu_t[S_{ij}-\frac13S_{kk}\delta_{ij}]$. *(Compiler check, not in the sources: with that definition $\tau_{kk}=-2\overline\rho k$, so the left side has trace $-4\overline\rho k$ while the right side is traceless; with $\tau_{ij}=+\overline\rho\,\overline{u''_iu''_j}$ both are traceless.)* §4.1 then writes $P_k=\tau_{ij}\partial u_i/\partial x_j$, which uses the negative convention.
-- **Eqs. (12)–(13), dimensions.** *(Compiler check, not in the sources: with $\tau_{ij}=\overline{u'_iu'_j}/2k$, dimensionless as defined after Eq. 6, and $\alpha_2=C_{GGDH}/(\beta^*k)$, $\sqrt k\,\alpha_2\tau_{ij}\partial\vartheta/\partial x_j=C_{GGDH}(k/\epsilon)\tau_{ij}\partial\overline\Theta/\partial x_j$, which has units K·s/m, not those of a heat flux; the printed right side $C_{GGDH}\tau_{ij}\partial_j\overline\Theta/\omega$ has the same defect. Both are dimensionally consistent if $\tau_{ij}$ there is the dimensional $\overline{u'_iu'_j}$, and the middle and right expressions then agree only if $\omega=\epsilon/k$; with $\omega=\epsilon/(\beta^*k)$ a factor $\beta^*$ remains. Eq. (13) is likewise consistent only with dimensional $\tau$.)*
+- **Eq. (1) against §3.2:** $\tau_{ij}$ is defined as $-\overline\rho\,\overline{u''_iu''_j}$, but Eq. (1) writes $\tau_{ij}-\frac23\overline\rho k\delta_{ij}=-2\mu_t[S_{ij}-\frac13S_{kk}\delta_{ij}]$. with that definition $\tau_{kk}=-2\overline\rho k$, so the left side has trace $-4\overline\rho k$ while the right side is traceless; with $\tau_{ij}=+\overline\rho\,\overline{u''_iu''_j}$ both are traceless *(compiler check, not in the sources)*. §4.1 then writes $P_k=\tau_{ij}\partial u_i/\partial x_j$, which uses the negative convention.
+- **Eqs. (12)–(13), dimensions.** with $\tau_{ij}=\overline{u'_iu'_j}/2k$, dimensionless as defined after Eq. 6, and $\alpha_2=C_{GGDH}/(\beta^*k)$, $\sqrt k\,\alpha_2\tau_{ij}\partial\vartheta/\partial x_j=C_{GGDH}(k/\epsilon)\tau_{ij}\partial\overline\Theta/\partial x_j$, which has units K·s/m, not those of a heat flux; the printed right side $C_{GGDH}\tau_{ij}\partial_j\overline\Theta/\omega$ has the same defect. Both are dimensionally consistent if $\tau_{ij}$ there is the dimensional $\overline{u'_iu'_j}$, and the middle and right expressions then agree only if $\omega=\epsilon/k$; with $\omega=\epsilon/(\beta^*k)$ a factor $\beta^*$ remains. Eq. (13) is likewise consistent only with dimensional $\tau$ *(compiler check, not in the sources)*.
 - **Eq. (7):** $J_1$ and $J_4$ are printed with the same tensor, $\frac{\partial\vartheta}{\partial x_i}w_{ik}w_{kj}\frac{\partial\vartheta}{\partial x_j}$.
-- **Eq. (16).** *(Compiler check, not in the sources: the kinematic flux $\overline{u''_iT''}$ is added to $\mu_t f\,\partial\overline T/\partial x_i$ with the dynamic eddy viscosity; the two terms differ by a density factor unless $f$ absorbs it.)*
+- **Eq. (16).** the kinematic flux $\overline{u''_iT''}$ is added to $\mu_t f\,\partial\overline T/\partial x_i$ with the dynamic eddy viscosity; the two terms differ by a density factor unless $f$ absorbs it *(compiler check, not in the sources)*.
 - **After Eq. (12):** "$C_{GDDH}(I_m,J_n)$" for $C_{GGDH}$.
 - **§4.2.1:** the Lav et al. (2021) cost function is called "Eqn. 9"; it is Eq. (11), Eq. (9) is the GDH.
 - **§3.2:** "(Spalart and Allmaras, yyyy)", and the reference list entry has no year.

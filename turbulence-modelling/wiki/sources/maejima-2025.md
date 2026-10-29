@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1013:A28"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Maejima_Unsupervised_and_supervised_machine_learning_pipeline_for_su.pdf"
 tags: [les, sgs-model, neural-network, data-driven, backscatter, a-priori-a-posteriori]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -139,8 +139,9 @@ appears in the printed definition (low Mach number).
 60 printed references in JFM author–year style, alphabetical; merged complete
 into the [bibliography](/bibliography.md) with `citedby` this slug. Duraisamy
 (2021) and Inagaki & Kobayashi (2023) are the ingested `duraisamy-2021` and
-`inagaki-2023`; Maeyama & Kawai (2023, J. Fluid Mech. 969:A29) is distinct from
-the ingested `maeyama-2022`. The arXiv preprints (Gulrajani 2017, Kingma 2014,
+`inagaki-2023`; Maeyama & Kawai (2023, J. Fluid Mech. 969:A29) is the ingested
+[maeyama-2023](/sources/maeyama-2023.md), not the plasma-turbulence
+`maeyama-2022`. The arXiv preprints (Gulrajani 2017, Kingma 2014,
 Mirza 2014, Tian 2022, Zhu 2020) are preprint entries as printed. Recorded as
 printed: Slotnick et al. (2014) "Tech. Rep," without institution, Lilly (1966)
 NCAR report, the Smith & Metzler issue "(-1)", and the Kingma & Ba arXiv

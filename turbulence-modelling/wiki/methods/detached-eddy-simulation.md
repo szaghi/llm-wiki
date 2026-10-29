@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Detached-eddy simulation and its delayed and zonal forms"
-description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and ambiguous grids, DDES shielding, IDDES, ZDES modes including mode 2 (2020), grid lengths, calibration with the numerical scheme, transitional DDES, high-order DG use, and applications."
+description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and ambiguous grids, DDES shielding, IDDES, ZDES modes including mode 2 (2020), grid lengths, scheme calibration, transitional and adaptive variants, high-order DG use, and applications."
 status: established
-aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES, RSM-IDDES, RSM-DynIDDES, dynamic IDDES, modelled-stress depletion, grid-induced separation]
+aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES, RSM-IDDES, RSM-DynIDDES, dynamic IDDES, modelled-stress depletion, grid-induced separation, AIDDES, adaptive IDDES, transitional IDDES, SA-BCM IDDES]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -136,7 +136,7 @@ dependent"; the RANS model becomes hybrid by replacing $l_{\mathrm{RANS}}$
 with $l_{\mathrm{DDES}}$. They use the SA and SST hosts, with $\Delta=\Delta_{\max}$
 taken in their edge-based solver as the longest edge of the dual control
 volume ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, Eqs. 16–17).
-For SA, $l_{\mathrm{RANS}}=d$ and with $f_d=1$ the form reduces to the
+For SA, $l_{\mathrm{RANS}}=d$ and with $f_d=1$ and $\Psi=1$ the form reduces to the
 $d_{\mathrm{DES}}$ above *(compiler check, not in the sources)*.
 
 Delassaux et al. (2023, §4.1.3, Eqs. 6–11) print the SST host in ANSYS
@@ -527,6 +527,47 @@ $k$-$\omega$ DDES) and call theirs the first on a Reynolds-stress host (§I).
 In their equilibrium argument the LES branch is "Smagorinsky-like", an exact
 Smagorinsky model only in equilibrium turbulence (§II C).
 
+### Adaptive IDDES: a local LES coefficient from SATES
+
+[Wu et al. (2026)](/sources/wu-2026-b.md) print the SST-IDDES of
+Gritskevich et al. (as cited) as
+
+$$l_{\mathrm{IDDES}}=\hat f_d(1+f_e)\,l_{\mathrm{RANS}}+(1-\hat f_d)\,l_{\mathrm{LES}},\qquad l_{\mathrm{LES}}=C_{\mathrm{DES}}\Delta,\qquad \Delta=\min\big[C_w\max(d,\Delta_{\max}),\,\Delta_{\max}\big],$$
+
+with $C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$ and $l_{\mathrm{RANS}}=\sqrt k/(\beta^*\omega)$
+(the SATES integral length $L_i$, registry §11); $\hat f_d$, $f_e$ and the
+value of $C_w$ are not printed (§2.3, Eqs. 17–19). Their grid length has no
+wall-normal spacing term, where Carlsson et al. and Li et al. (2024b) above
+print $\max(C_wd,C_w\Delta_{\max},\Delta_{wn})$. Their *adaptive IDDES*
+(AIDDES) replaces the LES length by
+
+$$l_{\mathrm{LES}}=C_{x,\mathrm{II}}\,\Delta_{\mathrm{vol}},$$
+
+with $C_{x,\mathrm{II}}$ (page-local) the two-layer coefficient of SATES-II,
+a WALE-type near-wall coefficient blended with a σ-model coefficient by a
+modified SST $F_2$ (Eq. 20; formulas on the
+[SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md)). They
+read the ratio $l_{\mathrm{IDDES}}/l_{\mathrm{RANS}}$ as a SATES-like
+resolution indicator, one in RANS regions (Eq. 21). In SST-IDDES this ratio
+stays near 1 in the attached boundary layer, the shielding, but "decays more
+slowly and remains at moderate values" in the separated shear layer of a
+supersonic base flow, a delayed RANS-to-LES transition; AIDDES keeps the
+shielding and drops quickly in the shear layer (§4.1.2, Fig. 8). On the
+[supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md)
+($M_\infty=2.46$, $9.5\times10^6$ cells) the recirculation length is
+$3.58R$ with IDDES and $2.81R$ with AIDDES against $2.63R$ measured
+($+36.1\%$ and $+6.8\%$, $R$ the base radius, page-local), at 45.30 and
+46.54 wall-clock hours on 640 cores (Table 3); on the
+[30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md) at $21^\circ$
+IDDES suppresses the Kelvin–Helmholtz instability of the slat wake,
+giving a "relatively stable quasi-two-dimensional" wake, and AIDDES gives
+stronger three-dimensional fluctuations and better velocity profiles
+downstream under the varying adverse pressure gradient, while IDDES,
+through its shielding, deviates much less near the walls than SATES-SM
+(§4.2.2–§4.2.3, Figs. 13–14). On a flat plate, the authors state, AIDDES
+does not adversely affect the wall modelling of IDDES (§2.4, Fig. 1). The authors present the adaptive
+coefficient as a strategy transplantable to other hybrids (§5).
+
 ## Transitional DDES
 
 Möller et al. (2024) couple SST-DDES to the one-equation intermittency
@@ -603,6 +644,91 @@ own WALE LES on 10.9 million cells; §III; see
   like an LES model", and that 5% is a further adjustable parameter that
   may need re-tuning for other cases or meshes (pp. 25–26; see
   [numerical dissipation](/properties/numerical-dissipation.md)).
+
+### Transitional IDDES with an algebraic intermittency
+
+[Alberti et al. (2026)](/sources/alberti-2026.md) build a transitional
+SA-IDDES in the incompressible modal DG solver of Alberti et al. (2025)
+(section on high-order DG below), with the IDDES length of Shur et al., $C_{\mathrm{DES}}=0.65$,
+the shear-layer-adapted vorticity length replacing the whole IDDES grid
+length, all lengths normalized by $N+1$ and no low-Reynolds-number
+correction (§2.1, Eqs. 1–5). Its RANS branch is the algebraic SA-BCM
+transition model of Cakmakcioglu et al. (as cited), whose intermittency
+$\gamma_{\mathrm{BC}}\in[0,1]$ (page-local; no transport equation) multiplies
+the SA source (see
+[local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)).
+They argue that an algebraic model suits a hybrid because it adds no
+equation, and that DES-like models by default cannot predict
+laminar-to-turbulent evolution (§1). Three changes against what they call a "standard"
+SA-BCM-in-IDDES implementation (§2.1.1):
+
+1. both production and destruction of $\tilde\nu$ are multiplied by
+   $\gamma_{\mathrm{BC}}$ (pure-RANS SA-BCM multiplies production only),
+   retained from Yalçın et al. (as cited) to keep the eddy-viscosity balance
+   in LES mode (Eq. 6);
+2. a modified shielding function
+   $$\hat f_d^*=\max\{\hat f_d,\,1-\gamma_{\mathrm{BC}}\},$$
+   active wherever $\gamma_{\mathrm{BC}}<1$, which forces the sequence
+   laminar (Navier–Stokes) → RANS → LES and prevents a switch from a laminar
+   solution directly to LES when transition occurs outside the shielded
+   region; for DDES the analogue is $f_d^*=\min\{f_d,\gamma_{\mathrm{BC}}\}$
+   with the DDES $f_d$ above (Eq. 9; page-local $\hat f_d^*$, $f_d^*$);
+3. the SA-BCM constant the source calls $\chi_2$ (here $C_{\mathrm{BC}2}$,
+   page-local, not the SA ratio $\chi$) raised from 50 to 1000, to calibrate
+   the onset of natural transition; recommended only for DES-like models,
+   because the authors observed that 1000 "can already alter pure RANS
+   solutions" (§2.1.1, §4).
+
+They state that changes 1 and 2 apply to every intermittency-based
+transitional DES-like model, without testing a non-algebraic one, and list
+other routes in the literature: an intermittency threshold below which RANS
+is enforced (Xiao et al.) and a blending between transitional RANS and DES
+(Kim & Kwon), both as cited (§2.1.1, §4).
+
+**Results** (modal DG, $N=3$–5; §3):
+
+- *Eppler 387, $Re_c=3\times10^5$.* Fully turbulent IDDES misses the
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md) at
+  $0^\circ$ and predicts attached flow; the transitional hybrids match
+  transitional RANS in attached flow, which the authors want, since
+  switching to LES without massive separation leaves a dissipative deficit
+  on DES grids; $C_{\mathrm{BC}2}=1000$ slightly suppresses the bubble at
+  $0^\circ$ but places natural transition at $x/c\approx0.2$ at $8^\circ$, as
+  measured; at $16^\circ$ the modified model at $N=5$ predicts stall on the
+  whole suction side ($C_L=1.169$, $C_D=0.300$ against $C_L=1.09$,
+  $C_D=0.25$ and $C_L=0.99$ in two experiments), while fully turbulent IDDES
+  gives $C_L=1.427$ (§3.1, Table 3; see
+  [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)). With the original
+  shielding the Eppler results are "practically identical" (not shown).
+- *Sphere at $Re_D=420\,000$* (supercritical; $N=3$, 4): with
+  $C_{\mathrm{BC}2}=1000$ all transitional variants show natural transition
+  before turbulent separation; with the original shielding refinement from
+  $N=3$ to 4 moves transition upstream from $102^\circ$ to $79^\circ$
+  (angle from the stagnation point), with $\hat f_d^*$ it stays at
+  $97^\circ$–$96^\circ$; the modified model gives $C_D=0.095$ ($N=3$) and
+  0.083 ($N=4$), transition at $96^\circ$ and separation at $118^\circ$,
+  against Achenbach's $C_D=0.085$, $98^\circ$ and $119^\circ$, and
+  transitional RANS gives $C_D=0.375$ (§3.2, Table 5, Fig. 11). The
+  free-stream eddy-viscosity ratio $\tilde\nu_\infty/\nu=0.001$ was chosen to put
+  onset at the measured location (§3.2, Table 1).
+- *NACA 0012 at $11.5^\circ$, $Re_c=1.3\times10^5$.* At $N=4$ both
+  transitional variants reproduce the low-frequency burst and reformation
+  cycle of the leading-edge bubble, $St=0.0077$ and 0.0097 against 0.008 and
+  0.0083 in the references, with $C_D=0.127$ equal to a cited LES at "about
+  two orders of magnitude fewer DOFs" and a time step "roughly 50 times
+  larger" (stated); the solver behaves globally as WMLES once stalled and
+  never returns to pure RANS (§3.3, Table 7; see
+  [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)). The equivalent
+  Smagorinsky constant $C_{S,\mathrm{eq}}$ of the DG section below, with
+  $\Delta_{\mathrm{vol}}$, is about 0.5 in RANS-dominated regions and 0.1–0.2
+  over most of the LES region, with a plateau at 0.14 at $x/c=0.4$, so that
+  the LES branch "resembles an explicit LES", not an implicit one (Eq. 14,
+  Fig. 16).
+
+The authors concede that in natural transition SA-BCM is triggered by its
+eddy-viscosity term rather than by its vorticity-Reynolds-number term, so
+the onset depends on $\tilde\nu_\infty/\nu$ and $C_{\mathrm{BC}2}$, and leave a
+general fix to future work (§3.1–§3.2, §4).
 
 ## Zonal DES
 
@@ -1714,6 +1840,23 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
   uses the shielded length (Eq. 40), nor which $\Delta$ their SA-DDES uses.
 - Luckring & Rizzi (2024) report the vortex-flow statements above from
   the studies they cite.
+- Alberti et al. (2026) state in §3.2 that with $C_{\mathrm{BC}2}=50$ the
+  separation on the sphere is anticipated "down to $\phi\approx105°$", while
+  their Table 5 lists transition and separation at $99^\circ$ for that
+  variant at $N=3$; the Table 5 row "IDDES$_{TRA}$ ($\chi_2=50$)" does not say
+  which shielding function it uses, whereas Table 3 writes it with the
+  modified one. The NACA 0012 time step is printed as
+  $\Delta t=4\times10^{-3}$ without units. The sphere's transition location
+  rests partly on the calibrated free-stream eddy-viscosity ratio (§3.2).
+- Wu et al. (2026) test AIDDES on two cases (base flow and 30P30N) and a
+  flat plate; the ratio $l_{\mathrm{IDDES}}/l_{\mathrm{RANS}}$ of Eq. (21)
+  is an indicator they define, not part of the IDDES formulation of
+  Gritskevich et al. that they print (Eqs. 17–19). Their measured
+  recirculation length, $2.63R$, and the measured reattachment at
+  $x/R=2.67$ that Carlsson et al. (2023) use (Applications above) are both
+  attributed to Herrin & Dutton; the disagreement is recorded, open, on the
+  [supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md)
+  page.
 
 # Citations
 
@@ -1770,3 +1913,5 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 - [Le et al. (2024)](/sources/le-2024.md) — §3 (DES and RANS in engineering use).
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (first $k$-$\tau$ DDES in a spectral element code; Shur et al. and Bidadi et al.); §2.2, Eqs. (20)–(28), App. A.6, Eqs. (A32)–(A40) ($k$-$\tau$ SST-DDES and $k$-$\omega$ SST-DDES, $h_{\max}/N$); §4.2, Fig. 7 (NACA 0021, averaging time, span); §4.3, Figs. 10–11 (NACA 0012 grid convergence, gradient-jump penalty); §4.4.2, Fig. 14 (confined DDES); §5.
 - [Gao et al. (2025)](/sources/gao-2025.md) — §I (DDES needs $y^+\approx1$); §III.A.1, Fig. 5 (log-layer mismatch of DES, as stated).
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §1 (IDDES delayed transition); §2.3, Eqs. (17)–(21) (SST-IDDES as printed, AIDDES, length-ratio indicator); §2.4, Fig. 1 (flat plate); §4.1.2–§4.1.3, Table 3, Figs. 8, 11 (base flow); §4.2.2–§4.2.3, Figs. 13–14 (30P30N); §5.
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §1 (DES-like models and transition); §2.1, Eqs. (1)–(5) (SA-IDDES in modal DG); §2.1.1, Eqs. (6)–(9) (SA-BCM coupling, modified shielding, $\chi_2$ recalibration); §3.1, Table 3 (Eppler 387); §3.2, Tables 1, 5, Fig. 11 (sphere); §3.3, Table 7, Eq. (14), Fig. 16 (NACA 0012, equivalent Smagorinsky constant); §4.

@@ -5,7 +5,7 @@ description: "LESGO is an open-source incompressible LES code, pseudo-spectral i
 status: established
 aliases: [lesgo]
 tags: [software, les, wmles, wall-model, data-driven, reinforcement-learning]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # LESGO
@@ -63,7 +63,7 @@ forces in a body-force term.
   Fig. 18).
 - **Wall models**: the [equilibrium wall model](/methods/equilibrium-wall-model.md)
   in algebraic log-law form, $\tau_w=\rho\big[\kappa U_{\mathrm{LES}}/\ln(h_{\mathrm{wm}}/y_{0,\mathrm r})\big]^2$
-  with $y_{0,\mathrm r}=\nu\exp(-\kappa B)/u_\tau$ (page-local), $\kappa\approx0.4$,
+  with $y_{0,\mathrm r}=\nu\exp(-\kappa B)/u_\tau$ (registry §11 roughness length), $\kappa\approx0.4$,
   $B\approx5$, solved iteratively (Vadrot et al. 2023b, Eqs. 1–2); integral,
   slip and POD-inspired models; and, added by Vadrot et al., three published
   learned models (two supervised networks and one multi-agent
@@ -135,7 +135,7 @@ forces in a body-force term.
   - the [Smagorinsky model](/methods/smagorinsky-model.md),
     $\nu_t=(C_s\Delta)^2\lvert\bar S\rvert$, with the Mason–Thomson wall
     damping $\ell^{-2}=(C_{\mathrm{MT}}\Delta)^{-2}+[\kappa(y+y_{0,\mathrm r})]^{-2}$, $\ell=C_s\Delta$,
-    $C_{\mathrm{MT}}=0.16$ (page-local $\ell$, $C_{\mathrm{MT}}$, printed $C_0$; $y_{0,\mathrm r}$ the roughness length;
+    $C_{\mathrm{MT}}=0.16$ (page-local $\ell$; registry §11 $C_{\mathrm{MT}}$, printed $C_0$, and $y_{0,\mathrm r}$ the roughness length;
     §II A–B, Eqs. 4–6);
   - a log-law [equilibrium wall model](/methods/equilibrium-wall-model.md)
     on the bottom boundary, $\tau_{w,i}=-\big[\kappa/\ln(y/y_{0,\mathrm r})\big]^2
@@ -208,12 +208,12 @@ capabilities; the paper runs no LESGO case.
   wall-normal derivatives and velocity components in a $y$-wall-normal
   convention, while the paper itself uses $z$ wall-normal, without
   stating the change of convention.
-- The three sources describe the code only in the passages summarized above;
-  details of time advancement, de-aliasing and parallelization are not given,
-  and Vadrot et al. (2023a) give no training or run cost. Zhang et al.
-  (2022e) state the time stepping and de-aliasing of their modified version;
-  none of the four sources describes the parallelization, and Zhang et al.
-  give no cost. Taschner et al. (2024) do not run LESGO; they compare with
+- Vadrot et al. (2023a, 2023b) and Fowler et al. (2022) describe the code
+  only in the passages summarized above; they give no details of time
+  advancement, de-aliasing and parallelization, and Vadrot et al. (2023a)
+  give no training or run cost. Zhang et al. (2022e) state the time stepping
+  and de-aliasing of their modified version; none of the sources describes
+  the parallelization, and Zhang et al. give no cost. Taschner et al. (2024) do not run LESGO; they compare with
   its published results.
 - Zhang et al. (2022e) write the vertical coordinate as $z$ (atmospheric
   convention); it is $y$ here. Their Fig. 8 legend labels the turbine

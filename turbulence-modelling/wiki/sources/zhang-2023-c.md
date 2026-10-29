@@ -9,7 +9,7 @@ year: 2023
 venue: "Combust. Flame 257:113001"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Combustion_and_Flame_Zhang_Large-eddy_simulation_of_the_Darmstadt_multi-regime_turbulen.pdf"
 tags: [combustion, les, tabulated-chemistry, dynamic-procedure]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -90,7 +90,7 @@ $Z_v$, $Y_{c,v}$; $\langle\cdot\rangle$ is a time average.
 21. Corrected thickened-flame CO and H$_2$ in the outer premixed region are much improved and very close to the presumed PDF; the inner-zone improvement is slight because the correction is premixed-based (§4.2.2, Fig. 17). **Shown**
 22. The correction is not needed for major species; Gruhlke et al. showed theirs influences major species little; not tested further (§4.2.2). **Stated**
 23. The three databases give similar regime distributions by the flame index $G_{\mathrm{FO}}=\nabla\tilde Y_{\mathrm{CH_4}}\cdot\nabla\tilde Y_{\mathrm{O_2}}/(|\nabla\tilde Y_{\mathrm{CH_4}}||\nabla\tilde Y_{\mathrm{O_2}}|)$ (Eq. 20, Table 2) in the inner zone: non-premixed combustion is rare, multi-regime combustion dominates, and the premixed share grows downstream and decreases for $x>75$ mm (§4.3, Fig. 18). **Shown**
-24. Downstream the simulations predict more premixed than multi-regime combustion, unlike the experiment, seemingly through faster dilution of the rich mixture (§4.3). **Shown**
+24. Downstream the simulations predict more premixed than multi-regime combustion, unlike the experiment; the authors write that the simulations "seem to" dilute the rich mixture faster (§4.3; Conclusion 5). **Shown**
 25. Back-supported flames (alignment angle of $\nabla\tilde Z$ and $\nabla\tilde Y_c$ below 90°) prevail upstream and front-supported flames downstream, as in experiment (§4.3, Fig. 19). **Shown**
 26. Adding the $\beta$-PDF variance dimension (11 points in $Z_v$) increases the database size "10 times (to about 591 Mb)" (§3.3). **Stated**
 27. Time step 0.32 μs, CFL about 0.4; 20 flow-through times after ignition, then 20 of statistics (§3.4). **Stated**

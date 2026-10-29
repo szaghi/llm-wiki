@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Fluid Mech. 990:A21"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Fluid_Mechanics_Zhang_Effects_of_wall_temperature_on_hypersonic_shock_waveturbulen.pdf"
 tags: [dns, compressible, hypersonic, shock-boundary-layer-interaction, gpu, boundary-layer]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -39,7 +39,7 @@ Wall cooling shrinks the separation bubble markedly, and the authors
 explain this by fuller near-wall density and momentum profiles. The
 separation and plateau pressures are insensitive to $T_w$, as
 free-interaction theory (FIT) predicts. With the coordinate
-$\chi=(x-x_s)/L_{\mathrm{int}}$, $L_{\mathrm{int}}=x_c-x_s$, the FIT
+$x_{\chi}=(x-x_s)/L_{\mathrm{int}}$ (page-local; the source's $\chi$), $L_{\mathrm{int}}=x_c-x_s$, the FIT
 correlation function collapses across wall temperatures. The authors
 combine this with the power law $L_{\mathrm{int}}/\delta\propto(T_w/T_r)^n$,
 $n\sim0.85$, into Eq. (3.27), which predicts the wall pressure upstream of
@@ -76,7 +76,7 @@ Page 1 matches the Crossref metadata; no identity problem.
 14. The interaction origin moves upstream and the plateau lengthens with wall heating ($x_0/\delta=-2.69$, $-3.76$, $-4.86$), while the plateau end ($x_{p2}/\delta=-0.17$, $-0.20$, $-0.23$), the plateau pressure ($p_w/p_\infty=4.63$, 4.46, 4.55) and the separation pressure (1.54, 1.50, 1.54) are insensitive to $T_w$ (Table 4, §3.2). **Shown**
 15. The pressure rise in the interaction onset follows FIT under different wall thermal conditions: $F(x_{\mathrm{FIT}})$ collapses for $x_{\mathrm{FIT}}<2.5$ across Mach 2.9 and 6, Reynolds number, compression angle and wall temperature, consistent with Volpiani et al. (2020) (§3.3, Eq. 3.16, Fig. 18). **Shown**
 16. $F$ at the corner is 5.55–5.82 at $M_\infty=2.9$ and 6.79–7.05 at $M_\infty=6$ (§3.3, Fig. 18). **Shown**
-17. The coordinate $\chi=(x-x_s)/L_{\mathrm{int}}$ collapses $F$ better upstream of the plateau and, when only the wall temperature differs, also downstream of it; it also holds for the Mach 5 impinging-shock data of Volpiani et al. (2020) with $x_c$ the impingement point (§3.3, Eq. 3.17, Figs. 19–20). **Shown**
+17. The coordinate $x_{\chi}=(x-x_s)/L_{\mathrm{int}}$ collapses $F$ better upstream of the plateau and, when only the wall temperature differs, also downstream of it; it also holds for the Mach 5 impinging-shock data of Volpiani et al. (2020) with $x_c$ the impingement point (§3.3, Eq. 3.17, Figs. 19–20). **Shown**
 18. The Zhu et al. (2017) law $L_{sr}/\delta\propto(T_w/T_r)^{0.85}$ ($L_{sr}=x_r-x_s$) predicts the Mach 6 separation lengths within 5 %; the Touré & Schülein (2023) formula underperforms at $T_w/T_r=0.75$ and 1.0 (errors 17.2 % and 22.7 %) and underestimates wall-temperature effects, which the authors attribute to its fitting on impinging-shock data (Table 6, §3.3). **Shown**
 19. The predictive relation (3.27) holds under three conditions (same free stream and corner angle; separation strong enough for a plateau; $x<x_c$); predictions agree with DNS for $x<0$ and the error grows for $x>0$, especially at $M_\infty=6$; applicability is "preliminarily confirmed" for $Re_\tau=160$–675 (§3.3, Eqs. 3.24–3.28, Fig. 21). **Derived** and **Shown**
 20. The low-frequency separation-shock motion has dominant $St_\delta\approx0.015$–0.03 and $St_{L_i}\approx0.016$–0.022, close to Gonsalez & Dolling (1993), with intermittent lengths $L_i=0.61$, 0.74, $1.07\delta$; raising $T_w$ increases the low-frequency energy and the intermittent region and lowers the dominant frequency (§3.4, Fig. 23). **Shown**
@@ -124,7 +124,7 @@ $$p_{w2}\!\left(\frac{x}{\delta_2}\right)=\left(\frac{C_{f2}}{C_{f1}}\right)_0^{
 | $x^*=(x-x_0)/L_{0s}$ | $x_{\mathrm{FIT}}$ | page-local; **collision** with semi-local scaling |
 | $L=x_c-x_s$ | $L_{\mathrm{int}}$ | interaction length (separation to corner) |
 | $L_{sr}$, $L_{0s}=L_i$, $L'$, $L'_{sr}$, $L''$ | bubble length, intermittent length, predicted lengths | page-local; **collision:** $L_i$ is also the SATES integral length |
-| $F(x^*)$, $F(\chi)$, $\chi$ | $F(x_{\mathrm{FIT}})$, $F(\chi)$, $\chi$ | FIT correlation function; **collision:** $\chi$ is the SA ratio in the registry, $F$ the thickening factor |
+| $F(x^*)$, $F(\chi)$, $\chi$ | $F(x_{\mathrm{FIT}})$, $F(x_{\chi})$, $x_{\chi}$ (page-local) | FIT correlation function; **collision:** $\chi$ is the SA ratio in the registry, $F$ the thickening factor |
 | $n$ | $n$ | wall-temperature exponent of $L_{\mathrm{int}}/\delta$ |
 | $\tilde k$, $P_k$, $T_k$, $\Pi_t$, $\Pi_d$, $D$, $\varepsilon$, $M_k$ | $k$, $P_k$, turbulent transport, pressure diffusion, $\Pi^{\mathrm t}_{\mathrm{pd}}$, viscous diffusion, $-\varepsilon$, mass-flux term | the source's $\varepsilon$ carries a minus sign; **collision:** $\Pi$ is the registry's SGS flux |
 | $\tau_{ij}$ | $\sigma_{ij}$ | viscous stress; **collision** with the SGS stress |

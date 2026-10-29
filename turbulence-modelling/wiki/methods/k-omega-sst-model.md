@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES, BSL k-ω, baseline k-ω model]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # k-ω SST model
@@ -181,6 +181,22 @@ cross-diffusion again $2\rho(1-F_1)\sigma_{\omega2}\omega^{-1}\partial_jk\,\part
 with $\mu_{\mathrm{RANS}}=\rho k/\omega$ and only $\beta^*=0.09$ given among
 the constants ([Wu et al. (2024b)](/sources/wu-2024-b.md), §III.A,
 Eqs. 24–27).
+[Wu et al. (2026)](/sources/wu-2026-b.md) state instead that the same
+group's SATES "is developed based on the SST k-ω turbulence model" and
+print only its eddy viscosity, with the limiter written as a factor,
+$\mu_t=\rho(k/\omega)F_{\mathrm{cor}}$ with
+$F_{\mathrm{cor}}=\omega/\max(\omega,\lvert S\rvert F_2/a_1)$ (page-local; their
+"correction function in SST model"),
+$F_2=\tanh\big[\max\big(2\sqrt k/(\beta^*\omega d),\,500\mu/(\rho\omega d^2)\big)^2\big]$
+and $\beta^*=0.09$; $a_1$, the normalization of $\lvert S\rvert$ and the
+transport equations are not printed (§2.1, Eqs. 1–3). This is the limiter
+of the Equations section with $\lvert S\rvert$ in place of $\lvert\Omega\rvert$
+*(compiler check, not in the sources)*. Their SATES-II also builds a
+blending function from $F_2$, $\tanh[(0.67\max(\cdot,\cdot))^4]$ with the
+same two arguments and $\nu$ in place of $\mu/\rho$, to switch a near-wall
+coefficient on in the inner boundary layer (Eqs. 15–16; on the
+[SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md)), and
+their SST-IDDES uses $C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$ (Eq. 19).
 
 **A log-$\omega$ form for flux reconstruction.** Vandenhoeck et al. (2022)
 rewrite the SST-2003 model with $\tilde\omega_\ell=\ln\omega$ as unknown
@@ -416,7 +432,7 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
 
 - **A $k$-$\tau$ successor.** Tomboulides et al. (2025) list an SST
   version of their [$k$-$\tau$ model](/methods/k-tau-model.md) as the
-  intended basis of a DDES, after Gritskevich et al.
+  basis of a planned DDES, after Gritskevich et al.
   ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §4).
   Kumar et al. (2025) build it in Nek5000: the $k$-$\tau$ SST, with the SST
   functions $F_1$, $F_2$ and the eddy-viscosity limiter written in
@@ -1009,8 +1025,7 @@ version read (arXiv v1):
   Carreño Ruiz & D'Ambrosio (2022) need unsteady RANS at low incidence, where
   the boundary layer stays laminar and trailing-edge vortex shedding raises
   the mean lift by 22.8% (SD7003, $Re=23{,}000$, $\alpha=2^\circ$; §5,
-  Table 11). The two statements concern different regimes (turbulent vortex
-  flow, laminar periodic shedding).
+  Table 11).
 - Zhao et al. (2023b) print the diffusion coefficient of Eq. 2-2 as
   $\mu_L+\sigma_k\mu_T$ and that of the compressibility-corrected Eq. 2-5 as
   $\mu+\sigma_k\mu_t$, while §2 defines $\mu=\mu_L+\mu_T$; read literally, Eq.
@@ -1144,6 +1159,7 @@ version read (arXiv v1):
 - [Wei et al. (2023)](/sources/wei-2023.md) — §IV F, Figs. 36–37 (SST RAS against LES of a combusting hydrogen film).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.1, Eqs. (1)–(3) (BSL host of SATES-σ); §3.2–§3.3, Table 3 (SST-IDDES comparator).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §III.A, Eqs. (24)–(27) (BSL host of SATES).
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §2.1, Eqs. (1)–(3) (SST eddy viscosity with $F_{\mathrm{cor}}$ and $F_2$ as host of SATES); §2.2, Eqs. (15)–(16) ($F_2$-type blending of SATES-II); §2.3, Eq. (19) (SST-IDDES $C_{\mathrm{DES}}$).
 - [Guo & Wang (2025)](/sources/guo-2025.md) — §2.1, Eqs. (1)–(15) (SST-DES, SST-DDES, filtered eddy viscosity, adaptive grid scale); Eq. (20) ($\omega$ wall function).
 - [Ye et al. (2024)](/sources/ye-2024.md) — §II A, Eqs. (6)–(7); §III (SST URANS of a Mach 5 swept interaction with a flexible panel).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.1, Figs. 8–9; §3.1.2, Fig. 12 (Bayesian SST calibration and discrepancy inversion, as reviewed).

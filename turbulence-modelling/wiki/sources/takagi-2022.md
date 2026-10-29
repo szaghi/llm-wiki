@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 452:110899"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Takagi_A_novel_high-order_low-dissipation_TENO-THINC_scheme_for_hyp.pdf"
 tags: [shock-capturing, numerical-dissipation, compressible, implicit-les]
-timestamp: 2026-10-28T07:11:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -91,7 +91,7 @@ page are those of the version of record.
 The THINC interface flux (Eq. 16, characteristic speed positive), with
 $f_\pm$ the mean and half-jump of the neighbouring values:
 
-$$\hat f_{i+1/2}=f_++f_-\frac{A+T}{1+AT},\qquad T=\tanh(0.5\beta_{\mathrm{TH}}),\quad A=\frac{\operatorname{sgn}(\alpha_{\mathrm{TH}})}{T}\frac{B-1}{B+1},\quad B=e^{|\alpha_{\mathrm{TH}}|\beta_{\mathrm{TH}}},\quad \alpha_{\mathrm{TH}}=\frac{f_i-f_+}{f_-}.$$
+$$\hat f_{i+1/2}=f_++f_-\frac{A_{\mathrm{TH}}+T_{\mathrm{TH}}}{1+A_{\mathrm{TH}}T_{\mathrm{TH}}},\qquad T_{\mathrm{TH}}=\tanh(0.5\beta_{\mathrm{TH}}),\quad A_{\mathrm{TH}}=\frac{\operatorname{sgn}(\alpha_{\mathrm{TH}})}{T_{\mathrm{TH}}}\frac{B_{\mathrm{TH}}-1}{B_{\mathrm{TH}}+1},\quad B_{\mathrm{TH}}=e^{|\alpha_{\mathrm{TH}}|\beta_{\mathrm{TH}}},\quad \alpha_{\mathrm{TH}}=\frac{f_i-f_+}{f_-}.$$
 
 # Printed slips
 
@@ -116,7 +116,7 @@ $$\hat f_{i+1/2}=f_++f_-\frac{A+T}{1+AT},\qquad T=\tanh(0.5\beta_{\mathrm{TH}}),
 | $q$, $C_T$ | $q$, $C_T$ | TENO exponent and cutoff |
 | $\varepsilon$ | $\epsilon_W$ | small number ($10^{-40}$ in TENO, $10^{-15}$ in the THINC fallback); **collision** with $\varepsilon$ |
 | $\beta$ (THINC) | $\beta_{\mathrm{TH}}$ (registry §11) | jump steepness, 1.6; **collision** with $\beta(\boldsymbol x)$ |
-| $\alpha$, $A$, $B$, $T$ | $\alpha_{\mathrm{TH}}$ (registry §11), $A$, $B$, $T$ (page-local) | THINC flux auxiliaries; **collision** of $\alpha$ with the DG blending factor, of $T$ with the temperature |
+| $\alpha$, $A$, $B$, $T$ | $\alpha_{\mathrm{TH}}$ (registry §11), $A_{\mathrm{TH}}$, $B_{\mathrm{TH}}$, $T_{\mathrm{TH}}$ (page-local, as on the WENO page) | THINC flux auxiliaries; **collision** of $\alpha$ with the DG blending factor, of $T$ with the temperature |
 | $d_i$, $X_i$, $f_\pm$ | (jump centre, normalized cell coordinate, neighbour mean and half-jump, page-local) | $d_i$ collides with the wall distance $d$ |
 | $\zeta_i$ | $\zeta_i$ (page-local) | discontinuity pattern, values $2,1,-1,0$ |
 | $N$ | $N_x$ | number of cells, not a polynomial degree |

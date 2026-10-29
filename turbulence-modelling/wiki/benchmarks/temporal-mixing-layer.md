@@ -5,7 +5,7 @@ description: "A periodic shear layer between two counter-flowing streams that tr
 status: established
 aliases: [temporal mixing layer, temporally evolving mixing layer, TML, free-shear mixing layer, temporally evolving free-shear layer]
 tags: [benchmark, les, sgs-model, data-driven, neural-network, dns, combustion]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Temporally developing mixing layer
@@ -157,8 +157,7 @@ Across the two gradient-type studies on this case, the plain
 [gradient model](/methods/gradient-model.md) of Wang et al. (2023c)
 over- then under-predicts $\theta$, while the higher-order spatial
 gradient model of Wang et al. (2022) gives the best $\theta$ of its
-comparison; the two use different grids, filters and models, so the
-results are side by side, not a ranking. In both studies the dynamic
+comparison; the two use different grids, filters and models. In both studies the dynamic
 Smagorinsky model departs from the filtered DNS in $\theta$: it delays the
 transition in Wang et al. (2023c) and deviates in the linear-growth region
 in Wang et al. (2022).
@@ -199,8 +198,7 @@ unreliable beyond $t/\tau_\theta\approx400$ and its kinetic energies
 diverge after 200, while in Zhao et al. it does not diverge over the 250
 network steps tested. The set-ups differ (Gaussian filter at ratio 1
 against sharp spectral at ratio 2, different networks, data and
-viscosity), so the difference is recorded as one of set-up, and their LES
-errors are not comparable.
+viscosity); neither paper runs the other's set-up.
 
 **Why the temporal version.** [Kim & Leonard (2024)](/sources/kim-2024-b.md),
 §4.2, give the historical reason: a spatially growing free shear layer

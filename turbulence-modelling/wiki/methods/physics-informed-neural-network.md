@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [data-driven, neural-network, rans, boundary-layer]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -306,6 +306,61 @@ and state that machine-learned closures "have been mostly developed and
 tested on benchmark flame simulation cases", their transfer to engines
 being "not straight forward". The review runs no PINN.
 
+## Why vanilla PINNs miss developed turbulence (Hu & Yang 2026)
+
+[Hu & Yang (2026)](/sources/hu-2026.md) give PINNs a section of their
+review of machine-learning closures (§V, Eq. 6, Fig. 3, Table IV). They
+write the composite loss as
+
+$$\mathcal L=\mathcal L_{\mathrm{data}}+w_{\mathrm{PDE}}\,\mathcal L_{\mathrm{PDE}}+w_{\mathrm{BC}}\,\mathcal L_{\mathrm{BC/IC}},$$
+
+with $\mathcal L_{\mathrm{PDE}}$ evaluated at collocation points by
+automatic differentiation. The weights $w_{\mathrm{PDE}}$ and
+$w_{\mathrm{BC}}$ are page-local; the source writes $\lambda$ and $\mu$
+and prints no values. Hu & Yang call a "vanilla" PINN a single
+multilayer perceptron minimizing this loss. They state that it cannot
+recover fully developed turbulence "without additional ingredients", and
+they present this verdict as "an author perspective, not a settled
+consensus" (§V A). Their Table IV names three failure mechanisms:
+
+| Mechanism | Manifestation | Mitigations named | Works cited there |
+|---|---|---|---|
+| Spectral bias of the neural tangent kernel (NTK) | low-wavenumber modes are learned orders of magnitude faster than high-wavenumber ones, so the Kolmogorov cascade is out of reach | causal training, adaptive residual-point sampling, gradients weighted by NTK eigenvalues | Wang, Yu & Perdikaris (2022); Wang, Sankaran & Perdikaris (causal training) |
+| Representational bandwidth limit of smooth finite-width networks | the derivatives are too band-limited and the spectrum decays too fast; the field is "too viscous" | physics-informed neural operators (PINO), weak or variational losses (VPINN, Deep Ritz), data constraints on high wavenumbers | Li et al. (PINO); Eivazi et al. (2024, experimental fluid mechanics) |
+| Chaotic long-time unpredictability | trajectories diverge exponentially, so no stationary function of $(\boldsymbol x,t)$ exists to regress | use PINNs for inverse and reconstruction problems, for mean or filtered fields, or in hybrid PINN–LES/RANS | Raissi et al. (hidden fluid mechanics); Jin et al. (NSFnets) |
+
+All works in the table are cited by Hu & Yang (2026). The Eivazi et
+al. entry is a 2024 review of experimental applications, a different
+work from the RANS PINN of [Eivazi et al. (2022)](/sources/eivazi-2022.md)
+above.
+
+Hu & Yang (§V A–B) list the variants they see as answers to these
+obstacles: NSFnets in velocity–pressure or velocity–vorticity form,
+non-Newtonian PINNs, conservative and extended PINNs with domain
+decomposition (cPINN, XPINN) and their distributed MPI+X version,
+DeepXDE, causal training and NTK-based adaptive weights. To their
+knowledge, none of these variants (PINO, VPINN, Deep Ritz, causal
+training, hybrid PINN–LES/RANS) has shown a statistically faithful
+forward integration of high-Reynolds-number three-dimensional
+wall-bounded turbulence without substantial external data. They cite
+NSFnets as "accurate simulations across incompressible flows ranging from
+laminar to turbulent regimes", and they count them among the variants
+that succeed by working on mean or filtered fields, "as in NSFnets
+applied to modest-Reynolds-number laminar-to-turbulent regimes". Their
+conclusion is that vanilla PINNs are "best understood as a
+reconstruction tool for data-constrained fluid-mechanics problems,
+rather than a general-purpose substitute for DNS or LES in the forward
+direction".
+
+Hu & Yang read the three
+mechanisms as the PINN form of one obstacle common to all
+machine-learning closures: a pointwise training objective that does not
+match a multi-scale, solver-coupled deployment. They state that tracing
+the failures to this single root is their own interpretive synthesis,
+"not an established conclusion of the field" (§I, Fig. 2, §VIII). See
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+and [model-consistent training](/methods/model-consistent-training.md).
+
 ## Qualifications
 
 - **Data requirement.** The reconstruction of each turbulent case uses
@@ -359,3 +414,4 @@ being "not straight forward". The review runs no PINN.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §2.1, Eq. 9, Fig. 4c (PINN loss); §4.2.2, Fig. 9, Table 4 (soft constraint, SA-augmented and $k$-$\varepsilon$ PINNs, PT-PINNs, Eivazi et al. cited, interpretability claim).
 - [Le et al. (2024)](/sources/le-2024.md) — §2.2.3, p. 7, Fig. 6 (loss, variants, cost claim); §3.3, Fig. 17 (flame reconstruction); §4.3, p. 26, Table 8 (physics-informed reconstruction of inlet fields).
 - [Posch et al. (2025)](/sources/posch-2025.md) — §6.4.1 (PINNs as hybrid remedy for missing extrapolation, CRK-PINN cited); §6.4.2 (physics-informed GAN loss cited; closures tested on benchmark flames).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §I, Fig. 2, §VIII (single-root thesis, attributed); §V A–B, Eq. 6, Fig. 3, Table IV (composite loss, three failure mechanisms, variants, verdict as author perspective).

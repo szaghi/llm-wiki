@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-28T17:45:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # WALE model
@@ -78,6 +78,7 @@ channel LES, which all their cases capture accurately.
 | 0.55 | "usually $\Delta\approx3\Delta x_{\min}$" | compressible immersed-boundary wall-modelled LES up to Mach 7.2, finite differences on block-structured adaptive Cartesian grids (CHAMPS) | [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.2, Eq. (7) |
 | printed as the coefficient of $\Delta^2$, $C_w^2=10.6\,C_s^2$ with $C_s=0.1$, i.e. 0.106, so $C_w\approx0.326$ *(compiler check, not in the sources)*; isotropic part zero, subgrid Prandtl number 0.9 | $(\Delta_x\Delta_y\Delta_z)^{1/3}$ | sixth-order central finite-difference LES of compressible channels and a supersonic boundary layer, baseline against a learned model | [Xu et al. (2023)](/sources/xu-2023.md), §2.2, Eqs. (2.15)–(2.31) |
 | not printed | not printed (cell-based, STAR-CCM+) | incompressible finite-volume LES of a cylinder in the drag crisis, comparison for a hybrid RANS/LES model | [Mays et al. (2023)](/sources/mays-2023.md), §3.1, Table 2 |
+| 0.325, of a stated range 0.325–0.5 (the source's $C_{\mathrm{WT}}$), entering through $(C_w/C_s)^2$ with $C_s=0.1$ | $(\Delta_x\Delta_y\Delta_z)^{1/3}$ | near-wall cut-off coefficient of the SATES-II hybrid RANS/LES model (sixth-order WCNS, PHengLEI-HyOrder); not a stand-alone LES | [Wu et al. (2026)](/sources/wu-2026-b.md), §2.2, Eqs. 13–14 |
 
 The printed constants belong to different codes, filter widths and
 uses (a small-scale VMS viscosity against a classical LES model); no
@@ -302,6 +303,27 @@ instead (below).
   [implicit LES](/definitions/implicit-les.md) and
   [entropy conservation](/properties/entropy-conservation.md)).
 
+- **Near-wall coefficient of a hybrid RANS/LES model.**
+  [Wu et al. (2026)](/sources/wu-2026-b.md) (§2.2, Eqs. 13–16) use the
+  WALE operator not as an LES closure but to make the cut-off coefficient
+  of [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)
+  local near walls, in an "enhanced wall treatment":
+  $$C_x^{\mathrm{EWT}}=C_{x,\mathrm{base}}\Big(\frac{C_w}{C_s}\Big)^2\frac{(\mathcal S_{ij}\mathcal S_{ij})^{3/2}}{\big[(\mathcal S_{ij}\mathcal S_{ij})^{5/4}+(S_{ij}S_{ij})^{5/2}\big]\lvert S\rvert},$$
+  with $\mathcal S_{ij}$ the tensor of Duan & Wang above,
+  $C_{x,\mathrm{base}}=0.61$, $C_s=0.1$, $C_w=0.325$ and $C_x^{\mathrm{EWT}}$
+  (page-local) blended into the inner boundary layer by an $F_2$-type
+  function, a σ-model coefficient applying outside. The paper does not
+  define $\lvert S\rvert$; read with the registry's $\lvert S\rvert$, the
+  factor is the ratio of the WALE to the Smagorinsky viscosity at equal
+  $\Delta$ times the base coefficient *(compiler check, not in the
+  sources)*. On a flat plate, the authors state, the enhanced wall
+  treatment "improves the skin friction prediction accuracy" over the
+  constant coefficient (§2.4, Fig. 1). They also cite a dynamic SATES
+  coefficient of Lu et al. (2025, as cited) built from a WALE subgrid
+  viscosity, which they reject for its "undesirable grid-dependence"
+  (Table 1, §2.2). Their printed definition of the squared gradient is
+  recorded on the SATES page.
+
 ## Qualifications
 
 - Lederer et al. (2023) define $\epsilon^2(u_h)=\epsilon(u_h):\epsilon(u_h)$
@@ -348,3 +370,4 @@ instead (below).
 - [Mays et al. (2023)](/sources/mays-2023.md) — §3.1, Tables 2–3.
 - [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.2, Fig. 4 (OpenFOAM WALE reference LES of decaying isotropic turbulence).
 - [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I (WALE LES against implicit LES of Hamzehloo et al., cited); §III A.
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §1, Table 1 (Lu et al.'s WALE-based SATES coefficient, cited); §2.2, Eqs. (13)–(16) (WALE-type near-wall cut-off coefficient of SATES-II, $C_w=0.325$); §2.4, Fig. 1.

@@ -9,7 +9,7 @@ year: 2021
 venue: "Phys. Rev. Fluids 6:050504"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Physical_Review_Fluids_Duraisamy_Perspectives_on_machine_learning-augmented_Reynolds-averaged.pdf"
 tags: [data-driven, model-consistent-training, field-inversion, rans, les, review]
-timestamp: 2026-10-25T13:40:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Summary
@@ -34,9 +34,8 @@ the SGS force, neural-network deconvolution, super-resolution and GANs.
 §IV is the core argument. **A priori training** (targets and features
 extracted from coarse-grained DNS, Eq. 5) is consistent with the DNS field but
 not with the RANS or LES environment: features differ when computed from model
-variables, errors accumulate on-line, and model terms are rebalanced. This is
-the [a priori against a posteriori](/definitions/a-priori-and-a-posteriori-testing.md)
-question. **[Model-consistent training](/methods/model-consistent-training.md)**
+variables, errors accumulate on-line, and model terms are rebalanced (the
+bundle collects this under [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)). **[Model-consistent training](/methods/model-consistent-training.md)**
 is the remedy: field inversion (Eq. 7),
 [field inversion followed by learning](/methods/field-inversion-machine-learning.md)
 (Eq. 8), and integrated inference and learning in one optimization (Eq. 9), of

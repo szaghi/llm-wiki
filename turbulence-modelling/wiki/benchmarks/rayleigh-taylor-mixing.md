@@ -5,7 +5,7 @@ description: "Buoyancy-driven mixing of a heavy fluid placed above a light one: 
 status: established
 aliases: [Rayleigh-Taylor instability, RT mixing layer, Rayleigh–Taylor flow, variable-density mixing layer]
 tags: [benchmark, pans, hybrid-rans-les, rans]
-timestamp: 2026-10-28T06:42:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Rayleigh–Taylor mixing
@@ -189,9 +189,8 @@ discretization tool; neither reports a result for it.
   Fig. 8a), while the S1 growth coefficients of Table II (0.027, 0.012,
   0.016 at $f_k=0.50$, 0.35, 0.25, reference 0.025) are not monotonic in
   error.
-- The reference run is under-resolved at the initial interface
-  ($\theta_m\approx0.26$ at $t=0$, §IV.2), although the authors call it a
-  simulation resolving all flow scales.
+- The reference run, which the authors call a simulation resolving all
+  flow scales, already has $\theta_m\approx0.26$ at $t=0$ (§IV.2, Fig. 10).
 - **An announced test that is not in the paper.** The abstract of
   [Svärd (2022)](/sources/svard-2022.md) lists "a turbulent
   Rayleigh-Taylor problem" among the tests of its entropy-stable implicit

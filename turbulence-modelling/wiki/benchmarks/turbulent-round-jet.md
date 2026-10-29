@@ -5,7 +5,7 @@ description: "Free round jets issuing into quiescent or co-flowing surroundings:
 status: established
 aliases: [round jet, free round jet, circular jet, axisymmetric jet, compressible round jet, forced round jet, PPRIME jet, potential core]
 tags: [benchmark, les, dns, compressible, aeroacoustics, mesh-adaptation]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Turbulent round jets
@@ -222,11 +222,10 @@ thickness are not printed.
 
 - The potential-core length moves with the set-up: it lengthens with $M_j$ (about 55% from $M_j=0.45$ to 1.8 at
   $Re=5\times10^5$; Rahatgaonkar & Ghosh (2025)), and with mesh refinement
-  of a hybrid RANS/LES at fixed $M_j=0.9$ (Basile et al. (2023)), and both
-  sources compare their core with references only after accounting for the
-  inflow: Rahatgaonkar & Ghosh shift the reference profiles axially to the
-  same core length, and Basile et al. name the untripped nozzle among the
-  causes of their overlong core.
+  of a hybrid RANS/LES at fixed $M_j=0.9$ (Basile et al. (2023)).
+  Rahatgaonkar & Ghosh shift the reference profiles axially to the same
+  core length before comparing half-widths, and Basile et al. name the
+  untripped nozzle among the causes of their overlong core.
 - In the forced low-Reynolds-number jet of
   [Barbera et al. (2026)](/sources/barbera-2026.md) the transitional
   shear layer near the inlet needs DNS resolution whatever LES target is

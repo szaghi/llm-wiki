@@ -5,7 +5,7 @@ description: "Turbulent flow past a square cylinder with separation fixed at the
 status: established
 aliases: [square cylinder, square-cylinder wake, flow over a square cylinder, SQCYL]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, dg, des, immersed-boundary]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Flow past a square cylinder
@@ -64,9 +64,8 @@ the same kinds, one at a time, under the same cost.
   authors state agreement with Cato et al., who used an incompressible
   solver.
 
-The two rankings agree, across an incompressible finite-element and a
-compressible high-order DG discretization. The momentum source needs more
-iterations, which Fanizza et al. attribute to an optimization problem three
+In Fanizza et al. the momentum source needs more
+iterations, which the authors attribute to an optimization problem three
 times larger in 2D (two momentum components and an energy component,
 against one SA field).
 

@@ -5,7 +5,7 @@ description: "The anisotropic minimum-dissipation (AMD) model is an eddy-viscosi
 status: established
 aliases: [AMD model, AMD, minimum-dissipation model, Rozema model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Anisotropic minimum-dissipation model
@@ -118,8 +118,8 @@ is an incompressible, energy-conserving second-order unstructured finite
 volume code.
 
 - **Separation and dissipation** (§3.1, Figs. 4–5, 10–11). On the
-  baseline isotropic mesh ($\Delta_c/L=4.76\times10^{-4}$, $\Delta_c$ the
-  cube root of the cell volume, page-local) AMD is one of three models that
+  baseline isotropic mesh ($\Delta_{\mathrm{vol}}/L=4.76\times10^{-4}$, $\Delta_{\mathrm{vol}}$ the
+  cube root of the cell volume, page-local; not the registry's filter size $\Delta_c$) AMD is one of three models that
   separate on the leeward side. Of the eddy-viscosity models it gives the
   largest mean eddy viscosity in the boundary layer, of the order of the
   molecular one, and the largest subgrid dissipation
@@ -139,10 +139,9 @@ volume code.
 
 ## Qualifications
 
-- The anisotropic-cell robustness found by Zhou & Bae (2024, §3.3) comes
-  with a separation length that converges non-monotonically on isotropic
-  grids, so robustness to anisotropy and accuracy for separation are
-  distinct properties there.
+- Zhou & Bae (2024) report both the insensitivity of AMD to cell
+  anisotropy (§3.3) and its non-monotone convergence of the separation
+  length on isotropic grids (§3.1–3.2).
 - The advantage on anisotropic meshes is cited from other work (Bae &
   Koumoutsakos 2022; Sirignano & MacArt 2023, citing Zahiri & Roohi); in Sirignano &
   MacArt's own tests AMD beats DS on drag but is the least accurate model
@@ -153,7 +152,7 @@ volume code.
 - Sirignano & MacArt (2023, §7) summarize that the learned closures and AMD
   "had similar error for the RMS velocity components", while §4.2 states
   that the learned closures match filtered DNS more closely "for all cases
-  and all statistics": an internal difference in the strength of the claim.
+  and all statistics"; both statements are printed.
 - [Pan & Zhang (2023)](/sources/pan-2023.md) (§I) cite AMD papers, with a
   modulated [gradient model](/methods/gradient-model.md), among "novel
   sub-grid-scale stress models based on pressure gradient", in a

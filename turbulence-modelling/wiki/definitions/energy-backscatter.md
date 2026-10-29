@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-28T12:24:00Z
+timestamp: 2026-10-29T07:36:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -436,10 +436,9 @@ The sources reach different design choices from different questions.
   (§2.4). Domaradzki sets this against the common view that backscatter in
   an eddy-viscosity model leads to instability (§3.1), the view that
   Vela-Martín (2022, §2.2) states above for the local dynamic coefficient,
-  with the qualifier "generally". No contradiction is recorded: Vela-Martín's
-  statement is qualified, and Domaradzki states the same instability for
-  the pointwise (unfiltered) viscosity (§2.4) and reports stability only
-  for the filtered one.
+  with the qualifier "generally". Domaradzki states the same instability
+  for the pointwise (unfiltered) viscosity (§2.4) and reports stability
+  only for the filtered one.
 - **Backscatter by energy exchange with subgrid variables, stable by
   construction.** [van Gastelen et al. (2024)](/sources/vangastelen-2024.md)
   build a learned closure for 1D Burgers and Korteweg–de Vries equations
@@ -530,8 +529,7 @@ The sources reach different design choices from different questions.
 
 The two claims of Seyedi & Zayernouri and Kim et al. concern different
 flows (isotropic turbulence against a channel) and different measures (a priori stress correlation and a
-posteriori decay against two trained mean statistics), so they are not
-recorded as a contradiction. Kim et al. also find that the mean subgrid
+posteriori decay against two trained mean statistics). Kim et al. also find that the mean subgrid
 dissipation $\langle\Pi\rangle$ is not determined by the two target
 statistics: equally trained models give different values (§III C).
 
@@ -550,6 +548,28 @@ applied to convolutional SGS closures that are accurate a priori but show
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 The review gives no form of that backscatter model.
 
+[Hu & Yang (2026)](/sources/hu-2026.md) (§II C–E, §IV A), another review
+that runs no test, tie backscatter to the absence of scale separation:
+with no spectral gap the subgrid term "exchanges energy with the resolved
+field in both directions—forward (dissipation) and, intermittently,
+backward (backscatter)" (see [spectral gap](/definitions/spectral-gap.md)).
+They state that the constant-coefficient
+[Smagorinsky model](/methods/smagorinsky-model.md) is purely dissipative,
+$\nu_t\ge0$, and cannot represent backscatter. The
+[dynamic model](/methods/dynamic-procedure.md) can in principle, through a
+locally negative $\nu_t$, but the averaging or clipping used for
+stability suppresses some or all of it, the practice Vela-Martín (2022,
+§2.2) describes above. A learned closure "obtained by minimizing a
+pointwise regression loss" on filtered DNS "tends to average out the
+backscatter", and mis-modelled backscatter, a closure that locally
+injects energy, is the first of three a posteriori failure modes they
+list for learned SGS models (§IV A; see
+[neural-network SGS models](/methods/neural-network-sgs-model.md)). The
+same review cites the convolutional model of Guan et al. for
+two-dimensional turbulence, which stays stable a posteriori while
+reproducing "both forward scatter and backscatter", the work Fang et al.
+(2026) cite above.
+
 Kim et al. (2022) and Maejima & Kawai (2025) both work in channel flow
 and reach different emphases. Kim et al. find backscatter unnecessary for
 the mean velocity at $Re_\tau=180$ on
@@ -557,8 +577,8 @@ $(\Delta x^+,\Delta z^+)=(70.7,35.3)$. Maejima & Kawai find that admitting
 more backscatter brings the mean velocity closer to DNS at
 $Re_\tau\approx1000$ on $(72,36)$. Their own run with no projected
 backscatter (floor zero) still beats the conventional model (App. C). The
-models, Reynolds numbers and a priori targets differ, so no contradiction
-is recorded.
+models, Reynolds numbers and training targets differ between the two
+papers.
 
 ## Compressible flows: the spherical part of the flux
 
@@ -687,8 +707,9 @@ dynamic coefficients there are domain averages (Zhang et al. 2022b, App.;
   structure autonomously on embedded one-dimensional lines and feeds it
   back to the LES, is offered as a remedy: such models give a
   bidirectional rather than a top-down transfer (§4.1). The review defines
-  and measures no local flux $\Pi$; it also applies "top-down" inconsistently to LES-ODT (abandoned in
-  §2.4.1, adopted in §3.3).
+  and measures no local flux $\Pi$. Of LES-ODT it writes in §2.4.1 that the
+  "top-down" strategy is "abandoned" and in §3.3 that LES-ODT is a
+  "top-down" strategy.
 
 ## Interpretation and scope
 
@@ -727,6 +748,27 @@ Other sources treat backscatter as a physical effect to be represented:
   [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md). This
   measures the net transfer at each wavenumber and cannot show the spatial
   sign of $\Pi$ *(compiler check, not in the sources)*.
+- In the same spectral view, [Rajek & Pozorski (2026)](/sources/rajek-2026.md)
+  (§II D, §III B, Fig. 5) compute the "theoretical" spectral eddy
+  viscosity $\nu_t(k\mid k_c)$ a priori, from the transfer across a sharp
+  cutoff in DNS of forced isotropic turbulence, by the method of
+  Domaradzki et al. (1987), as cited. At $Re_\lambda\approx100$ and
+  $k_c=30$ it is negative for $k<0.4k_c$, "with absolute values close to
+  the molecular viscosity", in agreement with Domaradzki et al. The
+  authors read such negative values as "possibly imitating the backward
+  energy transfer" and call them "clearly in contradiction with the
+  general eddy-viscosity concept". They cite Lesieur's EDQNM result that
+  the spectral eddy viscosity becomes negative if the spectrum beyond the
+  cutoff falls as $k^{-m}$ with $m>5$. Used as the closure of an LES, this
+  theoretical viscosity recovers the DNS spectrum at $Re_\lambda\approx100$.
+  It needs DNS data, so it has no predictive value beyond DNS-attainable
+  Reynolds numbers (§III B). Their adaptive model keeps the viscosity
+  non-negative by construction: the control operator of the regulator
+  never lets it fall below zero (Eq. 26; see
+  [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md)). By
+  their Eq. (16), which defines it from the shell-averaged transfer, a
+  negative $\nu_t(k\mid k_c)$ is a net inverse transfer at wavenumber $k$,
+  not a spatial sign of $\Pi$ *(compiler check, not in the sources)*.
 - Jakhar et al. (2026, p. 1) call backscatter "an important process in
   atmospheric and oceanic flows", which eddy-viscosity closures "miss".
   They note that their higher-order gradient closures violate the
@@ -751,8 +793,7 @@ dissipation; they attribute its instability to the amplification of
 subfilter energy and of the aliasing of the deconvolved product, not to
 backscatter (§5.4.1–5.4.2). Vela-Martín (2022, §8) instead names
 similarity models as models with numerically stable backscatter. Both
-statements are hedged ("may"; "may be unnecessary or undesirable"), so no
-contradiction is recorded.
+statements are hedged ("may"; "may be unnecessary or undesirable").
 
 ## Qualifications
 
@@ -825,3 +866,5 @@ contradiction is recorded.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §1; §3.2, Fig. 12; §4.1, Figs. 17–20.
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.4.1; §3.3; §4.1.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.4 (backscatter modelling named among stabilizations of CNN closures, Guan et al. cited). Review, citation only.
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §II C–E (two-way exchange without a spectral gap; Smagorinsky and dynamic model); §IV A (pointwise training averages out backscatter; failure modes; Guan et al. as cited). Review, citation only.
+- [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §II D, Eq. (16); §III B, Fig. 5 (negative a priori spectral eddy viscosity at low $k$; Lesieur as cited); §IV, Eq. (26) (non-negative adaptive viscosity).

@@ -5,7 +5,7 @@ description: "On curvilinear grids a discretization preserves a uniform flow onl
 status: established
 aliases: [GCL, geometric conservation law, free-stream preservation, freestream preservation, metric identities, discrete metric identities]
 tags: [dg, gas-kinetic, flux-reconstruction, high-order, compressible, implicit-les]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Geometric conservation law and free-stream preservation
@@ -220,8 +220,8 @@ the normal grid velocity of a face, page-local) is folded into the
 inviscid flux by a Galilean transformation (§2.1, Eqs. 1–9; see
 [immersed boundary methods](/methods/immersed-boundary-method.md)). They
 do not discuss a GCL. For a rigid motion $\mathcal J$ does not change in
-time and the grid velocity $\boldsymbol V_{\mathrm{trans}}+\boldsymbol\omega_{\mathrm g}\times\boldsymbol r$
-($\boldsymbol\omega_{\mathrm g}$ the angular velocity of the grid, page-local)
+time and the grid velocity $\boldsymbol V_{\mathrm{trans}}+\boldsymbol\Omega_{\mathrm{rot}}\times\boldsymbol r$
+($\boldsymbol\Omega_{\mathrm{rot}}$ the rotation rate of the grid, registry clash list)
 is divergence-free, so the temporal identity of Liu et al. above holds
 exactly *(compiler check, not in the sources)*. Their test of the moving formulation is a Galilean one: a steady
 Spalart–Allmaras RANS of a NACA 0012 at $Re=6\times10^6$, relative Mach

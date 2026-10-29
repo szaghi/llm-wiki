@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 450:110814"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Alauzet_Periodic_adjoints_and_anisotropic_mesh_adaptation_in_rotatin.pdf"
 tags: [mesh-adaptation, rans, turbomachinery, spalart-allmaras, numerical-dissipation]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -50,8 +50,8 @@ solutions predict higher pressure ratio and efficiency and keep the tip and
 induced vortices that the globally refined structured meshes dissipate. The
 paper proposes comparing SA with the
 [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md) once discretization
-error is removed (future work). Turbulence modelling is not the subject; the
-paper is peripheral to the bundle's closure topics.
+error is removed (future work). Turbulence modelling is not the paper's
+subject.
 
 # Version read
 

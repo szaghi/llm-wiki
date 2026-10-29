@@ -5,7 +5,7 @@ description: "The NASA Rotor 37 transonic axial-compressor rotor: a mesh-converg
 status: established
 aliases: [Rotor 37, NASA Rotor37, R37, Stage 37 rotor]
 tags: [benchmark, turbomachinery, rans, mesh-adaptation, gpu, dg]
-timestamp: 2026-10-27T15:46:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # NASA Rotor 37
@@ -125,7 +125,7 @@ in wall units is not printed.
 - The design tip Mach number is printed as 1.48 (relative,
   [Alauzet et al. (2022)](/sources/alauzet-2022.md), §8.2) and 1.4939
   ([Kurz et al. (2025)](/sources/kurz-2025.md)); neither defines the value
-  further, so this is recorded as a difference in printing.
+  further.
 - The two sources cite different NASA reports for the stage: Alauzet et
   al. (ref. [60]) Reid & Moore (1978), NASA TP 1338, whose title gives a
   design pressure ratio of 1.82; Kurz et al. (ref. [60]) Moore & Reid

@@ -5,7 +5,7 @@ description: "A discretization is entropy conservative when its convective terms
 status: established
 aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability, entropy-stable RANS]
 tags: [entropy-stable, kinetic-energy-preserving, compressible, dg, dns, numerical-dissipation]
-timestamp: 2026-10-29T05:15:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Entropy conservation and entropy stability
@@ -594,8 +594,8 @@ the selective use of the sensor on
   print an isothermal no-slip wall whose convective part is entropy
   stable with the exact-Riemann wall pressure, with the wall temperature
   imposed in the BR2 viscous flux, for which they state no
-  entropy-stability proof (App. C); their entropy-conservative split-form
-  DGSEM with subcell blending crashes in the initial transient of laminar
+  entropy-stability proof (App. C); Potluri et al.'s entropy-conservative
+  split-form DGSEM with subcell blending crashes in the initial transient of laminar
   hypersonic boundary layers at $M_\infty\ge6$ until the viscous residual
   is limited near the wall (§3.3; see
   [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
@@ -636,7 +636,7 @@ the selective use of the sensor on
   Eq. (93) carries the superscript NS on the SA viscous term.
 
 - **Regime of the evidence.** The two turbulence studies point in
-  different directions without contradicting each other: Aiello et al.
+  different directions: Aiello et al.
   (2026) find EC decisive for long-time robustness and thermodynamic
   statistics of a thermally perfect gas at Mach 3–5 without shock capturing,
   while Brillon & Nadarajah (2026) find the choice among EC and KEP fluxes
@@ -660,8 +660,7 @@ the selective use of the sensor on
   KEP fluxes equivalent on the Taylor–Green vortex. Svärd adds a mass-flux
   diffusion to an EC flux rather than rejecting it, and on the
   Taylor–Green vortex finds Chandrashekar's flux "very similar"; the
-  statements concern different flows, gases and measures, so no
-  contradiction is recorded.
+  statements concern different flows, gases and measures.
 - **Printed slips (Svärd 2022).** §4 calls the total flux of Eq. (20) "the
   sum of the inviscid and viscous" fluxes, with $f^{V2}=+\tfrac43\mu[\![u]\!]/h$,
   which with the update $(u_i)_t+(f_{i+1/2}-f_{i-1/2})/h=0$ would make the

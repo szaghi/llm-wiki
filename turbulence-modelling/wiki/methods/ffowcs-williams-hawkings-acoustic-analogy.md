@@ -5,7 +5,7 @@ description: "The Ffowcs Williams–Hawkings analogy turns a flow solution into 
 status: established
 aliases: [FW-H, FWH, Ffowcs Williams-Hawkings equation, acoustic analogy, hybrid aeroacoustic prediction]
 tags: [aeroacoustics, les, hybrid-rans-les, rans, turbomachinery]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Ffowcs Williams–Hawkings acoustic analogy
@@ -253,10 +253,9 @@ results bound where the neglect is safe (§4.2–4.3, Figs. 18–25):
 
 Lewis et al. neglect quadrupoles on a Mach-number argument (relative tip
 Mach number 0.57), and Rismondo et al. find them significant at a tip Mach
-number of about 0.11. The two
-claims concern different quantities and distances: Lewis et al. predict
-in-duct and far-field fan broadband noise, and Rismondo et al. find the
-quadrupole important in the near field and at low frequency.
+number of about 0.11. Lewis et al. predict in-duct and far-field fan
+broadband noise; Rismondo et al. find the quadrupole important in the near
+field and at low frequency.
 
 ## Retarded time and source compactness
 
@@ -276,7 +275,7 @@ nearest microphone they find $f_{\max}=30f_T$ for the surface terms and
 $3.85f_T$ for the volume terms (Tables 3–4). By that criterion the delays
 of the volume terms are not negligible above $3.85f_T$ at that microphone,
 a range that contains the rise of the nonlinear spectrum above $20f_T$
-that they report.
+that they report *(compiler check, not in the sources)*.
 
 ## Accuracy reported
 
@@ -347,12 +346,9 @@ Two lessons recur:
 
 - Rismondo et al. print $\ell_{ij}=(p-p_0)\delta_{ij}+\sigma_{ij}$ and
   $T^{\mathrm L}_{ij}=\dots-\sigma_{ij}$ with opposite signs on the same
-  viscous stress. Both tensors come from the momentum flux
-  $\rho u_iu_j+(p-p_0)\delta_{ij}-\sigma_{ij}$ of the Navier–Stokes momentum
-  equation (registry $\sigma_{ij}$), the loading as its surface part and
-  $T^{\mathrm L}_{ij}$ as its volume part, so the two printed signs cannot
-  both hold; the printed $T^{\mathrm L}_{ij}$ matches the momentum
-  equation *(compiler check, not in the sources)*. Rismondo et al. drop
+  viscous stress. Monfaredi et al. (2021, Eq. 4) print the viscous and
+  eddy-viscosity stresses in their loading source $F_i$ with the minus
+  sign, the sign of Rismondo et al.'s $T^{\mathrm L}_{ij}$. Rismondo et al. drop
   the viscous stress from $T^{\mathrm L}_{ij}$ at low Mach number. They also say Eq. (2.3) "contains seven terms" but plot
   "six terms" (the first two merged in their Fig. 19). Their nonlinear
   frequency range is printed "$f<4.0f/f_T$" in §4.2 and $f<4f_T$ in §5.

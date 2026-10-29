@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 476:111899"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Wang_Multiple-GPU_accelerated_high-order_gas-kinetic_scheme_for_d.pdf"
 tags: [gpu, gas-kinetic, dns, compressible]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-29T07:42:00Z
 ---
 
 # Summary
@@ -24,8 +24,6 @@ the multi-GPU code uses CUDA-aware MPI with a one-dimensional (slab)
 decomposition in $x$. It is an implementation and performance paper: no new
 turbulence model and no new discretization. HGKS is used for
 [DNS](/definitions/direct-numerical-simulation.md), without an SGS model.
-The paper is peripheral to closure modelling and is cited here for GPU
-performance and arithmetic precision in scale-resolving simulation.
 
 On the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
 $Re=1600$, $M=0.1$, one GPU runs about 7 (TITAN RTX) and 16 (Tesla V100)
@@ -125,7 +123,7 @@ Ref. [23] (Cao, Pan & Xu, J. Comput. Phys. 448:110739) is the ingested
 and [39] (Cao et al.) are arXiv preprints and stay separate preprint
 entries. Several printed keys (Pan & Xu 2018, Yang, Pan & Xu 2021,
 Pirozzoli et al. 2021, Li 2019) share author-year stems with different works
-already in the bibliography and are disambiguated at merge. [31] and [39]
+already in the bibliography and carry suffixed keys. [31] and [39]
 print no year; several items end in "et al." and [40], [41] print garbled
 author names.
 

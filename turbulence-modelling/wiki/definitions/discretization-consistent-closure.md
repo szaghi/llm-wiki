@@ -5,7 +5,7 @@ description: "An LES closure built for the discrete equations actually solved, s
 status: established
 aliases: [filter-consistent closure, discretize-first closure, model-data consistency, computational subgrid stress]
 tags: [les, sgs-model, implicit-les, data-driven, numerical-dissipation]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Discretization-consistent closure
@@ -261,12 +261,13 @@ that a network trained on box-filtered DNS meets a different stress field
 in the solver (§1, §3). But they argue that reinforcement learning and
 end-to-end differentiable-solver training, citing Kim et al. (2022), Bae
 & Koumoutsakos (2022), Kurz et al. (2023), Sirignano & MacArt (2023) and
-others, learn "the combined effect of solver numerics and physics", and
-that such models are therefore likely "limited in their transferability
+others, learn "the combined effect of solver-specific numerical effects
+and turbulence physics", and
+that such models are therefore "limited in their transferability
 to other solvers" and costlier to train, since LES must run during
 training (§1). Their alternative is supervised training on data filtered
-with several filter shapes that "do not mimic any specific solver's
-transfer function": a box filter, a positive raised-cosine kernel, and a
+with several filter shapes that "do not mimic the specific transfer
+function of any specific LES solver": a box filter, a positive raised-cosine kernel, and a
 box filter followed by the two-thirds dealiasing cutoff. A network trained
 on all three runs, without retraining, in a Fourier-spectral solver with
 dealiasing and in a sixth-order compact finite-difference solver without
@@ -496,8 +497,8 @@ solver.
   targets from an explicit filter cause "severe inconsistencies"; Beck & Kurz (2023) and
   Lozano-Durán & Bae (2023) bind the closure to its solver on purpose.
   Wu & Lele (2026, §1) call that binding a limit on transferability and
-  train on explicitly filtered data, with several filters. The claims do
-  not collide on one case: the binding side works in DG (Kurz et al.;
+  train on explicitly filtered data, with several filters. The settings
+  differ: the binding side works in DG (Kurz et al.;
   Beck & Kurz), staggered finite volumes (Agdestein & Sanderse) or charLES
   (Lozano-Durán & Bae), Wu & Lele in a Fourier-spectral and a sixth-order
   compact solver; Wu & Lele do not run an in-the-loop closure, and the

@@ -1,6 +1,6 @@
 ---
 type: Source
-title: "Zhang et al. (2022) — Large-eddy simulation of wind-turbine wakes over two-dimensional hills"
+title: "Zhang et al. (2022e) — Large-eddy simulation of wind-turbine wakes over two-dimensional hills"
 description: "Wall-modelled LES (LESGO, Smagorinsky with wall damping, log-law wall stress, immersed-boundary terrain, filtered actuator disk) of a wind-turbine wake over steep and gentle two-dimensional hills: wake trajectory, Gaussian self-similarity, power by turbine position and a disk-integrated mean-kinetic-energy budget."
 resource: "doi:10.1063/5.0095348"
 source_kind: paper
@@ -9,12 +9,12 @@ year: 2022
 venue: "Phys. Fluids 34:065123"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Zhang_Large-eddy_simulation_of_wind-turbine_wakes_over_two-dimensi.pdf"
 tags: [les, wmles, wall-model, immersed-boundary, wind-energy, separated-flow]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
 
-Zhang et al. (2022e in the bundle's labels) study the wake of a single
+Zhang et al. (2022e) study the wake of a single
 wind turbine placed upstream of, on and behind an isolated
 spanwise-uniform $\cos^2$ hill in a neutral, pressure-gradient-driven
 atmospheric boundary layer at wind-tunnel scale. The tool is

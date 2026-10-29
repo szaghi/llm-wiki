@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 263:105967"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Zhao_Turbulence_simulations_with_an_improved_interior_penalty_dis.pdf"
 tags: [rans, dg, compressible, eddy-viscosity]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -102,7 +102,7 @@ DOI).
 | $\tau_{ij}$ | (total Boussinesq stress, sign not printed) | **collision:** not the SGS stress $\tau_{ij}$ |
 | $\Omega=\lvert S_{ij}\rvert$ | $\lvert S\rvert$ | **collision:** not the rotation rate; normalization not printed; also the element domain |
 | $k$, $\omega$, $F_1$, $F_2$, $\beta^*$, $\sigma_k$, $\sigma_\omega$, $d$ | same | agree |
-| $\beta$ (SST) | $\beta$ (SST destruction coefficient, as on the [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) page) | values not printed |
+| $\beta$ (SST) | $\beta_\omega$ (destruction coefficient of the $\omega$ equation, registry §11; see the [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) page) | values not printed |
 | $a_1$, $CD_{k\omega}$, $\sigma_{\omega2}$ | SST limiter constant (0.31), cross-diffusion term, its coefficient | |
 | $M_t$, $\overline{p''d''}$, $\alpha_1,\alpha_2,\alpha_3$ | $M_t$, $\Pi^{\mathrm t}_{\mathrm{pd}}$ (modelled turbulent [pressure dilatation](/definitions/pressure-dilatation.md), registry §11), (correction constants 1.0, 0.4, 0.2) | **collision:** the double prime is not a Favre fluctuation here |
 | $g$, $\Theta$, $L$, $T$, $\psi$ | (homogeneity tensor, viscous-flux auxiliary variable, jump-based lifting quantity, tensor and scalar test functions; page-local) | |

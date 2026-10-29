@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Vreman model
@@ -71,7 +71,8 @@ not print the value of $C_v$ used in their runs.
 | 0.1 | compact-difference LES of the transitional Taylor–Green vortex | [Caban et al. (2026)](/sources/caban-2026.md), §2, Eq. (7) |
 | $\approx0.063$ ($c=2.5C_s^2=0.01$) and $\approx0.167$ ($c=0.07$) | gas-kinetic channel LES at $Re_\tau=180$ (best of $c=0.01$–0.1) and 395 (after Vreman 2004) | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.B, §IV |
 | 0.1 ($c=2.5C_s^2=0.025$) | gas-kinetic implicit-versus-explicit LES of the compressible Taylor–Green vortex | [Cao et al. (2022b)](/sources/cao-2022-c.md), §III, Eqs. (10)–(11) |
-| 0.1 (prefactor $C_V=0.025$ printed) | finite-volume LES of a sinusoidally forced periodic shear flow on $16^3$ | [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B, Eqs. (42)–(45) |
+| 0.1 ($c=2.5C_s^2=0.025$) | the same comparison on $64^3$, $128^3$ and $256^3$ | [Wang et al. (2026)](/sources/wang-2026.md), §II B, Eqs. (14)–(15) |
+| 0.1 (prefactor $c=0.025$; printed $C_V$) | finite-volume LES of a sinusoidally forced periodic shear flow on $16^3$ | [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B, Eqs. (42)–(45) |
 | 0.1 (prefactor printed as $2.5C_s^2$, with $C_s=0.1$ after Sayadi & Moin and Yu et al., cited) | sixth-order finite-difference LES of compressible channels and a supersonic boundary layer, baseline against a learned model | [Xu et al. (2023)](/sources/xu-2023.md), §2.2 |
 | constant $c=0.025$ and $c=0.07$ printed, formula not printed | incompressible second-order finite-volume wall-modelled LES of the Gaussian bump | [Zhou & Bae (2024)](/sources/zhou-2024-b.md), §2.1 |
 | constant $C=0.07$ printed, "as specified in the original paper", formula not printed | compressible reacting LES of a rotating detonation rocket engine | [Vignat et al. (2024)](/sources/vignat-2024.md), §3.3 |
@@ -84,7 +85,7 @@ order of Kim et al. ($\alpha_{ij}=\partial_i\bar u_j$,
 $\beta_{ij}=\Delta_m^2\alpha_{mi}\alpha_{mj}$) with $c=2.5C_s^2=0.025$.
 Hausmann et al. (2022, Eqs. 42–45) print a third index pattern,
 $\beta_{ij}=\Delta^2\alpha_{ik}\alpha_{jk}$ with $\alpha_{ij}=\partial_j\bar u_i$,
-and the prefactor $C_V=0.025$ (page-local); this $\beta$ is the same
+and the prefactor $c=0.025$ (the source's $C_V$); this $\beta$ is the same
 matrix $\Delta^2GG^T$ as the single-$\Delta$ form of Kim et al., so it gives
 the same viscosity as the other orders, and the $C_s$ of the table is
 $\sqrt{0.025/2.5}=0.1$ *(compiler check, not in the sources)*.
@@ -282,6 +283,23 @@ $N$ (the paper's $P$), with $N=5$.
   (Vreman $2.6\times10^{-5}$, $3.2\times10^{-4}$, $1.3\times10^{-3}$
   against $1.5\times10^{-5}$, $1.4\times10^{-4}$, $6.7\times10^{-4}$, Table
   II). The same ordering holds on $128^3$ and $384^3$ (App. B).
+  The sequel, [Wang et al. (2026)](/sources/wang-2026.md) (§II B,
+  Eqs. 14–15), prints the same form,
+  $\mu_t=\bar\rho\,c\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ with
+  $\alpha_{ij}=\partial_i\bar u_j$ and $\beta_{ij}=\Delta_m^2\alpha_{mi}\alpha_{mj}$
+  (one width on their uniform grids), and runs it on $64^3$, $128^3$ and
+  $256^3$ against a $512^3$ DNS. Vreman and Smagorinsky give nearly
+  identical modelled dissipation, higher than the dynamic model on every
+  grid, and a modelled share that rises to most of the subgrid dissipation
+  on $256^3$ (§III B, Figs. 3, 6). Judged by PDFs of the resolved velocity
+  gradients, Vreman is farther from DNS than implicit LES on $64^3$ and
+  $128^3$ (time-averaged Jensen–Shannon divergence against filtered DNS
+  $4.77\times10^{-3}$ and $9.39\times10^{-4}$, against $4.16\times10^{-3}$ and
+  $8.01\times10^{-4}$) and closest of all on $256^3$ ($1.95\times10^{-4}$,
+  Wasserstein-1 $6.94\times10^{-3}$), mainly from late decay (§IV B,
+  Table I); against unfiltered DNS on $256^3$ it has the largest
+  Wasserstein-1 distance of the four runs, $1.45\times10^{-2}$ (Table II).
+  Details on [implicit LES](/definitions/implicit-les.md).
 - **Transitional shear flow.** Hausmann et al. (2022, §III A–B) choose
   Vreman over Smagorinsky for a sinusoidally forced periodic shear flow
   ($Re_{\mathrm{shear}}=3115$, LES on $16^3$ against a $128^3$ DNS),
@@ -541,3 +559,4 @@ computed and subtracted from the mean-stress model.
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — §4.2, Fig. 8 (streamwise-stress peak over-estimate, Vreman cited); §5 (model named for future inclusion). Not run.
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II B, Eqs. (11)–(16) (form, $c_v=0.07$, isotropic filter width).
 - [Gao et al. (2025)](/sources/gao-2025.md) — §II.A (model choice and stated advantages; constant not printed).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §II B, Eqs. (14)–(15); §III B, Figs. 3, 6; §IV B, Tables I–II.

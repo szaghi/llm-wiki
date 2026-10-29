@@ -9,7 +9,7 @@ year: 2024
 venue: "Flow Turbul. Combust. 113:667–693"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Flow_Turbulence_and_Combustion_Moratilla-Vega_Installed_Jet_Noise_Analysis_Using_a_Coupled_LESAPE_High-Ord.pdf"
 tags: [les, aeroacoustics, numerical-dissipation, dg]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -86,7 +86,7 @@ the issue year is 2024.
 
 - **Smoothing range.** "the value of $\epsilon$ ranges from 0.3 to 1" (§2.1, p. 669) against "$\epsilon\in[0.1,1]$" (p. 670).
 - **Probe distance.** "The acoustic signal is recorded along a line at $y/D_j=20$" against "the acoustic probes are located at a distance of $y/D_j=15$" (both p. 675).
-- **Lowest reliable frequency.** "the minimum reliable frequency is between St = 0.05 and 0.01" (p. 675, with a sentence repeated verbatim) against "the 0.05−0.1 reliable range obtained with the 100t∗ of signal"; 100 $t^*$ resolves $St=0.01$, and five to ten times that is $0.05$–$0.1$ *(compiler check, not in the sources)*.
+- **Lowest reliable frequency.** "the minimum reliable frequency is between St = 0.05 and 0.01" (p. 675, with a sentence repeated verbatim) against "the 0.05−0.1 reliable range obtained with the 100t∗ of signal". The paper takes the lowest reliable frequency as 5–10 times the inverse sample length (citing Shur et al. 2003 and Mendez et al. 2013); 100 $t^*$ gives an inverse length of $St=0.01$, and five to ten times that is $0.05$–$0.1$ *(compiler check, not in the sources)*.
 - **Azimuthal points.** A grid study "with 121 and 193 azimuthal points", then "The results obtained for the 120 azimuthal point mesh" (p. 673).
 - **CFL.** "$CFL=1/(2p+1)$" with $p=5$ "is approximately 0.16" (p. 675); $1/11=0.091$ *(compiler check, not in the sources)*.
 - **$St_{\max}$.** Eq. 13 with $|kh|_{1\%}=8.071$, $h=0.117D_j$ and $U_j=0.75c_\infty$ gives 14.6, not the printed "approximately 1.4"; the paper does not state which $h$ it used *(compiler check, not in the sources)*.

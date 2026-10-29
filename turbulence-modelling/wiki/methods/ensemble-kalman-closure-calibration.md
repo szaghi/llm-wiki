@@ -5,7 +5,7 @@ description: "Derivative-free calibration of closure parameters with an ensemble
 status: established
 aliases: [EnKF, ensemble Kalman filter, ensemble Kalman inversion, ensemble data assimilation, EnKF-MM, EnKF mixed model, EnKF-FM]
 tags: [data-driven, field-inversion, sgs-model, les, uncertainty-quantification]
-timestamp: 2026-10-28T12:26:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # Ensemble Kalman filter calibration of turbulence closures
@@ -127,10 +127,10 @@ calibrated fields as training data for a neural-network closure (see
 Several calibrated values equal a bound of the $\pm50\%$ box: $c_{b2}=0.311$
 (half of 0.622) in DA1, DA3 and DA4, $c_{v1}=3.550$ (half of 7.1) in DA1
 and DA4, $\kappa=0.615$ (1.5 times 0.41) in DA4 *(compiler check, not in
-the sources; the paper does not comment on it)*.
+the sources)*; the paper does not comment on it.
 
 **A gradient-based counterpart.** The two LES calibrations differ in
-target and filter, so their values are not comparable. Wang et al. (2023c)
+target and filter. Wang et al. (2023c)
 match the filtered-DNS energy spectrum in forced isotropic turbulence at
 $Re_\lambda\approx160$ (Gaussian filter, ratio 2) and obtain
 $C_{\mathrm f}\approx0.00738$ for the dissipative part of a mixed model,
@@ -248,7 +248,8 @@ pure gradient model, all compared with filtered DNS:
   (§II.B); the mixing layer was recalibrated.
 - *Functional part alone (App. C).* Calibrating a pure Smagorinsky-type
   model the same way (EnKF-FM) gives $C_{\mathrm f}=0.01$, about 36% above
-  the mixed-model value; it reproduces the spectrum except at high
+  the mixed-model value ($0.01/0.00738=1.36$, *compiler check, not in the
+  sources*); it reproduces the spectrum except at high
   wavenumbers but is worse than EnKF-MM in strain and rotation PDFs and
   the worst of all models in the SGS energy flux.
 

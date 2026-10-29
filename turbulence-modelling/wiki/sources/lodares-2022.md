@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 455:110998"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Lodares_An_entropystable_discontinuous_Galerkin_approximation_of_the.pdf"
 tags: [rans, spalart-allmaras, dg, entropy-stable, kinetic-energy-preserving]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -101,7 +101,7 @@ identity problem. Numbering on this page is that of this version.
 
 # Printed slips
 
-- **Eq. 93, p. 15:** the term introduced as "those concerning the SA model" carries the superscript NS (and a plain $J$ for $\mathcal J$); by Eqs. 91–94 it should be SA.
+- **Eq. 93, p. 15:** the term introduced as "those concerning the SA model" carries the superscript NS (and a plain $J$ for $\mathcal J$), while the surrounding Eqs. 91–94 label the SA terms SA.
 - **Reference code for NACA 0012:** Table 2 labels the reference "Ref. (FUN3D, 897×257)", all Fig. 10 legends "Ref. (CFL3D, 897 x 257 grid)". *(compiler check, not in the sources)* The Table 2 reference values ($C_D=0.00819$ at $0^\circ$; $C_L=1.0909$, $C_D=0.01231$ at $10^\circ$) equal the CFL3D Spalart–Allmaras values that [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) print (Tables 3–4), not their FUN3D values (0.008120; 1.0983, 0.01242): the reference is the CFL3D solution.
 - **Spelling:** "Chadrashekar form" (§7.2, p. 21).
 - **Name of the second configuration:** "thermodynamic entropy stable scheme" (§4.6), "thermodynamic entropy conserving schemes with the matrix dissipation numerical flux" (§5.3), "thermodynamic entropy conserving one" (Abstract); with matrix dissipation the scheme is entropy-stable.

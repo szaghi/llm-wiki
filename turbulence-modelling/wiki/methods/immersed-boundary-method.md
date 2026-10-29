@@ -5,7 +5,7 @@ description: "Immersed boundary methods impose walls on non-conforming grids by 
 status: established
 aliases: [IBM, moving Cartesian grid, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, VMIB, variational multiscale immersed boundary, weak Dirichlet immersed boundary, single ghost cell, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-28T17:49:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Immersed boundary methods
@@ -235,8 +235,8 @@ homogeneous, which their LES analysis needs (§2.1).
 **Volume penalization (DG).** [Ferrer et al. (2023)](/sources/ferrer-2023.md),
 §4.7, Eqs. (27)–(29), add to the momentum and energy equations of
 [HORSES3D](/software/horses3d.md) a source
-$$\frac{\chi}{\eta_p}\Big(\rho(\boldsymbol u_s-\boldsymbol u),\ \tfrac{\rho}{2}\big(|\boldsymbol u_s|^2-|\boldsymbol u|^2\big)\Big),$$
-with $\chi=1$ in the solid and 0 in the fluid, $\eta_p$ the permeability and
+$$\frac{\chi_{\mathrm m}}{\eta_p}\Big(\rho(\boldsymbol u_s-\boldsymbol u),\ \tfrac{\rho}{2}\big(|\boldsymbol u_s|^2-|\boldsymbol u|^2\big)\Big),$$
+with $\chi_{\mathrm m}=1$ in the solid and 0 in the fluid, $\eta_p$ the permeability and
 $\boldsymbol u_s$ the body velocity (page-local; Ferrer et al. write $\eta$).
 The mask is built by ray tracing of an STL surface on a surface-area-heuristic
 k-d tree, parallel in OpenMP and MPI, and surface quantities are recovered
@@ -253,11 +253,11 @@ the two cell ends and the $N-1$ interior Legendre–Gauss points, Roe flux,
 BR1 gradients, five-stage fourth-order SSP Runge–Kutta). Page-local:
 $\boldsymbol U=(\rho,\rho\boldsymbol u,\rho e)$ the conservative state with
 $e=E/\rho$ the total energy per unit mass, $\boldsymbol F_c$, $\boldsymbol F_v$
-the convective and viscous fluxes, $\Omega$ the solid, $\chi$ and $\eta_p$
+the convective and viscous fluxes, $\Omega$ the solid, $\chi_{\mathrm m}$ and $\eta_p$
 the mask and permeability as above, $\boldsymbol s_p$ the penalization source. The system
 $\partial_t\boldsymbol U+\nabla\cdot(\boldsymbol F_c-\boldsymbol F_v)+\boldsymbol s_p=0$
 carries
-$$\boldsymbol s_p=-\frac{\chi}{\eta_p}\big(0,\ \rho\boldsymbol u_\Omega-\rho\boldsymbol u,\ \rho e_\Omega-\rho e\big)$$
+$$\boldsymbol s_p=-\frac{\chi_{\mathrm m}}{\eta_p}\big(0,\ \rho\boldsymbol u_\Omega-\rho\boldsymbol u,\ \rho e_\Omega-\rho e\big)$$
 (Eqs. 12–13, 16), with target velocity $\boldsymbol u_\Omega=0$ and target
 energy $e_\Omega=c_vT_\Omega$ ($c_v$ the specific heat at constant volume,
 page-local) for an isothermal wall. Density is not penalized, only
@@ -275,7 +275,7 @@ $\Delta t_{\max}=\tfrac{6}{11}\eta_p$ with third-order Adams–Bashforth
 splitting: a half step of the penalization sub-problem, a full step of the
 unchanged spectral-difference Runge–Kutta update, and a second half step,
 the penalization sub-problems being integrated exactly,
-$$\boldsymbol U(t)=\chi\big[(1-r_p)\mathsf A\boldsymbol U_\Omega+r_p\mathsf B\boldsymbol U_0\big]+(1-\chi)\boldsymbol U_0,\qquad r_p=e^{-t/\eta_p},$$
+$$\boldsymbol U(t)=\chi_{\mathrm m}\big[(1-r_p)\mathsf A\boldsymbol U_\Omega+r_p\mathsf B\boldsymbol U_0\big]+(1-\chi_{\mathrm m})\boldsymbol U_0,\qquad r_p=e^{-t/\eta_p},$$
 at $t=\Delta t/2$ (Eqs. 18–23; page-local $\boldsymbol U_0$ the sub-step
 initial state, $\boldsymbol U_\Omega=(\rho,\rho\boldsymbol u_\Omega,\rho e_\Omega)$,
 $\mathsf A=\mathrm{diag}(0,\boldsymbol I,1)$, $\mathsf B=\mathrm{diag}(1,\boldsymbol I,1)$).
@@ -302,10 +302,10 @@ difference).** [Monteiro et al. (2026)](/sources/monteiro-2026.md),
 code RHEA-X (second-order central split-form finite differences on
 Cartesian grids), after the framework of Angot et al. and Verzicco that
 they cite: the solid is a porous region of vanishing permeability. With
-the mask $\chi\in[0,1]$ ($\chi=1$ in the solid, intermediate values at the
+the mask $\chi_{\mathrm m}\in[0,1]$ ($\chi_{\mathrm m}=1$ in the solid, intermediate values at the
 interface) and the body values $\boldsymbol u_b$, $T_b$ (page-local), the
-targets are $\boldsymbol u_{\mathrm{IB}}=\chi\boldsymbol u_b+(1-\chi)\boldsymbol u$
-and $T_{\mathrm{IB}}=\chi T_b+(1-\chi)T$, and the momentum and energy
+targets are $\boldsymbol u_{\mathrm{IB}}=\chi_{\mathrm m}\boldsymbol u_b+(1-\chi_{\mathrm m})\boldsymbol u$
+and $T_{\mathrm{IB}}=\chi_{\mathrm m} T_b+(1-\chi_{\mathrm m})T$, and the momentum and energy
 sources are
 $$\boldsymbol f_{\rho u}=\frac{\rho}{K_{\mathrm{IB}}}\big(\boldsymbol u-\boldsymbol u_{\mathrm{IB}}\big),\qquad f_{\rho E}=\frac{\rho}{K_{\mathrm{IB}}}\big(E-E_{\mathrm{IB}}\big),\qquad K_{\mathrm{IB}}=-\alpha_{\mathrm{IB}}\Delta t,$$
 with $E_{\mathrm{IB}}$ the total energy at $T_{\mathrm{IB}}$ and
@@ -490,15 +490,15 @@ The wall model and the validation are in the next section.
 
 [Llorente (2024)](/sources/llorente-2024.md), a theoretical letter with no
 computations, asks how the URANS equations should be penalized when a body
-is represented by volume penalization. Page-local symbols: $\chi$ the mask
-(1 in the body, 0 outside; registry $\chi$ is the Spalart–Allmaras ratio,
-which does not occur here), $\eta_p$ the penalization parameter (the
+is represented by volume penalization. Page-local symbols: $\chi_{\mathrm m}$ the mask
+(registry §11; 1 in the body, 0 outside; bare $\chi$ is the
+Spalart–Allmaras ratio, which does not occur here), $\eta_p$ the penalization parameter (the
 source's $\eta$, called permeability; typical values $10^{-7}$ to
 $10^{-10}$, citing Ménez et al.; it has the dimension of time in Eq. 2b,
 *compiler check, not in the sources*), $\boldsymbol u_b$ the body velocity,
 $u^{\mathrm{rel}}_i=u_i-u_{b,i}$ the relative velocity (the source's $w_i$,
 renamed because $w_i$ are the registry's quadrature weights),
-$\mathcal R=\chi/\eta_p$ the **fluid resistance** (inverse permeability; the
+$\mathcal R=\chi_{\mathrm m}/\eta_p$ the **fluid resistance** (inverse permeability; the
 source's $\mathscr R_\eta$), $\mathcal T_c=\mathcal L/\mathcal U$ and
 $\mathcal T_d=\mathcal L^2/\nu$ convective and diffusive times of
 characteristic scales $\mathcal L$, $\mathcal U$. The source's overbar is
@@ -511,7 +511,7 @@ cites from Angot, Bruneau & Fabrie, the penalized solution converges to the
 no-slip one as $\eta_p\to0$ with error $\propto\eta_p^{1/2}$ for Dirichlet
 conditions (p. 2). Articles on penalized turbulent flow, of which the
 letter cites Yu & Yu (2022) as an example, add
-$\chi\eta_p^{-1}(\langle u_i\rangle-\langle u_{b,i}\rangle)$ to the URANS
+$\chi_{\mathrm m}\eta_p^{-1}(\langle u_i\rangle-\langle u_{b,i}\rangle)$ to the URANS
 equations (p. 3, Eqs. 3–4).
 
 **Time-scale condition.** Non-dimensionalizing and multiplying by
@@ -533,7 +533,7 @@ with a resistance–velocity correlation that "arises because the body is
 moving". Requiring $\langle u_i\rangle=\langle u_{b,i}\rangle$ in the body at all times closes
 it as $\langle\mathcal R'u^{\mathrm{rel}\prime}_i\rangle=-\partial_t\langle u_{b,i}\rangle$ (Eq. 11),
 so the closed URANS-VP momentum equation carries the extra source
-$-\chi\,\partial_t\langle u_{b,i}\rangle$, minus the body acceleration
+$-\chi_{\mathrm m}\,\partial_t\langle u_{b,i}\rangle$, minus the body acceleration
 (Eqs. 12a–12d). For a fixed body the two procedures, penalizing URANS and
 averaging the penalized Navier–Stokes equations, coincide. Theorem 1 bounds
 the $L^2$ norm of the solution by that of the body velocity when
@@ -828,9 +828,9 @@ on a pressure smoothness indicator (Eqs. 7–16). Results (§3.3–3.4, §5):
   model does not change it, and three-dimensional runs confirm the
   two-dimensional lengths (Figs. 12–13). The authors conclude that these
   simulations "are more sensitive to the wall model than the LES subgrid
-  model" and name the dynamic slip condition of Bose & Moin as future
-  work; their slip wall is a free-slip condition, not the
-  [slip-wall model](/methods/slip-wall-model.md).
+  model" and name the dynamic slip condition of Bose & Moin (see
+  [slip-wall models](/methods/slip-wall-model.md)) as future work; their
+  slip wall is a free-slip condition.
 - A [turbulent channel](/benchmarks/turbulent-channel-flow.md) at $M=0.5$
   and 1.5, $Re=10{,}000$ on bulk velocity and half height, with both walls
   immersed: wall-resolved grids agree with DNS, while the wall-modelled
@@ -1025,7 +1025,7 @@ printed. See [RANS wall functions](/methods/rans-wall-function.md).
   (§3.1, Table 3, Figs. 4–8; see the
   [geometric conservation law](/properties/geometric-conservation-law.md)).
 - *Pitching airfoil.* On AGARD Case 3 (NACA 0012, $M_\infty=0.6$,
-  $Re=4.8\times10^6$, $\alpha=4.86^\circ+2.44^\circ\sin\omega t$, reduced
+  $Re=4.8\times10^6$, $\alpha=4.86^\circ+2.44^\circ\sin\varpi_{\mathrm p}t$ ($\varpi_{\mathrm p}$ the pitching angular frequency, registry §11), reduced
   frequency 0.081), the $C_l$ hysteresis loop with its inversion near
   $\alpha\approx6^\circ$ and the shock and suction-peak positions agree with
   experiment and with the body-fitted FUN3D; the pitching-moment
@@ -1344,8 +1344,8 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   1.3 mm, *compiler check, not in the sources*), but the turbulence
   treatments and wall laws differ (Vreman LES with a constrained-LES
   near-wall viscosity and stress enhancement against SST-based IDDES with
-  the explicit Cai & Sagaut law), so the two findings concern different
-  set-ups, and neither source runs the other's. Both agree that the coarse or
+  the explicit Cai & Sagaut law), and neither source runs the other's
+  set-up. Both agree that the coarse or
   wall-model-dominated runs fail to separate (Cai et al. 2022, coarse grid;
   Mozaffari et al. 2024, §3.3).
 - **Constant normal pressure.** Constant et al. (2024, §1) state that most
@@ -1365,8 +1365,7 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   for the Reynolds stress tensor" (p. 6) and is then closed exactly by
   requiring perfect penalization in the body, which the letter's own
   Eq. (7c) shows does not hold for finite $\eta_p$; Theorem 1 uses the same
-  assumption ($\langle u^{\mathrm{rel}}_i\rangle=0$ in the body). The result is a kinematic body
-  acceleration forcing, independent of turbulence. Printed slips: the final
+  assumption ($\langle u^{\mathrm{rel}}_i\rangle=0$ in the body). Printed slips: the final
   energy identity of Theorem 1 lacks the time integral that Eq. (13)
   carries; the dissipation integral is called "negative semi-definite"
   although it is non-negative for $\nu+\nu_t\ge0$; the diffusive flux of
@@ -1385,7 +1384,7 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   penalized solution converges as $\eta_p\to0$; Llorente (2024, p. 2) cites the
   Angot–Bruneau–Fabrie estimate as an error $\propto\eta_p^{1/2}$.
 - **Printed slips (D'Ayer et al.).** With $\mathsf A=\mathrm{diag}(0,\boldsymbol I,1)$
-  as printed, Eq. (23) gives the density $\chi r_p\rho_0$ in the solid,
+  as printed, Eq. (23) gives the density $\chi_{\mathrm m} r_p\rho_0$ in the solid,
   decaying to zero, while the density row of $\boldsymbol s_p$ is zero, so
   the exact sub-problem keeps $\rho_0$ *(compiler check, not in the
   sources)*. The channel of 8 roughness patterns of length $\sqrt3\,d$,
@@ -1431,9 +1430,8 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   that the no-slip forcing of most IB methods is not valid at wall-modelled
   filter sizes and model the filtered slip; Cai et al. (2022), Constant et
   al. (2024) and Mozaffari et al. (2024) instead impose a wall law at
-  off-wall reconstruction points. The approaches act on different
-  quantities, the first is tested only a priori, and no source compares
-  them.
+  off-wall reconstruction points. The first is tested only a priori, and
+  no source compares the two.
 
 - **Printed forms in the three wall-function sources.**
   [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) print the

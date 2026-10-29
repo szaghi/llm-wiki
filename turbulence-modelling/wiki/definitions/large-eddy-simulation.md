@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -840,7 +840,7 @@ from the side of grid convergence: in implicitly filtered LES numerical
 and modelling errors are "fundamentally inseparable", because refining
 the grid reduces both, whereas explicitly filtered LES with a fixed filter
 width larger than the grid spacing "is known to produce grid-independent
-LES solution" (citing Bose et al.; they also recall Lund's finding that
+LES solution" (citing Bose et al.; they also cite Lund's finding that
 plain refinement improved statistics faster than explicit filtering).
 They carry the analogy to wall-modelled LES: holding the wall-model
 matching height $h_{\mathrm{wm}}$ fixed during refinement plays the role
@@ -862,9 +862,8 @@ A posteriori, the mixed model with the cube-root width lengthens the
 recirculation bubble (reattachment length $x_R$, registry §11) from $x_R/H=7.19$ to 7.43 against the experimental
 6.51 (Table III). The author concludes that "the effect of a grid width in
 one direction much smaller than in other directions must be excluded in
-determining the filter width" (§V), which agrees with the argument of
-Haering et al. (2022, §II C) that the cube root tends to the smallest
-spacing. Abe tests only a free shear layer; near-wall treatment "was not
+determining the filter width" (§V); Haering et al. (2022, §II C) argue
+that the cube root tends to the smallest spacing. Abe tests only a free shear layer; near-wall treatment "was not
 our main concern". The [dynamic procedure](/methods/dynamic-procedure.md)
 sidesteps the question by computing $(C_s\Delta)^2$ as one product (Abe
 2021, §II A); Prakash et al. (2022, §III) use it for the same reason in
@@ -916,7 +915,7 @@ modal spectrum inside an element covering the scales between them; they
 build a smoothness indicator on it (see
 [mesh adaptation](/methods/mesh-adaptation.md)). They attribute spurious
 peaks in centreline rms profiles on coarse elements partly to DG
-inter-element discontinuities, recalling an a priori study by Beck et al.
+inter-element discontinuities, citing an a priori study by Beck et al.
 in which filtered DNS projected on a DG/LES grid is itself discontinuous at
 element interfaces (§4.2.3, Fig. 10). In the continuous spectral element
 method the velocity is continuous across elements but its gradient is not;
@@ -1065,7 +1064,7 @@ fluctuation) with a filter that leaves the mean unchanged,
 $\bar u_i=\langle u_i\rangle+u_i^>$, and write $\tau_{ij}$ as cross and
 subgrid–subgrid products of $u^>$ and $u^<$. Their computable measure of
 resolution is the unresolved fraction $1-k_{\mathrm{res}}/k_{\mathrm{tot}}$;
-citing Jiménez & Moser, they recall that "for typical LES" this fraction is
+citing Jiménez & Moser, they state that "for typical LES" this fraction is
 expected to stay below about 0.1 over the entire domain "for the model to
 perform well", and report that their hybrid model keeps a correct mean in
 channel flow "well past this threshold", with the fraction as low as 0.4
@@ -1728,7 +1727,7 @@ their own adjoint shape optimization is 2D URANS, and LES and DES adjoints
 are named as future work (see
 [Ffowcs Williams–Hawkings analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)).
 
-**Cost, fidelity and the modelling burden.** Four sources place LES
+**Cost, fidelity and the modelling burden.** Five sources place LES
 differently. [Le et al. (2024)](/sources/le-2024.md)
 (§3, p. 9), reviewing supersonic combustion, class DNS and LES as "not
 suitable to use in engineering applications" because of their cost, with
@@ -1804,8 +1803,8 @@ grid ratio (§4). See
 
 - Abe (2021) gives the coarse-grid case two labels, BSC and, in §III and the
   Fig. 8 caption, "BFC".
-- **Modelled-energy fraction: different statements, not a conflict.**
-  Haering et al. (2022, §V A 1) recall, citing Jiménez & Moser, that typical
+- **Modelled-energy fraction.**
+  Haering et al. (2022, §V A 1) state, citing Jiménez & Moser, that typical
   LES is expected to model below about 10% of the energy, and report their
   own hybrid model performing well past it; Seyedi & Zayernouri (2022,
   §III.1) use the 10% figure as a description of common LES practice to
@@ -1817,8 +1816,7 @@ grid ratio (§4). See
   a weak grid criterion. No source states that LES fails above 10%, and the
   fractions are defined differently (domain-wide $1-k_{\mathrm{res}}/k_{\mathrm{tot}}$
   in Haering et al., a local fraction of the DNS energy in Helm & Martín,
-  an unprinted percentage in Seyedi & Zayernouri); the statements are
-  therefore recorded as qualifications, not as a contradiction.
+  an unprinted percentage in Seyedi & Zayernouri).
 - Helm & Martín (2022, §III B) give the Mach 7 unresolved share at the wall
   both as 25% and, a sentence later, as a maximum of 18%.
 - Sirignano & MacArt (2023, Eq. 3.4) and Saini et al. (2023) do not state

@@ -9,7 +9,7 @@ year: 2022
 venue: "Flow Turbul. Combust. 109:841-869"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Flow_Turbulence_and_Combustion_Menter_An_Algebraic_LCTM_Model_for_LaminarTurbulent_Transition_Pred.pdf"
 tags: [rans, transition, intermittency]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Summary
@@ -76,7 +76,7 @@ numbers on this page are those of the version of record.
 24. On S809 natural transition starts at $\alpha=6^\circ$ for the algebraic model and $7^\circ$ for the transport models, against about $5^\circ$ in experiment; the algebraic model gives slightly better lift and drag (Figs. 20–22). **Shown**.
 25. On Pak-B all three LCTM models reproduce the bubble-size trends; γ-alg-SST is on the small-bubble side at $Re=5\cdot10^4$, $Tu=0.08\%$, and γ-SST overpredicts the bubble at $Re=5\cdot10^4$, $Tu=2.85\%$ (Fig. 24). **Shown**.
 26. The transport models give reasonable T3A results even with streamwise spacing $10\delta$; the algebraic model deviates from $2\delta$ and is "clearly less forgiving", especially compared with γ-$Re_\theta$ (§4, Fig. 26). **Shown**.
-27. The transition location is virtually insensitive to the first-cell height for $y^+_{\max}<5$; γ-alg-SST is unaffected for $y^+_{\max}<6$; on the coarsest mesh transition moves to the leading edge (§4, Fig. 27). **Shown** (the passage is internally inconsistent; see Printed slips).
+27. The transition location is virtually insensitive to the first-cell height for $y^+_{\max}<5$; γ-alg-SST is unaffected for $y^+_{\max}<6$; on the coarsest mesh transition moves to the leading edge (§4, Fig. 27). **Shown** (see Printed slips).
 28. Mesh recommendations: $y^+\le1$ in the transition region, wall-normal expansion ratio at most 1.15 (above 1.2 to be avoided), streamwise step not much larger than the boundary-layer thickness; wall-function meshes are unsuitable (§4). **Stated** (from Figs. 26–28).
 29. A hysteresis test (laminar against turbulent start) should be a standard procedure for every new transition model (§1, §5). **Stated**.
 
@@ -104,7 +104,7 @@ numbers on this page are those of the version of record.
 | $d_w$, $y$ | $d$ | wall distance; $y$ used interchangeably in Eq. (24) |
 | $Re_\theta$, $Re_{\theta c}$, $Tu$ | $Re_\theta$, $Re_{\theta c}$, $Tu$ | as in the registry; the model name writes "Reθt" |
 | $Re_{V22}$, $Rat_{Re}$, $\tilde\Omega$ | $Re_V$, $\mathrm{Rat}$, $\Omega_V$ (page-local on the transition page) | vorticity Reynolds number over 2.2, onset ratio, $\max(\lvert S\rvert,\lvert\Omega\rvert,0.1\omega)$; $\tilde\Omega$ is **not** a Favre filter |
-| $Tu_l$, $\lambda_{\theta l}$ | $Tu_l$, $\lambda_{\theta l}$ (page-local) | local intensity (percent, capped at 100), local pressure-gradient indicator |
+| $Tu_l$, $\lambda_{\theta l}$ | $Tu_l$, $\lambda_{\theta l}$ (registry §11) | local intensity (percent, capped at 100), local pressure-gradient indicator |
 | $\gamma_{Bubble}$, $C_{bubbleC1}$, $C_{bubbleC2}$, $F_{RV1}$, $RV1_{switch}$ | $\gamma_b$, $C_{b1}$, $C_{b2}$, $F_{RV}$, $RV_{\mathrm{switch}}$ (page-local) | bubble term and coefficient blending |
 | $\tilde k$ | $k_h$ (page-local) | **collision:** harmonic mean of $k$ over face-connected cells (Eq. 12), not a Favre filter |
 | $\alpha$ | $\alpha$ (SST page) | SST $\omega$-production coefficient; **collision** with the registry's DG blending factor, resolved by page context; also used for the angle of attack |
@@ -119,7 +119,7 @@ numbers on this page are those of the version of record.
 80 printed references in author–year (Springer) style, alphabetical, all merged into the
 [bibliography](/bibliography.md) with `citedby` this slug. Xu et al. 2016a and 2016b are printed in
 the opposite order to their letters, so their keys are resolved by venue, not by printed order. Two
-entries ("Xing-hao", "Daniele") print given names in the surname slot, and their keys need the
+entries ("Xing-hao", "Daniele") print given names in the surname slot, and their keys use the
 Crossref surname. The DOIs printed for Ge et al. (2015) and Suluksna et al. (2009) do not match the
 printed journals (see Printed slips). The ERCOFTAC database is an undated web item. Five items lack
 volume or pages; none is unparseable and no printed duplicate was found.

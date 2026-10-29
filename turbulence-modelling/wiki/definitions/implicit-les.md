@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, coarse-grained simulation, CGS, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-29T05:12:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -74,7 +74,14 @@ can carry.
    wall-resolved ILES of the T161 low-pressure-turbine cascade with the
    sixth-order DGSEM of TRACE ($N=5$, Roe interface flux, Kennedy–Gruber
    kinetic-energy-preserving split form, BR1 viscous flux without penalty)
-   and use it as the reference for RANS closures. [Sirignano & MacArt (2023)](/sources/sirignano-2023.md)
+   and use it as the reference for RANS closures.
+   [Okano & Haga (2026)](/sources/okano-2026.md) (§2.1) run compressible
+   channel WMLES with the $N=3$ flux-reconstruction solver LS-FLOW-HO
+   ("An explicit subgrid scale turbulence model is not used here"), with an
+   equilibrium wall model supplying the wall stress and an artificial
+   viscosity added only below the matching height to keep strongly cooled
+   walls stable (see [wall-modelled LES](/methods/wall-modelled-les.md)).
+   [Sirignano & MacArt (2023)](/sources/sirignano-2023.md)
    (§3.2) and [Kurz et al. (2023)](/sources/kurz-2023.md) (§3.3, "iLES")
    use no-model LES as a baseline for learned closures.
    [Wang et al. (2023c)](/sources/wang-2023-c.md) (§II.A) recall the
@@ -1124,8 +1131,8 @@ interpretation they flag as needing further work).
   the kinetic solver through an enlarged collision time
   $\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$, with the cell as
   implicit filter: static [Smagorinsky](/methods/smagorinsky-model.md)
-  ($C_s=0.1$), [Vreman](/methods/vreman-model.md) ($C_v=2.5C_s^2=0.025$,
-  page-local $C_v$) and the [dynamic procedure](/methods/dynamic-procedure.md)
+  ($C_s=0.1$), [Vreman](/methods/vreman-model.md) (prefactor
+  $c=2.5C_s^2=0.025$, the page-local $c$ of the Vreman page) and the [dynamic procedure](/methods/dynamic-procedure.md)
   with a top-hat test filter of twice the width and a domain-averaged
   coefficient (§III, Eqs. 7–13). Kinetic energy and its total decay rate
   are insensitive to the choice; the enstrophy-based and solenoidal
@@ -1133,7 +1140,8 @@ interpretation they flag as needing further work).
   is the best explicit one (§IV A, Figs. 1–3). Writing the discrete
   equation with a numerical subgrid stress $\tau^{\mathrm{num}}_{ij}$ beside the
   modelled one, after Moser et al. (Eq. 20), they estimate the total
-  subgrid dissipation as $-\mathrm dE_k/\mathrm dt$ minus the physical
+  subgrid dissipation as $-\mathrm d\mathcal K/\mathrm dt$ ($\mathcal K$ the
+  volume-averaged kinetic energy, page-local as above) minus the physical
   dissipation (Eq. 22): modelled and numerical parts together for explicit
   LES, numerical only for implicit LES. The static models give about twice
   the implicit value at $t=2.5$–10 and the dynamic model lies between,
@@ -1148,6 +1156,72 @@ interpretation they flag as needing further work).
   [numerical dissipation](/properties/numerical-dissipation.md), the a
   priori comparison on
   [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+- **The same comparison across grid resolutions, judged by velocity
+  gradients.** The sequel, [Wang et al. (2026)](/sources/wang-2026.md),
+  repeats it with the same fourth-order gas-kinetic scheme (fifth-order
+  WENO-Z reconstruction, two-stage fourth-order time stepping, CFL 0.4),
+  the same three closures and coefficients, on $64^3$, $128^3$ and $256^3$
+  against a $512^3$ DNS of the same framework (§II, §III A). The implicit
+  LES is the scheme with $\mu_t=0$.
+  - *Dissipation budget.* The total subgrid dissipation, again the residual
+    of the kinetic-energy budget, is similar for all four runs on $64^3$;
+    with refinement it decreases and the models separate, the dynamic
+    model staying close to implicit LES while Smagorinsky and Vreman give
+    noticeably more (§III B, Fig. 1). The time-averaged modelled
+    dissipation falls with refinement for every model, while its share of
+    the total subgrid dissipation rises: numerical dissipation dominates on
+    the coarse grid, and on $256^3$ the modelled part is most of the total
+    for Smagorinsky and Vreman, whereas the dynamic model keeps a lower
+    fraction (§III B, Fig. 6). The authors conclude that the tested models
+    "do not exhibit consistent, scale-independent behavior across grid
+    resolutions" (§III B).
+  - *Velocity-gradient statistics.* Arguing that global dissipation alone
+    cannot tell whether a model improves or distorts the resolved
+    structures, they compare PDFs of the three resolved normal velocity
+    gradients with box-filtered (Gaussian in App. C) and unfiltered DNS.
+    The distance between PDFs $P$ (DNS) and $Q$ (LES) of a gradient value
+    $s$ is measured by the Jensen–Shannon divergence and the Wasserstein-1
+    distance (Eqs. 33–34),
+
+    $$\mathrm{JSD}=\tfrac12\!\int\!P\ln\frac{2P}{P+Q}\,ds+\tfrac12\!\int\!Q\ln\frac{2Q}{P+Q}\,ds,\qquad
+    W_1=\int\lvert F_P-F_Q\rvert\,ds,$$
+
+    with $F_P$, $F_Q$ the cumulative distributions (page-local), on 100
+    common bins over the joint range padded by 2%, averaged over the three
+    components ("Mean JSD", "Mean $W_1$") and over $t\in[1,16]$.
+  - *Rankings.* Time-averaged values (Tables I–II):
+
+    | Grid, reference | implicit LES | dynamic | Smagorinsky | Vreman |
+    |---|---|---|---|---|
+    | $64^3$, filtered DNS (JSD / $W_1$) | $4.16\times10^{-3}$ / $2.07\times10^{-2}$ | $4.20\times10^{-3}$ / $2.21\times10^{-2}$ | $5.17\times10^{-3}$ / $3.38\times10^{-2}$ | $4.77\times10^{-3}$ / $3.06\times10^{-2}$ |
+    | $128^3$, filtered DNS | $8.01\times10^{-4}$ / $1.32\times10^{-2}$ | $7.90\times10^{-4}$ / $1.32\times10^{-2}$ | $9.95\times10^{-4}$ / $1.98\times10^{-2}$ | $9.39\times10^{-4}$ / $1.80\times10^{-2}$ |
+    | $256^3$, filtered DNS | $2.39\times10^{-4}$ / $9.09\times10^{-3}$ | $2.43\times10^{-4}$ / $7.76\times10^{-3}$ | $2.01\times10^{-4}$ / $7.18\times10^{-3}$ | $1.95\times10^{-4}$ / $6.94\times10^{-3}$ |
+    | $64^3$, unfiltered DNS | $9.13\times10^{-3}$ / $9.30\times10^{-2}$ | $1.01\times10^{-2}$ / $1.01\times10^{-1}$ | $1.31\times10^{-2}$ / $1.21\times10^{-1}$ | $1.21\times10^{-2}$ / $1.17\times10^{-1}$ |
+    | $128^3$, unfiltered DNS | $1.49\times10^{-3}$ / $3.12\times10^{-2}$ | $1.73\times10^{-3}$ / $3.72\times10^{-2}$ | $2.37\times10^{-3}$ / $4.72\times10^{-2}$ | $2.32\times10^{-3}$ / $4.52\times10^{-2}$ |
+    | $256^3$, unfiltered DNS | $3.25\times10^{-4}$ / $9.61\times10^{-3}$ | $3.89\times10^{-4}$ / $1.23\times10^{-2}$ | $3.02\times10^{-4}$ / $1.29\times10^{-2}$ | $3.53\times10^{-4}$ / $1.45\times10^{-2}$ |
+
+    On $64^3$ implicit LES is closest on both metrics and both references;
+    on $128^3$ it ties with the dynamic model against filtered DNS and is
+    closest against unfiltered DNS; on $256^3$ Smagorinsky and Vreman are
+    closer against filtered DNS, mainly in late decay ($t=14$–16), which
+    the authors read as "a modest regularizing benefit", and against
+    unfiltered DNS Smagorinsky has the smallest JSD and implicit LES the
+    smallest $W_1$ (§IV B). On $128^3$ at $t=10$ the Smagorinsky and Vreman
+    runs under-predict the tails of the gradient PDF beyond about 2
+    (Fig. 8), and the six off-diagonal gradients at $t=5$ rank implicit
+    LES, dynamic, then the static models (App. B, Table III). Spectra at
+    $t=8$ agree at low and intermediate wavenumbers, with the strongest
+    high-wavenumber depletion for the static models (App. A, Fig. 11).
+  - *Conclusion and its scope.* The abstract states that implicit LES
+    "provides consistently robust agreement with DNS across the tested grid
+    resolutions"; §IV B concludes that it gives "the best and most
+    consistent reproduction of the DNS-based velocity-gradient statistics
+    across the tested grid resolutions" and that the explicit closures
+    "show no systematic advantage over iLES". The $256^3$ values of
+    Tables I–II are those of the table above. The authors restrict their conclusions
+    to this scheme, this flow and the standard, non-recalibrated
+    coefficients, and did not test similarity, gradient or dynamic mixed
+    models (§V).
 - **Low-order TVD-type reconstruction, transonic cavity.** Cheng et al.
   (2023, §3.6, Figs. 9–14) run their compact-stencil implicit LES on the
   Mach 0.8 deep cavity of Forestier et al. ($Re=8.6\times10^5$ on the
@@ -1791,6 +1865,22 @@ numerics outweighing the model, and they conclude that on fine grids
 high-order DG behaves "more like a wall-modeled ILES rather than a simple
 WMLES" (model details on
 [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+In the same group's transitional hybrid of 2026,
+[Alberti et al. (2026)](/sources/alberti-2026.md) omit the
+low-Reynolds-number correction because high-order DG "suits" implicit LES
+and excessive eddy viscosity is detrimental (§2.1); on the NACA 0012 at
+$\alpha=11.5^\circ$, $Re_c=130\,000$, they nevertheless find that the LES
+branch of IDDES acts as an actual subgrid model, "not as ILES": the
+averaged equivalent Smagorinsky constant
+$C_{S,\mathrm{eq}}=\sqrt{\nu_t/(\Delta^2\lvert\Omega\rvert)}$ (Eq. 14,
+page-local as on the detached-eddy-simulation page, with $\Delta$ the cube
+root of the cell volume and $\lvert\Omega\rvert$ the registry
+rotation-rate magnitude, equal to the vorticity magnitude) is
+about 0.5 in RANS-dominated regions and 0.1–0.2 over most of the LES
+region, with a plateau at 0.14 at $x/c=0.4$, where the modelled Reynolds
+stress still contributes about 10% (§3.3, Fig. 16). The 2025 channel
+values (about 0.01 on fine grids) and these airfoil values come from
+different flows, grids and model variants.
 
 ## Qualifications
 
@@ -1894,17 +1984,18 @@ WMLES" (model details on
 - [Goc et al. (2021)](/sources/goc-2021.md) (§2.3), who run explicit SGS
   models, state that low-dissipation numerics are essential because
   numerical dissipation is "extremely detrimental" for coarse LES (Mittal &
-  Moin 1997, cited): the opposite design choice to usage 2.
+  Moin 1997, cited); usage 2 builds the dissipation into the scheme as
+  the model.
 
 - Ferrer et al. (2023, §4.1) call DG "very suitable for ILES" because its
   numerical dissipation is confined to high wavenumbers, and give no
   resolution condition; Flad & Gassner (2017), whom they cite, find that
   the same high-wavenumber concentration makes de-aliased DG ILES fail
   when the cutoff lies in the inertial range (above). Ferrer et al.
-  state no resolution condition and the paper reports no coarse-resolution
-  test, so the two statements are not recorded as a contradiction.
+  report no coarse-resolution test.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) (§2.3) take the
-  position opposite to usage 2 for their hybrid RANS/LES: "if one assumes
+  position, for their hybrid RANS/LES, that the scheme's dissipation
+  should be minimized rather than designed as a model: "if one assumes
   that the added dissipation to the simulation should be only due to the
   SGS scales", the scheme's fourth-order artificial dissipation should be
   as low as possible, although "some amount of numerical dissipation is
@@ -1918,8 +2009,7 @@ WMLES" (model details on
   mechanism"; Abe, on the coarse high-aspect-ratio grid of a
   backward-facing step (above), finds that "the performance of the ILES
   suddenly decreases" and favours a high-quality SGS model on coarse
-  grids. The schemes, models and flows differ, so the two are not
-  recorded as a contradiction. Duan & Wang (2024) find both verdicts in
+  grids. The schemes, models and flows differ. Duan & Wang (2024) find both verdicts in
   one flux-reconstruction code, split by resolution: ILES is best when the
   flow is well resolved (Taylor–Green vortex, wall-resolved channel) and
   fails in the wall-modelled channel, where an explicit model is needed
@@ -1940,8 +2030,7 @@ WMLES" (model details on
   measure (reattachment length), against a fifth-order gas-kinetic scheme
   on uniform grids of $128^3$ and finer in the Taylor–Green vortex, with a
   global measure (kinetic-energy decay rate). Neither tests the other's
-  configuration, so the two are not recorded as a contradiction. Cao et
-  al.'s verdict also sits beside their own report of a large peak-dissipation
+  configuration. Cao et al.'s verdict also sits beside their own report of a large peak-dissipation
   discrepancy on the two coarsest grids.
 - Cao et al. (2024, §3.3) label a $160^3$ run of the same gas-kinetic
   scheme "DNS" and a $128^3$ run "iLES". Beattie et al. (2025) call a run
@@ -1988,9 +2077,11 @@ WMLES" (model details on
   0.0086–0.0136 in the author's own Table 5 and "$\approx0.0115$" for the
   quoted second-order scheme.
 - Simonis et al. (2022, Eq. 25) print the enstrophy-based dissipation as
-  $\epsilon_{\mathrm{res}}=2\pi\nu\zeta$ with $\zeta$ the volume average of
+  $\epsilon_{\mathrm{res}}=2\pi\nu\mathcal Z$ with $\mathcal Z$ (registry
+  §11; the paper's $\zeta$) the volume average of
   $\lvert\nabla\times\boldsymbol u\rvert^2$ (Eq. 23); for incompressible
-  periodic flow the paper's own definitions give $-dk/dt=\nu\zeta$, without
+  periodic flow the paper's own momentum equation and definitions give
+  $-\mathrm d\mathcal K/\mathrm dt=\nu\mathcal Z$, without
   the factor $2\pi$ *(compiler check, not in the sources)*. Whether the
   factor enters their computed $\epsilon_{\mathrm{mod}}$ is not determinable
   from the paper.
@@ -2007,6 +2098,15 @@ WMLES" (model details on
   $Re=1600$) and one fourth-order scheme; the authors defer higher Mach
   numbers, where shocklets make the numerical dissipation depend on the
   shock-capturing scheme (§V).
+- **Wang et al. (2026): printed equations.** Their Eq. (28) calls
+  $\bar\rho(\overline{u_iu_j}-\bar u_i\bar u_j)$ (their $U_i$ written $u_i$)
+  "the modeled SGS stress", the expression the registry uses to define the
+  unclosed subgrid stress $\tau_{ij}$; the eddy-viscosity form
+  used to evaluate the modelled dissipation of Eq. (29) is not printed.
+  Eqs. (18) and (25) divide by the density $\rho$, Eq. (29) by a reference
+  density $\rho_0$. The width of the Gaussian filter of App. C is not
+  printed. The DNS reference is $512^3$ here and $1024^3$ in Cao et al.
+  (2022b), as each paper prints it.
 - **Huang et al. (2022c): what "$N_p=7$" means.** The printed spacings
   ($\Delta x\simeq0.087\delta$, $\Delta z\simeq0.052\delta$,
   $\Delta y_1\simeq0.037\delta$) equal the element sizes divided by
@@ -2128,3 +2228,6 @@ WMLES" (model details on
 - [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1 (ALDM lineage, truncation error as SGS model); §3–4 (ML-ILES, end-to-end training); §4.1, Figs. 2–3 (under-resolved reference); §5.2, Tables 3–5, Figs. 7–9 (a posteriori spectra, generalization, cost).
 - [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §1 (right amount of dissipation and dispersion); §4 (ADDA); §5.1–5.3, Tables 3–4, Figs. 8–12, 19, 22 (Taylor–Green vortices, SD7003, MUSCL2).
 - [Sun et al. (2026)](/sources/sun-2026.md) — §1, §4 (VMS model defined by the numerical method; HERK-VMS fine scales); §7.2, Figs. 10–13.
+- [Wang et al. (2026)](/sources/wang-2026.md) — Abstract; §II A–C, Eqs. (10)–(17); §III A–B, Eqs. (18)–(29), Figs. 1–6; §IV A–B, Eqs. (30)–(34), Tables I–II, Figs. 7–10; §V; App. A–C, Table III, Figs. 11–12.
+- [Okano & Haga (2026)](/sources/okano-2026.md) — §2.1 (no-model flux-reconstruction WMLES).
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §2.1; §3.3, Eq. (14), Fig. 16.

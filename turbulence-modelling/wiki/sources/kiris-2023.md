@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Aircraft 60:1118–1140"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Aircraft_Kiris_HLPW-4_Wall-Modeled_Large-Eddy_Simulation_and_LatticeBoltzma.pdf"
 tags: [wmles, high-lift, wall-model, grid-requirements, lattice-boltzmann]
-timestamp: 2026-10-28T01:51:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -148,7 +148,7 @@ merged complete into the [bibliography](/bibliography.md) with `citedby`
 this slug. Refs. [13] and [46] are the ingested
 [goc-2021](/sources/goc-2021.md) and [bose-2018](/sources/bose-2018.md).
 Many printed keys name works other than the master entries of the same key
-and are re-keyed (`park-2017-b`, `park-2016-b`, `wang-2022-c`, `tamaki-2022-c`, `rumsey-2022-d`, `rumsey-2022-e`, `rumsey-2020-b`, `rumsey-2018-b`, `ghate-2020-c`, and `kiris-2022-c` for
+and carry suffixed keys in the bibliography (`park-2017-b`, `park-2016-b`, `wang-2022-c`, `tamaki-2022-c`, `rumsey-2022-d`, `rumsey-2022-e`, `rumsey-2020-b`, `rumsey-2018-b`, `ghate-2020-c`, and `kiris-2022-c` for
 kiris-2022-b, whose printed reference is the focus group's 2022 briefing
 slides, not the AIAA 2022-3294 conference paper held under the master key `kiris-2022-b`); ref. [25] is the master
 `meyers-2007-b` and ref. [10] the master `lozanoduran-2020-c`. No printed

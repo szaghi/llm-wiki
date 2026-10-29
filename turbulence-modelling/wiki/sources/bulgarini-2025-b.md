@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 526:113763"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Computational_Physics_Bulgarini_Efficient_h-adaptive_isogeometric_discontinuous_Galerkin_sol.pdf"
 tags: [dg, mesh-adaptation, rans, spalart-allmaras, high-order, turbomachinery]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -171,7 +171,7 @@ $u^+=\kappa^{-1}\ln y^++B$ with $\kappa=0.41$, $B=5$.
 40 printed references, numbered style. The list is merged complete into
 the [bibliography](/bibliography.md) with `citedby` this slug. Ref. [19]
 is the bundle source [Ims & Wang (2023)](/sources/ims-2023.md); no other
-cited work falls on the key of a planned or ingested source. [21], [24],
+cited work falls on the key of an ingested source. [21], [24],
 [33] and [34] (AIAA meeting papers) print no year and no venue, the year
 being taken from the printed DOI, and [21], [24], [30], [34] print a
 publisher URL in an "arXiv:" field; [23] is an undated web item ("N.L.R.

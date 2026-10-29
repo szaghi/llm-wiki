@@ -5,7 +5,7 @@ description: "Spatially developing turbulent boundary layers on flat walls: zero
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -512,8 +512,8 @@ degree more than on the ZPG plate. On the strong-APG DLR/UniBw layers DM2
 and DM3 ($Re_L=3.4$ and $5.2\times10^7$, parameter 25 to 45) the agreement
 deteriorates for $y_1^+>80$, and at $N=6$ the $C_f$ difference grows for
 $y_1^+=160$ and 320 near the end of the APG region, $0.8<x/L<0.85$; the
-authors attribute this to a wall law that holds only for ZPG layers,
-consistent with the shrinking log layer above (see
+authors attribute this to a wall law that holds only for ZPG layers (the
+shrinking log layer is described above; see
 [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
 
 ## Equilibrium, non-equilibrium, rough and three-dimensional layers: a physics review

@@ -5,7 +5,7 @@ description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on t
 status: established
 aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG, DG-ES, selective entropy-stable DG, ESDG, local discontinuous Galerkin, LDG, interior penalty DG, IPDG, direct discontinuous Galerkin, DDG, p-multigrid DG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -28,7 +28,7 @@ of the entropy-stable spectral vanishing viscosity of
 ## Approximation on curvilinear hexahedra
 
 Each element is the image of the reference cube $E=[-1,1]^3$ under a polynomial
-map $\boldsymbol x=\boldsymbol\chi(\boldsymbol\xi)$ of geometry degree
+map $\boldsymbol x=\boldsymbol X(\boldsymbol\xi)$ of geometry degree
 $N_{\mathrm{geo}}$ (independent of $N$), with Jacobian determinant
 $\mathcal J$ (page-local symbols). The solution is
 $$U(\boldsymbol\xi,t)\approx\sum_{i,j,k=0}^{N}U_{ijk}(t)\,\ell_i(\xi^1)\ell_j(\xi^2)\ell_k(\xi^3),\qquad \ell_j(\xi)=\prod_{i\ne j}\frac{\xi-\xi_i}{\xi_j-\xi_i},$$
@@ -140,8 +140,7 @@ integrate the cubic non-linearity of the viscous flux exactly (§2.10,
 
 The factor of three of Flad & Gassner and the factor of two of Brillon &
 Nadarajah come from different codes and different over-integration rules
-($\lfloor\tfrac32(N+1)\rfloor$ against $2(N+1)$ points); they are recorded
-side by side, not as a contradiction.
+($\lfloor\tfrac32(N+1)\rfloor$ against $2(N+1)$ points).
 
 ## Modal filtering and filtered artificial viscosity
 
@@ -592,6 +591,30 @@ meshes need, which make it progress in a "staircase" (§3.1.2, Fig. 12).
 Results by model variant are on
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) and
 [log-layer mismatch](/definitions/log-layer-mismatch.md).
+[Alberti et al. (2026)](/sources/alberti-2026.md) (§2.2, Eqs. 10–13) run
+the same solver for transitional IDDES: the weak form with an orthonormal
+hierarchical modal basis of complete (Pascal) polynomials defined in
+physical space, $\prod_{m=1}^{d}(N+m)/m$ modes per element, the
+artificial-compressibility Godunov flux, BR2 with interface-jump
+penalization, order $N+1$ for all unknowns except the pressure (order
+$N$), curved elements with second-order edges, and ROS3Pw, a strongly
+A-stable three-stage linearly implicit Rosenbrock scheme for the
+semi-discrete system with a block-diagonal mass matrix whose pressure
+entries vanish, with the Jacobian updated once per step and matrix-based
+GMRES with an additive-Schwarz preconditioner (coefficients not printed).
+They state that high-order DG suits implicit LES, so they apply no
+low-Reynolds-number correction to the LES length (§2.1), yet on a stalled
+NACA 0012 the LES branch acts as a subgrid model, with an equivalent
+Smagorinsky constant of 0.1–0.2, not as an implicit LES (§3.3; see the
+[NACA 0012 page](/benchmarks/naca-0012-airfoil.md)). On that case they
+report, at $N=4$, a drag equal to that of a reference LES with
+"approximately two orders of magnitude fewer DOFs and a time step size
+roughly 50 times larger" (§3.3); at $N=3$ the stalled phase is
+over-estimated, which they attribute to insufficient resolution in the
+scale-resolving part. Models and results are on the
+[transition-model page](/methods/local-correlation-based-transition-model.md),
+the [Eppler 387](/benchmarks/eppler-387-airfoil.md) and the
+[laminar separation bubble](/definitions/laminar-separation-bubble.md).
 
 **Interior-penalty DG for RANS.** [Zhao et al. (2023b)](/sources/zhao-2023-b.md)
 discretize the compressible RANS mean-flow equations with an interior
@@ -1520,15 +1543,14 @@ their [SD7003](/benchmarks/sd7003-airfoil.md) references (§5.2).
   Gao et al. (2022) report about 1.55 µs per degree of freedom, stage and
   core, 94.0% above the FLEXI baseline of Krais et al.; Gao et al. (2023,
   §5.2) report about 1.74 µs for the shock-free boundary layer at their
-  conditions, 34.6% above the baseline of Kempf et al. The runs differ
-  (moving-mesh framework, conditions, statistics collection, which they
-  name as the main overhead) and the baselines differ, so the values are
-  recorded side by side, not as a contradiction.
+  conditions, 34.6% above the baseline of Kempf et al. The two runs use
+  different frameworks (fixed and moving mesh), conditions and statistics
+  collection, which the papers name as the main overhead, and the two
+  percentages refer to different reference codes.
 
 - **Memory per degree of freedom.** Krais et al. (2021, Table 4) report for
   CPU FLEXI 1.47 KiB at $N=1$ and 0.567 KiB at $N=12$; Kurz et al. (2025,
-  Table 2) report for GALÆXI 1.457 and 0.787 KiB. The codes differ; the
-  values are recorded side by side, not as a contradiction.
+  Table 2) report for GALÆXI 1.457 and 0.787 KiB, for a different code.
 - **Printed slips (Cernetic et al. 2024, arXiv v2).** Eq. (35) prints the
   total cost as $\tfrac56N_x^4(1+N)^4(10N^4+100N^3+315N^2+523N+372)$; the
   paper's own ingredients, which reproduce its Eq. (33), give $351N^2$ in
@@ -1574,9 +1596,8 @@ their [SD7003](/benchmarks/sd7003-airfoil.md) references (§5.2).
   author manuscript.
 - **Wall units on element grids.** Morsbach et al. (2024, §3.1) give blade
   resolutions in wall units divided by $N$; Wang (2024, §4.2, Eq. 26, after
-  Jia et al.) divides the first-cell $y^+$ by $N+1$. The two are different
-  conventions for a per-degree-of-freedom spacing, not a disagreement, but
-  their values are not directly comparable.
+  Jia et al.) divides the first-cell $y^+$ by $N+1$, so their values are
+  per-degree-of-freedom spacings with different divisors.
 - The 40% applicability plateau is inferred by Flad & Gassner (2017) from two
   resolutions of one test case at $N=7$; the authors present it as a
   finding, not a bound.
@@ -1587,9 +1608,8 @@ their [SD7003](/benchmarks/sd7003-airfoil.md) references (§5.2).
 - **Two "sweet spots".** Cernetic et al. (2024) place the cost-effective
   order of modal DG for shocked turbulence at order 2 or 3 ($N=1$ or 2);
   Schotte et al. (2026, §3) call $N=2$ and 3 a sweet spot for modal DG on
-  complex RANS configurations. The statements concern different flows and
-  criteria (an idealized cost model with many shocks against practice on
-  steady aerodynamic cases) and are not competing claims.
+  complex RANS configurations. The first rests on an idealized cost model
+  with many shocks, the second on practice on steady aerodynamic cases.
 - Ghidoni et al. (2026)
   measure $y^+$ on the first-element height, not on a node distance or
   the element height over $N+1$ (§1), a third convention beside those of
@@ -1720,6 +1740,7 @@ their [SD7003](/benchmarks/sd7003-airfoil.md) references (§5.2).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §3.1, Eq. (20) (DG weak form, nodal and modal bases, mass-matrix conditioning, viscous discretizations); §3.4, Eq. (28) (HDG/EDG face unknowns); §6.3, Figs. 14–16 (DG combustion LES, reviewed); §7.
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §3, Eqs. (6)–(13) (FRDG recovering DG for linear equations); §4.3 (DG reference at $N=7$ for SD7003, cited).
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1, Eq. (6) (positive-part SA source, $r$ limit); §2.2, Eqs. (19)–(22) (incompressible modal DG, artificial-compressibility Godunov flux, BR2, ROS3Pw); §2.3, Eq. (23), Table 1 (length-scale normalization, equivalent hexahedron); §3.1.2–§3.1.3, Tables 4–5, Figs. 12–14; §4.
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §2.1; §2.2, Eqs. (10)–(13) (incompressible modal DG with Pascal basis, artificial-compressibility Godunov flux, BR2, ROS3Pw with GMRES and additive Schwarz); §3.3, Eq. (14), Table 7, Fig. 16.
 - [An et al. (2025)](/sources/an-2025.md) — §2.2.1–§2.2.2, Eq. (14) (CFL3D and third-order DG RANS–SA); §3.1–§3.2, Figs. 6, 16 (step and bump, DG against finite volumes); Appendix, Eqs. (A.1)–(A.2) (HWENO and positivity limiting of $\tilde\nu$).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (CODA and FLEXI against entropy-filtered PyFR on the supersonic Taylor–Green vortex).
 - [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I, §IV (modal DG against nodal DGSEM); §II, Eqs. (6)–(26) (orthonormal physical-space basis, entropy projection, direct enforcement of the entropy balance, BR2, SSP-RK); §III A 2–3, Tables I–V (channel implicit LES at moderate and severe under-resolution, degree-of-freedom comparisons); App. A, Table VI (cost); App. B (orders); sign conventions and Tables I/IV.

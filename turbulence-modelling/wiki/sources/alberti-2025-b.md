@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Fluids 299:106686"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Computers_amp_Fluids_Alberti_A_systematic_study_on_hybrid_RANSLES_models_for_a_high-order.pdf"
 tags: [des, hybrid-rans-les, dg, spalart-allmaras, log-layer-mismatch, high-order]
-timestamp: 2026-10-28T17:01:00Z
+timestamp: 2026-10-29T07:42:00Z
 ---
 
 # Summary
@@ -77,8 +77,8 @@ source's $\Delta_{hwn}$, $C_w$, $h_{wn}$); $\hat f_d$, $f_{dt}$, $f_B$, $f_e$ th
 IDDES blending, shielding, grid and elevating functions (the source's
 $\tilde f_d$ for $\hat f_d$); $\alpha_{\mathrm{ID}}=0.25-d/\Delta_{\max}$ the IDDES
 grid variable; $\Psi$ the low-Reynolds-number correction; $s_\Delta$ the
-length-scale normalization; $N_{\mathrm{dof}}$ the degrees of freedom per
-element; $C_{S,\mathrm{eq}}=\sqrt{\nu_t/(\Delta_{\mathrm{vol}}^2|\Omega|)}$ the
+length-scale normalization and $N_{\mathrm{dof}}$ the degrees of freedom per
+element (both registry §11); $C_{S,\mathrm{eq}}=\sqrt{\nu_t/(\Delta_{\mathrm{vol}}^2|\Omega|)}$ the
 equivalent Smagorinsky constant (the source's $\tilde C_S$, Eq. 25); $H$ the
 step height.
 
@@ -141,8 +141,8 @@ in 3D.
 | Source | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
 | $k$ | $N$ | polynomial degree; **collision** with the turbulent kinetic energy $k$ |
-| $N_{dof}$ | $N_{\mathrm{dof}}$ (page-local) | complete (Pascal) basis |
-| $s_\Delta$ | $s_\Delta$ (page-local) | default $N+1$ |
+| $N_{dof}$ | $N_{\mathrm{dof}}$ (registry §11) | complete (Pascal) basis |
+| $s_\Delta$ | $s_\Delta$ (registry §11) | default $N+1$ |
 | $\mathbf w=[p,u_i,\tilde\nu]$, $p=P/\rho$ | $p$ kinematic, $u_i$, $\tilde\nu$ | |
 | $d_w$, $\tilde d$ | $d$, $d_{\mathrm{DES}}$ | |
 | $\Omega=\sqrt{2\Omega_{ij}\Omega_{ij}}$ | $\lvert\Omega\rvert$ | factor two included |

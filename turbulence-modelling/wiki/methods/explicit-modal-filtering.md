@@ -5,7 +5,7 @@ description: "Explicit filtering, in the modal space of a high-order element or 
 status: established
 aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering, explicit differential filter, Najafi-Yazdi filter, entropy-adaptive filter, improved adaptive filter]
 tags: [les, filtering, implicit-les, dg, numerical-dissipation, sgs-model]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Explicit modal filtering as an LES closure
@@ -135,6 +135,23 @@ stabilize. A range just below the Li–Wang centre works, summarized as
 $s_0\in[-(N+2),-(N+1)]$ for $N=2$, 3 (Table 2b, §5; see
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
 for the indicator).
+
+**Wall cells of wall-modelled LES only.** [Okano & Haga (2026)](/sources/okano-2026.md)
+(§1, §3, §5.1–5.2) describe the stabilization of
+[wall-modelled LES](/methods/wall-modelled-les.md) in
+[flux reconstruction](/methods/flux-reconstruction.md) proposed by
+Fukushima & Haga (as cited): an auxiliary boundary condition for the
+gradients plus a modal filter (of Hamedi & Vermeire, as cited) applied
+only to the wall-adjacent cells and only in the wall-normal direction,
+where the coarse cells below the matching height make the polynomials
+oscillate. In a compressible channel at bulk Mach 0.8 this filter and
+their near-wall artificial viscosity give the same $Re_\tau$ (1676 against
+1677) and skin friction at a wall-to-recovery temperature ratio of 0.81,
+but the filtered runs blow up at 0.2 and 0.1, and with their numerics for
+any wall colder than 0.4 (at 0.1 within 500 steps at $N=3$). The
+replacement is an
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+confined to the same cells (Table 3, Figs. 2–4, 10).
 
 ## A filter strength independent of the time step
 
@@ -278,8 +295,8 @@ order ($N_s=1$) with $a_1=0.49$, after Visbal & Gaitonde (cited); a
 localized artificial diffusivity of viscosity and conductivity handles the
 remaining large gradients (see
 [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
-The filter here is a stabilization of a DNS on $2865\times298\times420$
-points ($\Delta x^+=4.6$), not a subgrid closure.
+The filter here stabilizes a DNS on $2865\times298\times420$ points
+($\Delta x^+=4.6$).
 
 ## Differential filters on unstructured grids
 
@@ -582,16 +599,16 @@ et al. (2025), is on the
 page. [Kumar et al. (2025)](/sources/kumar-2025.md), App. A.3–A.4,
 Eqs. (A5)–(A12), print that high-pass-filter (HPF) relaxation model of
 Nek5000 (Stolz et al., Schlatter et al., Fischer & Mullen, cited): a
-Legendre low-pass filter $\mathcal F_N u=\sum_{k=0}^N\sigma_k\tilde u_kP_k$
+Legendre low-pass filter $\mathcal F_N u=\sum_{k=0}^N\hat G_k\tilde u_kP_k$
 ($\tilde u_k$ the Legendre coefficients, $P_k$ the Legendre polynomials,
-page-local) with $\sigma_k=1$ for $k\le N-m$ and
-$\sigma_k=\big((m-i)/m\big)^2$ for $k=N-m+i$, $i=1,\dots,m$, applied as a
+$\hat G_k$ the filter weights, page-local; the source's $\sigma_k$) with $\hat G_k=1$ for $k\le N-m$ and
+$\hat G_k=\big((m-i)/m\big)^2$ for $k=N-m+i$, $i=1,\dots,m$, applied as a
 tensor product in three dimensions; the high-pass part
 $\mathcal H_N*u=u-\mathcal F_Nu$ enters the momentum equation as the
 relaxation term $-\chi_f\,\mathcal H_N*u_i$, element by element, with
 $\chi_f=5$ ($\chi_f=10$ does not change the results significantly). For
-$N=8$, $m=3$ the printed weights give $\sigma_6=(2/3)^2$, $\sigma_7=(1/3)^2$,
-$\sigma_8=0$ *(compiler check, not in the sources)*. The paper does not state that the term is active in its
+$N=8$, $m=3$ the printed weights give $\hat G_6=(2/3)^2$, $\hat G_7=(1/3)^2$,
+$\hat G_8=0$ *(compiler check, not in the sources)*. The paper does not state that the term is active in its
 own RANS and detached-eddy runs (see Qualifications).
 
 ## Modal filters as sensors, not as closures
@@ -622,9 +639,10 @@ controls is on [numerical dissipation](/properties/numerical-dissipation.md).
 
 - **Printed forms in Kumar et al. (2025), App. A.4.** Eq. (A10) is printed
   without the relaxation term the text says is added to it, and the
-  symbols $\mathcal H_N$ and $\chi$ of the text are absent from it; the
+  symbols $\mathcal H_N$ and $\chi$ (here $\chi_f$) of the text are absent
+  from it; the
   text takes "$m=0$" while saying the filter "only affects the last
-  mode", whereas with the printed $\sigma_k$ the value $m=0$ leaves every
+  mode", whereas with the printed $\hat G_k$ the value $m=0$ leaves every
   mode unfiltered *(compiler check, not in the sources)*.
 - **Printed forms in Tsoutsanis & Nogueira (2025).** Table 1 gives the
   sharp filter as $\vartheta^{\mathrm t}_{\max}=r-2/r-1$ (strong/weak); with Eq. (31),
@@ -695,3 +713,4 @@ controls is on [numerical dissipation](/properties/numerical-dissipation.md).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2 (modal filtering, anti-aliasing, artificial viscosity and entropy filtering in PyFR); §5.1, Figs. 11–12 (entropy filter on the supersonic Taylor–Green vortex).
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — App. A.3–A.4, Eqs. (A5)–(A12) (HPF relaxation model of Nek5000, Legendre filter weights, $\chi_f=5$).
 - [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §4.1, Eqs. (29)–(36), Table 1, Fig. 5 (modal filters on a Taylor basis as an energy-ratio sensor).
+- [Okano & Haga (2026)](/sources/okano-2026.md) — §1; §3, Figs. 2–4; §5.1–5.2, Table 3, Fig. 10 (wall-normal modal filter on wall-adjacent cells of flux-reconstruction WMLES, failing on cold walls).

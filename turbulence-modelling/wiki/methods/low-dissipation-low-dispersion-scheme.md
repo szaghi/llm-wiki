@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs an energy-preserving central flux with much-r
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation, dispersion-relation-preserving scheme, optimized selective filter, FDo11p, RFo11p]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -528,7 +528,7 @@ footnote 1).
   18 000, but stresses are plotted only for $Re_\tau=395$.
 - The recommended range is printed as "1/512 to 1/1024" (§2.2.1) and "1/512
   or smaller" (§5).
-- **Two answers to one problem.** Carlsson et al. (2023) reduce the
+- **Carlsson et al. and Wang et al. side by side.** Carlsson et al. (2023) reduce the
   artificial dissipation added to an energy-preserving central flux so that
   only the subgrid model dissipates; Wang et al. (2024) keep the
   dissipation of a dispersion-optimized upwind scheme and find it better

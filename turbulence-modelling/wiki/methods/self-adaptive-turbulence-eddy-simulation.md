@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Self-adaptive turbulence eddy simulation (SATES)"
-description: "SATES, the unified URANS–LES–DNS model of Han and coworkers formerly called VLES, multiplies the BSL k-omega eddy viscosity by a resolution control function of three length scales; the constant-coefficient SATES-SM and the sigma-model-weighted SATES-σ, their WCNS numerics in PHengLEI, and their high-lift and cylinder results."
+description: "SATES, the unified URANS–LES–DNS model of Han and coworkers formerly called VLES, multiplies the k-omega eddy viscosity (BSL or SST host, as each source prints it) by a resolution control function of three length scales; the SATES-SM, SATES-σ and two-layer SATES-II cut-off coefficients, their WCNS numerics in PHengLEI, and high-lift, cylinder and supersonic base-flow results."
 status: established
-aliases: [SATES, very-large eddy simulation, VLES (Han et al.), SATES-SM, SATES-σ, SATES-sigma, self-adaptive turbulence eddy simulation]
+aliases: [SATES, very-large eddy simulation, VLES (Han et al.), SATES-SM, SATES-σ, SATES-sigma, SATES-II, self-adaptive turbulence eddy simulation, adaptive filter-length coefficient]
 tags: [hybrid-rans-les, rans, eddy-viscosity, separated-flow, numerical-dissipation]
-timestamp: 2026-10-28T17:01:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Self-adaptive turbulence eddy simulation (SATES)
@@ -19,18 +19,25 @@ Kolmogorov length $L_k$, so that the same equations act as URANS, LES or
 DNS according to the local ratio of grid to turbulence scales
 ([Wu et al. (2023)](/sources/wu-2023-b.md), §2.1.1;
 [Wu et al. (2024)](/sources/wu-2024.md), §2.1). The model is that of Han and
-coworkers, earlier called very-large eddy simulation (VLES); both sources
+coworkers, earlier called very-large eddy simulation (VLES); both papers
 use the new name. Two variants are documented: SATES-SM, whose cut-off
 coefficient $C_x$ is a constant calibrated against the
 [Smagorinsky model](/methods/smagorinsky-model.md), and SATES-σ, whose $C_x$
 is made local by a factor built from the [sigma model](/methods/sigma-model.md)
-(Wu et al. 2024, §2.2). The symbols $F_r$, $L_i$, $L_c$, $L_k$, $C_x$,
+(Wu et al. 2024, §2.2). A third variant, SATES-II of
+[Wu et al. (2026)](/sources/wu-2026-b.md), blends a WALE-type near-wall
+coefficient with a σ-model coefficient in the outer flow, and the same
+coefficient is carried over into IDDES (§2.2–§2.3). The symbols $F_r$, $L_i$, $L_c$, $L_k$, $C_x$,
 $\beta_F$, $n_F$ are those of the registry (§11); $F_\sigma$ and
-$C_{x,\mathrm{base}}$ are page-local, defined below.
+$C_{x,\mathrm{base}}$ are page-local, defined below, and so are the
+SATES-II symbols $F_{\mathrm{cor}}$, $C_x^\sigma$, $C_x^{\mathrm{EWT}}$,
+$C_{x,\mathrm{II}}$, $f_{\mathrm{bl}}$, $C_{\mathrm{bl}}$, $C_{\mathrm{WT}}$,
+$C_m$, $\mathcal D_m$, $T_{\mathrm{RANS}}$, $T_{\mathrm{SGS}}$, $L_{\mathrm{SGS}}$
+and $R$ (base radius).
 
 ## Formulation
 
-Both sources print the BSL $k$-$\omega$ equations as the host model (Wu et
+Wu et al. (2023) and Wu et al. (2024) print the BSL $k$-$\omega$ equations as the host model (Wu et
 al. 2023, Eqs. 1–3; Wu et al. 2024, Eqs. 1–3), with $F_1$ blending the Wilcox
 $k$-$\omega$ and the $k$-$\varepsilon$ constant sets (see
 [$k$-$\omega$ SST](/methods/k-omega-sst-model.md)). The modification is
@@ -41,11 +48,25 @@ F_r=\min\Big\{1,\Big[\frac{1-\exp(-\beta_FL_c/L_k)}{1-\exp(-\beta_FL_i/L_k)}\Big
 $$L_i=\frac{k^{3/2}}{\beta^*k\omega},\qquad L_c=C_x\Delta,\qquad L_k=\frac{\nu^{3/4}}{(\beta^*k\omega)^{1/4}},\qquad \Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$$
 
 (Wu et al. 2023, Eqs. 4–6; Wu et al. 2024, Eqs. 4–6), with
-$\varepsilon=\beta^*k\omega$, $\beta^*=0.09$ (both sources' $\beta_1^*$),
-$\beta_F=0.002$ (both sources' $\beta^*$) and $n_F=2$ (Wu et al. 2023, Table
+$\varepsilon=\beta^*k\omega$, $\beta^*=0.09$ (both papers' $\beta_1^*$),
+$\beta_F=0.002$ (both papers' $\beta^*$) and $n_F=2$ (Wu et al. 2023, Table
 1; Wu et al. 2024 prints the square in Eq. 5 and $\beta_F$ in Table 1).
 
-Both sources read $F_r$ as the ratio of modelled to total turbulent kinetic
+**The host as printed by Wu et al. (2026).** Wu et al. (2026) state that
+SATES "is developed based on the SST k-ω turbulence model" and that,
+compared with it, SATES "only modifies the formulation of turbulent
+viscosity" (§2.1–§2.2). Their eddy viscosity keeps the SST limiter,
+
+$$\mu_t=F_r\,\rho\frac{k}{\omega}F_{\mathrm{cor}},\qquad F_{\mathrm{cor}}=\frac{\omega}{\max(\omega,\lvert S\rvert F_2/a_1)},\qquad F_2=\tanh\Big[\max\Big(\frac{2\sqrt k}{\beta^*\omega d},\frac{500\mu}{\rho\omega d^2}\Big)^2\Big]$$
+
+(Eqs. 1–6), with the same $F_r$, $L_i$, $L_k$, $\beta_F=0.002$, $n_F=2$ and
+$\beta^*=0.09$ as above; they call $F_{\mathrm{cor}}$ "the correction
+function in SST model", print no value of $a_1$ and no normalization of
+$\lvert S\rvert$, and do not print the transport equations. Wu et al.
+(2023), Wu et al. (2024) and Wu et al. (2024b) print the BSL equations and
+$\mu_t=F_r\rho k/\omega$ without a limiter (above).
+
+Wu et al. (2023) and Wu et al. (2024) read $F_r$ as the ratio of modelled to total turbulent kinetic
 energy, the integral of the energy spectrum between $L_k$ and $L_c$ over the
 integral between $L_k$ and $L_i$; Wu et al. (2024) say $F_r$ "roughly
 resembles" that ratio (§2.1, Eq. 5). Three operating modes follow (Wu et al.
@@ -128,9 +149,80 @@ to values above 1.0 in the boundary layer before separation (§3.2, Figs. 8,
 together with $C_{x,\mathrm{base}}$ and the floor; it is not the stand-alone
 σ-model constant tabulated on the [sigma model](/methods/sigma-model.md) page.
 
+### SATES-II: a two-layer coefficient read as a ratio of time scales
+
+Wu et al. (2026) summarize the earlier variants in their Table 1: SATES-SM
+is "Simple, but lacks local adaptivity" and weak in free shear layers,
+SATES-σ is good in free shear flows but has "weak modeling capability in
+wall boundary layers" (§1, Table 1). They also cite a dynamic coefficient
+of Lu et al. (2025, as cited), obtained by equating the SATES length with a
+Boussinesq subgrid viscosity $\mu_t^{\mathrm{SGS}}=\rho(C_m\Delta)^2\mathcal D_m$
+($C_m$ a model constant, $\mathcal D_m$ a differential operator "with units
+of frequency"; Lu et al. used the [WALE model](/methods/wale-model.md)),
+printed as $C_x=C_m^2\mathcal D_m\Delta/\sqrt k$ (Eqs. 8–9). Because this
+coefficient grows with $\Delta$, the authors call it an "undesirable
+grid-dependence" (Table 1, §2.2).
+
+**Time-scale reading of $C_x$.** Wu et al. (2026, §2.2) cite Johansen et
+al. (2004) for the statement that the URANS eddy viscosity equals a
+subgrid viscosity when $L_c=L_i$; on that basis they equate the SATES eddy viscosity with a
+RANS viscosity $L_i^2/T_{\mathrm{RANS}}$ and with a subgrid viscosity
+$L_{\mathrm{SGS}}^2/T_{\mathrm{SGS}}$ and print the result
+
+$$L_c=L_{\mathrm{SGS}}\sqrt{\frac{T_{\mathrm{SGS}}}{T_{\mathrm{RANS}}}},\qquad C_x=C_m\sqrt{\frac{T_{\mathrm{SGS}}}{T_{\mathrm{RANS}}}}$$
+
+(Eq. 10), where $T_{\mathrm{RANS}}$, $T_{\mathrm{SGS}}$ and $L_{\mathrm{SGS}}$
+(page-local) are time and length scales the paper does not define further.
+They read $C_x$ as "a blending of the RANS and LES time scales", which
+"should be independent of numerical discretization", so that in SATES-II
+"the grid effect is confined solely in the filter length scale,
+$L_c=C_x\Delta$" (§2.2).
+
+**Outer coefficient from the σ model.** With the
+[sigma model](/methods/sigma-model.md) as the subgrid model they print
+
+$$C_x^\sigma=\frac{C_\sigma}{\beta^*}\sqrt{\frac{\mathcal D_\sigma}{\omega}}\,\frac{1}{\sqrt{F_{\mathrm{cor}}}},\qquad C_\sigma=1.5,$$
+
+with $\mathcal D_\sigma$ the operator of the σ model built from the singular
+values $\varsigma_1\ge\varsigma_2\ge\varsigma_3$ of the velocity gradient
+and the floor $C_x^\sigma=\max(C_x^\sigma,0.15)$ "in the previous SATES-σ
+model" (Eqs. 11–12). This is a different expression from the SATES-σ
+coefficient of Wu et al. (2024) above ($C_\sigma=3.0$, through
+$F_\sigma$), which Wu et al. (2026) reprint in their Table 1 as the
+"SATES-σ" row.
+
+**Inner coefficient from WALE ("enhanced wall treatment").** With
+$\mathcal S_{ij}$ the traceless symmetric part of the squared velocity
+gradient, as on the [WALE page](/methods/wale-model.md),
+
+$$C_x^{\mathrm{EWT}}=C_{x,\mathrm{base}}\Big(\frac{C_{\mathrm{WT}}}{C_s}\Big)^2\frac{(\mathcal S_{ij}\mathcal S_{ij})^{3/2}}{\big[(\mathcal S_{ij}\mathcal S_{ij})^{5/4}+(S_{ij}S_{ij})^{5/2}\big]\lvert S\rvert},$$
+
+with $C_{x,\mathrm{base}}=0.61$, $C_s=0.1$ and $C_{\mathrm{WT}}=0.325$, a
+constant that "has a value between 0.325 and 0.5" (Eqs. 13–14). The
+form is that of the SATES-σ factor, the base coefficient times the ratio of
+the WALE to the Smagorinsky subgrid viscosity at equal $\Delta$ *(compiler
+check, not in the sources)*.
+
+**Blending.** The two are combined by a modified SST $F_2$:
+
+$$C_{x,\mathrm{II}}=C_x^\sigma(1-f_{\mathrm{bl}})+C_x^{\mathrm{EWT}}f_{\mathrm{bl}},\qquad f_{\mathrm{bl}}=\tanh\Big[\Big(C_{\mathrm{bl}}\max\Big(\frac{2\sqrt k}{\beta^*\omega d},\frac{500\nu}{\omega d^2}\Big)\Big)^4\Big],\qquad C_{\mathrm{bl}}=0.67$$
+
+(Eqs. 15–16; the source's $f_{\mathrm{blend}}$ and $C_1$), so that
+$f_{\mathrm{bl}}=1$ applies the wall treatment in the inner boundary layer
+and $f_{\mathrm{bl}}=0$ recovers the σ-model coefficient in the outer flow.
+Table 1 describes SATES-II as "Dynamic blending of RANS/LES time scales and
+providing enhanced wall treatment". The authors present the adaptive
+coefficient as "a general improvement strategy" for hybrid RANS/LES
+methods and transplant it into IDDES (AIDDES, on the
+[DES page](/methods/detached-eddy-simulation.md)); extension to PANS and
+PITM, to other host models (which "requires reinterpreting time scales")
+and to strongly non-equilibrium flows such as strong shock/boundary-layer
+interaction, "where the time-scale separation may become less
+well-defined", is left open (§1, §2.3, §5).
+
 ## Relation to VLES and to DES
 
-Both sources justify the renaming by Pope's definition of very-large eddy
+Wu et al. (2023) and Wu et al. (2024) justify the renaming by Pope's definition of very-large eddy
 simulation as LES whose filter and grid "are too coarse to resolve 80% of
 the energy": Wu et al. (2023) state that the method resolves "larger than
 90%" of the kinetic energy even on coarse grids and so performs like Pope's
@@ -146,9 +238,23 @@ lift after stall", attributing it to the thick RANS layer of DDES (§1,
 §3.3). Wu et al. (2023) list [PANS](/methods/partially-averaged-navier-stokes.md)
 beside DES and VLES among bridging methods (§1).
 
+Wu et al. (2026) bring the two families together. Their AIDDES replaces
+the LES length of SST-IDDES by $C_{x,\mathrm{II}}(\Delta_x\Delta_y\Delta_z)^{1/3}$,
+and they define for IDDES a SATES-like indicator, the ratio of the IDDES
+hybrid length to $L_i$, which "approximates the weight of the integral
+length scale in the hybrid length scale" (§2.3, Eqs. 17–21; formulas on
+the [DES page](/methods/detached-eddy-simulation.md)). In their runs IDDES
+keeps this indicator near 1 in the attached boundary layer (shielding) but
+lets it decay slowly in separated shear layers, which they read as a
+delayed RANS-to-LES transition; SATES-SM gives $F_r$ of "about 0.2 − 0.4"
+in the attached boundary layer upstream of the base flow's separation,
+i.e. insufficient near-wall modelling, while SATES-II gives
+$F_r\approx0.9$–1.0 in the inner layer and low values in the separated shear
+layer and recirculation region (§4.1.2, Fig. 8).
+
 ## Numerics
 
-Both sources run SATES in the CARDC structured finite-difference solver
+Wu et al. (2023) and Wu et al. (2024) run SATES in the CARDC structured finite-difference solver
 [PHengLEI](/software/phenglei.md), with the fourth-order
 [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
 (explicit flux difference with coefficients $9/8$ and $-1/24$, Roe flux,
@@ -195,6 +301,20 @@ supersonic axisymmetric base flow ($M_\infty=2.46$, about 7 M and 42 M cells):
   weights on 42 M cells (Fig. 14);
 - the TENO-type weights cost 1.51 to 1.68 times the CPU hours of Jiang–Shu
   weights, Z-type weights 1.02 to 1.03 times (Table I).
+
+Wu et al. (2026) run SATES-SM, SATES-II, SST-IDDES and AIDDES in
+PHengLEI-HyOrder, the group's high-order cell-centred finite-difference
+branch of [PHengLEI](/software/phenglei.md) (§3.4): a sixth-order WCNS
+whose interpolation combines one sixth-order and three third-order
+candidates with multi-order-candidate weights and the smooth scale
+separation of Wu et al. (2024b) (MOC6-STA, §3.1–§3.2, Eqs. 22–25), a Roe
+flux whose dissipation is scaled by a sensor combining a total-variation
+indicator and the Ducros factor (Eqs. 27–28; see
+[shock sensors](/definitions/shock-sensor.md)), fourth-order central
+viscous terms, a second-order upwind scheme for the turbulence equations,
+and second-order backward differentiation with LU-SGS and Newton-like
+sub-iterations; hybrid runs start from steady RANS fields. Details are on
+the [WCNS page](/methods/weighted-compact-nonlinear-scheme.md).
 
 ## Results
 
@@ -250,10 +370,40 @@ conditions", the maximum lift and the stall being captured (Wu et al. 2024,
 §3.3, Figs. 22–26). The flap lift is over-predicted, which the authors
 attribute to free-air simulation against wind-tunnel blockage (§3.3).
 
+**SATES-II and AIDDES** (Wu et al. 2026, §2.4, §4). On the NASA
+zero-pressure-gradient [flat plate](/benchmarks/turbulent-boundary-layer.md)
+($M=0.2$, $Re=5\times10^6$ per unit length, $137\times97\times97$ points)
+SATES-SM under-predicts the skin friction against the SST results of CFL3D
+and FUN3D, while the wall treatment of SATES-II restores it and AIDDES
+leaves the wall behaviour of IDDES unchanged (Fig. 1). On the Herrin–Dutton
+[supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md)
+($M_\infty=2.46$, grid of $9.5\times10^6$ cells, 640 cores; Table 3):
+
+| Model | $L_r/R$ | error | wall time (h) |
+|---|---|---|---|
+| SATES-SM | 3.17 | +20.5% | 50.28 |
+| SATES-II | 2.81 | +6.8% | 51.59 |
+| SST-IDDES | 3.58 | +36.1% | 45.30 |
+| AIDDES | 2.81 | +6.8% | 46.54 |
+| experiment | 2.63 | | |
+
+($L_r$ the recirculation length, registry §11; $R$ the base radius.) The
+four models "roughly consume comparable computing resources" (§4.1.3);
+the resolved kinetic energy of the shear layer deviates most with IDDES,
+less with SATES-SM, and is most accurate with SATES-II, AIDDES being
+comparable (Fig. 11). On the [30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
+at $Re_C=9\times10^6$, $M=0.2$, $\alpha=21^\circ$ (page-local angle of
+attack), SATES-SM separates prematurely on the slat upper surface, which
+the authors attribute to the lack of wall modelling, SATES-II gives
+$F_r\to1$ near the walls and improves the boundary-layer profiles at
+$x/C=0.85$–0.975 and on the flap, IDDES gives a "relatively stable
+quasi-two-dimensional" slat wake, and AIDDES stronger three-dimensional
+fluctuations than IDDES (§4.2, Figs. 12–14).
+
 ## Qualifications
 
 - All evidence is numerical comparison with experiment and other
-  simulations; neither source analyses the model. The SATES "LES mode" is
+  simulations; neither Wu et al. (2023) nor Wu et al. (2024) analyses the model. The SATES "LES mode" is
   the eddy viscosity $F_r\rho k/\omega$, linked to the Smagorinsky model only
   through $C_x$.
 - Wu et al. (2024) state the limit of SATES-σ themselves: because it works
@@ -290,9 +440,28 @@ attribute to free-air simulation against wind-tunnel blockage (§3.3).
   velocity squared per time) *(compiler check, not in the sources)*. Their
   heat flux multiplies the effective viscosity by a single $Pr$, with no
   turbulent Prandtl number stated (Eq. 4).
+- Wu et al. (2026) test SATES-II on the flat plate (against the SST
+  results of CFL3D and FUN3D), the base flow and the 30P30N airfoil; the
+  base-flow errors of Table 3 are relative to the one experimental
+  recirculation length $L_r/R=2.63$. Their remaining AIDDES deviations "may originate from
+  the lack of a realistic turbulent boundary layer at inlet" (§4.1.3).
+- In Wu et al. (2026), Eq. (11) carries the factors $1/\beta^*$ and
+  $F_{\mathrm{cor}}^{-1/2}$, which Eq. (10) does not show, and Table 1
+  prints the SATES-II coefficient as $(C_m/\beta^*)\sqrt{\mathcal D_m/\omega}$,
+  without $F_{\mathrm{cor}}$. Substituting their Eq. (8) into the middle
+  expression of their Eq. (9),
+  $\Delta^{-1}\mu_t^{\mathrm{SGS}}/(C_\mu\sqrt k)$, gives
+  $\rho C_m^2\mathcal D_m\Delta/(C_\mu\sqrt k)$, while the printed result is
+  $C_m^2\mathcal D_m\Delta/\sqrt k$ *(compiler check, not in the sources)*.
+  They define the squared gradient of Eq. (13) in words as
+  "$g^2_{ij}=g_{ij}g_{ij}$", a scalar contraction, while the same equation
+  uses it as a tensor with free indices and a trace $g^2_{kk}$; the WALE
+  tensor written above is the one of the WALE page. The introduction
+  prints $F_r$ without the $\min(1,\cdot)$ of Eq. (5).
 
 # Citations
 
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1 (DES deficiencies, bridging methods); §2.1.1, Eqs. (1)–(7), Table 1, Fig. 1 (SATES formulation, renaming from VLES); §2.2 (WCNS, blended scheme); §3.2–§3.4, Table 2, Figs. 6–25 (30P30N grid, scheme and model comparisons); §4.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §1 (SGS viscosity in boundary layers, DDES after stall); §2.1, Eqs. (1)–(6), Fig. 1 (SATES, three modes, Pope's VLES); §2.2, Eqs. (7)–(11), Table 1 (SATES-SM and SATES-σ); §2.3–§2.4, Eqs. (12)–(17) (WCNS-E-4, MUSCL, time integration, PHengLEI); §3.1 (channel, square cylinder); §3.2, Table 3, Figs. 7–17 (supercritical cylinder); §3.3, Figs. 18–26 (MD-30P30N stall sweep); §4.
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §1, Table 1 (earlier SATES variants, Lu et al.'s coefficient); §2.1–§2.2, Eqs. (1)–(16) (SST host with $F_{\mathrm{cor}}$, time-scale reading of $C_x$, $C_x^\sigma$, WALE-type wall treatment, SATES-II blending); §2.3, Eqs. (17)–(21) (AIDDES, IDDES resolution indicator); §2.4, Fig. 1 (flat plate); §3.1–§3.4, Eqs. (22)–(28) (MOC6-STA WCNS, adaptive Roe dissipation, PHengLEI-HyOrder); §4.1–§4.2, Tables 2–3, Figs. 5–14 (base flow and 30P30N); §5.
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I (sharp TENO cut-off and SATES convergence); §III.A–B, Eqs. (24)–(45) (BSL host model, filtered eddy viscosity, Smagorinsky calibration of $C_x$, Speziale VLES against SATES, fine-grid limit, self-adaptivity); §IV.C, Figs. 7–14, Table I (30P30N and supersonic base flow with fifth-order WCNS weights, sub-iteration convergence, cost).

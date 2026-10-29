@@ -5,7 +5,7 @@ description: "Scalar or vector fields of the velocity gradient whose iso-surface
 status: established
 aliases: [vortex criterion, vortex identification, Q-criterion, Q criterion, lambda-2 criterion, λ2 criterion, Omega criterion, Ω criterion, Rortex, Liutex, swirling strength, vortex indicator]
 tags: [dns, les, mesh-adaptation, symbolic-regression, benchmark]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Vortex identification criteria
@@ -105,8 +105,7 @@ grid-sensitive thresholds, and that some "might fail to capture dissipative
 vortices with scales smaller than the grid scale", which leaves small
 vortices under-resolved when a criterion drives refinement.
 
-The sources normalize their thresholds differently, so the printed values
-are not comparable across flows:
+The sources normalize their thresholds differently:
 
 | Criterion and value | Normalization | Flow | Source |
 |---|---|---|---|
@@ -219,7 +218,8 @@ under-resolved two-dimensional flows (§V, Tables I–III):
 | [NACA 0012](/benchmarks/naca-0012-airfoil.md), $M=0.3$, $15^\circ$ | 60.83 | 415.01 | 62.27 | 65.40 | Table III |
 
 On the cylinder and the airfoil the adaptive runs save 81–85% of the
-fine-grid time. On the Kelvin–Helmholtz case the indicator gives "the
+fine-grid time (printed savings 82.25% and 81.08%, Table I; 85.00% and
+84.24%, Table III). On the Kelvin–Helmholtz case the indicator gives "the
 highest vortex resolution" (Figs. 8–9); on the airfoil the $\Omega$-driven
 run "exhibits quantifiable deviations in both the morphology and size of
 the vortices", which the authors attribute to the $\Omega$ criterion being

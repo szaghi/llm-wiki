@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Fluids 309:106998"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Computers_amp_Fluids_Dayer_Immersed_boundary_conditions_using_the_spectral_difference_m.pdf"
 tags: [immersed-boundary, high-order, dns, boundary-layer, compressible]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Summary
@@ -118,7 +118,7 @@ file. Locators are those of the manuscript.
 | $\lambda$ | (thermal conductivity) | |
 | $\xi,\eta$ (§2.2) | $\xi$ (reference coordinates) | **collision:** $\eta$ is also the permeability |
 | $\eta$ (§2.3) | $\eta_p$ (penalization permeability, s; registry §11, as on [immersed boundary methods](/methods/immersed-boundary-method.md)) | **collision:** $\eta$ is the Kolmogorov length in the registry |
-| $\chi$, $\mathbf S$, $\mathbf u_\Omega$, $e_\Omega$, $T_\Omega$ | $\chi$, $\boldsymbol s_p$, $\boldsymbol u_\Omega$, $e_\Omega$, $T_\Omega$ (solid mask, penalization source, target velocity, energy, temperature; page-local, as on [immersed boundary methods](/methods/immersed-boundary-method.md)) | **collision:** $\mathbf S$ is not the strain-rate tensor |
+| $\chi$, $\mathbf S$, $\mathbf u_\Omega$, $e_\Omega$, $T_\Omega$ | $\chi_{\mathrm m}$ (registry §11), $\boldsymbol s_p$, $\boldsymbol u_\Omega$, $e_\Omega$, $T_\Omega$ (solid mask, penalization source, target velocity, energy, temperature; page-local, as on [immersed boundary methods](/methods/immersed-boundary-method.md)) | **collision:** the source's $\chi$ is not the Spalart–Allmaras ratio $\chi$; $\mathbf S$ is not the strain-rate tensor |
 | $\mathbf U_S$, $\delta(t)$, $\mathbf A$, $\mathbf B$ | (Strang-split solution), $r_p=e^{-t/\eta_p}$ (relaxation factor), $\mathsf A$, $\mathsf B$ (selector matrices), page-local as on [immersed boundary methods](/methods/immersed-boundary-method.md) | |
 | $L/D$ | $L_r/D$ | recirculation length |
 | $\alpha$, $\theta$ (§3.1) | (separation angle, surface angle) | **collision:** not the DG/FV blending factor, not a momentum thickness |

@@ -5,7 +5,7 @@ description: "Linear interaction analysis superposes weak vortical, entropic and
 status: established
 aliases: [LIA, linear interaction approximation, Ribner–Moore–Chang theory, Kovasznay decomposition, Kovasznay modes, shock-LIA]
 tags: [compressible, hypersonic, dns, les, shock-turbulence-interaction]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Linear interaction analysis of shock–turbulence interaction
@@ -193,8 +193,9 @@ whole Mach range, with stronger peaks at higher altitude. To check the
 condition $\ell\gg\ell_T$ the authors compute $\ell_T$ at $M_1=10$ by
 one-dimensional DNS with the HTR solver (Park two-temperature model,
 five-species air, 1200 points, CFL about 0.1): it grows from about
-$10^{-4}$ m at sea level to about $10^{-2}$ m at 30 km, so LIA becomes less
-likely to apply with altitude. They cite DNS by Kerkar & Ghosh in which
+$10^{-4}$ m at sea level to about $10^{-2}$ m at 30 km, from which the
+authors conclude that the LIA condition $\ell\gg\ell_T$ holds less well at
+altitude. They cite DNS by Kerkar & Ghosh in which
 reactions in the non-equilibrium region amplify mainly the streamwise
 velocity, "as opposed to the laterally dominating turbulence predicted by
 LIA" (p. 14). A vibrational Damköhler number, the viscous-dissipation

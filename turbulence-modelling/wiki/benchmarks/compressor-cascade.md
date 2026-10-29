@@ -5,7 +5,7 @@ description: "Linear compressor cascades as turbomachinery benchmarks: the low-s
 status: established
 aliases: [compressor cascade, linear compressor cascade, V103 cascade, PVD cascade, NACA65 K48 cascade, TCTA, Transonic Cascade TEAMAero, compressor corner separation]
 tags: [benchmark, turbomachinery, transition, des, rans, implicit-les]
-timestamp: 2026-10-28T07:03:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Compressor cascades
@@ -40,7 +40,7 @@ accelerating-flow counterpart.
 | Inlet Mach number | 0.1 | about 0.07 | 0.67 | 1.21 |
 | Reynolds number | $1.385\times10^5$ on axial chord | $2.3\times10^5$ | $5.6\times10^5$ | $1.35\times10^6$ on chord |
 | Inflow | angle 42°, $Tu=3.25\%$ | incidence $-7^\circ$ and $0^\circ$ (Liu et al.), $0^\circ$ (Li & Liu) | design point | angle 145.7°; no inflow turbulence (measured below 1%) |
-| Span in the computation | $0.1c_{ax}$ ($c_{ax}$ page-local: axial chord), periodic | half span with end wall | mid-span symmetry with end wall | 5%, 10%, 20% chord, periodic |
+| Span in the computation | $0.1c_{ax}$ ($c_{ax}$ the axial chord, registry §11), periodic | half span with end wall | mid-span symmetry with end wall | 5%, 10%, 20% chord, periodic |
 | Physics | separation-induced transition (suction side), bypass transition (pressure side) | corner separation; mid-chord laminar bubbles | corner separation; mid-chord bubbles; tip leakage with 1% clearance (Zhang et al.) | bow shock oscillating at mid-chord over a laminar or transitional layer with shock-induced separation |
 | Methods | DDES-$\gamma$ in [TRACE](/software/trace.md) (second-order finite volume); own WALE LES; DNS of Zaki et al. | steady RANS, [Spalart–Allmaras](/methods/spalart-allmaras-model.md) variants (CFL3D); time-averaged URANS, [Reynolds-stress model](/methods/reynolds-stress-model.md) with and without $\gamma$ ([OpenFOAM](/software/openfoam.md)) | as PVD (Liu et al.); SA-based DDES in OpenFOAM (Zhang et al.) | implicit LES, DGSEM $N=3$ in TRACE; URANS SST with $\gamma$-$Re_\theta$ |
 | Grids | DDES 0.68, 1.08, 4.32 M cells, 40 spanwise cells, $y^+<1$; LES 10.86 M | about 1.5 M points in half span, $y^+\approx0.7$ (Li & Liu) | DDES about 5.9 M (single row) and 6.65 M (tandem) cells in half span, $\Delta y^+<0.5$ (Zhang et al.) | 47,319 or 108,564 elements per plane; 54.6 M to 375.2 M degrees of freedom |
@@ -54,7 +54,7 @@ inlet angle 42° and outlet angle 0°, and for their tip-clearance variant a
 blade height of 52 mm (aspect ratio 1.3) with a clearance of 0.52 mm (1% of
 span); their validation case keeps aspect ratio 1. The two sources measure
 the angles from different reference directions (the 90° offset between
-112.5° and 22.5°, 132° and 42°); this is a convention difference. The TCTA has pitch 0.065 m, chord 0.1 m
+112.5° and 22.5°, 132° and 42°). The TCTA has pitch 0.065 m, chord 0.1 m
 and stagger 135.8° (Klose et al. 2025, §3).
 
 ## What the case tests
@@ -159,7 +159,7 @@ page it adds a scale-resolving computation of the K48 corner separation
 beside the RANS of Liu et al. Both find the corner separation the critical
 feature; Liu et al. report that RANS overpredicts it, Zhang et al. that
 DDES slightly underpredicts the high-loss area. The two computations differ
-in model level and aspect ratio, so this is no contradiction.
+in model level and aspect ratio.
 
 **Transonic buffet in the TCTA.**
 [Klose et al. (2025)](/sources/klose-2025.md) (read in the ASME accepted
@@ -233,7 +233,7 @@ one-equation $\gamma$ model, of Menter et al. (2015), to different hosts.
 
 - The four configurations differ in Mach number (0.07 to 1.21), Reynolds
   number ($1.4\times10^5$ to $1.35\times10^6$), end-wall treatment and
-  modelling level, so their errors are not comparable across sources.
+  modelling level.
 - [Möller et al. (2024)](/sources/moller-2024.md) state "Values of
   $l_{\mathrm{ratio}}<0$ are not possible" (§II.B.1, p. 7). With
   $l_{\mathrm{ratio}}=l_{\mathrm{RANS}}/l_{\mathrm{DDES}}$ (their Eq. 22),

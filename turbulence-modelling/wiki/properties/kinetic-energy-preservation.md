@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-29T05:15:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -641,7 +641,7 @@ High-Order CFD Workshop, [Wang et al. (2013)](/sources/wang-2013.md), §5.6,
 define a third error, the difference between the time derivative of the
 kinetic energy and the numerically evaluated dissipation rate
 $2(\mu/\rho_0)\mathcal Z$ (§4.15; $\mathcal Z$ the volume-averaged
-enstrophy, page-local, not the convex entropy $\mathcal E$ of the previous section), which needs no reference
+enstrophy, registry §11, not the convex entropy $\mathcal E$ of the previous section), which needs no reference
 solution; as "a potential drawback" they note that it "should be zero for
 any truly kinetic energy preserving method, such as the skew-symmetric
 central FDM", which in practice adds dissipation through de-aliasing
@@ -915,8 +915,7 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
   et al. vary order and dissipation together (second-order central against
   sixth-order upwind, §2.3–2.5) on channel and periodic-hill LES, while
   Carlsson et al. vary the added dissipation of one central scheme; no
-  source compares the two at fixed order on the same flow, so the entry is
-  recorded as a qualification.
+  source compares the two at fixed order on the same flow.
 - **Explicit models on a split-form baseline.** Flad & Gassner (2017) find
   a Smagorinsky model on the dissipation-free split-form DGSEM better than
   DG implicit LES at $48^3$; Volpiani (2024) finds Smagorinsky,
@@ -925,8 +924,7 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
   implicit LES best. The discretizations differ (DG with Riemann interface
   fluxes against eleven-point central differences with no dissipation at
   all), as do the flows (decaying isotropic turbulence against the
-  Taylor–Green vortex), so the two findings are recorded side by side, not
-  as a contradiction.
+  Taylor–Green vortex).
 - **Naming of the split forms.** Volpiani (2024, Eq. 15) and Liang & Fu
   (2024, Eq. 22) call $\tfrac12(C^D+C^\phi)$ the Feiereisen form; in the
   family that Bernades et al. (2023) cite that combination is
@@ -940,10 +938,10 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
   dissipation-free scheme thermalizes (above) are not shown.
 - The "first" claims of Flad & Gassner (2017, §3, §4) are priority statements
   of the authors.
-- That Goc et al. (2021) and Lozano-Durán et al. (2022) describe the charLES
-  fluxes slightly differently (entropy and kinetic energy conserved in their
-  respective limits; kinetic-energy conserving and approximately entropy
-  preserving) is a difference of wording about the same scheme.
+- Goc et al. (2021) and Lozano-Durán et al. (2022) describe the same charLES
+  fluxes in different words: entropy and kinetic energy conserved in their
+  respective limits, against kinetic-energy conserving and approximately
+  entropy preserving.
 
 # Citations
 

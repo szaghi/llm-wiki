@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Phys. Commun. 278:108408"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computer_Physics_Communications_Vandenhoeck_Development_of_an_implicit_high-order_flux_reconstruction_so.pdf"
 tags: [rans, transition, flux-reconstruction, k-omega, high-order, software]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-29T10:06:00Z
 ---
 
 # Summary
@@ -119,7 +119,7 @@ that of this version.
 | $y_1^+$ | $y_1^+$ (registry §11) | based on the first-element height, not the first degree of freedom |
 | $-uv^+=\mu_t\,\partial_yu_x/(\rho u_\tau^2)$ | $-\langle u'v'\rangle^+$ | computed from the eddy viscosity, not a resolved stress |
 | $N_{dim}$, $N_s=(P+1)^{N_{dim}}$ | $N_{\mathrm{dim}}$, $(N+1)^{N_{\mathrm{dim}}}$ | |
-| $h_f$, $c_{SD}$, $c_{DG}$, $c_{g2}$ | (VCJH correction functions); $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$, $c_{\mathrm{HU}}$, the named values of the correction parameter $c_{\mathrm{FR}}$ (registry §11) | $c_{g2}$ is Huynh's $g_2$ scheme, written $c_{\mathrm{HU}}$ on the [flux-reconstruction page](/methods/flux-reconstruction.md) |
+| $h_f$, $c_{SD}$, $c_{DG}$, $c_{g2}$ | (VCJH correction functions); $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$, $c_{\mathrm{HU}}$, the named values of the correction parameter $c_{\mathrm{FR}}$ (page-local on the flux-reconstruction page) | $c_{g2}$ is Huynh's $g_2$ scheme, written $c_{\mathrm{HU}}$ on the [flux-reconstruction page](/methods/flux-reconstruction.md) |
 | $J_{e,u}$, …, $J^D_{f,q}$ | (Jacobian blocks) | page-local |
 | $\varepsilon$ (Eq. 65) | (finite-difference step, $10^{-7}$) | **collision:** not the dissipation rate |
 

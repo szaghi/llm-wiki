@@ -5,7 +5,7 @@ description: "RANS closures that give the Reynolds-stress anisotropy as an expli
 status: established
 aliases: [EARSM, EASM, explicit algebraic stress model, explicit algebraic Reynolds stress model, BSL-EARSM, non-linear eddy-viscosity model, generalized eddy-viscosity hypothesis, stochastic EARSM, SBL-SpaRTA EARSM]
 tags: [rans, reynolds-stress-model, eddy-viscosity, data-driven, symbolic-regression, turbomachinery]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Explicit algebraic Reynolds-stress models
@@ -304,8 +304,8 @@ et al. 2022; §4.5, Eq. 17).
   $-\langle\rho\rangle\langle u_i''u_j''\rangle$ and print Eqs. 1–2 in the form of
   the positive-trace stress; the form above uses the registry convention
   (see the [Boussinesq](/definitions/boussinesq-hypothesis.md) page).
-- Sandberg & Zhao print $I_2=w_{mn}w_{nm}$ with $w$ their scaled rotation,
-  that is $\operatorname{tr}(\mathsf W^2)\le0$; Cherroud et al. print
+- Sandberg & Zhao print $I_2=\mathsf W_{mn}\mathsf W_{nm}$ (their scaled
+  rotation, lower-case $w$ in the source), that is $\operatorname{tr}(\mathsf W^2)\le0$; Cherroud et al. print
   $I_2=\Omega^*_{mn}\Omega^*_{mn}$, that is
   $\mathsf W^\omega_{mn}\mathsf W^\omega_{mn}\ge0$: the same invariant with
   opposite sign (and a different time scale), so learned

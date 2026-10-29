@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Sound Vib. 565:117888"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Sound_and_Vibration_Lewis_Large_Eddy_Simulation_of_the_ACAT1_fan_stage_for_broadband_n.pdf"
 tags: [les, wmles, wall-model, turbomachinery, aeroacoustics, grid-requirements]
-timestamp: 2026-10-26T07:39:00Z
+timestamp: 2026-10-29T10:06:00Z
 ---
 
 # Summary
@@ -47,10 +47,9 @@ the rotor–stator interaction at the vane leading edge; and the vane
 boundary-layer transition with trailing-edge scattering. Free-field
 Ffowcs Williams–Hawkings predictions overpredict the noise levels;
 Goldstein's in-duct analogy lowers them; with an indicative rotor-shielding
-correction, LES2 agrees very well with the measurements. The paper is an
-aeroacoustics application, peripheral to closure modelling; its modelling
-content is the [LES](/definitions/large-eddy-simulation.md) mesh-sensitivity
-finding.
+correction, LES2 agrees very well with the measurements. The
+[LES](/definitions/large-eddy-simulation.md) mesh-sensitivity finding is
+the paper's statement on wall-modelled LES.
 
 # Version read
 

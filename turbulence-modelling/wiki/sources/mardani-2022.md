@@ -9,7 +9,7 @@ year: 2022
 venue: "Combust. Flame 241:111873"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Combustion_and_Flame_Mardani_Dynamic_adjustment_of_the_Eddy_Dissipation_Concept_model_for.pdf"
 tags: [combustion, rans, eddy-viscosity]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -28,7 +28,7 @@ cascade constant is tied to it through $\tfrac23C_{D1}=C_\mu=0.09$.
 The authors first restate the cascade and the validity limits of the default
 EDC: the fine structure is smaller than the cell only for $Re_T>20.8$, and
 the time-scale fraction $R=\gamma_{\mathrm{fs}}^2/(1-\gamma_{\mathrm{fs}}^3)$
-stays below 1 only for $Re_T>64.31$; $\pm10\%$ on $C_\gamma$ moves the
+stays below 1 only for $Re_T>64.31$; $\pm10\%$ on $C_{\mathrm{vf}}$ moves the
 second limit to 95 and 42. They then generalize the cascade frequency ratio
 to $\alpha_{\mathrm c}$ (default 2) and run parametric studies on the
 Adelaide jet-in-hot-coflow (JHC) burner HM1: the error trends reverse
@@ -39,10 +39,10 @@ fits both.
 The contribution is a localized ("dynamic") EDC: identifying the
 fine-structure velocity with a turbulent flame speed
 $s_{\mathrm L}\sqrt{Re_T+1}$ gives $C_{D2}\approx3/[4(Re_T+1)Da^2]$ and cell-wise
-$C_\tau$ and $C_\gamma$ computed at every iteration from a Damköhler number
+$C_\tau$ and $C_{\mathrm{vf}}$ computed at every iteration from a Damköhler number
 built on one reaction or the fastest reaction of the DRM-22 mechanism,
 without the pre-calculation step of Parente et al. (2016). The authors note
-that their $C_\gamma$ decreases with $Da$ and $Re_T$, opposite to the
+that their $C_{\mathrm{vf}}$ decreases with $Da$ and $Re_T$, opposite to the
 correlations of Parente et al. (2016) and Romero-Anton et al. (2020).
 In 2-D axisymmetric RANS of JHC HM1, HM3 and the Delft JHC the local model
 improves downstream temperature and species peaks (more than 15% for HM1
@@ -67,7 +67,7 @@ Page-local symbols: $\gamma_{\mathrm{fs}}$ the fine-structure length fraction
 $u^*/u'$ and $\gamma^*_{\mathrm{fs}}$ the volume fraction (the source's
 $\gamma$, $\gamma^*$; the registry's $\gamma$ is the ratio of specific
 heats); $\tau_{\mathrm{fs}}$ the fine-structure residence time (the source's
-$\tau$); $C_{D1}$–$C_{D4}$, $C_\gamma$, $C_\tau$ the EDC constants;
+$\tau$); $C_{D1}$–$C_{D4}$, $C_{\mathrm{vf}}$ (the source's $C_\gamma$, as on [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)), $C_\tau$ the EDC constants;
 $Re_T$ the turbulence Reynolds number; $Da$ the Damköhler number;
 $\alpha_{\mathrm c}$ the cascade frequency ratio and
 $\beta_{\mathrm c}=\varepsilon/q^*$ (the source's $\alpha$, $\beta$);
@@ -80,7 +80,7 @@ and $s_{\mathrm T}$ the laminar and turbulent flame speeds.
 4. The fine-structure Reynolds number is $u^*L^*/\nu=2C_{D2}/(3C_{D1})$, so the fine structure depends on the combustion constants and, through $C_{D1}$, on the turbulence model (§2). **Derived**
 5. The default EDC is physically meaningful only for $Re_T>20.8$ (fine structure smaller than the cell, Eq. 18) and, more restrictively, for $Re_T>64.31$ (time-scale fraction $R<1$, printed $\gamma_{\mathrm{fs}}<0.7568$, Eqs. 19–20) (§4). **Derived**
 6. Numerical studies show the standard EDC cannot be applied below $Re_T=64.31$; the critical value varies between constant sets (§4). **Stated**
-7. A 10% decrease of $C_\gamma$ moves the validity limit to $Re_T>42$, a 10% increase (2.1377 → 2.3515) to $Re_T>95$ (§4, Fig. 2). **Derived**
+7. A 10% decrease of $C_{\mathrm{vf}}$ moves the validity limit to $Re_T>42$, a 10% increase (2.1377 → 2.3515) to $Re_T>95$ (§4, Fig. 2). **Derived**
 8. With $\omega_n=\alpha_{\mathrm c}\omega_{n-1}$ the dissipation ratio becomes $\varepsilon/q^*=1/(1-\alpha_{\mathrm c}^{-2})=\beta_{\mathrm c}$; $\alpha_{\mathrm c}$ must exceed unity (§4.1, Eqs. 22–23). **Derived**
 9. $\alpha_{\mathrm c}$ acts on the EDC cascade only, not on the turbulence field or mixing time scale; it changes the chemical time scale directly and the velocity only through temperature and composition (§4.1). **Stated**
 10. For JHC-HM1, increasing $\alpha_{\mathrm c}$ raises $\gamma_{\mathrm{fs}}$, lowers $\tau_{\mathrm{fs}}$ and raises the peak temperature; lowering it reduces the error at $Z=120$ mm, raising it reduces the error at $Z=30$ and 60 mm (§6.1, Fig. 4, Table 3). **Shown**
@@ -88,11 +88,11 @@ and $s_{\mathrm T}$ the laminar and turbulent flame speeds.
 12. Increasing the fine-structure to Kolmogorov time-scale ratio increases the error at $Z=30$ and 60 mm and decreases it at 120 mm, attributed to wind-tunnel air entrainment raising the oxygen level downstream (§6.2, Fig. 5). **Shown**
 13. If only the MILD region is targeted, a smaller $C_{D2}$ (fine-structure to Kolmogorov scale ratios below 1) is applicable (§6.2). **Stated**
 14. Approximating the fine-structure velocity by $s_{\mathrm T}=s_{\mathrm L}\sqrt{Re_T+1}$ yields $C_{D2}\approx3/[4(Re_T+1)Da^2]$ (§4.2, Eqs. 26–31). **Derived**
-15. The local constants are $C_\tau=C_{D3}/(2Da\sqrt{Re_T+1})$ and $C_\gamma=C_{D4}[9/(16C_{D1}^2(Re_T+1)Da^2)]^{1/4}$ with $C_{D3}=1.0$, $C_{D4}=0.65$; $C_{D4}$ was varied from 0.2 to 1.0 and 0.65 chosen against temperature and species measurements (§4.2, Eqs. 32–33). **Derived** (form) / **Stated** (values; the parametric study is not displayed)
+15. The local constants are $C_\tau=C_{D3}/(2Da\sqrt{Re_T+1})$ and $C_{\mathrm{vf}}=C_{D4}[9/(16C_{D1}^2(Re_T+1)Da^2)]^{1/4}$ with $C_{D3}=1.0$, $C_{D4}=0.65$; $C_{D4}$ was varied from 0.2 to 1.0 and 0.65 chosen against temperature and species measurements (§4.2, Eqs. 32–33). **Derived** (form) / **Stated** (values; the parametric study is not displayed)
 16. A non-unity $C_{D4}$ limits the reacting part of the fine structure as a reacting fraction below 1 does, consistent with Lewandowski & Ertesvåg (§4.2). **Stated**
-17. In the new correlation $C_\gamma$ decreases with $Da$ and $Re_T$, opposite to Parente et al. ($C_\gamma\propto Da^{1/2}(Re_T+1)^{1/2}$) and Romero-Anton et al. ($C_\gamma\propto Da^{3/4}(Re_T+1)^{1/2}$); the model thus gives a smaller fine structure for fast burning or highly mixed conditions (§4.2). **Derived**
+17. In the new correlation $C_{\mathrm{vf}}$ decreases with $Da$ and $Re_T$, opposite to Parente et al. ($C_{\mathrm{vf}}\propto Da^{1/2}(Re_T+1)^{1/2}$) and Romero-Anton et al. ($C_{\mathrm{vf}}\propto Da^{3/4}(Re_T+1)^{1/2}$); the model thus gives a smaller fine structure for fast burning or highly mixed conditions (§4.2). **Derived**
 18. Unlike Parente et al., the local constants are computed during the solution at every iteration, with no pre-calculation using a global mechanism (§1, §4.2). **Stated**
-19. For JHC-HM1 the local model gives $C_\gamma$ in 0.6–3.5, $C_\tau$ in 0.2–3, $Da<8.5$ (growing downstream), $Re_T$ in 200–2400 and $\gamma_{\mathrm{fs}}<0.75$, within the physical limits; $\gamma_{\mathrm{fs}}$ is also clipped at 0.7548 in the code (§6.3, Fig. 6). **Shown**
+19. For JHC-HM1 the local model gives $C_{\mathrm{vf}}$ in 0.6–3.5, $C_\tau$ in 0.2–3, $Da<8.5$ (growing downstream), $Re_T$ in 200–2400 and $\gamma_{\mathrm{fs}}<0.75$, within the physical limits; $\gamma_{\mathrm{fs}}$ is also clipped at 0.7548 in the code (§6.3, Fig. 6). **Shown**
 20. Combustion lowers $Re_T$ against the non-reacting case, more strongly downstream: "combustion has suppressed the turbulence and relaminared the turbulent flow" (§6.3, Fig. 7). **Shown**
 21. Damköhler numbers from reaction no. 49 of DRM-22 ($Da_I$) and from the maximum local rate ($Da_{II}$) give similar predictions, both somewhat better than reaction no. 58 (§6.3, Fig. 8). **Shown**
 22. At $Z=120$ mm the local model improves temperature, OH and CO$_2$ by more than 15% for HM1 and more than 12% for HM3; at 30 and 60 mm the deviations are about 10% or less for HM3 and, for HM1, about 3% for temperature and CO$_2$ and 37% for OH (§6.3, Fig. 12). **Shown**
@@ -112,18 +112,18 @@ and $s_{\mathrm T}$ the laminar and turbulent flame speeds.
   limit value of 0.7568 for γ".
 - **§4:** "the standard EDC model setting (i.e., $C_{D1}$ = 2.137; $C_{D2}$ =
   0.5)"; the paper gives $C_{D1}=0.135$ (§2), and 2.1377 is the default
-  $C_\gamma$.
+  $C_{\mathrm{vf}}$.
 - **Table 3, $\alpha=1.2$:** printed $C_\tau=0.6369$. *(compiler check, not
   in the sources)* Eq. (24) with $C_{D2}=0.5$ and
   $\beta_{\mathrm c}=1/(1-1/1.44)$ gives 0.6396; the other rows match Eq. (24)
   to four digits.
 - **Eq. (25) against Table 3:** Eq. (25) prints
   $\gamma=(C_{D2}/(\beta C_{D1}^2))^{1/2}(\nu\varepsilon/k^2)^{1/2}$.
-  *(compiler check, not in the sources)* The $C_\gamma$ column of Table 3 is
+  *(compiler check, not in the sources)* The $C_{\mathrm{vf}}$ column of Table 3 is
   reproduced by $(C_{D2}/(\beta_{\mathrm c}C_{D1}^2))^{1/4}$ with
   $C_{D2}=0.5$ and $C_{D1}\approx0.134$ (1.4827 at $\alpha=1.1$, 2.1377 at
   $\alpha=2$); the printed exponent 1/2 gives about 2.2 at $\alpha=1.1$. The
-  default $C_\gamma=2.1377=(3C_{D2}/(4C_{D1}^2))^{1/4}$ likewise implies
+  default $C_{\mathrm{vf}}=2.1377=(3C_{D2}/(4C_{D1}^2))^{1/4}$ likewise implies
   $C_{D1}=0.1340$, while the text gives 0.135.
 - **$Re_T$:** defined as $k^2/(\nu\varepsilon)$ (Eqs. 11, 18, 34) and as
   $\nu_T/\nu$ (before Eq. 27); with $\nu_t=C_\mu k^2/\varepsilon$ the two
@@ -157,7 +157,7 @@ and $s_{\mathrm T}$ the laminar and turbulent flame speeds.
 | $\gamma$, $\gamma^*$ | $\gamma_{\mathrm{fs}}$, $\gamma^*_{\mathrm{fs}}$ (page-local) | **collision** with $\gamma$, ratio of specific heats; the source also writes $\gamma$ for the volume-type fraction in Eqs. (15), (18), (25) |
 | $\tau$ | $\tau_{\mathrm{fs}}$ (page-local) | fine-structure residence time; **collision** with the SGS stress $\tau_{ij}$ |
 | $C_{D1}$, $C_{D2}$, $C_{D3}$, $C_{D4}$, $C_\tau$ | same (page-local) | EDC constants; default $C_{D2}=0.5$ |
-| $C_\gamma$ | $C_{\mathrm{vf}}$ (page-local, as on [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)) | fine-structure constant, default 2.1377; written $C_\gamma$ in the claims above |
+| $C_\gamma$ | $C_{\mathrm{vf}}$ (page-local, as on [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)) | fine-structure constant, default 2.1377 |
 | $Re_T$, $Re_t$ | $Re_T$ (page-local) | turbulence Reynolds number; two printed definitions (Printed slips) |
 | $\alpha$ | $\alpha_{\mathrm c}$ (page-local) | cascade frequency ratio; **collision** with the DG blending factor $\alpha$; $\alpha_T$, $\alpha_L$ in Eq. (26) are thermal diffusivities |
 | $\beta$ | $\beta_{\mathrm c}$ (page-local) | $\varepsilon/q^*$; **collision** with the field-inversion $\beta(\boldsymbol x)$ |

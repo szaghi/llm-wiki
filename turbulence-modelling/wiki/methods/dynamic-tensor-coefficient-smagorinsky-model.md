@@ -5,7 +5,7 @@ description: "The dynamic tensor-coefficient Smagorinsky model (DTCSM) replaces 
 status: established
 aliases: [DTCSM, tensor-coefficient Smagorinsky model, non-Boussinesq dynamic SGS model]
 tags: [les, sgs-model, eddy-viscosity, wmles, separated-flow]
-timestamp: 2026-10-28T06:48:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Dynamic tensor-coefficient Smagorinsky model
@@ -180,8 +180,7 @@ such energy-transfer-free stresses in coarse channel LES is on
   solvers (compressible charLES on Voronoi grids against an incompressible
   finite-volume code on hybrid grids) and different wall treatments
   (Zhou & Bae impose the reference mean wall stress); Zhou
-  & Bae attribute the difference to such factors without testing them, so
-  it is recorded as a set-up difference, not as a contradiction.
+  & Bae attribute the difference to such factors without testing them.
 
 # Citations
 

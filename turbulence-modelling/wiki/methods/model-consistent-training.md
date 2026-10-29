@@ -5,7 +5,7 @@ description: "Training a learned closure with the solver in the loop, so the los
 status: established
 aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning, CFD-driven machine learning, closed-loop training]
 tags: [data-driven, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-28T17:42:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -332,6 +332,99 @@ three-dimensional flow data", but they credit it with guaranteeing
 and they call for a quantitative comparison of the two (§IV). See
 [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 
+## Aligning the objective with deployment (Hu & Yang 2026)
+
+[Hu & Yang (2026)](/sources/hu-2026.md) build their review of
+machine-learning closures for RANS, LES and PINNs on one thesis. Learned
+closures are trained on a pointwise, offline objective, but they must work
+coupled to a solver, across many scales and in a statistically stationary
+state. The remedies that work in each "pillar" share one design rule:
+align the training objective with deployment (§I, Fig. 2, §III D, §VIII).
+The authors label the attribution of the failure modes to this one root
+"the interpretive synthesis proposed by this review, not an established
+conclusion of the field". They identify model-consistent training, in
+the sense of [Duraisamy (2021)](/sources/duraisamy-2021.md), as the key
+determinant of robust a posteriori performance (§IV A).
+
+**Remedies grouped under the rule.** All works below are cited by Hu &
+Yang (2026); none is ingested here unless linked.
+
+- *RANS (§III B, §VII C).* Corrective targets: scalar multipliers on the
+  eddy viscosity or on the production, which the authors read as
+  projecting the learned object onto a one-dimensional subspace the
+  solver tolerates. The Reynolds force vector (the divergence of
+  $R_{ij}$, Cruz et al.) as the learning target. CFD-driven training on
+  several flows at once (Fang et al., a pool of ten cases). Online RANS
+  optimization with embedded DNS (oRANS, Dehtyriov et al., preprint).
+  Transport-equation corrections (Wu et al., nonlocal effects). Iterative
+  coupling with under-relaxation, and non-linear super-stencils (Luther &
+  Jenny). The listed RANS mitigations answer the ill-conditioning of the
+  mean-momentum operator; see
+  [tensor-basis neural network](/methods/tensor-basis-neural-network.md)
+  and [field inversion and machine learning](/methods/field-inversion-machine-learning.md).
+- *LES (§IV A).* Dissipativity constraints (non-negative $\nu_t$, or
+  blending with a classical model), statistical or spectral losses,
+  solver-in-the-loop training, and adaptive hybrid closures. The
+  solver-in-the-loop entries are adjoint-based embedded training
+  (Sirignano et al.; MacArt et al.) and PDE-constrained optimization
+  through a differentiable solver (Shankar et al.). Hu & Yang report from
+  Sirignano et al. that the same network trained purely a priori is
+  "unusable a posteriori". The adjoint-trained network of
+  [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) above
+  is the same comparison on bluff-body wakes.
+- *PINNs (§V A–B).* Causal training, weak-form losses and
+  physics-informed neural operators; see
+  [physics-informed neural networks](/methods/physics-informed-neural-network.md).
+
+**Three degrees of coupling (§V C).** Hu & Yang order hybrid
+machine-learning–solver couplings by how deeply the network enters the
+solver:
+
+| Coupling | What is learned | Example, as cited by Hu & Yang |
+|---|---|---|
+| Learned discretization | the coefficients of the numerical scheme | Bar-Sinai et al. |
+| Solver in the loop | a correction trained through an unrolled solver | Um et al. |
+| End-to-end differentiable CFD | the whole coarse-grid solver, trained through | Kochkov et al., high-resolution accuracy on grids "an order of magnitude coarser" |
+
+They state that tighter coupling gives stronger a posteriori performance
+at a higher training cost. The learned TENO weights of
+[Bezgin et al. (2025)](/sources/bezgin-2025.md) above are a learned
+discretization trained through an unrolled solver.
+
+**The resolution-handoff bottleneck (§V C 4).** The authors ask where, in
+scale and in space, the solver should hand the dynamics over to the
+learned component. In Kochkov et al. the handoff is set implicitly by the
+coarse grid. In oRANS it is spatial and explicit, an embedded DNS
+subdomain. There, accuracy degrades when the interface is mishandled
+("boundary-condition contamination") or when the embedded region is too
+short to capture the relevant low-wavenumber modes. They link the
+question to the grey area of
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) and cite
+as a first step the learned RANS/LES switching coefficients of an
+explicit-algebraic-stress DES (Liu et al.). Non-zonal, learned placement
+of the crossover is, they state, open (see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+**Generalization, data and benchmarks (§VII).** Hu & Yang cite the
+finding of Mandler & Weigand (2025): a data-driven eddy-viscosity
+augmentation tailored to one phenomenon loses generality, and systematic
+data mismatch, not extrapolation, dominates the generalization error.
+They accept it within that model class and name three loopholes. First,
+anisotropy and transport-equation closures leave the class. Second, the
+learned object can be changed (the Reynolds force vector, multiplicative
+corrections). Third, the result covers offline a priori training, not
+CFD-driven or solver-in-the-loop training (§VII A). From the same
+diagnosis they conclude that "a modest, well-chosen dataset consumed by
+model-consistent or solver-in-the-loop training can outperform a far
+larger one used for naive a priori regression" (§VII D). They also argue
+that benchmarks ranking models only by mean-field $L_2$ error "would
+reward exactly the objective–deployment mismatch" (§VII E; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+Their Table II rates the CFD-driven and online family qualitatively:
+about 5–10 coupled training cases, a posteriori robustness "High",
+interpretability "Medium". The authors call the table "a reader's guide
+rather than a rigorous benchmark".
+
 ## Evidence
 
 - **Decaying isotropic turbulence.** Duraisamy (2021, §IV.B, Fig. 2)
@@ -556,7 +649,7 @@ the convergence of these training methods and the choice of loss function
   Bae & Koumoutsakos (2022, preprint p. 6, Figs. 3–4) report for their own
   log-law model a friction-velocity error below 5% from $Re_\tau=5200$ to
   $10^6$. The two assessments differ in solver, grid and error measure;
-  the normative entry on this disagreement is on
+  the side-by-side record is on
   [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - **Identifiability.** Duraisamy (2021, §VII, Fig. 4) shows an anisotropy
   perturbation inferred from mean-velocity data in channel flow that
@@ -604,9 +697,7 @@ the convergence of these training methods and the choice of loss function
   end-to-end training through a differentiable solver (Sirignano & MacArt
   2023; Duraisamy 2021; a differentiable-physics closure on unstructured
   grids by Kim, Shankar, Viswanathan & Maulik, preprint, as they cite it),
-  like reinforcement learning, learns the combined effect of solver
-  numerics and physics, so its models are likely "limited in their
-  transferability to other solvers", and that it costs more because the
+  "can suffer similar issues" as reinforcement learning, whose models are "limited in their transferability to other solvers, as they learn the combined effect of solver-specific numerical effects and turbulence physics": the end-to-end network "is also unlikely to transfer directly to different flow solvers", and that it costs more because the
   LES must run during training. They train supervised instead, on DNS
   filtered with several filter shapes, and run one network in two solvers
   without retraining (§5.2.1, §7; see
@@ -626,6 +717,14 @@ the convergence of these training methods and the choice of loss function
   the training data, a common stabilizer, can destroy the divergence-free
   property. Validation errors were better without noise; no data are
   shown.
+- **Printed slips in Hu & Yang (2026).** In Table II the inference-cost
+  cell of the CFD-driven and online family reads "Medium/low", while the
+  caption says these methods "incur medium training but low inference
+  cost"; the caption of the same table refers to "Tables 1 and 3" for the
+  paper's Tables I and III.
+- **A review's ratings.** Hu & Yang (2026) present no new computation;
+  they call their Table II, with its robustness and interpretability
+  grades, "a reader's guide rather than a rigorous benchmark".
 
 # Citations
 
@@ -652,3 +751,4 @@ the convergence of these training methods and the choice of loss function
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1, Eqs. 10–12 ($k$-corrective-frozen targets, consistency argument); §4.2, Table 2, Fig. 5, App. C (a posteriori selection, results against SST and BSL-EARSM).
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — §1 (shift to LES-generated data and model-consistent or RL training; many LES runs needed); §3.2, Fig. 2 (GPU speed-up). No training performed.
 - [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §4.2, Eqs. (41)–(42), Fig. 6 (end-to-end training through JAX-Fluids); §5.1–5.2, Tables 2–3 (unroll length, cell-wise against spectral error).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §I, Fig. 2, §III D, §VIII (objective–deployment thesis, attributed); §III B, §IV A, §V A–C (remedies, coupling taxonomy, resolution-handoff bottleneck); §VII A, C–E, Table II (Mandler & Weigand loopholes, data, benchmarks, ratings).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Local-correlation-based transition models"
-description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model and its separation correction, the one-equation γ model and its Reynolds-stress coupling, algebraic γ-alg-SST, coupling to delayed DES, hysteresis, low-Reynolds airfoils, cascades and mesh requirements."
+description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model and its separation correction, the one-equation γ model and its Reynolds-stress coupling, algebraic γ-alg-SST and SA-BCM, coupling to delayed and improved delayed DES, hysteresis, low-Reynolds airfoils, cascades and mesh requirements."
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-28T12:26:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Local-correlation-based transition models
@@ -353,8 +353,7 @@ Carreño Ruiz & D'Ambrosio, on very-low-Reynolds airfoils, tune the
 separation correction and still report too little skin friction after
 reattachment and no reattachment at $Re=30{,}000$, $\alpha=8^\circ$ (above);
 Morsbach et al. report no re-tuned separation correction.
-The cases differ in Reynolds number, free-stream turbulence and geometry,
-so the two results do not test the same configuration.
+The cases differ in Reynolds number, free-stream turbulence and geometry.
 
 **Wake-induced transition.** In a turbine stage the wakes of the upstream
 row, convecting through the passage as a "negative jet", trigger
@@ -395,8 +394,8 @@ across the layer equals $Re_\theta$ only for zero-pressure-gradient flat
 plates and exceeds it (falls below it) in adverse (favourable) gradient.
 The local pressure-gradient parameter of this model,
 $-7.57\times10^{-3}(\cdot)+0.0128$, differs in its coefficients from the
-$-0.1111(\cdot)+0.1875$ of γ-alg-SST above: they belong to different
-models, not to one model printed two ways. Pacciani et al. (2025) also use
+$-0.1111(\cdot)+0.1875$ of γ-alg-SST above, the parameter of a
+different model. Pacciani et al. (2025) also use
 this parameter, calling it local and Galilean invariant but liable to need
 extra logic near corners between walls
 ([Pacciani et al. (2025)](/sources/pacciani-2025.md), §4.4, Eq. 21).
@@ -441,6 +440,90 @@ the transition; on the ERCOFTAC T3C5 plate it is identical to RANS-$\gamma$
 (not shown) (§II.F, §III.B; details and the mode argument on the
 [DES page](/methods/detached-eddy-simulation.md); see
 [compressor cascades](/benchmarks/compressor-cascade.md)).
+
+**Algebraic intermittency inside IDDES (SA-BCM).**
+[Alberti et al. (2026)](/sources/alberti-2026.md) (§1, §2.1.1, Eqs. 6–9)
+take the algebraic model of Cakmakcioglu et al. (2020, as cited), SA-BCM,
+which needs no transport equation, as the RANS branch of
+Spalart–Allmaras IDDES in an incompressible high-order modal DG solver,
+arguing that an algebraic model suits hybrid simulation because it adds no
+partial differential equation. The intermittency, written
+$\gamma_{\mathrm{BC}}$ (page-local subscript), is
+$$\gamma_{\mathrm{BC}}=1-\exp\Big(-\sqrt{T_1/C_{\mathrm{BC}1}}-\sqrt{C_{\mathrm{BC}2}T_2}\Big),\qquad T_1=\max\Big(\frac{Re_\omega}{2.193\,Re_{\theta c}}-1,\,0\Big),\qquad T_2=\max\Big(\frac{\nu_t}{\nu},\,0\Big),$$
+$$Re_\omega=\frac{d^2\lvert\Omega\rvert}{\nu},\qquad Re_{\theta c}=803.73\,(Tu_\infty+0.6067)^{-1.027},$$
+with $C_{\mathrm{BC}1}=0.002$ and $C_{\mathrm{BC}2}$, $T_1$, $T_2$ page-local
+(the source's $\chi_1$, $\chi_2$; renamed because $\chi$ is the registry's
+$\tilde\nu/\nu$) and $Tu_\infty$ "manually tuned" per case. $T_1$ is the
+onset term built on the vorticity Reynolds number, $T_2$ an eddy-viscosity
+term. $\gamma_{\mathrm{BC}}=0$ gives the Navier–Stokes equations, and
+$\gamma_{\mathrm{BC}}=1$ the full model. The model also carries the
+low-Reynolds-number destruction coefficient of Spalart & Garbaruk (as
+cited), $c_{w2,\mathrm{LRe}}=c_{w4}+c_{w5}/(\chi/40+1)^2$ with $c_{w4}=0.21$,
+$c_{w5}=1.5$ (Eq. 8; $\chi$ is not defined in the paper). Three changes
+adapt it to IDDES:
+
+1. **Production and destruction both multiplied by $\gamma_{\mathrm{BC}}$**
+   (Eq. 6, after Yalçın et al. as cited), where pure-RANS SA-BCM multiplies
+   only the production, to keep the eddy-viscosity balance of LES mode
+   unaltered; the $c_{b2}$ cross term is not multiplied (formula on the
+   [Spalart–Allmaras page](/methods/spalart-allmaras-model.md)).
+2. **A shielding function that cannot pass from laminar to LES**,
+   $\hat f_d^*=\max(\hat f_d,\,1-\gamma_{\mathrm{BC}})$ (Eq. 9; $\hat f_d$ the
+   IDDES blending function with RANS at $\hat f_d=1$, the source's
+   $\tilde f_d$, page-local as on the
+   [DES page](/methods/detached-eddy-simulation.md)), and for DDES
+   $f_d^*=\min(f_d,\gamma_{\mathrm{BC}})$: wherever $\gamma_{\mathrm{BC}}<1$ the
+   solution stays in RANS mode, enforcing the sequence laminar → RANS →
+   LES. The authors' rationale: a transitional DES-like model can otherwise
+   switch from a laminar solution directly to LES when transition happens
+   outside the shielded region, capturing transition in LES mode would need
+   much finer resolution, and RANS correlations are unlikely to work in the
+   LES branch. They cite, as alternatives, an intermittency threshold below
+   which RANS is enforced (Xiao et al.) and a blending between transitional
+   RANS and DES (Kim & Kwon).
+3. **$C_{\mathrm{BC}2}$ raised from 50 to 1000** to set the onset of
+   natural transition, recommended only for DES-like models, where the eddy
+   viscosity is much lower. Cakmakcioglu et al., as Alberti et al. cite them,
+   found values up to 10 000 to alter the RANS skin friction of a
+   Schubauer–Klebanoff plate only minimally; Alberti et al. state that they
+   "actually observed that $\chi_2=1000$ can already alter pure RANS
+   solutions" (§2.1.1), without showing it.
+
+Changes 1 and 2 are stated to apply to any intermittency-based transitional
+DES-like model, algebraic or not; 2 and 3 are the paper's novelties, and the
+first is the only one of Yalçın et al.'s suggestions retained. The authors
+diagnose a defect of SA-BCM in natural transition: $\gamma_{\mathrm{BC}}$ is
+switched on by $T_2$, not by the onset term $T_1$, so the transition point
+depends almost entirely on the free-stream $\tilde\nu_\infty/\nu$ and on
+$C_{\mathrm{BC}2}$; on the [Eppler 387](/benchmarks/eppler-387-airfoil.md) at
+$8^\circ$ the switch-on by $T_2$ is preceded by $T_1$ only with
+$C_{\mathrm{BC}2}=50$, and only for $x/c>0.6$, and raising the constant moves
+the switch-on upstream (§3.1, Figs. 4–5). A general fix should act on $T_1$ (better $Re_{\theta c}$
+correlations or a local replacement of $Tu_\infty$) and is left to future
+work (§4). Results (§3, Tables 3, 5, 7):
+
+- on the Eppler 387 at $Re_c=3\times10^5$, the transitional IDDES overlaps
+  transitional RANS where the flow is attached ($0^\circ$), the larger
+  constant slightly suppressing the bubble, predicts transition at
+  $x/c\approx0.2$ at $8^\circ$ as McGhee measured, and approaches the
+  experiment at $14^\circ$ and $16^\circ$ as the degree rises, where
+  fully turbulent IDDES misses the
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md)
+  (details on the Eppler page);
+- on a sphere at $Re_D=420\,000$ (supercritical) the larger constant gives
+  natural transition before turbulent separation, and the modified
+  shielding keeps the transition angle from the stagnation point at
+  $97^\circ$ and $96^\circ$ for $N=3$ and 4, where the original shielding
+  moves it upstream from $102^\circ$ to $79^\circ$; the drag coefficient is
+  0.095 and 0.083 against 0.085 measured by Achenbach (as cited), with
+  transition and separation at $96^\circ$ and $118^\circ$ against $98^\circ$
+  and $119^\circ$, while unsteady transitional RANS gives 0.375, $123^\circ$
+  and $130^\circ$ (§3.2, Table 5); the authors state that the agreement is
+  partly due to calibrating $\tilde\nu_\infty/\nu=0.001$ to put the onset at
+  the measured location (§3.2, Table 1);
+- on the [NACA 0012](/benchmarks/naca-0012-airfoil.md) at $11.5^\circ$,
+  $Re_c=130\,000$, both transitional variants reproduce the low-frequency
+  cycle of bubble bursting and reformation at $N=4$ (§3.3).
 
 **Transonic buffet.** In a URANS of the TCTA transonic compressor cascade
 (inlet $M=1.21$, $Re=1.35\times10^6$), Langtry–Menter $\gamma$-$Re_\theta$ on
@@ -587,8 +670,9 @@ compared with γ-Reθ-SST, γ-SST and experiment (§3):
   natural transition starts at $6^\circ$ against $7^\circ$ for the transport
   models and about $5^\circ$ in experiment (Figs. 13–15, 20–22).
 
-Accuracy is overall of the same quality as the transport models; the
-algebraic model predicts earlier natural transition and smaller bubbles.
+The authors judge the accuracy overall of the same quality as that of the
+transport models; the algebraic model predicts earlier natural transition
+and smaller bubbles.
 
 **Blunt-leading-edge vortex separation, as surveyed.** Luckring & Rizzi
 (2024) report a DLR TAU computation with SST-γ-Reθ on the 53° AVT-183
@@ -663,6 +747,13 @@ finite-volume reference (§4.2).
   and 1173.51 by Vandenhoeck et al. (2022, Eq. 33) and Ghidoni & Noventa
   (2026, Eq. 27); the latter print the branch without the operator between
   its first two terms, which Vandenhoeck et al. print as a minus.
+- **Printed items of Alberti et al. (2026).** For the sphere with
+  $C_{\mathrm{BC}2}=50$ the §3.2 text has the separation "anticipated down to
+  $\phi\approx105^\circ$" ($\phi$ the angle from the stagnation point,
+  page-local), while Table 5 gives $99^\circ$ for both transition and
+  separation; the Table 5 label "IDDES$_{TRA}$ ($\chi_2=50$)" does not say
+  which shielding function it uses, where Table 3 writes
+  "($\chi_2=50$, $\tilde f_d^*$)"; $\chi$ in Eq. (8) is not defined.
 - Vandenhoeck et al. (2022) give $Tu_\infty=10^{-2}$ for their flat-plate
   verification while defining $Tu$ in percent (§3.3.2, §4.1), so the unit of
   that value is ambiguous.
@@ -685,3 +776,4 @@ finite-volume reference (§4.2).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.3, §3.3.3, §3.3.3.3–§3.3.3.4.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1 Fig. 3, §4.3.
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §3.1.1.2, Figs. 63–64 (SST-γ-Reθ free transition on the AVT-183 diamond wing, as cited).
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §1; §2.1.1, Eqs. (6)–(9) (SA-BCM in IDDES: intermittency, multiplied production and destruction, modified shielding, $C_{\mathrm{BC}2}=1000$); §3.1, Figs. 3–5, Table 3; §3.2, Tables 1, 5, Figs. 9, 11 (supercritical sphere); §3.3; §4.

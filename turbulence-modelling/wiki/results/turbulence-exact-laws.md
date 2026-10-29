@@ -5,7 +5,7 @@ description: "Exact laws relate the energy cascade rate of MHD turbulence to two
 status: established
 aliases: [exact law, third-order law, Politano–Pouquet law, Kolmogorov–Yaglom law, energy cascade rate, A18 law, F21 law, compressible Hall MHD exact law]
 tags: [mhd, plasma, astrophysics, dns, compressible]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Exact laws of (Hall-)MHD turbulence
@@ -58,13 +58,13 @@ Ferrand et al. (2022, §2.1, Eqs. 1–6) write isothermal compressible Hall MHD
 
 $$\begin{aligned}
 &\partial_t\rho+\nabla\cdot(\rho\boldsymbol u)=0,\qquad \rho(\partial_t\boldsymbol u+\boldsymbol u\cdot\nabla\boldsymbol u)=-\nabla p+\boldsymbol J\times\boldsymbol B+\boldsymbol d_\nu+\boldsymbol f,\\
-&\partial_t\boldsymbol B=\nabla\times(\boldsymbol u\times\boldsymbol B)-\lambda_H\nabla\times\!\left(\frac{\boldsymbol J}{\rho}\times\boldsymbol B\right)+\boldsymbol d_\eta,\qquad \nabla\cdot\boldsymbol B=0,
+&\partial_t\boldsymbol B=\nabla\times(\boldsymbol u\times\boldsymbol B)-\alpha_H\nabla\times\!\left(\frac{\boldsymbol J}{\rho}\times\boldsymbol B\right)+\boldsymbol d_\eta,\qquad \nabla\cdot\boldsymbol B=0,
 \end{aligned}$$
 
-with $\boldsymbol J=\nabla\times\boldsymbol B/\mu_0$, the Hall parameter
-$\lambda_H=m_i/q_e$ (page-local; the source writes $\lambda$, which the
+with $\boldsymbol J=\nabla\times\boldsymbol B/\mu_0$, the Hall coefficient
+$\alpha_H=m_i/q_e$ (registry §11; the source writes $\lambda$, which the
 registry uses for the perpendicular scale), the ion inertial length
-$d_i=\lambda_H/\sqrt{\mu_0\rho}$, the dissipative terms
+$d_i=\alpha_H/\sqrt{\mu_0\rho}$, the dissipative terms
 $\boldsymbol d_\nu=\nu\nabla^2\boldsymbol u+\tfrac{\nu}{3}\nabla(\nabla\cdot\boldsymbol u)$ and
 $\boldsymbol d_\eta=\eta_m\nabla^2\boldsymbol B$ (page-local), a large-scale
 forcing $\boldsymbol f$, and the isothermal closure $p=c_s^2\rho$ ($c_s$
@@ -86,14 +86,14 @@ large-scale forcing and infinite Reynolds numbers it reads (Eq. 9)
 $$\begin{aligned}
 -4\varepsilon_{F21}=\ &\nabla_l\cdot\left\langle\{\!\{\rho\}\!\}|\delta\boldsymbol u|^2\delta\boldsymbol u+\frac{1}{\mu_0}|\delta\boldsymbol B|^2\delta\boldsymbol u-\frac{2}{\mu_0}(\delta\boldsymbol u\cdot\delta\boldsymbol B)\delta\boldsymbol B\right\rangle\\
 &-\tfrac12\left\langle\left(\rho\,\nabla^\dagger\!\cdot\boldsymbol u^\dagger+\rho^\dagger\,\nabla\cdot\boldsymbol u\right)|\delta\boldsymbol u|^2\right\rangle+2\left\langle\delta\rho\,\delta\boldsymbol u\cdot\{\!\{\boldsymbol j\times\boldsymbol B\}\!\}\right\rangle\\
-&+\frac{\lambda_H}{\mu_0}\nabla_l\cdot\left\langle2(\delta\boldsymbol B\cdot\delta\boldsymbol j)\delta\boldsymbol B-|\delta\boldsymbol B|^2\delta\boldsymbol j\right\rangle-2\lambda_H\left\langle\delta(\boldsymbol J\times\boldsymbol B)\cdot\delta\boldsymbol j\right\rangle .
+&+\frac{\alpha_H}{\mu_0}\nabla_l\cdot\left\langle2(\delta\boldsymbol B\cdot\delta\boldsymbol j)\delta\boldsymbol B-|\delta\boldsymbol B|^2\delta\boldsymbol j\right\rangle-2\alpha_H\left\langle\delta(\boldsymbol J\times\boldsymbol B)\cdot\delta\boldsymbol j\right\rangle .
 \end{aligned}$$
 
 The first line is the flux term of incompressible MHD; the second line
 carries the compressible source terms (dilatation and density increments);
-the third line, proportional to $\lambda_H$, is the Hall part. The split
+the third line, proportional to $\alpha_H$, is the Hall part. The split
 $\varepsilon=\varepsilon_{\mathrm{MHD}}+\varepsilon_{\mathrm{Hall}}$ assigns
-to $\varepsilon_{\mathrm{Hall}}$ all terms with the factor $\lambda_H$ (§4).
+to $\varepsilon_{\mathrm{Hall}}$ all terms with the factor $\alpha_H$ (§4).
 
 ### The A18 law
 

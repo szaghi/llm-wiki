@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1019:R2"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Yeung_Small-scale_properties_from_exascale_computations_of_turbule.pdf"
 tags: [dns, isotropic-turbulence, intermittency, gpu, energy-cascade]
-timestamp: 2026-10-28T07:11:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Summary
@@ -66,11 +66,11 @@ and after refinement; $M$ number of segments.
 
 1. DNS of forced isotropic turbulence at $Re_\lambda=2500$ on a $32\,768^3$ periodic grid was obtained with a GPU pseudo-spectral code on the 1.1-exaflop Frontier machine (Abstract; §1; Table 1). **Shown**
 2. The largest pseudo-spectral DNS that fits in Frontier's memory is $40\,960^3$; $32\,768^3$ is "more realistic for our present purposes" (§1). **Stated**
-3. The best timing for $32\,768^3$ is 13 s per step on 44% of the machine (citing the companion CPC paper); at $Re_\lambda\approx2500$ one $\tau_\eta$ takes about 1000 steps and $T_E/\tau_\eta\approx300$, so a $10T_E$ run would need "two years or more of virtually non-stop computing" (§1). **Stated**
+3. The best timing for $32\,768^3$ is 13 s per step on 44% of the machine (citing the companion CPC paper, [Yeung et al. 2025b](/sources/yeung-2025-b.md)); at $Re_\lambda\approx2500$ one $\tau_\eta$ takes about 1000 steps and $T_E/\tau_\eta\approx300$, so a $10T_E$ run would need "two years or more of virtually non-stop computing" (§1). **Stated**
 4. After the time step or grid spacing is halved, scales of the order of the coarser grid's $\eta$ equilibrate in about $2\tau_\eta$ (§2.2, citing Yeung et al. 2018; Yeung & Ravikumar 2020). **Stated**
 5. The protocol has three phases: (1) a long run adequate for scales larger than $\eta$; (2) a halved time step for a few $\tau_\eta$ ($C_{\mathrm{CFL}}$ 0.6 to 0.3); (3) a halved grid spacing for a few $\tau_\eta$ ($k_{\max}\eta$ 1.4 to 2.8); it is repeated from different phase-1 snapshots and ensemble-averaged (§2.2; Table 1 caption). **Stated** (method)
 6. Grid refinement can be done in increments, e.g. $N_1\to3N_1/2\to2N_1$ (§2.2). **Stated**
-7. A single segment at $Re_\lambda=1000$ on $8192^3$ spanning $27\tau_\eta$ suggests the results are insensitive to the phase-3 durations of Table 1, "presumably because the energy of the large scales is kept frozen by the forcing scheme" (§2.2). **Shown** (test not displayed)
+7. According to the authors, a single segment at $Re_\lambda=1000$ on $8192^3$ spanning $27\tau_\eta$ indicates that the results are insensitive to the phase-3 durations of Table 1, "presumably because the energy of the large scales is kept frozen by the forcing scheme" (§2.2). **Shown** (test not displayed)
 8. All runs are in single precision; round-off effects are judged unlikely to have strongly affected the conclusions, but "rigorous testing is not readily available" (§2.2). **Stated**
 9. At fixed forcing and fixed $k_{\max}\eta$, refining $N_1\to N_2$ with $\eta\propto1/N$ and $\langle\varepsilon\rangle$ independent of $\nu$ gives $\nu\propto N^{-4/3}$; with $u'$ unchanged, $\langle\varepsilon\rangle=15\nu u'^2/\lambda^2$ gives $Re_\lambda\propto N^{2/3}$, a 58% increase for $N_2=2N_1$ (§2.2). **Derived**
 10. In the $Re_\lambda=2080$ ($12\,288^3$) to 2500 ($16\,384^3$) transition, the kinetic energy varies little, the mean dissipation recovers from the viscosity drop within about $20\tau_\eta$, and the dissipation skewness recovers sooner (§2.2, Fig. 1a). **Shown**

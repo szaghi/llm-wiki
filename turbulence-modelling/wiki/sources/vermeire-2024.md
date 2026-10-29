@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Fluids 268:106065"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Computers_amp_Fluids_Vermeire_High-Order_Implicit_Large_Eddy_Simulation_using_Entropically.pdf"
 tags: [implicit-les, flux-reconstruction, high-order, incompressible-flow, numerical-dissipation, taylor-green-vortex]
-timestamp: 2026-10-28T11:49:00Z
+timestamp: 2026-10-29T10:06:00Z
 ---
 
 # Summary
@@ -61,11 +61,12 @@ section numbers are those of this version.
 
 # Key claims
 
-Page-local symbols: $M_{\mathrm{AC}}$ the incompressibility factor of
-EDAC (the source's $M$, not a Mach number) and $\zeta=1/M_{\mathrm{AC}}^2$;
+Symbols: $M_{\mathrm{AC}}$ the incompressibility factor of EDAC
+(registry §11; the source's $M$, not a Mach number) and, page-local,
+$\zeta=1/M_{\mathrm{AC}}^2$;
 $N_m$ the degree of the geometry mapping (the source's $p_m$); $E_k$ the
 volume-averaged kinetic energy; $\mathcal Z$ the volume-averaged enstrophy
-(the source's $\epsilon$); $\psi_{\mathrm{div}}$ the volume-averaged
+(registry §11, the source's $\epsilon$); $\psi_{\mathrm{div}}$ the volume-averaged
 divergence error; $t_\delta=\delta/u_b$ and $t_c=tu_\infty/c$ the channel
 and airfoil convective times.
 
@@ -127,7 +128,7 @@ named.
 |---|---|---|
 | $p_s$ | $N$ | solution polynomial degree; order $N+1$ |
 | $p_m$ | $N_m$ (page-local) | mapping degree |
-| $M$ | $M_{\mathrm{AC}}$ (page-local) | incompressibility factor; **collision** with the Mach number $M$ |
+| $M$ | $M_{\mathrm{AC}}$ (registry §11) | incompressibility factor; **collision** with the Mach number $M$ |
 | $Ma$ | $M$ | Mach number of the vortex initial pressure, 0.08 |
 | $\zeta=1/M^2$ | $\zeta$ (page-local) | |
 | $\mathbf v$, $u_i$; $p$ | $\boldsymbol u$, $u_i$; $p$ | $p$ kinematic |
@@ -138,7 +139,7 @@ named.
 | $\alpha_{j,f,l}$ | (lifting coefficients) | **collision** with the DG blending factor $\alpha$ and the angle of attack |
 | $\mathbf J$ | $\mathcal J=\det\mathbf J$ | metric Jacobian |
 | $e_k$ | $E_k$ (page-local) | volume-averaged kinetic energy, Eq. (18) |
-| $\epsilon$ | $\mathcal Z$ (page-local) | enstrophy with factor 1/2, Eq. (19); **collision** with the dissipation rate $\varepsilon$ |
+| $\epsilon$ | $\mathcal Z$ (registry §11) | enstrophy with factor 1/2, Eq. (19); **collision** with the dissipation rate $\varepsilon$ |
 | $\psi$ | $\psi_{\mathrm{div}}$ (page-local) | divergence error, Eq. (20); not the $k$-$\sqrt kL$ surrogate $\psi$ |
 | $\boldsymbol\omega$ | $\omega_i$ | vorticity |
 | $u_\tau=\sqrt{\tau/\rho}$, $\delta$ | $u_\tau=\sqrt{\tau_w/\rho_w}$, $\delta$ | |

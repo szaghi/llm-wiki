@@ -5,7 +5,7 @@ description: "The thickened flame model of LES combustion widens the flame front
 status: established
 aliases: [TF model, TFLES, thickened-flame LES, dynamically thickened flame, DTF, DTFLES, artificially thickened flame, thickening factor, non-premixed thickened flame, flame sensor, minor-species correction, wrinkling factor]
 tags: [combustion, les, numerical-dissipation, thickened-flame]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Thickened flame model
@@ -406,7 +406,7 @@ in the paper. See the [discontinuous Galerkin spectral element method](/methods/
   the sources)*. The "+65%" heat release quoted for $RR=2$ (§4) compares
   with $\sqrt{2.575}-1=60.5\%$ from Table 2, and in §5 the factors 1.46 and
   1.12 of Table 3 are quoted as heat-release ratios, which by Eq. (14)
-  would be $\sqrt{1.46}=1.21$ and $\sqrt{1.12}=1.06$ *(compiler checks,
+  would be $\sqrt{1.46}=1.21$ and $\sqrt{1.12}=1.06$ *(compiler check,
   not in the sources)*. Eq. (6) replaces $\chi_{Z,\mathrm{st}}$ by $a_{\mathrm{cf}}/\pi$
   without $C_{\mathrm{st}}^2$; carried through, the prefactor of the
   consumption speed would be $C_{\mathrm{st}}\sqrt{2a_{\mathrm{cf}}D_{\mathrm m}/\pi}$ rather than
@@ -431,8 +431,9 @@ in the paper. See the [discontinuous Galerkin spectral element method](/methods/
   printed formula $\sqrt{\tau_\eta\tau_\Delta}$ is their geometric mean;
   the coefficients of the one-equation model are said to be "dynamically
   evaluated from scale similarity" with no further detail.
-- **Zhang et al. (2023).** The constants $C_k$ and $b$ of the efficiency
-  function (Eqs. A.1–A.4) are given no values in the paper. The DTF is
+- **Zhang et al. (2023).** The two constants of the efficiency function
+  (the source's $C_k$ and $b$, Eqs. A.1–A.4; not the registry's DES factor
+  $C_k$) are given no values in the paper. The DTF is
   run only with the premixed table: Table 1 lists four cases, the FP,
   CF-Diff and CF-PaPre databases with the presumed PDF and the FP
   database with the DTF. The correction factor is

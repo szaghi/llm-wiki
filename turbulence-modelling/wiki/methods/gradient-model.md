@@ -5,7 +5,7 @@ description: "Clark's gradient model truncates the Taylor expansion of the filte
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model, velocity gradient model, VGM, spatial gradient model, SGM-7-19, ANNSGM, density-unweighted gradient model]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-28T11:50:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -372,9 +372,9 @@ $Re_\tau\approx1000$, with grid spacings $(\Delta x^+,\Delta z^+)\approx(72,36)$
 
 They justify clipping at all with the stability criterion of Matsumoto,
 Inubushi & Goto (2024, cited): learned models cannot run stably for $k_{\max}\eta<0.2$,
-and their grid has $k_{z,\max}\eta\approx0.13$ (App. C). This is the
-opposite choice to the clipping procedures above, which remove backscatter
-pointwise. The backscatter it keeps is what the authors credit for the
+and their grid has $k_{z,\max}\eta\approx0.13$ (App. C). The clipping
+procedures above remove backscatter pointwise; this floor keeps it above
+$\nu_{\mathrm{clip}}$. The backscatter it keeps is what the authors credit for the
 correct near-wall shear stress; see
 [energy backscatter](/definitions/energy-backscatter.md).
 
@@ -804,8 +804,7 @@ with $\tau_{12}$ and $\tau_{22}$ (Fig. 2c); a posteriori $C_0$ peaks near
 - **Attribution.** The sources of this page attribute the model to Clark
   et al. (1979); Kim & Leonard (2024, §3.1) attribute the deterministic
   stress-like term now called the tensor-diffusivity model to Leonard
-  (1973, 1974) and credit Clark et al. with the a priori test. Both are
-  attributions of cited work, not a disagreement about the model.
+  (1973, 1974) and credit Clark et al. with the a priori test.
 
 - **Two printed magnitudes of the learned coefficients.** Wang et al.
   (2022) print the off-local coefficients of ANNSGM-7-19 as

@@ -5,7 +5,7 @@ description: "The uncertainty that comes from the structure of a turbulence clos
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-28T12:43:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -61,7 +61,7 @@ irrecoverable; single-point and Markovian closure structures add errors no
 learned correction inside that structure can remove
 ([Duraisamy (2021)](/sources/duraisamy-2021.md), §II Eq. 2, §VII).
 
-Three further sources restate the layers. [He et al. (2022)](/sources/he-2022-b.md)
+Four further sources restate the layers. [He et al. (2022)](/sources/he-2022-b.md)
 (§1–2.1) adopt L1–L4 after Duraisamy et al. (2019) and map the
 data-driven literature onto them: tensor-basis, random-forest and
 symbolic anisotropy corrections are L2, field inversion of a transport
@@ -209,10 +209,10 @@ identifiability question below:
   of SST (§3.2.1, Figs. 11, 18).
 - **More data, more credible inversions.** On an iced airfoil, inverting on
   lift and drag together gives a better pressure plateau, which was not
-  observed, than inverting on lift alone (§3.3.1, Fig. 28). Yan et al. also
-  recall Rumsey's finding that enhanced mixing in separated shear layers
+  observed, than inverting on lift alone (§3.3.1, Fig. 28). Yan et al. (§1) also
+  cite Rumsey's finding that enhanced mixing in separated shear layers
   helps the periodic hill but worsens backward-facing-step flows, as an
-  example of ad hoc corrections that do not generalize (§1).
+  example of ad hoc corrections that do not generalize.
 
 See [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 and the [SA page](/methods/spalart-allmaras-model.md) for the learned model.
@@ -463,8 +463,8 @@ the corrections *inside* one RANS solve fixes both but "does not deliver
 estimates of the predictive uncertainty as naturally", so it is "no
 longer an uncertainty quantification method" (§1, §3). See
 [turbulence-model aggregation](/methods/turbulence-model-aggregation.md).
-Sandberg & Zhao (2022, §5) reach the same outlook from their review of
-learned stress and heat-flux closures: universal models are unlikely, and
+Sandberg & Zhao (2022, §5) state, from their review of learned stress
+and heat-flux closures, that universal models are unlikely and that
 classes of models for flow topologies, blended by machine-learning
 classifiers, are the more plausible future
 ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md)).
@@ -675,8 +675,6 @@ the external one, so the authors conclude that further gains need better
 subgrid models (§4.1, §4.7, §5(4), §6; see
 [wall-modelled LES](/methods/wall-modelled-les.md) and
 [machine-learning wall models](/methods/machine-learning-wall-model.md)).
-This is the LES counterpart of the RANS question above of which model
-layer carries the discrepancy.
 
 **Agreement through compensating errors.** Three sources show quantities
 right for the wrong reason. Lozano-Durán & Bae (2023) find the total error
@@ -809,7 +807,7 @@ discretization component (above); they run no finite-volume–DG
 comparison, while An et al. compare the two discretizations on the
 coefficients.
 
-## Model-form uncertainty in three further reviews
+## Model-form uncertainty in four further reviews
 
 - **Nominal coefficients (Le et al. 2024).** [Le et al. (2024)](/sources/le-2024.md)
   (§3.1, §3.1.1, pp. 10–11) sort machine-learning uses in RANS into
@@ -859,6 +857,36 @@ coefficients.
   call a formulation *anchored* when it has "some degree of pedigree
   (historical applications, calibration history, validation history)" for
   a new prediction (§2.1).
+- **Uncertainty as the motive and the Bayesian family (Hu & Yang 2026).**
+  [Hu & Yang (2026)](/sources/hu-2026.md) (§I) open their review of
+  machine-learning closures by stating that model-form and parametric
+  uncertainties "remain a major obstacle" to the predictive capability of
+  RANS models. They list a Bayesian philosophy of machine-learning RANS
+  (§III C, Table I), whose stated strength is quantified predictive
+  uncertainty, "crucial for engineering decision-making". As they cite
+  them, the members are: physics-informed Bayesian inference of
+  Reynolds-stress discrepancies that respects realizability, such as
+  positive semi-definiteness (Xiao et al.); a Bayesian deep network
+  trained by Stein variational gradient descent, whose weight
+  distribution gives uncertainty bounds on the predicted fields (Geneva &
+  Zabaras); Bayesian model-scenario averaging, weighting each closure by
+  its posterior probability, and MAP-based predictions (Edeling et al.);
+  space-dependent aggregation of stochastic SBL-SpaRTA experts with a
+  mixture of experts (Cherroud et al., 2025); and the blending of
+  [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (see the
+  section on blending specialized corrections above and [turbulence-model aggregation](/methods/turbulence-model-aggregation.md)).
+  Their qualitative Table II ("a reader's guide rather than a rigorous
+  benchmark") gives the family about 5–20 training cases with priors,
+  "Medium" inference cost, "High" a posteriori robustness and
+  "Medium–high" interpretability. They note (§VI A) that the Fourier
+  neural operator and DeepONet are deterministic point predictors without
+  native uncertainty quantification. Diffusion-based generative models
+  could provide uncertainty estimates for closures, but they call this "a
+  potential rather than a demonstrated capability" (§VI D). From Mandler
+  & Weigand (2025), as cited (§I, §VII A), they take the finding that a
+  systematic mismatch between training inputs and target responses, not
+  extrapolation, dominates the generalization error of data-driven
+  eddy-viscosity models.
 
 ## Qualifications
 
@@ -895,9 +923,7 @@ coefficients.
   uncertainty that data remove (§1, §2.2). The two sources classify by
   different criteria, as their definitions print them: the origin of the
   error (inputs against physical model) for Duraisamy et al., reducibility
-  by data for Agrawal & Koutsourelakis. The difference is one of
-  terminology, not of fact, so it is recorded here rather than as a
-  contradiction. This page keeps the review's usage in its title and lead.
+  by data for Agrawal & Koutsourelakis. This page keeps the review's usage in its title and lead.
   Fang et al. (2026, §4.2.4) define aleatoric uncertainty as arising from
   noise or variability in the data and epistemic uncertainty as arising
   from the model structure or insufficient data.
@@ -993,3 +1019,4 @@ coefficients.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.4 (aleatoric and epistemic uncertainty, deep ensembles, MC dropout, Bayesian networks, SVI, Mondrian forests).
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.1 (calibration, anchored formulation), §2.4.1 (formulation hierarchy, Wilcox cited), §3.2.3.2, §3.2.3.4, Figs. 84–88, 93–94 (SACCON and X-31 model disagreement).
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §3.1, Eqs. 9–16 (multipliers on the dissipation terms, additive discrepancy in the cost); §3.3; §4, Fig. 6 (similar shapes); §5, Table 3, Fig. 9 (K-fold spread, extrapolation in $Re_\tau$).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §I (uncertainties as obstacle); §III C, Tables I–II (Bayesian family as cited, ratings); §VI A, §VI D (no native UQ in neural operators; generative models as potential); §VII A (Mandler & Weigand, as cited).

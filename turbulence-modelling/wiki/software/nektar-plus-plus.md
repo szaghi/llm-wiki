@@ -5,7 +5,7 @@ description: "Nektar++ is an open-source spectral/hp element framework with cont
 status: established
 aliases: [Nektar, NektarPlusPlus, IncNavierStokesSolver, AcousticSolver, NekMesh, FieldConvert]
 tags: [software, spectral-element, les, implicit-les, wmles, aeroacoustics]
-timestamp: 2026-10-28T12:28:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Nektar++
@@ -96,7 +96,7 @@ scheme: explicit non-linear terms, a pressure Poisson solve, then Helmholtz
 solves for the viscous terms (§II A). The code-specific points:
 
 - **Free sampling height.** The resolved velocity is interpolated at any
-  wall distance $h$ by evaluating the elemental high-order expansion after
+  wall distance $h_{\mathrm{wm}}$ by evaluating the elemental high-order expansion after
   locating the element and its reference coordinates (Eqs. 15–16); the runs
   sample at the top of the first wall-adjacent element, $0.224\delta$
   (§II C, §III A).

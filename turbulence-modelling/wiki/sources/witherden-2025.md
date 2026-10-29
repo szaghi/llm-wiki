@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Phys. Commun. 311:109567"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Computer_Physics_Communications_Witherden_PyFR_v203_Towards_industrial_adoption_of_scale-resolving_sim.pdf"
 tags: [flux-reconstruction, software, gpu, high-order, shock-capturing, implicit-les]
-timestamp: 2026-10-28T17:01:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Summary
@@ -150,7 +150,7 @@ $\varepsilon_d=\tfrac43(2\pi)^{-3}\int\mu(\nabla\cdot\boldsymbol u)^2\,\mathrm d
 76 printed references, numbered style; many are PyFR Seminar Series talks
 with Cassyni DOIs. The list is merged complete into the
 [bibliography](/bibliography.md) with `citedby` this slug. Four printed
-works fall on keys of planned or ingested bundle sources that are
+works fall on keys of ingested bundle sources that are
 different works (Dzanic & Witherden 2022, J. Comput. Phys. 468:111501;
 Liang 2024, a PyFR seminar; Liang & Hu 2024, Renew. Energy; Volpiani et
 al. 2024, J. Aircr. 61) and are keyed `dzanic-2022-b`, `liang-2024-c`, `liang-2024-d` and `stefaninvolpiani-2024`. Three items are

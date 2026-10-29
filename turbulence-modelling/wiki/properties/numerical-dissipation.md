@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-29T05:16:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -261,10 +261,9 @@ central scheme (§2.3–2.4, §3). The authors credit OPT6's advantage to its
 "good" dispersion and dissipation against KGP2's "perfect" dissipation but
 "poor" dispersion (Table 1, §5). The recommendation sits beside the
 statement of Goc et al. (2021, §2.3, below) that numerical dissipation is
-"extremely detrimental" for coarse LES; it is not recorded as a
-contradiction, because Goc et al. state a design rationale (citing Mittal
-& Moin) without testing it, and Wang et al. attribute their result to
-dispersion, not to the added dissipation.
+"extremely detrimental" for coarse LES: Goc et al. state a design
+rationale (citing Mittal & Moin) without testing it, and Wang et al.
+attribute their result to dispersion, not to the added dissipation.
 
 For shock-capturing WENO schemes, [Luo & Wu (2021)](/sources/luo-2021-b.md)
 (§4, Figs. 4–7) separate the linear dissipation of the underlying upwind
@@ -567,7 +566,7 @@ relation) analysis places the TENO-type weights near the linear scheme
 **Eigenvalue-scaled Roe dissipation in a second-order unstructured code.**
 [De Cosmo et al. (2025)](/sources/decosmo-2025.md), §2.2, §3.2, keep the
 two acoustic eigenvalues of the Roe dissipation matrix multiplied by a
-factor $c_{\mathrm{diss}}$ (page-local) and set the three convective ones
+factor $c_{\mathrm{diss}}$ (registry §11) and set the three convective ones
 to zero, then calibrate $c_{\mathrm{diss}}$ on the decay of isotropic
 turbulence: larger values steepen the inertial range and lower the energy,
 smaller ones flatten it and pile energy up near the grid Nyquist
@@ -733,6 +732,25 @@ branch, chosen to remove checkerboarding upstream of the cylinder without
 harming energy conservation; URANS runs use plain second-order upwind
 (see Qualifications for the printed weights).
 
+**A sensor-scaled Roe dissipation with a scale-separated compact scheme.**
+In the SATES-II and adaptive-IDDES runs of
+[Wu et al. (2026)](/sources/wu-2026-b.md) (§3.2–3.3, Eqs. 22–28), the
+convective flux of [PHengLEI](/software/phenglei.md) is a sixth-order
+[weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+with multi-order candidates and a smooth TENO-type scale separation, meant
+to stay central-like at low wavenumbers and add dissipation at high ones;
+its approximate dispersion relation shows smaller dispersion and
+dissipation errors at resolved scales and larger dissipation at high
+wavenumbers (Fig. 3). The Roe dissipation term is multiplied, per
+primitive variable, by a factor that combines a relative-jump
+(total-variation) indicator and a Ducros-type dilatation–vorticity ratio
+as $\phi_{\mathrm R}=\phi_1+\phi_2-\phi_1\phi_2$ (page-local
+$\phi_{\mathrm R}$, $\phi_1$, $\phi_2$, as on the WCNS page; Eqs. 27–28). On the 2-D Riemann problem (configuration 3, $400\times400$) the
+factor stays near one in most regions, keeping shock capturing, and
+decreases near shear layers (Fig. 4). See
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)
+and [shock sensors](/definitions/shock-sensor.md).
+
 ## Where it acts in the element
 
 [Beck & Kurz (2023)](/sources/beck-2023.md) (§V A–C) contrast two DG-based
@@ -787,6 +805,14 @@ dissipation (Fig. 11).
   viscosity is printed as $\mu_b=4\mu/15$, the value of the formula above
   with $n=2$ *(compiler check, not in the sources)*. Results are under
   "Interaction with the subgrid model" below.
+  [Wang et al. (2026)](/sources/wang-2026.md) (§III A, Eqs. 18–29) use the
+  same residual on $64^3$, $128^3$ and $256^3$ grids, writing the total
+  subgrid dissipation as the sum of a modelled part, the volume average of
+  $-\tau^{\mathrm{mod}}_{ij}\bar S_{ij}$, and a numerical part, zero modelled
+  part in implicit LES (Eq. 27), so that the numerical part follows as the
+  residual minus the modelled one; the physical dissipation is again the
+  deviatoric-strain, bulk-viscous ($\mu_b=4\mu/15$ for the BGK model, as
+  they state) and pressure-dilatation terms (Eq. 25).
 - **Subdomain energy budget with the model terms.** [Saini et al. (2023)](/sources/saini-2023.md)
   (§2.2–2.3, Eqs. 2–12) extend the budget-residual method of Schranner et
   al. (cited) to LES with an explicit model. The resolved-energy
@@ -879,7 +905,7 @@ dissipation (Fig. 11).
   (§4.2, Eqs. 46–49) take, in the near-incompressible Taylor–Green vortex,
   the gap between the kinetic-energy decay rate and the enstrophy-based rate
   $2\mu\mathcal Z/\rho$ ($\mathcal Z$ the volume-averaged
-  enstrophy, page-local, as on the Taylor–Green page) as the numerical dissipation; their optimized
+  enstrophy, registry §11) as the numerical dissipation; their optimized
   [modal filters](/methods/explicit-modal-filtering.md) raise it slightly,
   more for stronger filters, and lower the enstrophy-based rate (Figs. 9–11).
   [Simonis et al. (2022)](/sources/simonis-2022.md) (Eqs. 24–26) call the
@@ -1205,6 +1231,23 @@ differences; neither paper prints the filtering interval.
 
 ## Interaction with the subgrid model
 
+- **The numerical share against grid resolution.**
+  [Wang et al. (2026)](/sources/wang-2026.md) (§III B, Figs. 1, 5–6) split
+  the subgrid dissipation of a fourth-order gas-kinetic LES of the
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($Re=1600$,
+  Mach 0.1) into its modelled and numerical parts for Smagorinsky
+  ($C_s=0.1$), Vreman and dynamic Smagorinsky closures. With grid
+  coarsening the absolute modelled dissipation grows, but its share of the
+  total falls: numerical dissipation dominates on $64^3$, where all closures
+  and the no-model run give similar totals, while on $256^3$ the modelled
+  part is most of the total for the static models and a smaller fraction
+  for the dynamic one. Judged by velocity-gradient PDFs against filtered
+  DNS, the no-model [implicit LES](/definitions/implicit-les.md) has the
+  smallest time-averaged discrepancies on $64^3$, it and the dynamic model
+  the smallest on $128^3$ (Jensen–Shannon $8.01\times10^{-4}$ against
+  $7.90\times10^{-4}$, equal Wasserstein-1), and the static models the
+  smallest on $256^3$, mainly in late decay (§IV B, Table I); the authors restrict the conclusion to this scheme, flow
+  and the non-recalibrated coefficients (§V).
 - **Low-dissipation solvers chosen for model comparisons.**
   [Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§2.1, §3.1) compare four
   SGS models in WMLES of the [Gaussian bump](/benchmarks/gaussian-bump.md)
@@ -1757,11 +1800,12 @@ turbulent scales by design:
 - **A constant blend in an immersed-boundary solver.** [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
   (§2.3, §3.1–3.3) blend a fourth-order kinetic-energy- and
   entropy-preserving central flux with a third-order WENO flux,
-  $(1-\alpha)f^{\#}+\alpha f_{\mathrm{WENO}}$ with the registry's blending
-  factor $\alpha$, and report the runs by constant dissipation factors. In
-  channel flow at $Re_\tau=5200$, $\alpha<0.0125$ produces significant
-  noise and larger values accelerate the centreline flow and retard the
-  near-wall flow; the best setting is $\alpha=0.0125$ in the interior with
+  $(1-\sigma_b)f^{\#}+\sigma_bf_{\mathrm{WENO}}$ with $\sigma_b$ the upwind
+  fraction of registry §11, and report the runs by constant dissipation
+  factors. In channel flow at $Re_\tau=5200$, $\sigma_b<0.0125$ produces
+  significant noise and larger values accelerate the centreline flow and
+  retard the near-wall flow; the best setting is $\sigma_b=0.0125$ in the
+  interior with
   $(0.05,0.025,0.0125)$ in the first irregular cells at the immersed wall,
   and doubling the latter changes little: interior dissipation matters more
   than dissipation at the immersed boundary (Fig. 12). Surface heat transfer
@@ -1826,6 +1870,14 @@ turbulent scales by design:
   number of about 1.5 by the Moin–Mahesh scaling they print (Eq. 38) (see
   [linear interaction analysis](/methods/linear-interaction-analysis.md)
   and [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+
+**First-order flux correction as a local dissipation fallback.** The
+astrophysical MHD code [AthenaK](/software/athenak.md) recomputes the
+face fluxes of a cell with first-order reconstruction and the local
+Lax–Friedrichs solver only where density or pressure would become
+negative, a fallback that acted about once per $10^{10}$ cell updates in
+the supersonic turbulence of Lemaster & Stone (2009), which
+[Stone et al. (2026)](/sources/stone-2026.md) cite (§3).
 
 ## Dissipation of compressible modes
 
@@ -2367,3 +2419,6 @@ evidence is one-dimensional and laminar.
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (negligible numerical diffusion of high-order codes and the $\omega$ wall value; implicit upwind dissipation in hybrid RANS/LES).
 - [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1, Eq. (38) (sensor-dependent dissipation of shock capturing in shock–turbulence interaction; review).
 - [Lv et al. (2025)](/sources/lv-2025.md) — §I, §V (dissipated vortices on coarse grids as motivation for adaptive refinement; passing).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §III A, Eqs. (18)–(29); §III B, Figs. 1, 5–6; §IV B, Tables I–II; §V (modelled and numerical subgrid dissipation against grid resolution).
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §3.2, Figs. 2–3; §3.3, Eqs. (27)–(28), Fig. 4 (scale-separated WCNS and sensor-scaled Roe dissipation).
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3 (first-order flux correction in AthenaK; passing).

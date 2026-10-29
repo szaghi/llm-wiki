@@ -9,7 +9,7 @@ year: 2019
 venue: "Annu. Rev. Fluid Mech. 51:357–377"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2019_Crossref_Annual_Review_of_Fluid_Mechanics_Duraisamy_Turbulence_Modeling_in_the_Age_of_Data.pdf"
 tags: [rans, data-driven, uncertainty-quantification, field-inversion, review]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-29T07:36:00Z
 ---
 
 # Summary
@@ -47,9 +47,9 @@ prediction environments, because latent RANS variables (the dissipation rate)
 play an operational role. The remedy argued for is
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md):
 inference precedes learning, and the learned correction is embedded in the
-RANS solver. This prefigures the
-[a priori against a posteriori](/definitions/a-priori-and-a-posteriori-testing.md)
-question, although the paper does not use those terms in that sense. It
+RANS solver. The bundle files this training–prediction mismatch under
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md);
+the paper does not use those terms in that sense. It
 closes with five open challenges and a call for every prediction to carry an
 explicit uncertainty estimate.
 

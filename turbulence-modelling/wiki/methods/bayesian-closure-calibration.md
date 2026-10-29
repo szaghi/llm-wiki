@@ -5,7 +5,7 @@ description: "Calibration of RANS closure coefficients as Bayesian inference: pr
 status: established
 aliases: [Bayesian calibration, Bayesian recalibration, Bayesian uncertainty quantification of closure coefficients, MAP calibration, polynomial-chaos calibration, non-intrusive polynomial chaos, embedded model error, turbo-RANS]
 tags: [uncertainty-quantification, rans, data-driven, dg, compressible]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Bayesian calibration of turbulence-model coefficients
@@ -58,7 +58,7 @@ and represented by kernel density estimates; An et al. state that MCMC
 samples and use 100 000 (§2.3.2, §3.1). Le et al. (2024, §3.1.1) report
 the same sample range for the MCMC calibration of SA and SST by Hosder et
 al., and cite Sargsyan et al. for the remark that the MAP point can be
-found by standard optimization without MCMC. The MAP objective with Gaussian prior
+found by optimization without MCMC. The MAP objective with Gaussian prior
 and likelihood is the one written on
 [model-form uncertainty](/definitions/model-form-uncertainty.md).
 
@@ -234,7 +234,7 @@ Several MAP values lie within 1.5% of a prior bound: $\kappa=0.61481$
 (bound 0.615), $c_{b2}=0.77421$ (0.7775), $c_{w3}=2.9789$ (3), $\sigma=0.99171$
 (1), $c_{w2}=0.445975$ and $0.44389$ (0.45), $c_{v1}=3.59145$ (3.55),
 $c_{b1}=0.10304$ (0.101625), the bounds taken from Table 1 *(compiler
-check, not in the sources; the paper does not comment on it)*. In Shan et
+check, not in the sources)*; the paper does not comment on it. In Shan et
 al.'s metaheuristic calibration of SA several calibrated values equal a
 bound of its $\pm50\%$ box (see
 [ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)).

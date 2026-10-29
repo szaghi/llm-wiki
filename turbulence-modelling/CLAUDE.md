@@ -53,7 +53,8 @@ bundle's notation.
   20 and make chunk 8. On 2026-10-27 it held 307 files: the 147 added
   (all distinct works, none a second version of a planned one, identified
   by the page-1 DOI and Crossref) make chunks 9–15 of 20 and chunk 16 of 7,
-  in archive order.
+  in archive order. On 2026-10-29 all 307 files are ingested; papers added
+  later are ingested in further chunks, found with `tools/worklist.sh`.
 - The page-1 and checksum check of 2026-10-25 found 131 distinct works and
   no byte copies. The year in the filename is the online year (the slug
   uses the year of the published issue), and more than half of the files
@@ -112,7 +113,13 @@ bundle's notation.
 
 ## Status
 
-**Chunk 15 staged 2026-10-29:** 20 papers of 2025–2026; 300 of 307
+**Chunk 16 staged 2026-10-29 — archive complete:** the last 7 papers;
+307 of 307 ingested, 191 concept pages plus the registry, 14270
+bibliography entries after the closing sweeps, the fourth whole-bundle deep
+lint done, one contradiction opened (thirteen open). Open human decisions
+are in INGESTION-ISSUES.md.
+
+**Chunk 15 committed 2026-10-29 (94f459a):** 20 papers of 2025–2026; 300 of 307
 ingested, 189 concept pages plus the registry, 14078 bibliography entries,
 deep lint done, two contradictions opened (twelve open). Chunk 16 (the last
 7 papers, with the whole-bundle deep lint and the closing `--dupes` sweep)

@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-28T17:45:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Smagorinsky model
@@ -81,6 +81,8 @@ are variants of the same eddy-viscosity idea.
 | 0.16, "to be consistent with the reference" | anelastic GPU LES of wind turbines with actuator lines (GRASP), $\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$ | [Taschner et al. (2024)](/sources/taschner-2024.md), §2.1, Eqs. (3)–(4); §3.1 |
 | 0.1 | calibration target of the cut-off coefficient $C_x=0.61$ of the hybrid model SATES-SM | [Wu et al. (2024)](/sources/wu-2024.md), §2.2, Eq. (7), Table 1 |
 | 0.1, $\Delta$ the cube root of the cell volume, $\mu_t=\bar\rho(C_s\Delta)^2\lvert\bar S\rvert$ entering the BGK collision time | gas-kinetic LES of the compressible Taylor–Green vortex, against implicit LES | [Cao et al. (2022b)](/sources/cao-2022-c.md), §III A, Eq. (9) |
+| 0.1, $\Delta$ the cell width of a uniform grid, $\mu_t=\bar\rho(C_s\Delta)^2\lvert\bar S\rvert$ entering the BGK collision time, "not recalibrated" for the scheme | gas-kinetic LES of the Taylor–Green vortex on $64^3$ to $256^3$, against implicit LES | [Wang et al. (2026)](/sources/wang-2026.md), §II B, Eq. (13); §V |
+| 0.1, calibration target of the SATES-SM coefficient $C_x=\sqrt{0.3}\,C_s/C_\mu=0.61$ | the SATES-SM variant against which SATES-II is built | [Wu et al. (2026)](/sources/wu-2026-b.md), §2.2, Eq. (7), Table 1 |
 | 0.1, $\Delta$ the cell size | finite-volume LES of forced isotropic turbulence carrying a subgrid-velocity enrichment | [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B, Eqs. (40)–(41) |
 | 0.1 "in the present wall-bounded turbulent flows", $\Delta$ the cube root of the cell volume, no wall damping mentioned | LES of the 30P30N three-element airfoil | [Wu et al. (2023)](/sources/wu-2023-b.md), §2.1, Eq. (8) |
 | 0.16 far from the wall ($C_{\mathrm{MT}}$ in the damping below) | LES of a neutral atmospheric boundary layer over a hill, with Mason–Thomson wall damping | [Zhang et al. (2022e)](/sources/zhang-2022-i.md), §II A–B, Eqs. (4)–(6) |
@@ -176,7 +178,8 @@ not in the sources)*.
 Manabe, Smagorinsky & Strickler (1965) for the model, and
 [Fureby & Nilsson (2023)](/sources/fureby-2023.md) (§3.2) cite Erlebacher
 et al. (1992), a compressible extension, for "SMG" in their list of
-candidate models; the formula is the same.
+candidate models; the formula is the same. The sequel of Cao et al., [Wang et al. (2026)](/sources/wang-2026.md)
+(§II B), again cites Manabe, Smagorinsky & Strickler (1965).
 
 **Origin, as recounted in a history of LES.** [Kim & Leonard (2024)](/sources/kim-2024-b.md)
 (§2.5) trace the model to the eddy coefficient of Smagorinsky's general
@@ -261,7 +264,7 @@ for the filter-width question across the sources.
 Vicente Cruz & Lamballais (2023, §6.3, Figs. 7–12), on the Taylor–Green
 vortex at $Re=40\,000$ with sixth-order compact differences:
 
-- in the standard condition $\Delta x=\Delta$ with $C_s=0.1$, the model
+- in what the authors call the standard condition, $\Delta x=\Delta$ with $C_s=0.1$, the model
   cannot control the energy pile-up near the mesh cutoff and overestimates
   the total dissipation; the authors attribute this to the interaction of
   differentiation errors with the model, not to the model itself, and note
@@ -280,8 +283,8 @@ vortex at $Re=40\,000$ with sixth-order compact differences:
   wavenumbers but nearly constant and vanishing near the cutoff, with the
   drop scaling on the mesh cutoff (a signature of numerical error).
 
-[Flad & Gassner (2017)](/sources/flad-2017.md) (§1, §4) find the same
-dependence on the baseline in DG. Added to de-aliased DG ILES with Roe
+[Flad & Gassner (2017)](/sources/flad-2017.md) (§1, §4) report a
+dependence on the baseline scheme in DG. Added to de-aliased DG ILES with Roe
 dissipation, Smagorinsky or small–small VMS Smagorinsky gives no
 significant improvement on coarse DHIT "independent of the SGS model
 constants used" (Fig. 3). Added to a dissipation-free
@@ -323,7 +326,7 @@ the effective Reynolds number of the resolved field, a strictly dissipative
 action.
 
 [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) (§3.1.8, Figs.
-19–20) reach the same conclusion on an entropy-stable, dissipation-free
+19–20) add the model to an entropy-stable, dissipation-free
 [flux-reconstruction](/methods/flux-reconstruction.md) baseline that is
 stable without any model, in the Taylor–Green vortex at $Re=1600$ with
 $96^3$ degrees of freedom ($N=5$). Adding Smagorinsky or its variants below
@@ -625,8 +628,9 @@ of eddy viscosity", matters more (§III C, §IV). The conclusion rests on
 these correlations, angle PDFs and eigenvalue ratios; see
 [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md).
 
-[Maejima & Kawai (2025)](/sources/maejima-2025.md) (§1) give the same
-reason for preferring other closures in coarse wall turbulence. The
+[Maejima & Kawai (2025)](/sources/maejima-2025.md) (§1) give the
+alignment as a reason for preferring other closures in coarse wall
+turbulence. The
 eddy-viscosity approach "expresses the SGS stresses as scalar multiples of
 the velocity gradient tensor, which does not hold well in real turbulence",
 and they recall Jiménez & Moser on the poor performance of eddy-viscosity
@@ -661,10 +665,9 @@ that Smagorinsky and Chollet–Lesieur models must assume the
 inertial-range form and the Kolmogorov constant, which the autonomous
 model predicts (§3.3), and recalls that the spectral viscosity of the
 Smagorinsky model is approximately uniform in wavenumber (Siegel &
-Domaradzki 1994; for the dynamic form, Thiry et al. 2019), consistent with
-the nearly constant a posteriori spectral viscosity found by Vicente Cruz
-& Lamballais (2023, §6.3; see
-[spectral eddy viscosity](/methods/spectral-eddy-viscosity.md)).
+Domaradzki 1994; for the dynamic form, Thiry et al. 2019). Vicente Cruz &
+Lamballais (2023, §6.3) find its a posteriori spectral viscosity nearly
+constant (see [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md)).
 
 **Isotropic turbulence a posteriori.** In decaying isotropic turbulence at
 $Re_\lambda=240$, the authors call Smagorinsky "one of the most dissipative
@@ -781,7 +784,7 @@ Smagorinsky run.
 instability (SF$_6$/N$_2$, $M\approx1.5$, LES on $384^3$ against DNS on
 $2048^3$), constant-coefficient Smagorinsky "grossly underestimates" the
 bubble and spike heights between 0.04 and 0.12 ms, which [Qi et al. (2022)](/sources/qi-2022-b.md)
-(§4.3, Fig. 23) relate to its known inability to predict transition
+(§4.3, Fig. 23) relate to its inability to predict transition
 (citing Piomelli & Zang; Meneveau & Katz; Sayadi & Moin; Zhou et al.).
 The same paper's one-equation model keeps a Smagorinsky form but sets its
 coefficient locally from a constraint on the anisotropic subgrid energy
@@ -814,6 +817,25 @@ methods (Hou et al., cited).
   sources)*; on $384^3$ it only matches
   implicit LES on $256^3$ (Cao et al. 2022b, §IV A, §IV C, App. B; see
   [implicit LES](/definitions/implicit-les.md)).
+- Over $64^3$, $128^3$ and $256^3$ in the same framework,
+  [Wang et al. (2026)](/sources/wang-2026.md) find Smagorinsky and
+  [Vreman](/methods/vreman-model.md) nearly identical, with more modelled
+  dissipation than the dynamic model on every grid; the time-averaged
+  modelled dissipation falls with refinement, while its share of the total
+  subgrid dissipation rises to most of it on $256^3$ (§III B, Figs. 1,
+  3, 6). On $128^3$ the Smagorinsky run under-predicts the tails of the
+  resolved velocity-gradient PDF and depletes the high-wavenumber spectrum
+  most (§IV B, Fig. 8; App. A, Fig. 11). Against filtered DNS its
+  time-averaged Jensen–Shannon divergence of the gradient PDFs is
+  $5.17\times10^{-3}$ on $64^3$ (implicit LES $4.16\times10^{-3}$) but
+  $2.01\times10^{-4}$ on $256^3$ (implicit LES $2.39\times10^{-4}$), the
+  late-decay "modest regularizing benefit" the authors note on the fine
+  grid (§IV B, Table I).
+- In their review, [Hu & Yang (2026)](/sources/hu-2026.md) (Sec. II C,
+  Eq. 5) note that the constant-coefficient model is purely dissipative
+  ($\nu_t\ge0$) and cannot represent backscatter, and that it keeps an
+  explicit dependence on the grid width (see
+  [energy backscatter](/definitions/energy-backscatter.md)).
 - On the 30P30N airfoil at $Re=1.71\times10^6$ (27 million cells, fourth-order
   weighted compact scheme) Smagorinsky LES under-predicts the lift by 6.7%,
   against −0.4% for the self-adaptive hybrid model and −19.8% for SST-IDDES;
@@ -991,6 +1013,16 @@ methods (Hou et al., cited).
   implicit LES; the authors read the branch as establishing a "'dynamic'
   balance", a self-adjusting Smagorinsky model (see
   [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+  In the transitional SA-BCM-based IDDES of
+  [Alberti et al. (2026)](/sources/alberti-2026.md) (§3.3, Eq. 14,
+  Fig. 16), on the NACA 0012 at $\alpha=11.5^\circ$, $Re_c=130\,000$, the
+  averaged equivalent constant $\sqrt{\nu_t/(\Delta^2\lvert\Omega\rvert)}$
+  ($\lvert\Omega\rvert$ the vorticity magnitude, $\Delta$ the cube root of
+  the cell volume) is about 0.5 in
+  RANS-dominated regions and 0.1–0.2 over most of the LES region, with a
+  local plateau at 0.14 at $x/c=0.4$, which the authors call "consistent
+  with a standard Smagorinsky model". The paper does not state whether
+  this $\Delta$ is the one the model itself uses.
 - **Eddy-viscosity part of a mixed model.** [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
   (§2.1, Eq. 1) add a scale-similarity term with a Gaussian secondary filter
   to the Smagorinsky stress with $C_s=0.13$ (see
@@ -1169,3 +1201,7 @@ methods (Hou et al., cited).
 - [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 3 (static against dynamic Smagorinsky in shock–turbulence LES, Garnier et al. cited; subgrid fluxes switched off at shocks; isotropic part). Review, citation only.
 - [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I (dynamic Smagorinsky on KEP-DGSEM of Flad & Gassner, cited).
 - [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.3 (named among engine-LES closures). Review, citation only.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §II B, Eq. (13); §III B, Figs. 1, 3, 6; §IV B, Table I, Fig. 8; §V; App. A, Fig. 11.
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §2.2, Eq. (7), Table 1 ($C_s=0.1$ behind $C_x=0.61$).
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §3.3, Eq. (14), Fig. 16 (equivalent Smagorinsky constant of a transitional IDDES).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — Sec. II C, Eq. (5) (review).

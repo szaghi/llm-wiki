@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Fluid Mech. 935:A31"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Fluid_Mechanics_Tonicello_Turbulence_kinetic_energy_transfers_in_direct_numerical_simu.pdf"
 tags: [dns, shock-boundary-layer-interaction, backscatter, a-priori-a-posteriori, compressible, spectral-difference]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -124,7 +124,7 @@ $N=5$. The resolved pressure-dilatation work is $K_1=\bar p\,\partial_j\tilde u_
 | $k$ | $k_{\mathrm{sgs}}$ (filtered fields) or $k$ (averaged fields) | unresolved kinetic energy per unit mass |
 | $K_0,\dots,K_5$ | (resolved kinetic-energy budget terms) | page-local; $K_3=-\Pi$, $K_1$ the resolved pressure-dilatation work |
 | $\Lambda$ | (spherical-part transfer, $-\tfrac23\bar\rho k_{\mathrm{sgs}}\partial_l\tilde u_l$) | page-local |
-| $Ma_{SGS}$ | $M_{\mathrm{sgs}}$ | page-local subgrid Mach number |
+| $Ma_{SGS}$ | $M_{\mathrm{sgs}}$ | subgrid Mach number (registry §11) |
 | $Ma$ | $M$ | |
 | $N$ (order of approximation) | $N+1$ | the source's solution polynomial has degree $N-1$; its $N=6$ is the registry's $N=5$ |
 | $h$ | $h$ | DNS resolution; element size in App. B |

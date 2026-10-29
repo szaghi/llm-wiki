@@ -5,7 +5,7 @@ description: "The variational multiscale method splits the finite-element soluti
 status: established
 aliases: [VMS, residual-based VMS, residual-based variational multiscale method, RB-VMS, VMS-LES, residual-based LES, modified VMS, multiscale Smagorinsky model, CG-VMSD]
 tags: [les, implicit-les, sgs-model, numerical-dissipation, immersed-boundary]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Variational multiscale method
@@ -226,9 +226,9 @@ significantly (Remark 4).
 method: residual-based VMS with generalized-$\alpha$, spectral radius 0.5,
 "VMS-Gen-$\alpha$(0.5)"):
 
-- **Manufactured solution** (§7.1, Figs. 6–7): $L^2$ order $k+1$ and $H^1$
-  order $k$ for velocity and pressure with $C^1$ quadratic and $C^2$
-  cubic NURBS ($k$ the spline degree, page-local), and the design orders
+- **Manufactured solution** (§7.1, Figs. 6–7): $L^2$ order $N+1$ and $H^1$
+  order $N$ for velocity and pressure with $C^1$ quadratic and $C^2$
+  cubic NURBS ($N$ the spline degree, the source's $k$), and the design orders
   1–4 in time for HERK(1,1) to HERK(4,4).
 - **[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
   $Re=1600$** on $64^3$, $96^3$ and $128^3$ quadratic-NURBS elements

@@ -5,7 +5,7 @@ description: "Supervised wall-stress model for wall-modelled LES that classifies
 status: established
 aliases: [BFWM, building-block flow wall model, machine-learning building-block-flow wall model]
 tags: [wall-model, wmles, data-driven, neural-network]
-timestamp: 2026-10-28T06:44:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Building-block-flow wall model
@@ -222,6 +222,21 @@ data-driven predictors; their own method blends data-driven corrections of
 a RANS model with locally learned weights (see
 [turbulence-model aggregation](/methods/turbulence-model-aggregation.md)).
 
+**A convex combination, seen from a review.**
+[Hu & Yang (2026)](/sources/hu-2026.md) (§IV C, Table III) place the
+model in the direct-regression family of data-driven wall models, against
+the reinforcement-learning family of
+[Bae & Koumoutsakos (2022)](/sources/bae-2022.md). They summarize it as a
+classifier network and a predictor network trained on WMLES-generated
+data of zero-, favourable- and adverse-pressure-gradient turbulence,
+separation, unsteady three-dimensional wall turbulence and laminar flow,
+returning the wall stress with a confidence score. They state that the
+design assumes the wall stress of a complex flow to be a convex
+combination of the wall stresses of the canonical flows. Lozano-Durán &
+Bae state their own assumption as a probability-weighted combination
+(§2.2), with the softmax class probabilities of Eq. (2.6) as weights. Hu
+& Yang do not test the model and print no new numbers for it.
+
 ## The authors' conclusion: external errors dominate
 
 Across the cases the BFWM reduces the internal error markedly, but the total
@@ -296,3 +311,5 @@ and cases differ, so no ratio to the figure above is formed here.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §1 (arXiv v2).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §I; §VI.
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §3.2; §4 (SGS model dominating the idealized wall condition; unified SGS/wall models proposed).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §IV C, Table III (direct-regression family; convex-combination assumption).
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — the reinforcement-learning wall model contrasted with it by Hu & Yang (2026, §IV C).

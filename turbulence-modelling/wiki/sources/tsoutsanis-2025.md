@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 523:113653"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Computational_Physics_Tsoutsanis_Arbitrary-order_unstructured_finite-volume_methods_for_impli.pdf"
 tags: [implicit-les, numerical-dissipation, finite-volume, weno, high-order, compressible]
-timestamp: 2026-10-29T05:09:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -203,12 +203,13 @@ slug. Ref. [114] is the ingested [Chapelier et al. (2024)](/sources/chapelier-20
 [15] the ingested [Deng et al. (2022)](/sources/deng-2022.md), [86]
 [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md), [27]
 [Ma et al. (2022)](/sources/ma-2022.md), and [101] the ingested review
-[Maltsev et al. (2022)](/sources/maltsev-2022.md). Three cited works share
-a key with a different ingested work and are keyed `maltsev-2022-b`, `cao-2022-c` and `huang-2022-c` respectively: ref.
-[61] (Maltsev, Tsoutsanis & Skote, hybrid finite-volume/DG framework,
-ECCOMAS 2022), ref. [16] (Cao, Zhao & Chen, quantitative analysis of
-implicit LES, Phys. Fluids 34) and ref. [30] (Huang et al., wall models in
-spectral/hp implicit LES, Phys. Fluids 34). Several Elsevier references
+[Maltsev et al. (2022)](/sources/maltsev-2022.md); ref. [16] (Cao, Zhao &
+Chen, quantitative analysis of implicit LES, Phys. Fluids 34) is the
+ingested [cao-2022-c](/sources/cao-2022-c.md) and ref. [30] (Huang et al.,
+wall models in spectral/hp implicit LES, Phys. Fluids 34) the ingested
+[huang-2022-c](/sources/huang-2022-c.md). Ref. [61] (Maltsev, Tsoutsanis &
+Skote, hybrid finite-volume/DG framework, ECCOMAS 2022) shares its key
+with the ingested review and is keyed `maltsev-2022-b`. Several Elsevier references
 print a volume without an article number; ref. [85] (Dzanic et al.) is an
 arXiv preprint; ref. [81] is printed "AIAA paper 6 (1991-1596)"; ref.
 [64] carries a 2019 DOI with a 2023 volume. No item is unparseable.

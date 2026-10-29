@@ -5,7 +5,7 @@ description: "The NASA Juncture Flow wing–fuselage model, with smooth-body cor
 status: established
 aliases: [Juncture Flow experiment, NASA JF, wing-body juncture flow]
 tags: [benchmark, wmles, separated-flow, boundary-layer, data-driven]
-timestamp: 2026-10-28T01:52:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # NASA Juncture Flow
@@ -148,10 +148,10 @@ and gave very accurate mean $C_p$ (§I). They also cite juncture-flow
 WMLES in which grids of aspect ratio one at the juncture gave the most
 accurate corner flow (their ref. [11], §I.2), and recommend LDV- and
 PIV-type velocity measurements "as was done in experiments like wing–body
-juncture flow" for future high-lift tests (§VI 5a). This agrees with
-Lozano-Durán et al. (2022) above, whose $C_p$ is within 5% on all grids
-while the velocity error at the juncture is about 15% and in the
-separation about 100%.
+juncture flow" for future high-lift tests (§VI 5a). In the runs of
+Lozano-Durán et al. (2022) above, $C_p$ is within 5% on all grids while
+the velocity error is about 15% at the juncture and about 100% in the
+separation.
 
 ## Junction flows as a RANS modelling challenge
 

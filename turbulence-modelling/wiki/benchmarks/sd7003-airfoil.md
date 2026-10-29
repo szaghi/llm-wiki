@@ -5,7 +5,7 @@ description: "The Selig–Donovan SD7003 airfoil at chord Reynolds numbers 23,00
 status: established
 aliases: [SD7003, SD 7003, Selig–Donovan SD7003, SD7003 wing, High-Order CFD Workshop case C3.3]
 tags: [benchmark, transition, implicit-les, separated-flow, flux-reconstruction, rans]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # SD7003 airfoil
@@ -162,12 +162,12 @@ transition-model page; the bubble physics is on
 
 ## What the case shows
 
-- The bubble is decided by resolved dissipation as much as by modelling:
-  in the implicit LES of Vermeire (2024) the polynomial degree at fixed
-  mesh moves the flow from fully separated ($N=1$) to a bubble with
-  turbulent reattachment ($N\ge2$), and in the RANS of Carreño Ruiz &
-  D'Ambrosio (2022) the calibration of the separation-induced
-  intermittency moves reattachment from 0.660 to 0.769 at $\alpha=4^\circ$
+- Both the resolution and the model move the bubble: in the implicit LES
+  of Vermeire (2024) the polynomial degree at fixed mesh moves the flow
+  from fully separated ($N=1$) to a bubble with turbulent reattachment
+  ($N\ge2$), and in the RANS of Carreño Ruiz & D'Ambrosio (2022) the form
+  of the separation-induced intermittency correction (their Eq. 6 against
+  Eq. 5) moves reattachment from 0.660 to 0.769 at $\alpha=4^\circ$
   (Table 8).
 - Both sources use scale-resolving simulations as the reference at
   $Re_c=6\times10^4$; experiments enter as PIV (Carreño Ruiz &

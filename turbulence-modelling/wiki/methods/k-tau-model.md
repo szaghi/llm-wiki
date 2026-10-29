@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity model transporting the turbulent 
 status: established
 aliases: [k-tau, k-τ RANS model, k–τ, Speziale k-τ, Kalitzin k-τ, Kok–Spekreijse k-τ, k-τ SST, k-tau SST]
 tags: [rans, eddy-viscosity, spectral-element, boundary-layer, des]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # The k-τ model
@@ -345,9 +345,9 @@ version of $k$-$\tau$ as the basis of a
   overprediction; the printed values give $+15\%$ against the measurement,
   while the largest NASA-code value, 0.01297, is $+8\%$
   *(compiler check, not in the sources)*.
-- **The cap $S_{\lim}$** is an empirical relaxation (twice the theoretical
-  wall limit) justified by the authors' experimentation; no figure shows
-  the failure without it (§2).
+- **The cap $S_{\lim}$.** The authors relax it to twice the theoretical
+  wall limit for robustness; no figure shows the failure without it
+  (§2).
 - **Printed slips.** The pipe section is headed "$Re_\tau=1000$" while the
   text gives 1142; Eq. 29 writes $Re_\tau$ where Eq. 30 defines
   $R_\tau=2.95$, and $\alpha_0$ is given no value; §1 calls $\varepsilon$

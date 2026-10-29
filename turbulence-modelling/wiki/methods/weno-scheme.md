@@ -5,7 +5,7 @@ description: "WENO, TENO, weighted compact nonlinear and bounded normalized-vari
 status: established
 aliases: [WENO, TENO, US-WENO, AUS-WENO, HAUS-WENO, unequal-sized WENO, interpolation-based WENO, alternative finite-difference WENO, smooth TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-Z+, WENO-Z+M, WENO-ZQ, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme, TENO-THINC, TENO-S, TENOA, THINC, TENO limiter, boundary variation diminishing, BVD-AD, WCNS, weighted compact nonlinear scheme, WCNS-T, ROUND, OMP6 hybrid]
 tags: [shock-capturing, numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-29T05:14:00Z
+timestamp: 2026-10-29T10:06:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -84,6 +84,8 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | Third-order WENO blended with a fourth-order skew-symmetric central flux by a smooth tanh switch on a pressure-ratio indicator, one-sided ENO and second-order central at boundaries (CurvIB) | LES with dynamic Smagorinsky of isotropic turbulence, channel flow, Mach 3 cylinder and shock diffraction, curvilinear immersed boundaries | [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §2.2, §3 |
 | Seventh-order WENO (Jiang–Shu weights, $\epsilon_{\mathrm Z}=10^{-6}$), sixth-order central viscous terms, fourth-order Runge–Kutta | wall-resolved LES (dynamic Smagorinsky–Yoshizawa) of a Mach 2 spatially developing boundary layer, reference of a hybrid RANS/LES study | [Wang et al. (2024c)](/sources/wang-2024-j.md), §II, App. |
 | Fifth-order WCNS with Jiang–Shu, Z, TENO (sharp cut-off) and smooth-TENO (tanh cut-off, fixed or adaptive) weights, sixth-order flux difference, Roe flux (PHengLEI) | SATES hybrid RANS/LES of the 30P30N airfoil and a Mach 2.46 base flow; two-dimensional Riemann problem | [Wu et al. (2024b)](/sources/wu-2024-b.md), §II, §IV |
+| Sixth-order WCNS with multi-order candidates (one six-point optimized linear candidate, three third-order ones) and a smooth TENO-type scale separation (MOC6-STA), Roe flux with sensor-scaled dissipation (PHengLEI-HyOrder) | SATES-II and adaptive IDDES of a Mach 2.46 base flow and the 30P30N airfoil; two-dimensional Riemann problem | [Wu et al. (2026)](/sources/wu-2026-b.md), §3.1–3.4, Eqs. (22)–(28) |
+| WENO-Z on primitive variables (no characteristic projection), alongside PLM, PPM4 and PPMX; LLF, HLLE, HLLC, HLLD or Roe; SSP Runge–Kutta (AthenaK, GPU) | driven isothermal MHD turbulence on $10{,}240^3$ cells; linear-wave and Shu–Osher verification | [Stone et al. (2026)](/sources/stone-2026.md), §3, §3.1–3.2 |
 | Hermite-WENO limiting of the Spalart–Allmaras variable, with a $\rho\tilde\nu$ modal-decay detector, linear weights adapted to anisotropic meshes and a positivity-preserving limiter, in third-order modal DG | steady RANS for Bayesian calibration of the SA constants | [An et al. (2025)](/sources/an-2025.md), App. A |
 
 The upwind schemes act on split fluxes or on characteristic variables.
@@ -670,8 +672,8 @@ differences for the viscous terms (§V).
 fourth-order kinetic-energy- and entropy-preserving central flux (Kuya et
 al., Totani et al.) with a third-order two-candidate WENO flux of
 Steger–Warming-type flux-vector splitting in characteristic variables,
-$\hat f=(1-\alpha_{\mathrm b})\hat f_{\mathrm{cent}}+\alpha_{\mathrm b}\hat f_{\mathrm{diss}}$
-($\alpha_{\mathrm b}$ page-local). Interior candidates for the positive
+$\hat f=(1-\sigma_b)\hat f_{\mathrm{cent}}+\sigma_b\hat f_{\mathrm{diss}}$
+($\sigma_b$ the upwind fraction of registry §11, the source's $\alpha$). Interior candidates for the positive
 split flux at $j+\tfrac12$ are $-\tfrac12f_{j-1}+\tfrac32f_j$ and
 $\tfrac12f_j+\tfrac12f_{j+1}$, with ideal weights $1/3$ and $2/3$ (Eqs.
 11–18). With a single ghost cell next to the immersed boundary (a second
@@ -805,6 +807,25 @@ and the authors recommend smooth scale separation "in TENO-based
 schemes, especially in simulating multiscale flows" (§IV.C, §V; details
 on [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md)).
 
+**Smooth scale separation inside multi-order candidates.**
+[Wu et al. (2026)](/sources/wu-2026-b.md), §3.1–3.2, Eqs. (22)–(25),
+apply the same smooth cut-off to a sixth-order weighted compact nonlinear
+interpolation built from multi-order candidates: three third-order
+candidates and a six-point optimized linear one, with linear weights
+$d_0=1/16$, $d_1=10/16$, $d_2=5/16$, $d_3=100$ (registry $d_k$) and
+$\epsilon_{\mathrm Z}=10^{-40}$ in the unnormalized weights. The
+scale-separation flag is $\tanh\big((\chi^{\mathrm T}_k/C_T)^k\big)$ for
+$\chi^{\mathrm T}_k<10C_T$ and 1 otherwise, with $C_T$ adapted after Fu
+et al. (2019), as cited; the smoothness measure behind $\chi^{\mathrm T}_k$
+is not defined in the paper. The aim is central-like stencils at low
+wavenumbers and extra dissipation at high ones; in an approximate
+dispersion relation analysis the scheme reduces dispersion and
+dissipation errors at resolved scales while adding dissipation at high
+wavenumbers (§3.2, Fig. 3), and an interpolation-error test compares it
+with third-order MUSCL and fourth-order WCNS (Fig. 2). The exponent $k$ of
+the tanh argument is printed as the stencil index, where Wu et al.
+(2024b) print 2.
+
 ## TENO hybrids: jump reconstruction at discontinuities, non-dissipative flux in smooth flow
 
 **TENO-THINC.** Takagi et al. (2022) keep TENO5 everywhere except in cells
@@ -919,9 +940,9 @@ selector inside TENO-THINC limiters is above and below.
 The **weighted compact nonlinear scheme** (WCNS of Deng & Zhang, which
 [Ma et al. 2022](/sources/ma-2022.md), §2.1, cite) is a finite-difference
 shock-capturing scheme of three components: a flux-difference formula
-mixing numerical fluxes $\hat E_{j\pm1/2}$ at cell edges with physical
+mixing numerical fluxes $E^*_{j\pm1/2}$ (the source's $\hat E$) at cell edges with physical
 fluxes $E_j$ at nodes (Eq. 9),
-$$E'_j=\frac{\alpha_{\mathrm W}}{h}\big(\hat E_{j+\frac12}-\hat E_{j-\frac12}\big)+\frac{192-175\alpha_{\mathrm W}}{256h}(E_{j+1}-E_{j-1})+\frac{35\alpha_{\mathrm W}-48}{320h}(E_{j+2}-E_{j-2})+\frac{64-45\alpha_{\mathrm W}}{3840h}(E_{j+3}-E_{j-3}),$$
+$$E'_j=\frac{\alpha_{\mathrm W}}{h}\big(E^*_{j+\frac12}-E^*_{j-\frac12}\big)+\frac{192-175\alpha_{\mathrm W}}{256h}(E_{j+1}-E_{j-1})+\frac{35\alpha_{\mathrm W}-48}{320h}(E_{j+2}-E_{j-2})+\frac{64-45\alpha_{\mathrm W}}{3840h}(E_{j+3}-E_{j-3}),$$
 sixth order in general and eighth order for the value used,
 $\alpha_{\mathrm W}=256/175$ ($\alpha_{\mathrm W}$, $E$ page-local); a
 numerical flux (Roe's) from left and right interface states; and a
@@ -935,7 +956,7 @@ interpolation dominates that dissipation (§1, §2.2).
 
 **WCNS-T.** On the same five-point stencil the linear tri-diagonal compact
 interpolation
-$$\tfrac12\hat u_{j-1/2}+\hat u_{j+1/2}+\tfrac3{14}\hat u_{j+3/2}=-\tfrac1{224}u_{j-2}+\tfrac18u_{j-1}+\tfrac{15}{16}u_j+\tfrac58u_{j+1}+\tfrac1{32}u_{j+2}$$
+$$\tfrac12u_{j-1/2}+u_{j+1/2}+\tfrac3{14}u_{j+3/2}=-\tfrac1{224}u_{j-2}+\tfrac18u_{j-1}+\tfrac{15}{16}u_j+\tfrac58u_{j+1}+\tfrac1{32}u_{j+2}$$
 is seventh order (Eq. 16). Ma et al. write it as a convex combination of
 four fourth-order compact sub-interpolations, each containing interface
 unknowns (Eq. 18), with optimal weights $d_k=(1,18,30,7)/56$, and replace
@@ -1429,6 +1450,12 @@ double-precision peak of a TITAN RTX runs only about twice as fast to memory
 bandwidth, "the bottleneck for current memory-intensive simulations" (not
 profiled; Tables 2–3).
 
+The Kokkos MHD code [AthenaK](/software/athenak.md) runs WENO-Z on
+primitive variables for its largest driven MHD turbulence run
+($10{,}240^3$ cells on 65,536 Frontier GPUs), and its authors state that
+the kernels are bandwidth-bound
+([Stone et al. 2026](/sources/stone-2026.md), §3.2, §5.1).
+
 ## Qualifications
 
 - **Printed slips in Kokkinakis & Drikakis (2025).** The text gives the
@@ -1488,8 +1515,11 @@ profiled; Tables 2–3).
 - Dang et al. (2022) print 216 floating-point operations for the WENO-SYMBO
   kernel in Table 6 and 262 manually counted operations in §5.4. The version
   read is an author manuscript.
-- The variants above are compared within each source only; no source of this
-  bundle compares two WENO variants on the same turbulent flow. Luo & Wu
+- The variants above are compared within each source only: two or more
+  WENO-type variants on one turbulent flow appear in Wang et al. (2024b)
+  and Kokkinakis & Drikakis (2025) (Taylor–Green vortex) and Wu et al.
+  (2024b) (30P30N airfoil, supersonic base flow), each against its own
+  references. Luo & Wu
   (2021) compare WENO variants on shock and acoustic tests only; their
   "broadband" sound-wave test is a synthetic acoustic spectrum (§5.2.1). Wang et
   al. (2024) compare WENO5 with other schemes only in the inviscid
@@ -1522,7 +1552,7 @@ profiled; Tables 2–3).
   Huang et al. 2025, indicator), $10^{-6}$ (Chapelier et al. 2024, TENO6)
   and the adaptive ranges above belong to different schemes and roles;
   Huang & Fu (2024, §2) note that $C_T$ "is usually taken as $10^{-5}$".
-  They are not conflicting values. Takagi et al. (2022, §4.5, Fig. 9) find
+  Takagi et al. (2022, §4.5, Fig. 9) find
   that with $10^{-5}$ the blast-wave solution develops a small overshoot at
   the strong contact on very fine grids, absent with $10^{-4}$, and keep
   $10^{-5}$ for under-resolved simulations.
@@ -1726,3 +1756,5 @@ profiled; Tables 2–3).
 - [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §3.1, Eqs. (10)–(20) (TENO6-A polynomials, learned weights); §5.3, Figs. 10–12 (field-dependent learned weights).
 - [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1, Eq. (38) (shock-capturing classes for shock–turbulence interaction; review).
 - [Zou et al. (2025)](/sources/zou-2025-b.md) — §II B (unstructured WENO and positivity limiters in moving-mesh RKDG; 2-D laminar).
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §3.1–3.2, Eqs. (22)–(25), Figs. 2–3 (multi-order-candidate WCNS with smooth scale separation).
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3, §3.2, Fig. 4; §5.1 (WENO-Z in AthenaK; passing).

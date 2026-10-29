@@ -9,7 +9,7 @@ year: 2023
 venue: "Prog. Aerosp. Sci. 143:100953"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Progress_in_Aerospace_Sciences_Sabnis_A_review_of_three-dimensional_shock_waveboundary-layer_inter.pdf"
 tags: [review, shock-boundary-layer-interaction, compressible, separated-flow, rans]
-timestamp: 2026-10-28T06:41:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -132,8 +132,8 @@ Same-author same-year works are keyed in printed order. Refs. [12], [34],
 [120], [165] and [183] print no pages or article number, [98] no volume or
 pages; [7] is printed as a journal-style item ("Tactical Missile Aero-dyn.
 104 (1986) 297–379") and kept as printed. Ref. [11] is a chapter of the
-book [4] and is a separate entry. Two printed keys collide with ingested or
-planned slugs of different works (ref. [79], Liu T. et al., Shock Waves
+book [4] and is a separate entry. Two printed keys collide with the keys of
+ingested sources or other entries for different works (ref. [79], Liu T. et al., Shock Waves
 32:665–678, keyed `liu-2022-m`; ref. [13], Wang Z.-Y. et al., AIAA J. 61:37–47, keyed `wang-2023-j`).
 All items parsed.
 

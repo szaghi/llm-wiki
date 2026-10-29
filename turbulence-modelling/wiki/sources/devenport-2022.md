@@ -9,7 +9,7 @@ year: 2022
 venue: "Prog. Aerosp. Sci. 131:100807"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Progress_in_Aerospace_Sciences_Devenport_Equilibrium_and_non-equilibrium_turbulent_boundary_layers.pdf"
 tags: [review, boundary-layer, rans, wall-model, anisotropy]
-timestamp: 2026-10-27T20:38:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Summary
@@ -69,8 +69,8 @@ Page-local symbols: $\Lambda_{\mathrm{CG}}$ the Castillo–George
 pressure-gradient parameter, $m$ the edge-velocity exponent
 ($U_e\propto|x-x_o|^m$), $K=(\nu/U_e^2)\mathrm dU_e/\mathrm dx$ the
 acceleration parameter, $H=\delta^*/\theta$ the shape factor, $k_s$,
-$k_g$, $k_o$ the equivalent sand-grain, geometric and hydrodynamic
-roughness lengths, $\Delta U^+$ the roughness function, $\Pi_{\mathrm w}$
+$k_g$ (registry §11), $k_o$ the equivalent sand-grain, geometric and hydrodynamic
+roughness lengths, $\Delta U^+$ (registry §11) the roughness function, $\Pi_{\mathrm w}$
 the Coles wake factor, $A_1=-\langle u'v'\rangle/(2k)$ Townsend's
 structure parameter, $\gamma_{\mathrm{FA}}$, $\gamma_{\mathrm{FGA}}$,
 $\gamma_{\mathrm{SSA}}$ the flow, flow-gradient and shear-stress angles,

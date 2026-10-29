@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Methods Appl. Mech. Engrg. 388:114280"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Chen_Turbulent_kinetic_dissipation_analysis_for_residual-based_la.pdf"
 tags: [les, implicit-les, numerical-dissipation, stabilized-fem, residual-based]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Summary
@@ -18,8 +18,8 @@ Chen et al. (2022) read the residual-based
 [variational multiscale method](/methods/variational-multiscale-method.md)
 of Bazilevs et al. (2007) for incompressible flow as an
 [implicit LES](/definitions/implicit-les.md): the small scales are modelled
-algebraically from the residuals, $\boldsymbol u^<=-\tau_{\mathrm M}\boldsymbol r_{\mathrm M}$,
-$p^<=-\tau_{\mathrm C}r_{\mathrm C}$, and the closure consists of residual-driven
+algebraically from the residuals, $\boldsymbol u^{<}=-\tau_{\mathrm M}\boldsymbol r_{\mathrm M}$,
+$p^{<}=-\tau_{\mathrm C}r_{\mathrm C}$, and the closure consists of residual-driven
 stabilization terms with no eddy viscosity. Testing the large-scale weak form
 with the resolved velocity gives a resolved kinetic-energy equation in which
 four small-scale terms appear: two cross-stress terms (I and II), a
@@ -63,7 +63,7 @@ No identity problem. Numbering on this page is that of this version.
 # Key claims
 
 Symbols: $\boldsymbol u^{>}$, $p^{>}$ the resolved (finite-element)
-scales and $\boldsymbol u^<$, $p^<$ the unresolved small scales of the VMS
+scales and $\boldsymbol u^{<}$, $p^{<}$ the unresolved small scales of the VMS
 split (registry §2; the source's $\boldsymbol u^h$, $p^h$ and
 $\boldsymbol u'$, $p'$), $\boldsymbol w$ the velocity weighting function
 (the source's $\boldsymbol w^h$). Registry §11, as on the
@@ -85,8 +85,8 @@ parameters (the source's $\alpha_m$, $\alpha_f$, $\gamma$, $\zeta$).
 6. The Smagorinsky model "engenders very high dissipation in the viscous sublayer ($y^+<5$)", proposed as the cause of its under-predicted statistics; the dynamic model has lower inner-layer and higher outer-layer dissipation than Smagorinsky (§5, Fig. 3, Eq. 33). **Shown**
 7. The classical SGS dissipation is mainly in the streamwise component; the three components of the VMS numerical dissipation are "rather comparable" (§5, Fig. 3). **Shown**
 8. The VMS total numerical dissipation is "much smaller in the inner layer, larger in the outer region" than the SGS dissipation of the classical LES (§5, Fig. 3; abstract; §7). **Shown**
-9. Term I equals the SUPG stabilization term once $\boldsymbol u^<$ is substituted; $\mathcal D_1$ is negative across the channel (§5, Fig. 4). **Shown**
-10. Term II, $(\boldsymbol w,\boldsymbol u^<\cdot\nabla\boldsymbol u^{>})$, has positive $\mathcal D_2$ over most of the channel: it "does not dissipate the turbulent kinetic energy but increases energy", which "differs from the intention of the turbulent model" (§5, Figs. 4–5). **Shown**
+9. Term I equals the SUPG stabilization term once $\boldsymbol u^{<}$ is substituted; $\mathcal D_1$ is negative across the channel (§5, Fig. 4). **Shown**
+10. Term II, $(\boldsymbol w,\boldsymbol u^{<}\cdot\nabla\boldsymbol u^{>})$, has positive $\mathcal D_2$ over most of the channel: it "does not dissipate the turbulent kinetic energy but increases energy", which "differs from the intention of the turbulent model" (§5, Figs. 4–5). **Shown**
 11. Term III is negative over most of the channel but very small against Term I (§5, Figs. 4–5). **Shown**
 12. Term IV (LSIC) "plays an important role in providing the additional dissipation"; its spanwise component is the largest, its wall-normal one small (§5, Figs. 4–5). **Shown**
 13. Keeping the convective part of the residual, Term (1) reads $-(\partial_ju^{>}_i)u^{>}_j\tau_{\mathrm M}u^{>}_k\partial_ku^{>}_i$, "which always stays negative when $j=k$"; the streamwise component dominates through $\partial_yu^{>}$ (§5). **Derived**

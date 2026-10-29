@@ -5,7 +5,7 @@ description: "Menter's scale-adaptive simulation, whose length-scale equation ca
 status: established
 aliases: [SAS, k-√kL model, KSKL, k-sqrt(k)L, Menter–Egorov SAS, SAS-F, forced SAS, SA-based SAS, dissipation-adaptive SAS, DSAS]
 tags: [rans, hybrid-rans-les, eddy-viscosity, dg, compressible]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Scale-adaptive simulation
@@ -101,10 +101,11 @@ $\sigma_\Phi$ divides $\nu_t$. The left side evaluates to $0.1691$, $\kappa=0.41
 $\omega$ equations (Eqs. 34–36), the model carries the factor
 $1+\zeta_2R_{\mathrm{SAS}}^2/C_{\varepsilon1}$ on $P_k/\varepsilon$, and the
 equivalent coefficients (Eq. 37) are $C_{\varepsilon1}=2-\zeta_1=1.2$ and
-$C_{\varepsilon2}=2-\zeta_3C_\mu^{-3/4}=1.82$, against 1.44 and 1.92 of the
-standard [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md); in Heinz's
-$k$-$\omega$ form, whose $\omega=\varepsilon/k$ carries no $C_\mu$ (unlike the
-registry's $\omega$), the coefficients are $0.2$ and $0.82$. Heinz states the
+$C_{\varepsilon2}=2-\zeta_3C_\mu^{-3/4}=1.82$, against the 1.44 and 1.92
+Heinz prints for the [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md)
+(§2.3); in Heinz's $k$-$\omega$ form, whose $\omega=\varepsilon/k$ carries no
+$C_\mu$ (unlike the registry's $\omega$), they are $C_{\omega1}=0.2$ and
+$C_{\omega2}/C_\mu=0.82$ ($C_{\omega1}$, $C_{\omega2}$ page-local). Heinz states the
 mechanism: resolved fluctuations reduce $L_{\mathrm{vK}}$, so $R_{\mathrm{SAS}}>1$ and the production of
 $\nu_t$ drops, lowering the modelled viscosity (§3.4).
 
@@ -297,7 +298,7 @@ stress near the wall (§I, as cited).
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §5 (HAL author manuscript).
 - [Haering et al. (2022)](/sources/haering-2022.md) — §II.
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction.
-- [Heinz (2020)](/sources/heinz-2020.md) — §3.4 Eqs. 31–37, §5.1 Fig. 6.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.3 ($k$-$\varepsilon$ constants); §3.4 Eqs. 31–37, §5.1 Fig. 6.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.2.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.2.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.

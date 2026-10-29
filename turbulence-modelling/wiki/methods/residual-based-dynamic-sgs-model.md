@@ -5,7 +5,7 @@ description: "The residual-based dynamic SGS model sets the eddy viscosity from 
 status: established
 aliases: [DSGS, Dyn-SGS, dynamic sub-grid scale model, R-DSGS, T-DSGS, residual-based eddy viscosity, residual-based artificial viscosity]
 tags: [les, sgs-model, eddy-viscosity, spectral-element, numerical-dissipation]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Residual-based dynamic subgrid-scale model
@@ -183,7 +183,8 @@ density-current front positions.
     and only at 25 and 12.5 m with DSGS. Nodal DSGS resolves them at
     coarser resolution than elemental DSGS.
   - Smagorinsky and Vreman give the largest tracer overshoots; elemental
-    DSGS damps them (supplementary figures, not in the file read).
+    DSGS damps them (§8.2, in supplementary figures that are not part of
+    the preprint read).
 
 The overall ranking of the conclusions (§9) favours R-DSGS:N. Smagorinsky
 and Vreman produce Gibbs oscillations that DSGS damps, DSGS is "more

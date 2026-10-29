@@ -9,7 +9,7 @@ year: 2022
 venue: "Astrophys. J. 927:205"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_The_Astrophysical_Journal_Ferrand_An_In-depth_Numerical_Study_of_Exact_Laws_for_Compressible_H.pdf"
 tags: [mhd, plasma, energy-cascade, compressible, dns, isotropic-turbulence]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-29T10:10:00Z
 ---
 
 # Summary
@@ -66,7 +66,7 @@ fluctuation), $\delta\phi=\phi^\dagger-\phi$, $\nabla_l$
 the increment-space gradient, $\langle S_2\rangle$ the F21 structure
 function, $R_E$ the A18 energy correlator, $E^{\mathrm{tot}}$ the total
 energy density, $\mathcal D$ and $\mathcal F$ the two-point dissipative and
-forcing terms, $\lambda_H=m_i/q_e$ the Hall parameter, $\boldsymbol j=\boldsymbol J/\rho$, $d_i$ the ion
+forcing terms, $\alpha_H=m_i/q_e$ the Hall coefficient (registry §11; normalized by the ion mass-to-charge ratio here, by $1/(en)$ on GHOST), $\boldsymbol j=\boldsymbol J/\rho$, $d_i$ the ion
 inertial length. $\varepsilon$ is the total (kinetic, magnetic and
 internal) energy cascade rate.
 
@@ -117,7 +117,7 @@ internal) energy cascade rate.
 | $\nu$ ("dynamic viscosity") | $\nu$ | called dynamic viscosity and placed in the $\rho$-weighted Eq. 2, but added to $\partial_t\boldsymbol u$ without $1/\rho$ in Eq. 16; $Re=1/\nu$ "due to the normalization" (§3.1) |
 | $\Delta$ | $\nabla^2$ | **collision:** the Laplacian, not the filter width |
 | $\theta=\nabla\cdot\mathbf v$ | $\nabla\cdot\boldsymbol u$ | **collision** with the momentum thickness; $\theta$ is also a polar angle in Eq. 27 |
-| $\lambda=m_i/q_e$ | $\lambda_H$ (page-local) | **collision** with the Taylor microscale and the MHD perpendicular scale |
+| $\lambda=m_i/q_e$ | $\alpha_H$ (registry §11) | **collision** of the printed $\lambda$ with the Taylor microscale and the MHD perpendicular scale |
 | $d_i$ | $d_i$ (page-local) | **collision** with the wall distance $d$ |
 | $\mathbf J$, $\mathbf J_c=\mathbf J/\rho$ | $\boldsymbol J$, $\boldsymbol j$ (page-local current density and its ratio to $\rho$) | |
 | $\boldsymbol\ell$, $\xi'$, $\delta\xi$ | $\boldsymbol l$, $\xi^\dagger$, $\delta\xi$ (page-local) | **collision:** the prime is the second point, not a fluctuation |

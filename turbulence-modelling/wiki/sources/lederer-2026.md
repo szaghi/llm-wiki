@@ -9,7 +9,7 @@ year: 2026
 venue: "Int. J. Numer. Methods Fluids, article fld.70103"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_International_Journal_for_Numerical_Methods_in_Fluids_Lederer_HighOrder_ProjectionBased_Upwind_Method_for_Simulation_of_Tr.pdf"
 tags: [implicit-les, numerical-dissipation, transition, separated-flow, incompressible-flow, high-order]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T10:06:00Z
 ---
 
 # Summary
@@ -53,8 +53,7 @@ untouched. The paper positions HOPU against
 DG-based implicit LES of the
 [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) family;
 the MCS method is not a DGSEM. The adaptive settings differ from the 2023
-paper (thresholds, indexing, update every 10th step): they are two versions
-of the method, not a contradiction. No timings or scaling data are reported.
+paper (thresholds, indexing, update every 10th step). No timings or scaling data are reported.
 
 # Version read
 

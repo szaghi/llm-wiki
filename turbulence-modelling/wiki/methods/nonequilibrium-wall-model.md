@@ -5,7 +5,7 @@ description: "Wall-stress models of wall-modelled LES that keep unsteadiness, co
 status: established
 aliases: [NEQWM, non-equilibrium wall model, nonequilibrium wall model, TBLE wall model, thin-boundary-layer-equation wall model, two-layer zonal wall model, integral wall model, wall-model integrated LES, integrated wall model]
 tags: [wall-model, wmles, boundary-layer, separated-flow]
-timestamp: 2026-10-29T05:11:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Non-equilibrium wall models
@@ -130,10 +130,10 @@ page.
 wall condition built to isolate the SGS model from the wall model on the
 [Gaussian bump](/benchmarks/gaussian-bump.md). From the thin-boundary-layer
 equations without unsteadiness and convection, integrated across the first
-off-wall cell (centre at $y=h_{\mathrm{wm}}$, velocity $u_{\mathrm c}$ there,
-page-local), the no-slip wall carries an effective wall eddy viscosity
-$\nu_{t,w}$ (page-local) calibrated by a running time average (breve,
-page-local, as on the equilibrium-wall-model page; the source writes an
+off-wall cell (centre at $y=h_{\mathrm{wm}}$, velocity $u_{\mathrm c}$ there),
+the no-slip wall carries an effective wall eddy viscosity
+$\nu_{t,w}$ calibrated by a running time average (breve; $\nu_{t,w}$ and
+$\breve u_{\mathrm c}$ as in registry §11; the source writes an
 overbar) so that the mean stress equals the DNS value
 $\tau^{\mathrm{DNS}}_w$:
 $$\breve\nu_{t,w}\approx\frac{\tau^{\mathrm{DNS}}_w+\tfrac12h_{\mathrm{wm}}\,\breve{(\partial_xp)}}{\rho\,\breve u_{\mathrm c}/h_{\mathrm{wm}}}-\nu,\qquad
@@ -410,7 +410,7 @@ comparison involves no wall model of their own.
 | H-type transitional boundary layer | the non-equilibrium model of Park & Moin (2014), with the wall model switched off by a transition sensor upstream, predicts the transition location well (Fig. 6a) | Bose & Park (2018, §4.1) |
 | Aérospatiale-A airfoil, $Re_c=2.1\times10^6$ | algebraic, equilibrium and Kawai–Larsson non-equilibrium models disagree on the trailing-edge separation, "highlighting" the sensitivity of mild adverse-gradient separation to wall-model details | Bose & Park (2018, §4.3) |
 | Bachalo–Johnson transonic bump | WM-LES with equilibrium and non-equilibrium models (Iyer et al., as compiled) cannot match both the shock and the reattachment $C_f$ maxima by choosing the exchange location (first or third point) | Heinz (2020, §5.3, Table 5, Fig. 14) |
-| Mach 2.28 oblique shock/boundary-layer interaction, $8^\circ$ deflection | equilibrium ODE model coupled with no slip kept: negative $C_f$ in the bubble, but interaction length $L_{\mathrm{int}}/\delta_r=7.0$–5.0 (coarse to fine; nominal impingement to reflected-shock foot over the inflow 99 % thickness, page-local) against 3.3 wall-resolved and 4.18 experimental; oversizing attributed to the wall model and to SGS plus shock-capturing dissipation; non-equilibrium improvements named as future work | [De Vanna et al. (2022)](/sources/devanna-2022.md) (§4.6, §5) |
+| Mach 2.28 oblique shock/boundary-layer interaction, $8^\circ$ deflection | equilibrium ODE model coupled with no slip kept: negative $C_f$ in the bubble, but interaction length $L_{\mathrm{int}}/\delta_r=7.0$–5.0 (coarse to fine; nominal impingement to reflected-shock foot over the inflow 99 % thickness; $L_{\mathrm{int}}$, $\delta_r$ registry §11) against 3.3 wall-resolved and 4.18 experimental; oversizing attributed to the wall model and to SGS plus shock-capturing dissipation; non-equilibrium improvements named as future work | [De Vanna et al. (2022)](/sources/devanna-2022.md) (§4.6, §5) |
 | Mach 7.2, $8^\circ$ compression ramp | equilibrium ODE model: early pressure rise on the coarse grid, minimum $C_f$ above DNS; the imbalance between tangential pressure gradient and convection, which the equilibrium model omits, named as a possible cause (not tested) | [van Noordt et al. (2022)](/sources/vannoordt-2022.md) (§3.4) |
 | [Gaussian bump](/benchmarks/gaussian-bump.md), $Re_L=2\times10^6$, idealized conditions fed by the DNS mean wall stress | the pressure-gradient condition "notably improves" the bubble measured from $C_f$ for the eddy-viscosity SGS models, but changes the bubble measured from the first-cell velocity little; the SGS model and the mesh still largely set the separation length, and the wall condition has "a negligible impact on the convergence behavior"; Iyer & Malik (as cited) found a non-equilibrium model only marginally better than an equilibrium one on the same bump | [Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§1, §3.2, Figs. 13–16) |
 | [Circular cylinder](/benchmarks/circular-cylinder-wake.md), $Re_D=3.9\times10^3$ and $1.4\times10^5$; [square cylinder](/benchmarks/square-cylinder-flow.md), $Re_D=2.2\times10^4$; sixth-order compact finite differences with implicit spectral vanishing viscosity, diffused-interface immersed boundary | the pressure-gradient wall function captures separation, shear-layer transition, shedding and the multiscale wake at $Re_D=3.9\times10^3$, the variant without pressure gradient (Werner–Wengle only) does not (Fig. 7); bulk values at $3.9\times10^3$ $C_D=1.02$, $C_{L,\mathrm{rms}}=0.113$, $L_r/D=1.42$, $St=0.229$; at $1.4\times10^5$ $L_r/D=0.98$ against LES 0.42–0.62 and experiment 0.44, attributed to flow sensitivity, eddy-viscosity models and the simplified boundary-layer equation; favourable-gradient wall stress under-predicted (Werner–Wengle); on the square cylinder the leading- and trailing-edge bubbles of wall-resolved LES are missed | [Yan et al. (2024)](/sources/yan-2024.md) (§III A–B, Tables II–IV, Figs. 7, 9) |
@@ -419,11 +419,7 @@ comparison involves no wall model of their own.
 Heinz (2020, §5.2, Table 3, Figs. 10–11) compiles WM-LES reattachment
 lengths on the hump of 1.035–1.105 against the experimental 1.10, and finds
 the double-peak skin-friction structure missed by WM-LES and DES. The
-evidence is compiled from published work in both reviews; Lv et al. (2021)
-is the only source here that runs a non-equilibrium-capable model against
-an equilibrium one in its own solver, and Zhou & Bae (2024) the only one
-that compares the two terms under a wall condition with the wall-stress
-error removed. Hu et al. (2024, §7) recommend wall models with low
+evidence of both reviews is compiled from published work. Hu et al. (2024, §7) recommend wall models with low
 sensitivity to the matching location when $h_{\mathrm{wm}}$ is held fixed
 during grid refinement, the property they cite for non-equilibrium models.
 

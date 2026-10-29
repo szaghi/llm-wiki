@@ -6,6 +6,123 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 16 — 2026 papers, archive complete: cold-wall WMLES with flux reconstruction, transitional IDDES in DG, SATES-II and AIDDES, ML-closure review, adaptive spectral eddy viscosity, grid resolution in gas-kinetic ILES, AthenaK; fourth whole-bundle deep lint (2026-10-29)
+
+Sources (7): okano-2026, alberti-2026, wu-2026-b, hu-2026, rajek-2026,
+wang-2026, stone-2026. 307 of 307 ingested (archive complete), 191 concept
+pages plus the registry, 14270 bibliography entries after the closing
+sweeps. Deep lint A1–A12 over the whole bundle done.
+
+### Decisions for the human
+
+1. **NASA wall-mounted hump, measured reattachment:** Oulghelou et al.
+   print 1.15 and Heinz prints 1.10, citing different reports of the same
+   experiment; kept side by side (the "not a contradiction" sentence was
+   removed). Open it as a contradiction, as was done for the Herrin–Dutton
+   base flow (2.67 against 2.63, both citing Herrin & Dutton)?
+2. **Registry §11 scoping (new rule):** a §11 symbol is now reserved only
+   on the pages its row lists; elsewhere the letter may carry a meaning the
+   page defines (e.g. $\mathcal R$ as a residual operator, $\mathcal T_{ij}$
+   as the Germano test-filter stress). This replaced renaming calligraphic
+   letters across 13 pages after the shock-jump row ($\mathcal R$,
+   $\mathcal P$, $\mathcal T$) was added. Confirm, or ask for the renames.
+3. **Bibliography:**
+   - `taylor-1935` (reddy-2026's print: Taylor–Green title and authors,
+     vol:page 151:421 of the 1935 "Statistical theory of turbulence", end
+     page 521 of Taylor–Green) was folded into `taylor-1937` by the
+     closing sweep. This answers the chunk-14 question on
+     `taylor-1935-b` vs `taylor-1935`; undo if you prefer them distinct.
+   - `pareshi-2005` keeps stone-2026's printed spelling (no Pareschi entry
+     to fold into).
+   - `sagaut-2005` is labelled second edition but carries DOI
+     10.1007/b137536; the resolver did not verify on Crossref which
+     edition the DOI names. Check?
+4. **Candidate pages** (not created, inline):
+   - flow past a sphere (alberti-2026's supercritical sphere; suggested by
+     three auditors) — needs a second source with a sphere run;
+   - deconvolution SGS models (ADM, D3M, DIAD, DDM), now spread over the
+     scale-similarity (≈61 KB) and neural-network SGS (≈65 KB) pages;
+   - ill-conditioning of RANS closures (hu-2026, with Poroseva et al. and
+     Wu et al. 2019 as cited);
+   - velocity-gradient PDF metrics (wang-2026), first-order flux
+     correction (stone-2026), adaptive spectral eddy viscosity
+     (rajek-2026) — one source each;
+   - a split of the homogeneous-isotropic-turbulence page (≈1540 lines).
+   Earlier candidates still open (chunks 13–15): low-Mach velocity
+   correction, p-multigrid, turbulent pipe flow, wall-pressure spectra,
+   HLLC, entropy filtering, swept SBLI, grid-length page, TKE budget.
+5. **Inherited compiler checks not re-derived** by the auditors (they need
+   the PDF tables): Bezgin's cost ratios and $\tau_\lambda$, Vadrot's
+   Eq. 12, prietosaavedra's App. A, qi-2022-b's claim 6, Cao's Table II
+   ratios, An et al.'s DG/FV point ratios, Yan's B8 coefficients,
+   Domaradzki Table 1, Ghidoni & Noventa's onset error, deng-2022 Eq. 15,
+   delassaux-2023's ±0.34 %, Zhao's $\mu=3.01\times10^{-4}$, the Nuca
+   coefficients, zhang-2022-b Eq. 6.5, zhao-2023-b base-2 orders. They are
+   kept as earlier lints left them. Also flagged: the Zhao (2021) sign
+   check on dynamic-procedure (same kind as the removed Wang check) and a
+   "compiler check" on huang-2025 that records an omission rather than a
+   computation.
+6. **Coverage of the whole-bundle lint:** two auditors read some pages by
+   section and grep rather than in full (Taylor–Green vortex, turbulent
+   boundary layer and STBLI bodies; 23 Source pages of A9's slice).
+
+### Contradictions
+
+- **Opened (1, *Open*):** measured reattachment of the Herrin–Dutton
+  Mach 2.46 base flow, $x/R=2.67$ in Carlsson et al. (2023) against
+  $L_r/R=2.63$ in Wu et al. (2026), both citing Herrin & Dutton as the
+  experimental reference
+  ([supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md)).
+  Thirteen open in the bundle; the twelve earlier ones re-verified.
+- **Kept side by side:** SATES host model (SST in Wu et al. 2026, BSL in
+  the earlier Wu papers); 30P30N span 11 % vs 12 % (a different case from
+  the BANC-III entry); the plateau of the spectral eddy viscosity
+  (rajek-2026 against Vicente Cruz & Lamballais and Domaradzki 2024);
+  equivalent Smagorinsky constants (alberti-2025-b, alberti-2026);
+  wang-2026's abstract against its Tables I–II; DANN cost bases; Hu &
+  Yang's "unseen geometries" against Bae & Koumoutsakos's tests; okano-2026
+  cold-wall heat flux against Griffin et al.
+
+### Printed slips (recorded on the Source pages)
+
+- okano-2026: "WMLRS"; "Fukushima et al. [24]" with two authors; wall
+  temperature ratio 0.8 vs 0.81; Eq. 12 explicit sum with "Einstein
+  summation".
+- alberti-2026: Eq. 3 conditions on $r$; separation ≈105° (text) vs 99°
+  (Table 5); $\chi$ in Eq. 8 undefined; time step without units; Eq. 1 vs
+  Eq. 2 placement of $1/\sigma$.
+- wu-2026-b: Eq. 9 lacks $\rho$, $C_\mu$; Eq. 28 adds a curl vector to a
+  scalar; "first-order convergence rate" after a sixth-order claim;
+  Eq. 10/11 vs Table 1 SATES-σ coefficient; TENO exponent printed with the
+  candidate index.
+- hu-2026: Table VI before V; "Tables 1 and 3"; Table III ref. 71 label;
+  "Medium/low"; Fig. 2 percentages.
+- rajek-2026: $u_\eta\approx0.3\times10^{-2}$ m/s against Table I (≈3.0×10⁻²);
+  $L_t/L$ vs $L/L_t$; "Eq. (22)" for Eq. (27).
+- wang-2026: Eq. 28 wording; $\rho$ vs $\rho_0$; Gaussian width not printed.
+- stone-2026: 4096³ vs 10 240³; "2D (axisymmetric)"; Fig. 5 panels;
+  Fig. 9 blast wave vs shock tube; 2024 vs 2025 companion papers; a §3.4
+  paragraph printed twice.
+
+### Bibliography
+
+14078 → 14273 at the merge (103 aliases, 38 verified silences, six form
+variants folded, self-keys `rajek-2026-b`–`-d`, preprint `wu-2026-c` kept
+distinct, printed keys naming other works re-keyed with "NOT the Source" notes); closing
+sweeps over the whole bibliography: `--dupes` 26 groups, 162 venue
+collisions, 193 fuzzy-title pairs reviewed; three folds (`jimenez-2018-c`,
+`lorini-2020`, `taylor-1935`); 14270 entries; 25 remaining `--dupes`
+groups reviewed as distinct (preprint/published, conference/journal,
+numbered parts, vol:page coincidences). Pending 0 of 307.
+
+### Bundle fit
+
+stone-2026 (astrophysics MHD code paper; turbulence only in demonstration
+runs: cited on AthenaK, mesh adaptation, compressible MHD turbulence, and
+in one clause elsewhere). hu-2026 is a review: its own statements are
+attributed, the works it cites are "as cited". All seven are versions of
+record.
+
 ## Chunk 15 — 2025–2026 papers: p-adaptive DG load balancing, ML-ILES, DG stabilizations, isogeometric and p-multigrid DG, ADDA, spectral-element DDES, entropy-aware DG, wall functions for WMLES, low-dissipation and low-Mach schemes, adaptive DG, compressible jets, half-explicit RK VMS, RHEA-X, DNS/LES mesh adaptation, STI and engine-combustion reviews (2026-10-29)
 
 Sources (20): valvo-2025, bezgin-2025, bilocq-2025, bulgarini-2025-b,

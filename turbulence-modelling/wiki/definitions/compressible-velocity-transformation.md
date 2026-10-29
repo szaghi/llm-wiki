@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-28T17:47:00Z
+timestamp: 2026-10-29T07:38:00Z
 ---
 
 # Compressible velocity transformations
@@ -95,7 +95,7 @@ semi-local viscous length,
 $$\delta^{*,\mathrm{sgs}}_\nu=\frac{\langle\nu\rangle+\nu_t}{u_\tau^*}=\frac{\langle\mu\rangle+\mu_t}{\langle\rho\rangle u_\tau^*},$$
 
 with $\nu_t$ the SGS eddy viscosity at height $y$ and
-$\delta^{*,\mathrm{sgs}}_\nu$ page-local, against $\delta_\nu=\nu_w/u_\tau$
+$\delta^{*,\mathrm{sgs}}_\nu$ registry §11, against $\delta_\nu=\nu_w/u_\tau$
 and the semi-local $\langle\nu\rangle/u_\tau^*$. They measure the spanwise
 length of the near-wall streak-like structures of a Mach 2.28 WMLES from
 the spanwise correlation of $u$ near $y^+\approx15$, or at the first grid
@@ -209,7 +209,7 @@ temperature. Griffin et al. (2023, §2.2) cite the Walz (modified
 Crocco–Busemann) relation with recovery factor $r=Pr^{1/3}$, accurate for
 adiabatic walls but degraded by heat transfer, and its recasting by Zhang et
 al. (2014) as the generalized Reynolds analogy (GRA), with Reynolds-analogy
-factor $s_{\mathrm{RA}}=1.14$ (Eq. 2.3; page-local $r$; $s_{\mathrm{RA}}$ as on the Morkovin page):
+factor $s_{\mathrm{RA}}=1.14$ (Eq. 2.3; page-local $r$; $s_{\mathrm{RA}}$ registry §11):
 
 $$T=T_w+s_{\mathrm{RA}}\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_e}\right)+\left(\frac{U}{U_e}\right)^2(T_e-T_w),\qquad T_r=T_e+\frac{rU_e^2}{2c_p}.$$
 
@@ -308,13 +308,14 @@ Three independent DNS studies of boundary layers extend the comparison:
   from 96 to 20 696 across the six cases (Table 3); the authors call the
   choice of similarity parameter "a matter of controversy" (§2).
 
-The sources thus agree that the total-stress-based transformation collapses
-compressible wall layers at least as well as any alternative, and that
-Trettel–Larsson succeeds in channels but not in the log layer of cooled
-boundary layers; Griffin et al.'s ranking of their own transformation is no
-longer the only evidence, and Zhang et al. (2022) confirm both points on
-cooled walls from subsonic to hypersonic Mach number. Cogo et al. and Huang et al. differ only in
-emphasis on whether Volpiani et al.'s transformation can be told apart. Griffin et al. (§1) also cite
+Cogo et al., Huang et al. and Zhang et al. (2022) each report the
+total-stress-based transformation collapsing their boundary layers; Huang
+et al. and Zhang et al. report Trettel–Larsson less successful in the log
+layer of their cooled boundary layers, and Huang et al. cite its near-perfect
+collapse of cold-wall channels. Cogo et al. state that their database
+"cannot decide" between the total-stress-based and Volpiani et al.'s
+transformations, while Huang et al. find the former best across the inner
+layer. Griffin et al. (§1) also cite
 Iyer & Malik (2019), who found the classical (van Driest-consistent) scaling
 more accurate for adiabatic walls, and Yang & Lv (2018) and Fu, Bose & Moin
 (2022), who found semi-local damping better for cold walls.
@@ -383,7 +384,7 @@ judge, initialize or close a simulation.
   $N=6$, no SGS model; see [implicit LES](/definitions/implicit-les.md))
   against the DNS of Wenzel et al. (as cited) one $\delta_r$ downstream of
   their forcing zone ($\delta_r$ the reference boundary-layer thickness,
-  page-local): the van Driest-transformed mean velocity is "in good
+  registry §11): the van Driest-transformed mean velocity is "in good
   agreement", and so are the density-scaled Reynolds stresses (see
   [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md); the scaling
   formula is not printed). For the skin friction they apply the van Driest
@@ -429,10 +430,10 @@ judge, initialize or close a simulation.
   and temperature profiles change "greatly" and $Re_\tau$ rises to 221, and
   the authors conclude that the Prandtl number must be corrected to the
   target value (§3.3, Table 5, Fig. 7). As in Wang et al. (2023b), the
-  choice of the van Driest transformation is not discussed, although the
-  wall is isothermal with a non-zero heat flux ($B_q=-0.047$); Carlsson et al. (above) call it
-  inaccurate for non-adiabatic walls on the strength of the studies they
-  cite. See [implicit LES](/definitions/implicit-les.md).
+  choice of the van Driest transformation is not discussed; the wall is
+  isothermal with a non-zero heat flux ($B_q=-0.047$), the case for which
+  Carlsson et al. (above), citing earlier studies, call van Driest
+  inaccurate. See [implicit LES](/definitions/implicit-les.md).
 - **DNS of a thermally perfect gas: the transformation as a scheme
   discriminator.** [Aiello et al. (2026)](/sources/aiello-2026.md) (§2.2,
   §4.1–4.2, Fig. 1, Table 3) run DNS of isothermal-wall channels of CO$_2$,
@@ -664,8 +665,8 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
   al. are not written out by Griffin et al. (2023); the forms above are those
   of Cogo et al. (2022) and Huang et al. (2022).
 - Huang et al. (2022) print Eq. (4.4) with upper limit $u^+$ and differential
-  $dz^*$; the integration variable is the semi-local wall distance and the
-  upper limit should be the corresponding wall-distance value. Their §4.1
+  $dz^*$, a velocity as the upper limit of an integral over the semi-local
+  wall distance. Their §4.1
   quotes $Re_\tau^*=2626$, 9178 and 6213 at $Re_\tau=1172$ where their Table 4
   gives 2761, 9114 and 6149.
 - Cogo et al. (2022) and Zhang et al. (2022, Table 3) evaluate their
@@ -707,7 +708,7 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
   $[-\delta,\delta]$ without the factor $1/(2\delta)$ (§3.3), and their
   printed wall-unit spacings imply $Re_\tau\approx216$ where Table 5 gives
   211 ($\Delta x^+=4\pi Re_\tau/128=21.18$ with the $4\pi\delta$ box and 128
-  cells gives $Re_\tau=215.7$, and $\Delta z^+=7.06$ gives 215.8) *(compiler
+  cells gives $Re_\tau=215.7$, and $\Delta z^+=7.06$ with the $\tfrac43\pi\delta$ span gives 215.8) *(compiler
   check, not in the sources)*. Locators refer to the arXiv v1 preprint read (2021, five authors;
   the Journal of Scientific Computing version lists four).
 - Zhang et al. (2024b, Eq. 3.6) define the generalized recovery temperature

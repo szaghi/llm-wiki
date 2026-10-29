@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-28T17:40:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Log-layer mismatch
@@ -50,8 +50,7 @@ cell.
 
 ## Mechanisms stated by the sources
 
-The sources attribute LLM to the coupling between the wall model and the
-under-resolved first cells of the LES, not to the log law itself.
+The sources state the following mechanisms.
 
 - **Numerical and subgrid errors at the first off-wall points.**
   [Fowler et al. (2022)](/sources/fowler-2022.md) (§1) cite the argument of
@@ -323,7 +322,7 @@ derivative jumps at element boundaries that converge away only for
 $y>0.25\delta$ on the two finer meshes, at the edge of the log layer
 (§III.B.2).
 
-A third discretization gives a similar result.
+A third discretization also samples in the first element.
 [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3, §7, Table 1) sample the
 LES velocity at the top node of the first spectral element (polynomial degree
 7, $y^+=63$–153 at $Re_\tau=1000$; 260 and 520 at $Re_\tau=5200$), i.e. at the
@@ -432,7 +431,7 @@ geometry at lower Reynolds number.
 
 ## Qualifications
 
-- Vadrot et al. (2023b) are internally inconsistent about where BK22 errs:
+- Vadrot et al. (2023b) print different statements about where BK22 errs:
   the abstract places the errors at $Re_\tau<10^3$ and $Re_\tau>10^6$, while
   their Table III gives $+1.5$, $+2.0$, $+2.0$ at $Re_\tau=2\times10^3$,
   $5.2\times10^3$, $10^4$, and §IV.C (l. 365) calls the mismatch at

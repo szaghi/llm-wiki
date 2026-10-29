@@ -9,7 +9,7 @@ year: 2026
 venue: "Flow Turbul. Combust. 117:8"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Flow_Turbulence_and_Combustion_Aiello_Impact_of_Structure-Preserving_Discretizations_on_Compressib.pdf"
 tags: [dns, compressible, hypersonic, kinetic-energy-preserving, entropy-stable, gpu]
-timestamp: 2026-10-28T07:11:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -62,7 +62,7 @@ Crossref. Locators are those of the published article.
 4. For gases that are not calorically perfect, entropy-conservative fluxes designed for calorically perfect gases (Chandrashekar, Ranocha, asymptotic EC) lose entropy conservation but keep kinetic-energy preservation, which depends only on mass and momentum (§3.2). **Stated**
 5. Entropy conservation for an arbitrary equation of state follows from discrete consistency with the Gibbs relation $\partial_t(\rho e)=T\partial_t(\rho s)+g\,\partial_t\rho$ (Aiello et al. 2025); the formulation is singular at uniform temperature, treated by the Ismail–Roe fix or an asymptotic expansion (§3.2). **Stated**
 6. The EC-TP flux (p. 10) is entropy conserving and kinetic-energy preserving for thermally perfect gases with $c_v(T)=\sum_{m=-\ell}^{r}c_{v,m}T^m$ (§3.2, Table 1). **Stated** (derivation in Aiello et al. 2026, J. Comput. Phys.)
-7. Gouasmi et al. (2020) is entropy conserving for thermally perfect gases and kinetic-energy preserving "according to our definition", but its pressure discretization spoils the kinetic-energy balance in isotropic turbulence (Aiello et al. 2026; Gassner et al. 2016); it reduces to Chandrashekar (2013) for a calorically perfect gas (§4). **Stated**
+7. Gouasmi et al. (2020) is entropy conserving for thermally perfect gases and kinetic-energy preserving "according to our definition", but its pressure discretization spoils the kinetic-energy balance in isotropic turbulence (Aiello et al. 2026, J. Comput. Phys.; Gassner et al. 2016); it reduces to Chandrashekar (2013) for a calorically perfect gas (§4). **Stated**
 8. Removing ghost nodes and using second-order boundary formulae improved robustness at hypersonic Mach numbers (negative temperatures appeared at ghost nodes in transients); preliminary Mach-3 runs showed a negligible effect of the boundary order reduction (§3.3). **Stated** (not shown)
 9. Viscous terms in conservative form were more robust than the non-conservative form often used against odd–even decoupling (§3.3). **Stated**
 10. All Trettel–Larsson profiles collapse on $u^+_{TL}=y^*$ in the viscous sublayer for every scheme and Mach number; a narrow log region appears for $y^*\ge40$, fitted with $\kappa=0.41$, $B=6.0$ on the entropy-conservative results (§4.1, Fig. 1). **Shown**

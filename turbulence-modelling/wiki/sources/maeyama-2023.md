@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Fluid Mech. 969:A29"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Fluid_Mechanics_Maeyama_Near-wall_numerical_coherent_structures_and_turbulence_gener.pdf"
 tags: [wmles, wall-model, les, dns, compressible, boundary-layer]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-29T10:04:00Z
 ---
 
 # Summary
@@ -164,23 +164,23 @@ $Re_\tau$.
 
 87 printed references, author–year (JFM) style, alphabetical. The list is
 merged complete into the [bibliography](/bibliography.md) with `citedby`
-this slug; the work itself was already in the bibliography as a cited entry
-(cited by [maejima-2025](/sources/maejima-2025.md)) and becomes the
-ingested entry. Same-author same-year works take suffixes in printed order
+this slug; the work itself is also cited by
+[maejima-2025](/sources/maejima-2025.md) and
+[okano-2026](/sources/okano-2026.md). Same-author same-year works take suffixes in printed order
 (Marusic et al. 2010a, 2010b). The cited Bose & Park (2018), Kuya, Totani &
 Kawai (2018) and Lozano-Durán, Bose & Moin (2022) are the ingested
 [bose-2018](/sources/bose-2018.md), [kuya-2018](/sources/kuya-2018.md) and
 [lozanoduran-2022](/sources/lozanoduran-2022.md). Recorded as printed: Park
-& Moin (2014) as "Phys. Fluids 26 (1), 37–48" (venue compared at merge with
-the existing entry), Larsson et al. (2016) as "Mech. Engng Rev. 3 (1),
+& Moin (2014) as "Phys. Fluids 26 (1), 37–48", Larsson et al. (2016) as "Mech. Engng Rev. 3 (1),
 15–00418", Jiménez (2018) without a page or article number. No printed
 duplicate, no unparseable item.
 
 # Pages created or updated
 
-Chunk 12 (2026-10-28). This source is cited on:
+Chunk 12 (2026-10-28), cited further in chunk 16. This source is cited on:
 
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
+- [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md)
 - [Compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)

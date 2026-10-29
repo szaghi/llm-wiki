@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-28T17:44:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -246,6 +246,16 @@ baseline:
   al. (Eqs. 2–5); it is "fully turbulent" (no trip terms), and two
   robustness devices of their DG code are in the next section
   ([Alberti et al. (2025)](/sources/alberti-2025-b.md), §2.1, Eqs. 1–6).
+  [Alberti et al. (2026)](/sources/alberti-2026.md) (§2.1, Eqs. 1–3) print
+  the same incompressible, trip-less model in compact form, with the
+  unknowns $[p,u_i,\tilde\nu]$ and the source split into production,
+  destruction and the cross term $(c_{b2}/\sigma)\,\partial_i\tilde\nu\,\partial_i\tilde\nu$;
+  the constants and closure functions are those of Spalart & Allmaras
+  (1992), not reprinted. The $\tilde\nu$ viscous flux of their Eq. (1) is
+  printed as $-(\nu+\tilde\nu)\,\partial_i\tilde\nu$, without the factor
+  $1/\sigma$ that the cross term of their Eq. (2) carries, a
+  comparison of the two printed equations *(compiler check, not in the
+  sources)*.
 
 **Negative SA.** Basile et al. (2023) use the negative-$\tilde\nu$ model with
 $\mu_t=\rho\tilde\nu f_{v1}$ for $\tilde\nu\ge0$ and $\mu_t=0$ for $\tilde\nu<0$
@@ -470,7 +480,12 @@ of the NACA 0012 case, which curved NURBS boundaries avoid (§6.2, Fig. 19).
 evaluate the SA source with the positive part of $\tilde\nu$ only, setting
 $\tilde\nu=0$ in it otherwise, and limit $r$ to $r_{\max}=10$ for stability,
 following Crivellini et al. (§2.1, Eq. 6); details of their solver are on
-the [DES page](/methods/detached-eddy-simulation.md).
+the [DES page](/methods/detached-eddy-simulation.md). Alberti et al. (2026,
+§2.1, Eqs. 2–3) keep both devices: $\tilde\nu$ enters the source as
+$\max(0,\tilde\nu)$ "to avoid potential liability related to $\tilde\nu<0$
+and ensure an increasing eddy viscosity", and $r$ is replaced by
+$r_{\max}=10$ when it is negative or not below $r_{\max}$, which removes the
+numerical instability of negative $r$.
 
 ## Variants
 
@@ -539,8 +554,8 @@ h=\frac{\lvert\omega_iu_i\rvert}{\lvert\Omega\rvert\,\lvert\boldsymbol u\rvert},
 The stated rationale is that velocity helicity correlates with energy
 backscatter in strongly rotating turbulence, which Li & Liu present as
 proved in the cited work; see [energy backscatter](/definitions/energy-backscatter.md).
-Since $h\ge0$ the factor is at least one, so the correction enhances
-production, the opposite direction to SA-R and SA-RC.
+Since $h\ge0$ the factor is at least one, so the correction can only
+raise the production measure *(compiler check, not in the sources)*.
 
 ### Quadratic constitutive relation
 
@@ -556,8 +571,8 @@ $$R^{\mathrm{QCR2013}}_{ij}=R^{\mathrm{QCR2000}}_{ij}+C_{cr2}\,\nu_t\lvert S^d\r
 with $R_{ij}$ the Boussinesq stress
 (Spalart 2000 and Mani et al. 2013, cited by Li & Liu, Eqs. 23–27).
 The QCR2000 correction adds no trace, since $O$ is antisymmetric and $R$
-symmetric *(compiler check, not in the sources: the added trace is
-$-2C_{cr1}O_{ik}R_{ik}=0$)*, so SA-QCR2000 is traceless like SA; the QCR2013
+symmetric: the added trace is $-2C_{cr1}O_{ik}R_{ik}=0$ *(compiler
+check, not in the sources)*, so SA-QCR2000 is traceless like SA; the QCR2013
 isotropic term partly supplies the missing $\tfrac23k\delta_{ij}$ (§4.2).
 Alauzet et al. (2022) write the SA-noft2-QCR2000 stress as
 $\mu\tau+\mu_t(\tau-\tau_{\mathrm{QCR}})$, with $\tau$ twice the deviatoric
@@ -591,9 +606,8 @@ with a neural network embedded in the solver ([Yan et al. (2022)](/sources/yan-2
 
 In all cases the regularized correction both lowers the production at the
 start of the separating shear layer and raises it downstream, in the region
-where production greatly exceeds dissipation (§3.2.1, §3.3.1). This
-continues the curved-channel field inversion reported by Duraisamy et al.
-(2019) above. In turbomachinery, Sandberg & Michelassi (2022) cite
+where production greatly exceeds dissipation (§3.2.1, §3.3.1). In
+turbomachinery, Sandberg & Michelassi (2022) cite
 field inversion with a neural network modifying SA in a low-Reynolds-number
 low-pressure-turbine cascade (Ferrero et al. 2020) as giving a posteriori
 accuracy similar to a much costlier two-equation model combined with the
@@ -808,8 +822,9 @@ of François et al.'s mode 2 is computed from $\tilde\nu$ rather than from
 $\nu_t$ ([François et al. (2022)](/sources/francois-2022.md), §3.1).
 Carlsson et al. (2023) use SA in DDES with $C_{\mathrm{DES}}=0.65$, which
 reproduces the spectra of decaying isotropic turbulence in LES mode with a
-low-dissipation scheme, and in SA-DDES of a supersonic base flow with the
-shear-layer-adapted length; in channel flow SA-IDDES gives results "very
+low-dissipation scheme, and in SA-DDES of a
+[supersonic axisymmetric base flow](/benchmarks/supersonic-axisymmetric-base-flow.md)
+with the shear-layer-adapted length; in channel flow SA-IDDES gives results "very
 similar" to SST-IDDES (not shown)
 ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, §4.2–4.4).
 Pan & Zhang (2023) compare SA-based DES ($C_{\mathrm{DES}}=0.65$, $\Delta$ the
@@ -869,6 +884,32 @@ $d$ is capped by a von Kármán length, on a Mach 2 boundary layer
 ([Wang et al. (2024c)](/sources/wang-2024-j.md), §III.F, Eqs. 29–40; see
 [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)). All
 three are on the [DES page](/methods/detached-eddy-simulation.md).
+
+**SA with algebraic transition as the RANS branch of IDDES.** Alberti et
+al. (2026, §2.1–2.1.1, Eqs. 4–9) replace the fully turbulent SA of their
+IDDES by SA-BCM, the algebraic transition model of Cakmakcioglu et al. (as
+cited), and multiply both production and destruction by its intermittency
+$\gamma_{\mathrm{BC}}$ (page-local subscript), where pure-RANS SA-BCM
+multiplies only the production:
+$$s_{\tilde\nu}=\gamma_{\mathrm{BC}}\Big[c_{b1}S_{\mathrm{SA}}\tilde\nu-c_{w1}f_w\Big(\frac{\tilde\nu}{l_{\mathrm{IDDES}}}\Big)^2\Big]+\frac{c_{b2}}{\sigma}\,\partial_i\tilde\nu\,\partial_i\tilde\nu,$$
+with $s_{\tilde\nu}$ the source of the $\tilde\nu$ equation and
+$l_{\mathrm{IDDES}}$ the IDDES length of the destruction term (both
+page-local), $C_{\mathrm{DES}}=0.65$, the shear-layer-adapted length of
+Mockett et al. in place of the whole IDDES subgrid length, all lengths
+divided by $N+1$, and no low-Reynolds-number correction of the LES length
+(§2.1). SA-BCM carries the low-Reynolds-number destruction coefficient of
+Spalart & Garbaruk (as cited), $c_{w2}$ replaced by
+$c_{w4}+c_{w5}/(\chi/40+1)^2$, $c_{w4}=0.21$, $c_{w5}=1.5$ (Eq. 8; $\chi$ is
+not defined in the paper). The intermittency, the modified shielding and
+the recalibrated constant are on the
+[transition-model page](/methods/local-correlation-based-transition-model.md),
+the mode logic on the [DES page](/methods/detached-eddy-simulation.md). On
+the [Eppler 387](/benchmarks/eppler-387-airfoil.md) and the
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) fully turbulent SA-IDDES
+misses the [laminar separation bubble](/definitions/laminar-separation-bubble.md)
+(§3.1, §3.3). The authors used the SA inflow ratio
+$\tilde\nu_\infty/\nu=3$ for fully turbulent runs and 0.2 (airfoils) or
+0.001 (sphere) for SA-BCM (Table 1).
 
 ### SA with wall functions on immersed-boundary Cartesian grids
 
@@ -1235,6 +1276,9 @@ computed at high order with SA, and as SA reference data in a fourth:
 
 ## Qualifications
 
+- Alberti et al. (2026) print the case conditions of their limited $r$
+  (Eq. 3) on $r$ itself ("$r^*$ if $0\le r<r_{\max}$; $r_{\max}$ if $r<0$ or
+  $r\ge r_{\max}$"), while $r^*$ is the unlimited value being tested.
 - Li et al. (2024b) and Zhang et al. (2024) print no value of $c_{w1}$, so
   the log-layer relation above cannot be checked against their forms.
 - Li & Liu's ranking rests on one cascade and one rotor, against experiment
@@ -1399,3 +1443,4 @@ computed at high order with SA, and as SA reference data in a fourth:
 - [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §3.2, Eqs. (9)–(16) (SA with the Crivellini et al. negative branch, $r_{\max}=10^3$, $\tilde\nu_\infty$); §3–§4 (isogeometric DG, adaptation); §6.1–§6.3, Tables 1–4, Fig. 19 (flat plate, NACA 0012, T106A).
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — §3.1.2–§3.1.3, Figs. 3–4; §3.2.2, Table 3 (CFL3D and FUN3D SA as reference).
 - [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §7.1, Fig. 5 (SA reference on the backward-facing step).
+- [Alberti et al. (2026)](/sources/alberti-2026.md) — §2.1, Eqs. (1)–(5) (incompressible trip-less SA, positive-part source, limited $r$, SA-IDDES); §2.1.1, Eqs. (6)–(8) (SA-BCM with multiplied production and destruction, Spalart–Garbaruk $c_{w2}$); Table 1; §3.1, §3.3.

@@ -5,7 +5,7 @@ description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes
 status: established
 aliases: [HGKS, HGKS-cur, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
 tags: [gas-kinetic, dns, implicit-les, compressible, numerical-dissipation, gpu]
-timestamp: 2026-10-28T12:25:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # High-order gas-kinetic schemes for turbulence simulation
@@ -88,7 +88,8 @@ dissipation of the scheme lives in the collision time.
 **Inherent bulk viscosity.** The BGK model carries a bulk viscosity
 $\mu_b=\frac{2K_{\mathrm{int}}}{3(K_{\mathrm{int}}+3)}\mu$ (Cao et al. 2022,
 §3.1, citing Xu), which is $\mu_b=\tfrac{4}{15}\mu$ for $K_{\mathrm{int}}=2$
-($\gamma=1.4$) *(compiler check, not in the sources)*. It enters the dissipation budget
+($\gamma=1.4$), the value [Wang et al. (2026)](/sources/wang-2026.md)
+(§III A, citing Xu) print. It enters the dissipation budget
 below; see [bulk viscosity](/definitions/bulk-viscosity.md).
 
 ## Reconstruction and time stepping
@@ -143,8 +144,7 @@ variants are labelled by the normal and tangential orders:
   distribution.
 
 The authors argue that the compact stencil "has the consistent physical and
-numerical domains of dependence" (abstract, §1, §6); this is a design
-argument, not a test in the paper.
+numerical domains of dependence" (abstract, §1, §6).
 In their assessment of interpolation-based WENO on the compressible
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
 [Wang et al. (2024b)](/sources/wang-2024-i.md), §I, list a compact
@@ -411,8 +411,8 @@ show no visible differences between methods and the same "unnatural
 leveling-off" near the cut-off as above (§V, Figs. 2–19). The authors
 explain the ranking by the numerical dissipation of the high-order scheme
 already sufficing as subgrid dissipation, so that an explicit model
-over-dissipates and lowers the wall velocity gradient (Abstract, §VI); this
-is stated, not measured by a dissipation budget. Refining the $Re_\tau=180$
+over-dissipates and lowers the wall velocity gradient (Abstract, §VI); the
+paper prints no dissipation budget. Refining the $Re_\tau=180$
 grid from $64^3$ to $96^3$ "significantly" improves all statistics; they
 state that "when the grids are refined, the numerical dissipation
 decreases" (App. B, Table VIII). They conclude that implicit LES is "more suitable than traditional
@@ -461,6 +461,34 @@ LES over-predicts the Reynolds stresses (§I, §IV C, §V). The modelled and num
 the explicit-LES residual are not separated. The decomposition is on
 [implicit LES](/definitions/implicit-les.md) and
 [numerical dissipation](/properties/numerical-dissipation.md).
+
+**The same comparison across grids, with the parts separated.**
+[Wang et al. (2026)](/sources/wang-2026.md), the sequel of Cao et al.
+(2022b), state the scheme in full (§II A–B): the finite-volume form with
+Gauss-point face fluxes (Eqs. 3–4), the smooth continuous interface
+distribution for the weakly compressible flow (Eq. 7), fifth-order WENO-Z
+reconstruction dimension by dimension, the two-stage fourth-order time
+stepping above (Eq. 10) and CFL 0.4, the whole labelled fourth-order. The
+eddy viscosity enters through the extended BGK equation with
+$\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$ (Eqs. 11–12,
+recovering an eddy-viscosity model by the Chapman–Enskog expansion, as
+they cite Chen et al. 2003), and the inherent bulk viscosity is
+$\mu_b=4\mu/15$ (§III A). On the Taylor–Green vortex at $64^3$, $128^3$
+and $256^3$ against a $512^3$ DNS of the same framework they separate the
+modelled part of the subgrid dissipation (the volume average of
+$-\tau^{\mathrm{mod}}_{ij}\bar S_{ij}$, Eq. 29) from the numerical one:
+the modelled share rises with refinement, numerical dissipation dominating
+on $64^3$ (§III B, Fig. 6). By velocity-gradient PDFs the implicit LES
+gives the smallest time-averaged discrepancies on $64^3$ against both the
+filtered and the unfiltered DNS, and on $128^3$ against the unfiltered DNS;
+against the filtered DNS on $128^3$ the dynamic model's mean
+Jensen–Shannon divergence is $7.90\times10^{-4}$ against $8.01\times10^{-4}$
+for the implicit LES, with equal Wasserstein-1 distances. On $256^3$ the
+static models are closer to the filtered DNS in late decay (§IV B,
+Tables I–II).
+The authors limit the conclusion to this scheme with standard
+coefficients "not recalibrated for the HGKS discretization" (§V). Details
+on [implicit LES](/definitions/implicit-les.md).
 
 ## Cost
 
@@ -666,7 +694,7 @@ differences between precisions (Figs. 10–13).
   linear-weight scheme on channel flow, side with the first reading: the
   numerical dissipation is "enough to replace" the subgrid dissipation and
   explicit models only add to it (Abstract, §VI), a statement drawn from
-  profile comparisons, not from a dissipation measurement. Their $96^3$
+  profile comparisons; the paper prints no dissipation budget. Their $96^3$
   implicit LES at $Re_\tau=180$ reaches $Re_\tau=177.89$ (Table V), whereas
   Zhao et al. (2023a, Table 8) report 171.33 for N5T5 on
   $64\times96\times64$ cells, and Zhao et al. (2021, App. B, Table VIII)
@@ -679,6 +707,14 @@ differences between precisions (Figs. 10–13).
   dissipation, the explicit models only add dissipation, and the
   numerical dissipation serves as the subgrid dissipation, explicit
   modelled dissipation not being required at this low Reynolds number (§V).
+  [Wang et al. (2026)](/sources/wang-2026.md) (§III B, §IV B, §V), with
+  fifth-order WENO-Z reconstruction in the same fourth-order framework,
+  find numerical dissipation dominant on $64^3$ and the explicit closures
+  "no systematic advantage over iLES" by velocity-gradient statistics,
+  while on $256^3$ the static models are closer to filtered DNS in late
+  decay (Table I), and they call the explicit Smagorinsky and Vreman
+  contributions "excessive for the present coarse-grid calculation"
+  (§IV B).
 
 # Citations
 
@@ -690,3 +726,4 @@ differences between precisions (Figs. 10–13).
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §II, Eqs. (1)–(11) (BGK flux, flux 1 and flux 2, reconstruction); §III, Eqs. (12)–(23) (eddy viscosity through the collision time; Vreman, dynamic Smagorinsky, WALE, dynamic Clark); §IV, Table I (setup); §V, Tables III–VII, Figs. 2–21 (results, cost); §VI; App. A–B, Table VIII.
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, §IV C–E (kinetic and lattice-Boltzmann fluxes in multi-material solvers, cited).
 - [Wang et al. (2024b)](/sources/wang-2024-i.md) — §I (a compact gas-kinetic scheme among earlier Taylor–Green schemes, cited; passing).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §II A–C, Eqs. (1)–(12); §III A–B, Eqs. (18)–(29), Fig. 6; §IV B, Tables I–II; §V.

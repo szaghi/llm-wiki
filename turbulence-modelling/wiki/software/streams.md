@@ -5,7 +5,7 @@ description: "STREAmS is an open-source multi-GPU finite-difference solver for c
 status: established
 aliases: [STREAmS-2.0, STREAmS 2.1, STREAMS]
 tags: [software, gpu, dns, compressible, implicit-les, immersed-boundary, boundary-layer]
-timestamp: 2026-10-28T17:51:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # STREAmS
@@ -15,8 +15,8 @@ the compressible Navier–Stokes equations on Cartesian grids for canonical
 wall-bounded flows, by Bernardini and co-workers (Bernardini et al. 2021,
 and STREAmS-2.0, Bernardini et al. 2023, both cited by
 [Placco et al. 2023](/sources/placco-2023.md), §2). It runs on multiple GPUs
-through CUDA Fortran ([Cogo et al. 2022](/sources/cogo-2022.md), §2). The
-first two studies of this bundle that use it ran on the Marconi100 system of
+through CUDA Fortran ([Cogo et al. 2022](/sources/cogo-2022.md), §2). Cogo
+et al. (2022) and Placco et al. (2023) ran it on the Marconi100 system of
 CINECA; [Aiello et al. (2026)](/sources/aiello-2026.md), §3.3, use the
 open-source GPU release STREAmS 2.1 (Salvadore et al. 2025, which they cite),
 with CINECA resources (machine not named).

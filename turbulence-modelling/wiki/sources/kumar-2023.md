@@ -9,7 +9,7 @@ year: 2023
 venue: "Combust. Flame 255:112903"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Combustion_and_Flame_Kumar_Acceleration_of_turbulent_combustion_DNS_via_principal_compo.pdf"
 tags: [combustion, dns, data-driven, neural-network]
-timestamp: 2026-10-28T01:52:00Z
+timestamp: 2026-10-29T10:05:00Z
 ---
 
 # Summary
@@ -28,10 +28,10 @@ thermochemistry, not of a subgrid stress: contrast the
 further network recovers non-transported species such as HO$_2$. A
 semi-implicit pressure update from the equation of state, linearized
 with the networks' Jacobians, removes the acoustic time-step limit: the
-step grows from 5 ns to 60 ns. The method is a competitor of the
-chemistry-reduction and tabulation strategies of
-[flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md),
-and the authors argue that 1D laminar flames are inadequate training
+step grows from 5 ns to 60 ns. The authors list tabulation and other
+chemistry accelerations as competing strategies (§1; see
+[flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)),
+and argue that 1D laminar flames are inadequate training
 data for turbulent conditions.
 
 The code is S3D (eighth-order explicit differencing, a tenth-order filter
@@ -143,8 +143,8 @@ $\dot{\boldsymbol\omega}_\psi=\mathbf Q^T\dot{\boldsymbol\omega}_{\Phi}$
 complete into the [bibliography](/bibliography.md) with `citedby` this
 slug. Ref. [1] (Pope 1997) is printed with the venue "Combust. Sci. Tech.
 1 (1997) 41–63", while the entry of the same title, year and pages
-already in the bibliography records Combust. Theory Model.; it is
-flagged for a venue check at the merge. Refs. [18] and [19], both Ranade
+already in the bibliography records Combust. Theory Model.; the two are
+one entry, folded on title and volume:page (the printed venue is noted). Refs. [18] and [19], both Ranade
 & Echekki (2019, Combust. Flame), take suffixes in printed order. Ref.
 [24] (Zdybał et al., Proc. Combust. Inst.) is printed with a DOI and no
 volume or pages; ref. [31] is a book chapter printed without the book

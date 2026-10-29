@@ -5,7 +5,7 @@ description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-
 status: established
 aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence, compressive-mode bottleneck, Helmholtz-decomposed spectra, nearly incompressible MHD, NI MHD, solar-wind turbulence transport model, turbulence transport model]
 tags: [mhd, compressible, plasma, astrophysics, dns]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Compressible MHD turbulence
@@ -435,6 +435,34 @@ reaches 11.4 at 75 au, while the proton and electron betas stay below 1
 profiles; the source has no numerical turbulence simulation. Imbalance and
 residual energy are on [critical balance](/properties/critical-balance.md).
 
+## Driven MHD turbulence as a code demonstration
+
+[Stone et al. (2026)](/sources/stone-2026.md) use compressible MHD
+turbulence only to demonstrate the GPU code
+[AthenaK](/software/athenak.md), the successor of the ATHENA++ of Gan et
+al. above; no spectra, mode fractions or statistics are analysed:
+
+- **Driven isothermal MHD** (§3.2, Fig. 4): $10{,}240^3$ cells on 65,536
+  Frontier GPUs, WENO-Z reconstruction, second-order Runge–Kutta and the
+  HLLD Riemann solver, purely solenoidal real-space driving over
+  $1\le2\pi k/L_{\mathrm{box}}\le3$ as printed, rms sonic Mach number 0.5
+  and a mean field at Alfvén Mach number 2; the field saturates at
+  $\delta B/\bar B\approx3$ over four turnover times. No
+  explicit viscosity or resistivity is stated for this run (see
+  [numerical dissipation](/properties/numerical-dissipation.md)).
+- **Two-fluid (ion–neutral) driven turbulence** (§3.4, Fig. 8): $1200^3$,
+  sonic Mach number about 10, Alfvén Mach number about 1, a stiff drag
+  coefficient of $10^6$ integrated by IMEX; at this strong coupling the
+  ionization fraction fluctuates little, while the authors cite Hu et al.
+  (2024) for strong fluctuations in general.
+- **Test particles in MHD turbulence** (§4.2, Fig. 19): $1280^3$,
+  $Re=5\times10^4$, $Pm=1$, about seven turnover times and
+  $3.6\times10^7$ particle trajectories.
+
+The paper cites a first-order flux correction that acted about once per
+$10^{10}$ cell updates in the supersonic turbulence of Lemaster & Stone
+(2009) (§3).
+
 ## Qualifications
 
 - **Different regimes.** Gan et al. drive at $M_t\le0.18$ with a strong
@@ -500,3 +528,4 @@ residual energy are on [critical balance](/properties/critical-balance.md).
 - [Ruan et al. (2023)](/sources/ruan-2023.md) — §1; §2, Eqs. (1)–(5); §3.1–§3.5, Eqs. (6)–(8), Figs. 2–5; §4 (Kelvin–Helmholtz-generated, Alfvénic turbulence in a 3D resistive MHD flare simulation; nonthermal velocity and turbulent energy diagnostics).
 - [Beattie et al. (2025)](/sources/beattie-2025.md) — §4.5, Eq. (49); §5.1, Eq. (54), Fig. 6; §6.1–6.2, Eqs. (56)–(57), Fig. 9; §8, Fig. 13; §9.1, §9.3; App. D; App. E (Helmholtz-decomposed spectra, compressive-mode bottleneck and bulk viscosity in trans-sonic MHD turbulence).
 - [Adhikari et al. (2023)](/sources/adhikari-2023.md) — §1; §2, Eqs. (3)–(11); §3, Eqs. (12)–(15), Table 2; §4, Eqs. (16)–(19); §5, Eqs. (20)–(34); §6–§8, Figs. 1–7 (nearly incompressible MHD at high plasma beta and its turbulence transport model).
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3; §3.2, Fig. 4; §3.4, Fig. 8; §4.2, Fig. 19 (demonstration runs, not analysed).

@@ -5,7 +5,7 @@ description: "The ERCOFTAC T3 series of flat-plate boundary layers under free-st
 status: established
 aliases: [T3 flat plates, ERCOFTAC T3A, T3A, T3B, T3A-, T3C, T3C1–T3C5, Rolls-Royce T3 plates, Savill T3 test cases]
 tags: [benchmark, transition, rans, boundary-layer, flux-reconstruction, dg]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-29T07:40:00Z
 ---
 
 # ERCOFTAC T3 flat-plate transition cases
@@ -109,7 +109,8 @@ others).
 
 ## What the case tests
 
-**Bypass onset at zero pressure gradient.** All three sources report
+**Bypass onset at zero pressure gradient.** Menter et al., Liu et al. and
+Pacciani et al. report
 onset in agreement with experiment on T3A and T3B:
 the algebraic γ-alg-SST model agrees with the transport models and the
 experiment ([Menter et al. (2022)](/sources/menter-2022.md), Fig. 8); the
@@ -265,10 +266,8 @@ transition over RANS-$\gamma$ without resolved inflow turbulence (§III.B,
   intensity is printed as 0.03% by
   [Menter et al. (2022)](/sources/menter-2022.md), Table 2, and 0.3% by
   [Pacciani et al. (2025)](/sources/pacciani-2025.md), Table 1, with viscosity ratios 1.0 and 1.2; neither source
-  discusses the difference or prints the measured intensity at the plate.
-  Because both values are inlet settings of different computational
-  domains, not statements about the experiment, this is recorded as a
-  difference in printed set-up, not a contradiction.
+  discusses the difference or prints the measured intensity at the plate;
+  both values are inlet settings of different computational domains.
 - The intermittency $\gamma$ is not the same object in the three sources: a
   transported or algebraic field of the local-correlation family in
   [Menter et al. (2022)](/sources/menter-2022.md) and

@@ -5,7 +5,7 @@ description: "The weighted compact nonlinear scheme (WCNS) differences numerical
 status: established
 aliases: [WCNS, weighted compact nonlinear scheme, WCNS-E, WCNS-T, WCNS-L, WCNS-Z, WCNS-JS, WCNS-ST, WCNS-STA, smooth TENO, S-TENO, nonlinear compact interpolation]
 tags: [numerical-dissipation, implicit-les, compressible, hybrid-rans-les]
-timestamp: 2026-10-28T17:01:00Z
+timestamp: 2026-10-29T07:36:00Z
 ---
 
 # Weighted compact nonlinear schemes
@@ -15,7 +15,7 @@ sources cite it, is a high-order finite-difference shock-capturing scheme
 built from three components: (i) a high-order **flux difference** that
 differentiates numerical fluxes defined at cell edges (and, in one form,
 physical fluxes at nodes); (ii) a **numerical flux**, an approximate
-Riemann solver (Roe in all three sources) evaluated from left and right
+Riemann solver (Roe in every source here) evaluated from left and right
 interface states; (iii) a **weighted nonlinear interpolation** that
 produces those interface states from the nodal values, with WENO-type
 weights. Unlike a WENO finite-difference scheme, which reconstructs split
@@ -29,7 +29,9 @@ subgrid dissipation (Ma et al.), and as the low-dissipation convective
 scheme under explicit and hybrid closures (Wu et al. 2023, 2024), in the
 CARDC solver [PHengLEI](/software/phenglei.md). Its relation to
 WENO and TENO is on [WENO and hybrid schemes](/methods/weno-scheme.md),
-whose WCNS section this page extends.
+whose WCNS section this page extends. The same group's sixth-order
+multi-order-candidate WCNS with an adaptive Roe dissipation
+([Wu et al. 2026](/sources/wu-2026-b.md)) runs in PHengLEI-HyOrder.
 
 Notation (page-local unless registered): the model equation
 $\partial_tU+\partial_xE=0$ on nodes $x_j=jh$ ($h$ the spacing, registry
@@ -298,6 +300,53 @@ compressible Taylor–Green comparison of
 [Wang et al. (2024b)](/sources/wang-2024-i.md), §I, a WCNS is listed
 among the schemes earlier tested on that case, in passing.
 
+## Sixth-order multi-order-candidate interpolation with adaptive Roe dissipation
+
+[Wu et al. (2026)](/sources/wu-2026-b.md) use in PHengLEI-HyOrder a
+sixth-order WCNS whose interpolation of the primitive variables follows
+the multi-order-candidate (MOC) form that they cite to Ma et al. (2024)
+and Bai et al. (2024), which the authors describe as "a simplified equivalent weighting
+formulation of WCNS" (§1, §3.1, Eqs. 22–23):
+
+$$u^{\mathrm L}_{j+\frac12}=\sum_{k=0}^{3}\mathsf w_k\,u^{(k)}_{j+\frac12},\qquad d_k=\big(\tfrac1{16},\tfrac{10}{16},\tfrac5{16},100\big),\qquad a_k=\frac{d_k}{\mathrm{IS}_k+\epsilon_{\mathrm Z}},\quad \epsilon_{\mathrm Z}=10^{-40},$$
+
+with $u^{(0)}$, $u^{(1)}$, $u^{(2)}$ the three third-order candidates above
+and $u^{(3)}$ a sixth-order optimized linear interpolation on a six-point
+stencil; the indicators are "given by Ma et al. (2024)" and not printed.
+Their MOC6-STA then replaces these weights by the smooth scale-separating
+form of Wu et al. (2024b), now over four candidates,
+$\mathsf w_k=d_k\delta^{\mathrm T}_k/\sum_ld_l\delta^{\mathrm T}_l$ with
+$\delta^{\mathrm T}_k=\tanh\big((\chi^{\mathrm T}_k/C_T)^{k}\big)$ for
+$\chi^{\mathrm T}_k<10C_T$ and 1 above, and $C_T$ adapted after Fu et al.
+(as cited) (§3.2, Eqs. 24–25; the exponent is printed with the letter of
+the candidate index, where Wu et al. (2024b) print 2; see
+Qualifications). The aim stated is central-like stencils at low wavenumbers
+and added dissipation at high wavenumbers.
+
+**Tests** (§3.2–§3.3). On the interpolation of $f(x)=x^me^x$ at $x=0$
+($m=1$, a regular point; $m=2$, a first-order critical point; $m$
+page-local) MOC6-STA gives "nearly identical error levels and convergence
+behavior" to MOC6, with errors below those of the fourth-order WCNS-CU4; a
+third-order MUSCL is also plotted (Fig. 2). In the approximate dispersion-relation
+analysis MOC6 has smaller dispersion and dissipation errors at resolved
+scales and more dissipation at high wavenumbers (Fig. 3; see
+[eigensolution analysis](/methods/eigensolution-analysis.md)).
+
+**Adaptive Roe dissipation.** The interface flux is the Roe flux with its
+upwind term scaled by a coefficient computed for each primitive variable,
+
+$$f^*_{j+\frac12}=\tfrac12\Big[f(U^{\mathrm L})+f(U^{\mathrm R})-\phi_{\mathrm R}\,|\tilde A|\,(U^{\mathrm R}-U^{\mathrm L})\Big],\qquad \phi_{\mathrm R}=\phi_1+\phi_2-\phi_1\phi_2,$$
+
+with $|\tilde A|$ the Roe-averaged Jacobian, $\phi_1$ a relative jump of
+the interface states and $\phi_2$ a Ducros-type dilatation–vorticity ratio
+(Eqs. 27–28; page-local $\phi_{\mathrm R}$, $\phi_1$, $\phi_2$; formulas on
+[shock sensors](/definitions/shock-sensor.md)). On the two-dimensional
+Riemann problem (configuration 3 of Lax & Liu, $400\times400$) the
+coefficient stays close to one in most regions, keeping shock capturing,
+and decreases near the shear layers (Fig. 4). The scheme carries the
+SATES-II and AIDDES runs of the supersonic base flow and the 30P30N
+(see [SATES](/methods/self-adaptive-turbulence-eddy-simulation.md)).
+
 ## Qualifications
 
 - **Evidence.** Ma et al. give no error norms for the implicit-LES cases,
@@ -348,6 +397,16 @@ among the schemes earlier tested on that case, in passing.
   integration (second-order backward differences with LU-SGS
   sub-iterations); the base-flow ranking uses one coarse grid, with a
   WCNS-JS fine-grid reference.
+- **Printed wording (Wu et al. 2026).** §3.2 states that MOC6-STA reaches
+  "nearly identical error levels and convergence behavior" to the
+  sixth-order MOC6, then that its error "remains consistently lower than
+  that of the 4th-order WCNS-CU4 scheme while showing the same first-order
+  convergence rate as all other high-order schemes". The cut-off exponent
+  of Eq. (24) is printed with the letter of the candidate index ($n$ in the
+  paper, $k$ here), the
+  text after it writes the cut-off with index $k$, and the scale-separated
+  measure of Eq. (24) is not defined in the paper. The coefficient is
+  called $\phi$ in Eq. (27) and $\phi_k$ "of kth's variable" in the text.
 - **Cost of WCNS-T.** Ma et al. state that the nonlinear compact
   interpolation needs "no extra computation" (§2.2, §4) and that one
   solution-dependent tri-diagonal system is solved per variable, grid
@@ -360,4 +419,5 @@ among the schemes earlier tested on that case, in passing.
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1 (GCL and shock capturing of WCNS, cited); §2.2.1, Eqs. (10)–(14) (fourth-order flux difference, Roe flux, Z-type weights, WCNS-L and WCNS-Z); §2.2.2, Eq. (15) (blended comparison scheme); §3.3, Table 2, Figs. 11–16 (scheme dissipation on the 30P30N airfoil); §3.4; §4.
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I (interpolation dominates resolution, cited); §II.B–D, Eqs. (8)–(23) (sixth-order flux difference, JS, Z, TENO, smooth TENO and adaptive weights); §IV.A–C, Figs. 4–14, Table I (spectral analysis, Riemann problem, 30P30N, supersonic base flow, sub-iteration convergence, cost); §V.
 - [Wang et al. (2024b)](/sources/wang-2024-i.md) — §I (WCNS among earlier Taylor–Green schemes; passing).
+- [Wu et al. (2026)](/sources/wu-2026-b.md) — §1, §3.1–§3.3, Eqs. (22)–(28), Figs. 2–4 (MOC6 and MOC6-STA interpolation, convergence and dispersion tests, adaptive Roe dissipation, Riemann problem); §3.4 (PHengLEI-HyOrder).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.3, Eqs. (12)–(15) (linear WCNS-E-4 in PHengLEI, Roe flux, GCL by citation); §2.4, Eqs. (16)–(17) (MUSCL comparison scheme); §3.2, Table 3, Figs. 13–17 (WCNS against MUSCL on the supercritical cylinder); §4.

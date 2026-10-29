@@ -5,7 +5,7 @@ description: "Morkovin's hypothesis holds that, while density fluctuations stay 
 status: established
 aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor, turbulent Prandtl number]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-29T10:03:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -312,7 +312,7 @@ written $y$ here.
 - **SRA phase relation.** $-R_{u''T''}$ falls upstream from 0.85 at
   $y/\delta_x=0.05$ to 0.6 at the edge and changes sign at the cold wall; it
   is about 0.5 in the Mach 9 downstream layer (Fig. 29b). Helm & Martín
-  recall about 0.6 through most of adiabatic layers up to edge Mach 12 (Duan
+  (§IV E) cite about 0.6 through most of adiabatic layers up to edge Mach 12 (Duan
   et al.), only slightly reduced by wall cooling; Huang et al. (2022) find
   about 0.55 for $y/\delta\gtrsim0.2$ (above).
 - **SRA magnitude relation.** About 0.65 upstream and 0.4 downstream at
@@ -448,8 +448,7 @@ against it, recent evidence that "intrinsic compressibility effects can be
 dynamically significant" near the wall (Hasan et al. 2023, 2025), with cold
 walls further modifying vortex topology and production (Yu et al.). The
 transformation of Hasan et al. is the one that Chen et al. (2024) recall as
-questioning the hypothesis (above), so the two sources agree on where the
-current challenge comes from. Aiello et al. add that the Chu–Kovásznay split
+questioning the hypothesis (above). Aiello et al. add that the Chu–Kovásznay split
 into vortical, acoustic and entropy modes "does not constitute a derivation
 of Morkovin's hypothesis" but is an interpretive frame: entropy modes are
 linearly passive yet act through density, temperature and transport
@@ -534,8 +533,9 @@ thermal balances accompany are on
 
 ## Near shocks and at the inflow of shock interactions
 
-Two DNS of shock/boundary-layer interactions use the analogies only at the
-inlet, and one of them declines Morkovin's assumption downstream.
+The sources below on shock/boundary-layer interactions use the analogies
+or the scaling only at the inlet, and one of them declines Morkovin's
+assumption downstream.
 
 - [Yu et al. (2022)](/sources/yu-2022-e.md), §1.2, reject the spectral
   turbulent-kinetic-energy formulation of Dupuy, Toutant & Bataille for
@@ -732,9 +732,8 @@ the van Driest-transformed mean velocity of the same station is on
   *(compiler check, not in the sources; $p'=0$ is not stated by the authors)*.
 - Wang & Xu (2024, App. A) attribute the non-proportionality of mean
   temperature and density to "the non-ideal gas law employed", while their
-  Eq. (2.5) is Dalton's law for an ideal-gas mixture; the
-  non-proportionality comes from the variable mixture molar mass in that
-  law.
+  Eq. (2.5) is Dalton's law for an ideal-gas mixture, in which the mixture
+  molar mass varies *(compiler check, not in the sources)*.
 - Printed inconsistencies of the two papers that do not bear on these
   scalings (shape factors, Reynolds-number tables) are recorded on their
   Source pages.

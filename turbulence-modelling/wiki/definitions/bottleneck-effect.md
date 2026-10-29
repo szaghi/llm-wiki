@@ -5,7 +5,7 @@ description: "The bottleneck is a bump of excess energy just ahead of the range 
 status: established
 aliases: [bottleneck, spectral bottleneck, bottleneck bump, compressible-mode bottleneck, soft pile-up]
 tags: [dns, implicit-les, numerical-dissipation, compressible, astrophysics]
-timestamp: 2026-10-29T05:13:00Z
+timestamp: 2026-10-29T07:37:00Z
 ---
 
 # Bottleneck effect in the energy spectrum
@@ -172,8 +172,7 @@ $\perp$ are kept for the magnetic-field directions on the MHD pages).
   bottleneck through $\nu_b$ also suppresses high-$k$ magnetic modes, and the
   field becomes larger-scale.
 
-The authors' resolution study (App. D) supports the reading that this
-bottleneck is a resolution artefact of the missing dissipation:
+The authors' resolution study (App. D):
 
 - for $P_\nu=0.1$ the run is "converged on all scales at $512^3$";
 - for $P_\nu=1$ the bulk-viscous scale is unresolved even at $1024^3$;
@@ -193,7 +192,7 @@ or misplaced.
 
 | symptom | where the excess sits | cause in the sources | examples |
 |---|---|---|---|
-| bottleneck | a bump inside the resolved range, ahead of where dissipation takes over ($k\eta\approx0.1$–$0.2$ in DNS; $k<k_c/2$, top near $k_c/4$, for implicit SVV) | a dissipation that switches on sharply in $k$ (viscous, scale-selective numerical, or shear-only in a compressible flow) | Yeung et al. (2025); Vicente Cruz & Lamballais (2023, §6.4); Cernetic et al. (2024); Beattie et al. (2025) |
+| bottleneck | a bump inside the resolved range, ahead of where dissipation takes over ($k\eta\approx0.1$–$0.2$ in DNS; $k<k_c/2$, top near $k_c/4$, for implicit SVV) | the onset of a dissipation mechanism: viscous (Yeung et al.), scale-selective numerical (Vicente Cruz & Lamballais; Cernetic et al.), shear-only viscous in a compressible flow (Beattie et al.) | Yeung et al. (2025); Vicente Cruz & Lamballais (2023, §6.4); Cernetic et al. (2024); Beattie et al. (2025) |
 | pile-up at the cutoff | the highest resolved wavenumbers, near $k_c$ | too little dissipation at the cutoff: no-model or under-dissipative LES | Prakash et al. (2022, §III.B.1, Fig. 4); Kurz et al. (2023, §4.2, Fig. 6); Vicente Cruz & Lamballais (2023, §6.2–6.3); Tsoutsanis & Nogueira (2025, §1, §4.1) |
 | thermalization | most of the resolved range relaxes to $E(k)\propto k^2$ equipartition | no dissipation at all (truncated Euler, kinetic-energy-conserving no-model LES) | Vicente Cruz & Lamballais (2023, §6.2); Flad & Gassner (2017, §3, Fig. 4) |
 

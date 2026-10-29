@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-28T17:45:00Z
+timestamp: 2026-10-29T07:39:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -77,11 +77,9 @@ and treatments of the trace; translated to the registry they agree.
   add a Smagorinsky viscosity to the molecular one ("Boussinesq's
   approximation", §2) and carry it as the viscosity of an artificial
   Navier–Stokes flux; its dissipation in kinetic-energy entropy variables is
-  non-negative by construction (§2.2.1, Eq. 25), which in registry notation is
-  $2\mu_aS^d_{ij}S^d_{ij}\ge0$ with $\mu_a$ the added viscosity *(compiler
-  check, not in the sources: the printed $\mu_a\big(2\lvert\mathsf S\rvert^2-\tfrac23(\partial_ku_k)^2\big)$
-  equals this when the source's $\lvert\mathsf S\rvert^2$ is read as
-  $S_{ij}S_{ij}$, which the paper does not define)*
+  non-negative by construction (§2.2.1, Eq. 25), printed as the added
+  viscosity $\mu_a$ times twice a squared strain magnitude minus
+  $\tfrac23(\partial_ku_k)^2$; the paper does not define that magnitude
   ([Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §2, §2.2.1, §6.1;
   see [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)).
 - **RANS, written on the anisotropy.** McConkey et al. (2022) state the
@@ -279,7 +277,7 @@ and treatments of the trace; translated to the registry they agree.
   $-2\bar\rho\nu_t\big(\tilde S_{ij}-\tfrac13\tilde S_{kk}\delta_{ij}\big)$,
   the registry's positive-trace convention in Favre form, and models the
   trace separately after Yoshizawa, $\tau_{kk}=2C_I\bar\rho\Delta^2\lvert\tilde S\rvert^2$
-  with $C_I=0.0066$ (page-local $C_I$), stating that the Smagorinsky form
+  with $C_I=0.0066$ ($C_I$ registry §11), stating that the Smagorinsky form
   "follows Boussinesq's hypothesis"
   ([Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eqs. 26–28; see
   [Smagorinsky model](/methods/smagorinsky-model.md)).
@@ -704,7 +702,7 @@ is the local flux $\Pi$ *(compiler check, not in the sources)*).
   [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 
 **Alignment in RANS.** Cato et al. (2023) use Schmitt's alignment indicator,
-in registry notation (page-local $c_{RS}$)
+in registry notation ($c_{RS}$ registry §11)
 
 $$c_{RS}=\frac{\lvert R_{ij}\langle S_{ij}\rangle\rvert}{\sqrt{R_{kl}R_{kl}}\sqrt{\langle S_{mn}\rangle\langle S_{mn}\rangle}},$$
 
@@ -866,6 +864,34 @@ $\tau_{xz}$, $\tau_{yz}$), an underpredicted horseshoe vortex, a spanwise
 velocity of the wrong sign off the axis and a much too small heat flux
 near the wall (§2.3, Fig. 5).
 
+[Hu & Yang (2026)](/sources/hu-2026.md), a review of machine-learning
+closures, state the same limit in the registry form
+$R_{ij}=\tfrac23k\delta_{ij}-2\nu_t\langle S_{ij}\rangle$ (§II A, Eq. 2). The
+hypothesis "misrepresents the Reynolds-stress anisotropy whenever the
+principal axes" of $R_{ij}$ and $\langle S_{ij}\rangle$ are misaligned,
+which in engineering flows "is the norm rather than the exception" (§II D).
+Their list of the resulting failures: adverse-pressure-gradient and
+separated boundary layers (reattachment length and wall-shear recovery
+"systematically mispredicted"); concave and convex curvature, whose
+effects on the Reynolds-stress budget are absent from the linear model;
+duct secondary flows, "which vanish identically under a scalar eddy
+viscosity"; and strong system rotation or streamline curvature. The duct
+statement is the one Sandberg & Zhao (2022) make above. For LES the
+review writes the Smagorinsky form of the hypothesis for the deviatoric
+SGS stress (§II C, Eq. 5) and notes that the dynamic variant relaxes the
+fixed coefficient "but retains the scalar form". Hu & Yang (§III D) also
+read the Boussinesq regression target of learned RANS corrections as
+misrepresenting physics "whenever $b_{ij}$ is misaligned with" the strain.
+They read each family of learned RANS closure as a distinct remedy for
+this mismatch together with the ill-conditioning of the RANS operator:
+corrective methods keep the baseline operator and regress only a scalar;
+direct methods regress the anisotropy and pay the cost of
+ill-conditioning; symbolic methods trade flexibility for closed-form
+interpretability; Bayesian and aggregation methods quantify the residual
+model-form uncertainty (see
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md)
+and [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+
 **Eddy viscosity for the deviatoric part only.** Tonicello et al. (2022)
 test the hypothesis a priori on a DNS of a Mach 2.91 boundary layer over a
 $24^\circ$ compression–expansion ramp, both for a Favre time average and for
@@ -924,7 +950,7 @@ and a production correction in the transport equations is needed"
 **What the energy-matching viscosity leaves out.** Inagaki & Kobayashi
 (2023) split the deviatoric subgrid stress of filtered channel DNS
 ($Re_\tau=400$) into the part carried by the flux-matching eddy viscosity
-and a remainder (page-local $\tau^{\mathrm{ani}}_{ij}$), following Abe:
+and a remainder ($\tau^{\mathrm{ani}}_{ij}$, registry §11), following Abe:
 
 $$\tau^d_{ij}=-2\nu_t^{\mathrm{opt}}\bar S_{ij}+\tau^{\mathrm{ani}}_{ij},\qquad \nu_t^{\mathrm{opt}}=\frac{\Pi}{\lvert\bar S\rvert^2},\qquad \tau^{\mathrm{ani}}_{ij}\bar S_{ij}=0,$$
 
@@ -941,7 +967,7 @@ arXiv v3). With a spectral cut-off in $x$ and $z$ only:
 - for the "coarse" filter ($105$, $52.4$) $-\langle\tau^{\mathrm{ani}}_{xy}\rangle$ is
   comparable to the eddy-viscosity part (Fig. 3), and its contribution to
   the budget of the resolved Reynolds stress $R^{\mathrm{res}}_{ij}$
-  (page-local, registry §11), the "anisotropic redistribution" (page-local
+  (registry §11), the "anisotropic redistribution" (registry §11
   $\xi^{\mathrm{AR}}_{ij}$, not the reference coordinate $\xi$), is comparable to the pressure redistribution in the spanwise
   component below $y^+=100$ (§III D–E, Figs. 5, 8); its spanwise component
   is positive (productive) everywhere for both filters;
@@ -970,7 +996,7 @@ b^\perp_{ij}=0.35\sum_{m=1}^{3}G^{m}(I_1,I_2)\,T^{(m)}_{ij},$$
 
 $$T^{(1)}=\mathsf S,\quad T^{(2)}=\mathsf S\mathsf W-\mathsf W\mathsf S,\quad T^{(3)}=\mathsf S^2-\tfrac13\operatorname{tr}(\mathsf S^2)\,\mathsf I,\qquad I_1=\operatorname{tr}(\mathsf S^2),\quad I_2=\operatorname{tr}(\mathsf W^2),$$
 
-with $G^m$ and $b^\perp_{ij}$ page-local
+with $G^m$ and $b^\perp_{ij}$ as in registry §11
 (§II C 2, Eqs. 9–16, 19). The source normalizes the anisotropy as
 $\boldsymbol\tau/k-\tfrac23\mathbf I$, twice the registry's $b_{ij}$, so its
 linear part reads $-2C_\mu\mathsf S$ and its prefactor $\beta/10=0.7$
@@ -1003,7 +1029,7 @@ Oulghelou et al. (2025) keep the same split in the
 [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md): the anisotropy is
 $b_{ij}=b^0_{ij}+b^\Delta_{ij}$, with $b^0_{ij}=-\nu_t\langle S_{ij}\rangle/k$ the
 Boussinesq part (the registry form divided by $2k$ *(compiler check, not in
-the sources)*) and $b^\Delta_{ij}$ (page-local) an additive correction on
+the sources)*) and $b^\Delta_{ij}$ (registry §11) an additive correction on
 the first three integrity-basis tensors, built here on strain and rotation
 normalized by $\omega$ rather than by $\varepsilon/k$; a second correction
 of the same form enters the $k$-equation as a production-like term
@@ -1072,7 +1098,7 @@ notation
 
 $$\nu_t^{*}=\arg\min_{\nu_t}\big\lVert 2kb_{ij}+2\nu_t\langle S_{ij}\rangle\big\rVert=-\frac{2k\,b_{ij}\langle S_{ij}\rangle}{\lvert\langle S\rangle\rvert^2},$$
 
-with $\nu_t^*$ page-local. Cato et al. (2023) estimate a DNS eddy viscosity
+with $\nu_t^*$ as in registry §11. Cato et al. (2023) estimate a DNS eddy viscosity
 with the same projection (§III B, Eq. 18, after Volpiani et al.), which in
 registry notation is the same expression *(compiler check, not in the
 sources)*, and call it "a good approximation for attached flows" whose
@@ -1130,13 +1156,13 @@ fitted one downstream (on [$k$-$\varepsilon$ models](/methods/k-epsilon-model.md
 **Non-negative optimum.** $\nu_t^*$ is negative where $b_{ij}$ and
 $\langle S_{ij}\rangle$ are poorly aligned, which destabilizes an implicit
 treatment. McConkey et al. (2022) therefore define the non-negative least
-squares fit (page-local $\nu_t^{\dagger}$)
+squares fit ($\nu_t^{\dagger}$, registry §11)
 
 $$\nu_t^{\dagger}=\arg\min_{\nu_t\ge0}\big\lVert 2kb_{ij}+2\nu_t\langle S_{ij}\rangle\big\rVert ,$$
 
 computed cell by cell, and split the anisotropy into a linear and a
 remainder part, $2kb_{ij}=-2\nu_t^{\dagger}\langle S_{ij}\rangle+a^{\perp}_{ij}$
-(page-local $a^{\perp}$; §II A–B, Eqs. 7, 9), which they call
+($a^{\perp}$ registry §11; §II A–B, Eqs. 7, 9), which they call
 "proportional/orthogonal". For a single scalar unknown the constrained
 minimizer is $\max(0,\nu_t^*)$, and $a^{\perp}_{ij}\langle S_{ij}\rangle=0$ holds
 only where the constraint is inactive *(compiler check, not in the
@@ -1249,8 +1275,7 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
   shock/boundary-layer interaction, find the three Boussinesq-type
   corrections unable to fix the near-wall flow and $C_f$ (above). The flows
   differ, and Fanizza et al. offer the Boussinesq constraint as a second
-  reason, not an isolated one (§4.3.1), so the two findings are not
-  incompatible; no source of this bundle tests corrections inside and
+  reason, not an isolated one (§4.3.1); no source of this bundle tests corrections inside and
   outside the hypothesis on a shock interaction with a stress diagnostic
   like Cato et al.'s $c_{RS}$.
 - Llorente (2024) equates the symmetric Reynolds stress to the
@@ -1378,3 +1403,4 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [An et al. (2025)](/sources/an-2025.md) — §2.1, Eq. (4) (eddy viscosity in the viscous stress).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1, §3.1.2, Fig. 12 (eddy-viscosity assumption and discrepancy inversion, as cited).
 - [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.2, Eqs. (9)–(10) (Favre-averaged RANS closed by the Boussinesq approximation in engine CFD; isotropy assumption).
+- [Hu & Yang (2026)](/sources/hu-2026.md) — review: §II A, Eq. 2 (RANS form); §II C, Eq. 5 (LES form, dynamic variant); §II D (misalignment failures); §III D (Boussinesq target of learned corrections; families read as remedies). Review, citation only.

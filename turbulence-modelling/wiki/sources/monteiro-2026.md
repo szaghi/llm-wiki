@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Phys. Commun. 326:110233"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Computer_Physics_Communications_Monteiro_RHEA-X_Distributed_GPU-resident_high-fidelity_flow_solver_fo.pdf"
 tags: [dns, gpu, software, kinetic-energy-preserving, pressure-equilibrium, immersed-boundary]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T07:41:00Z
 ---
 
 # Summary
@@ -69,8 +69,8 @@ numbers are those of this version.
 Page-local symbols: $\delta^h_j$ the second-order central difference;
 $\xi_{\mathrm{KEP}}$ the blending parameter of the KEP split family and
 $\eta_{\mathrm{PE}}$ the split parameter of the pressure-convection term; $\lambda_{\mathrm{th}}$
-the thermal conductivity; $c$ the sound speed; $\chi_{\mathrm{IBM}}$ the
-solid indicator, $K_{\mathrm{IBM}}=-\alpha_{\mathrm{IBM}}\Delta t$ the
+the thermal conductivity; $c$ the sound speed; $\chi_{\mathrm m}$ the
+solid mask of the volume penalization (registry §11), $K_{\mathrm{IBM}}=-\alpha_{\mathrm{IBM}}\Delta t$ the
 penalization coefficient; $St_p=\tau_p/\tau_f$ the particle Stokes number;
 CAMPI and CUMPI the CUDA-aware and host-staged MPI configurations; RF–HC the
 real-fluid configuration with high-pressure transport and pressure
@@ -134,7 +134,7 @@ $\Delta z^+=\pi\cdot590/384=4.83$.)*
 | $\eta$ (Eq. 23) | $\eta_{\mathrm{PE}}$ (page-local) | **collision** with the Kolmogorov length (and registry §11 $\eta_p$, the penalization permeability) |
 | $c$, $c_s$ | $c$ (page-local) | sound speed; $c$ is also the chord in $Re_c$, $c_i$ an SSP-RK coefficient |
 | $Z=P/(\rho R'T)$ | (page-local) compressibility factor | |
-| $\chi$, $\alpha$, $K_{\mathrm{IBM}}$ | $\chi_{\mathrm{IBM}}$, $\alpha_{\mathrm{IBM}}$, $K_{\mathrm{IBM}}$ (page-local) | **collision** with SA $\chi$ and the DG/FV blending $\alpha$ |
+| $\chi$, $\alpha$, $K_{\mathrm{IBM}}$ | $\chi_{\mathrm m}$ (registry §11), $\alpha_{\mathrm{IBM}}$, $K_{\mathrm{IBM}}$ (page-local) | **collision** with SA $\chi$ and the DG/FV blending $\alpha$ |
 | $St=\tau_p/\tau_f$ | $St_p$ (page-local) | **collision** with the Strouhal number |
 | $\langle f\rangle$, $f'$; $\tilde f=\langle\rho f\rangle/\langle\rho\rangle$, $f''$ | $\langle\phi\rangle$, $\phi'$; $\langle\phi\rangle_\rho$, $\phi''$ | **the tilde is a Favre average, not a Favre filter** |
 | $Re$, $Pr$, $Ma$, $Br$, $Ec$ | $Re$, $Pr$, $M$, $Br$, $Ec$ | $Br=Pr\,Ec$ |
