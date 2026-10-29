@@ -115,7 +115,7 @@ bundle's notation.
 
 ## Status
 
-**Chunk 17 staged 2026-10-29:** 7 founding papers added to the archive
+**Chunk 17 committed 2026-10-29 (12d8395):** 7 founding papers added to the archive
 (Smagorinsky 1963 … Spalart et al. 2006); 314 of 314 ingested, 191
 concept pages plus the registry, 14463 bibliography entries, deep lint
 done, no contradiction opened (thirteen open).
