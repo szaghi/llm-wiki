@@ -116,3 +116,4 @@ Chunk 3 (2026-10-19). This source is cited on:
 * [Positivity preservation in time integration](/properties/positivity-preservation.md)
 * [Semi-implicit and linearly implicit IMEX Runge–Kutta methods](/methods/semi-implicit-imex-runge-kutta.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
+* [Total variation diminishing (TVD) time stepping](/definitions/total-variation-diminishing.md)

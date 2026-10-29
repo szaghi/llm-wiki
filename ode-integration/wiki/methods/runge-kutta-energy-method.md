@@ -5,7 +5,7 @@ description: "The energy method writes $\\lVert y_{n+1}\\rVert^2-\\lVert y_n\\rV
 status: established
 aliases: [energy analysis of Runge–Kutta methods, discrete energy law, discrete energy identity, discrete integration by parts]
 tags: [stability, runge-kutta, structure-preserving, implicit, explicit, imex]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Energy method for Runge–Kutta stability
@@ -132,6 +132,18 @@ Qin–Zhang DIRK give $E(10)/E(0)=1$, while Radau IIA and Lobatto IIIC damp
   $h\le C\Delta x$, weak($\kappa$) under $h\le C\Delta x^{1+1/(\kappa-1)}$ (Sun et al.
   2022, Remark 3.8).
 
+**Coercive operators: an SSP alternative.** For *coercive* $L$, with
+$\eta_{\mathrm c}=\inf_{\lVert v\rVert=1}-\mathrm{Re}\langle Lv,v\rangle/\lVert Lv\rVert^2>0$ (page-local),
+[Gottlieb et al. (2001)](/sources/gottlieb-2001.md) (§3.2) argue without an energy identity:
+forward Euler is contractive iff $h\le2\eta_{\mathrm c}$, and the $s$-stage, order-$s$ stability
+polynomial is a convex combination of powers of $I+hL$ (Prop. 3.2); for time-dependent $L(t)$
+with $\lVert L(t)-L(t')\rVert\le K\lvert t-t'\rvert/\eta_{\mathrm c}(t)$ they prove for classical RK4 the bound $\lVert y_n\rVert\le e^{3Kt_n}\lVert y_0\rVert$ under $h_n\le2\eta_{\mathrm c}(t_n)$ (Prop.
+3.3). They cite Levy–Tadmor's energy-method analysis, whose step constant for RK4 was
+$C_4=\frac1{31}$ (Levy–Tadmor, Thm. 3.3), and state that they "improve in both simplicity and
+generality" on it with "our uniform $C_s=2$" (Remark after Prop. 3.3). Their argument
+assumes coercivity (Assumption 3.1); the merely seminegative case is on
+[strong stability](/properties/strong-stability.md).
+
 ## Nonlinear right-hand sides: the stage-value energy identity
 
 For any Runge–Kutta method and any $f$, with stage values $Y_i$,
@@ -139,7 +151,9 @@ For any Runge–Kutta method and any $f$, with stage values $Y_i$,
 $$\lVert y_{n+1}\rVert^2-\lVert y_n\rVert^2=2h\sum_ib_i\langle Y_i,f(Y_i)\rangle+h^2\sum_{i,l}b_i(b_l-2a_{il})\langle f(Y_i),f(Y_l)\rangle,$$
 
 the identity [Wei & Shu (2026)](/sources/wei-2026.md) use cell by cell for DG (Eq. (13),
-from Ketcheson). The first sum inherits the sign of the semi-discrete energy law; the
+from Ketcheson); [Ketcheson (2019)](/sources/ketcheson-2019.md) prints it with the matrix
+$M=BA+A^\top B-bb^\top$, $B=\mathrm{diag}(b)$, and builds relaxation on it (§1.1, Eqs.
+(7)–(8)). The first sum inherits the sign of the semi-discrete energy law; the
 second is a quadratic form whose matrix $b_i(b_l-2a_{il})$ is the negative of the
 algebraic-stability matrix $m_{il}=b_ia_{il}+b_la_{li}-b_ib_l$ after symmetrization
 *(compiler remark, not in the sources)*; for an explicit method its diagonal entries
@@ -254,6 +268,8 @@ multistep analogue, testing with Nevanlinna–Odeh multipliers, is on
 # Citations
 
 - [Sun et al. (2022)](/sources/sun-2022.md) — §1, Thm. 2.1, Lemmas 2.2–2.3, §3 (Lemmas 3.2–3.3, Thm. 3.4, Lemma 3.6, Thms. 3.5, 3.7, Remark 3.8), §4 Exs. 4.1–4.6.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §3.2 (Assumption 3.1, Props. 3.2–3.3, Remark on Levy–Tadmor).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §1.1 (Eqs. (7)–(8)); arXiv v1.
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §2 (Eqs. 2.3–2.6, Def. 2.1, Props. 2.1–2.2), Thms. 3.1–3.2, §5.
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §4.3, Table 1 (energy behaviour of Gauss–Legendre, Radau IIA, Lobatto IIIC and the Qin–Zhang DIRK).
 - [Hu & Shu (2025)](/sources/hu-2025.md) — §3 (Eqs. (3.2)–(3.3), Lemmas 3.1–3.2, Thm. 3.4, Remark 3.3), Lemma 4.1, §7.1–7.2 (Prop. 7.1, Remark 7.2); arXiv v1.

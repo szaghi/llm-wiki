@@ -102,6 +102,7 @@ Notation: the solution is $y$ with $y_n$ at step $n$ (source $u$, $u^n$) and dim
 Chunk 5 (2026-10-20). This source is cited on:
 
 * [Adaptive-weight (positivity-preserving) Runge–Kutta methods](/methods/adaptive-weight-runge-kutta.md)
+* [Dormand–Prince 5(4) pair](/methods/dormand-prince-5-4.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Extrapolation methods (Richardson extrapolation of a base integrator)](/methods/extrapolation-methods.md)
 * [Modified Patankar methods (MPRK, MPDeC, MP linear multistep, Patankar predictor–corrector)](/methods/modified-patankar-methods.md)

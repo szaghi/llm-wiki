@@ -3,9 +3,9 @@ type: Definition
 title: "Runge–Kutta method"
 description: "The s-stage one-step method defined by a Butcher tableau (A, b, c): its stage-value and stage-derivative forms, the row-sum convention, the explicit, diagonally implicit and fully implicit classes and their solve costs, reducibility, and the additive, multiderivative and mass-matrix generalizations used by the sources."
 status: established
-aliases: [RK method, Butcher tableau, implicit Runge–Kutta, IRK, explicit Runge–Kutta, ERK]
+aliases: [RK method, Butcher tableau, Butcher array, implicit Runge–Kutta, IRK, explicit Runge–Kutta, ERK, Runge–Kutta process, semi-explicit Runge–Kutta, Shu–Osher form]
 tags: [runge-kutta, explicit, implicit, order-conditions]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Runge–Kutta method
@@ -26,6 +26,16 @@ this form ([Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md), Eqs. (7)–
 [Fekete et al. (2022)](/sources/fekete-2022.md), Eqs. (2)–(4);
 [Reynolds et al. (2023)](/sources/reynolds-2023.md), Eq. (4)).
 
+**Origin of the general form and of the array.** [Butcher (1964)](/sources/butcher-1964.md)
+(§1, pp. 50–51) breaks with the tradition, which he traces through Runge, Kutta, Nyström,
+Gill and Huťa, of studying only explicit processes: he writes the general $s$-stage process
+for the autonomous system $y'=f(y)$ with a full matrix $(a_{ij})$, in stage-derivative
+unknowns, and introduces the array notation now called the Butcher tableau. In his array the
+column $c$ stands to the **right** of $A$, with $b^\top$ below, and $c_i=\sum_ja_{ij}$ is a
+definition, not an assumption. He lists Kutta's third-order process ($c=(0,\tfrac12,1)$,
+rows $(0,0,0)$, $(\tfrac12,0,0)$, $(-1,2,0)$, $b=(\tfrac16,\tfrac23,\tfrac16)$) as an example
+of the explicit class.
+
 ## Row-sum convention
 
 The sources that develop RK theory assume $c=A\mathbf 1$, i.e.
@@ -36,7 +46,7 @@ Biswas et al. (2024, §1.1) and [Biswas et al. (2025)](/sources/biswas-2025.md)
 (§1.3, "stage consistency") assume it throughout, and then the method is
 specified by $(A,b)$ alone. Under it the first stage-order residual
 $\tau^{(1)}=A\mathbf 1-c$ vanishes (see [stage order](/definitions/stage-order.md)).
-Fekete et al. (2022, §1) also assume it, and so do
+Butcher (1964, §1) defines $c$ this way from the start. Fekete et al. (2022, §1) also assume it, and so do
 [Zhang (2024)](/sources/zhang-2024.md) ("without loss of generality", §2) and
 [Bazavov (2026)](/sources/bazavov-2026.md) (Eq. (6)). An explicit method then has
 $s(s-1)/2+s=s(s+1)/2$ free coefficients, 136 for $s=16$ (Zhang 2024, §2). Reynolds et al. (2023) and
@@ -71,6 +81,25 @@ extra row $a_{s+1,j}=b_j$, $c_{s+1}=1$. It resembles the Shu–Osher form but is
 convex-combination form (Remark 1), and it exposes the structure of
 [2N-storage methods](/methods/low-storage-runge-kutta.md).
 
+**Shu–Osher (convex) form.** [Shu & Osher (1988)](/sources/shu-1988.md) (§II, Eqs.
+(2.10)–(2.12); read as ICASE Report 87-33) write an explicit method in stage values numbered
+from 0, $Y_1=y_n$, $Y_i=y_n+h\sum_{j<i}a_{ij}f(Y_j)$, $y_{n+1}=Y_{s+1}$ (their coefficients
+$c_{ik}$ are the registry $a_{ij}$ with shifted indices, the last row being $b$), with the
+non-autonomous version taking the time of stage $j$ as the row sum (their Eq. (2.11), the
+row-sum convention). For any coefficients $\alpha_{ij}\ge0$ with $\sum_j\alpha_{ij}=1$ the
+same method can be rewritten as
+
+$$Y_i=\sum_{j<i}\bigl(\alpha_{ij}Y_j+h\,\beta_{ij}f(Y_j)\bigr),\qquad
+\beta_{ij}=a_{ij}-\sum_{l=j+1}^{i-1}\alpha_{il}a_{lj}$$
+
+(translated to registry indexing, with $a_{s+1,j}=b_j$; derivation printed on report p. 9).
+The representation is therefore not unique. Shu & Osher use it to read off a step-size
+bound for total-variation stability as $\min\alpha_{ij}/\lvert\beta_{ij}\rvert$, with the
+[downwind operator](/methods/strong-stability-preserving-runge-kutta.md) $\tilde L$ in place
+of $f$ wherever $\beta_{ij}<0$; see
+[SSP methods](/methods/strong-stability-preserving-runge-kutta.md). They also state why they
+restrict to explicit methods: "to avoid solving nonlinear equations" (§II).
+
 ## Classes by the structure of $A$
 
 | Class | Structure of $A$ | Stage solves per step |
@@ -81,6 +110,16 @@ convex-combination form (Remark 1), and it exposes the structure of
 | EDIRK | DIRK with $a_{11}=0$ | $s-1$ systems |
 | fully implicit (FIRK) | dense | one coupled $(sd)\times(sd)$ system |
 
+The three-way split goes back to Butcher (1964, §1, p. 50), who calls a process
+"implicit" in general, "semi-explicit" when $a_{ij}=0$ for $i<j$ (lower-triangular $A$
+including the diagonal) and "explicit" when also $a_{ii}=0$. His
+semi-explicit example of order 4 ($c=(0,\tfrac12,1)$, rows $(0,0,0)$, $(\tfrac14,\tfrac14,0)$,
+$(0,1,0)$, $b=(\tfrac16,\tfrac23,\tfrac16)$) has explicit first and last stages and "appears to
+have been previously overlooked even though it is of comparable accuracy and more convenient
+for practical use" than his implicit example (p. 51). His word "semi-explicit" is unrelated to
+the later use of the term for DAEs. He counts $s(s+1)/2$, $s(s+3)/2$ and $s(s+1)$ free
+coefficients for the three classes (Table 1; see
+[order conditions](/results/runge-kutta-order-conditions.md)).
 The classification and the cost column follow Farrell et al. (2021, §2.1, §2.3,
 Eqs. (31)–(34)) and Biswas et al. (2024, §2.1). Farrell et al. (2021, Eq. (31))
 show that, for the heat equation discretized with finite elements, the coupled
@@ -183,7 +222,11 @@ Prince–Dormand method.
   evaluation of time-dependent forcing or boundary data.
 * Farrell et al. (2021) print the stage index range as $1\le i\le n$ in their
   Eq. (4), and their Eq. (15) omits the factor $\Delta t$ in the update; their
-  Eq. (3) has the correct form.
+  Eq. (3) has both the range $1\le i\le s$ and the factor.
+* Butcher (1964) writes $\nu$ for the number of stages, $\rho$ for the order, $x$ for the
+  independent variable and $\hat y$ for the numerical solution; Shu & Osher (1988) write
+  $\Delta t$, $L$ for the right-hand side and $u^{(i)}$ for stages numbered from 0. Their
+  Source pages translate them.
 * Zhang (2024) writes $\tau$ for the one-vertex tree, not a generic tree, and
   Bazavov (2026) writes $A_i$, $B_i$ for scalar 2N-storage coefficients and $\alpha_{ij}$ for
   the increment form above, which clash with the registry's Butcher matrix and Shu–Osher
@@ -203,3 +246,5 @@ Prince–Dormand method.
 - [Zhang (2024)](/sources/zhang-2024.md) — §2 (row-sum convention, parameter count).
 - [Bazavov (2026)](/sources/bazavov-2026.md) — Eq. (6); §3 (Eqs. (23)–(29), Remark 1).
 - [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2.1 (stage-value boundary data), §2.2 (Eqs. (2.18)–(2.21), stage formulations).
+- [Butcher (1964)](/sources/butcher-1964.md) — §1, pp. 50–52 (general implicit process, array notation, implicit/semi-explicit/explicit classes, examples, Table 1).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §II, Eqs. (2.10)–(2.12), pp. 8–9 (stage-value form, convex form, conversion formula); read as ICASE Report 87-33.

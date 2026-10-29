@@ -5,7 +5,7 @@ description: "ARKODE, the SUNDIALS package for one-step methods: a shared time-l
 status: established
 aliases: [ARKode, ERKStep, ARKStep, MRIStep]
 tags: [software, imex, multirate, step-size-control, runge-kutta]
-timestamp: 2026-10-19T19:14:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # ARKODE
@@ -56,7 +56,12 @@ tables must share $s$ but may have $c^{\mathrm E}\ne c^{\mathrm I}$, which
 SSP IMEX methods need (Reynolds et al. 2023, §2.2). Built in:
 Kennedy–Carpenter IMEX tables of orders 3, 4, 5 with embeddings 2, 3, 4
 (ARK3(2)4L[2]SA, ARK4(3)6L[2]SA, ARK5(4)8L[2]SA, and ARK4(3)7L[2]SA1) and
-DIRK tables of orders 2–5 with embeddings 1–4. ARKStep also offers a
+DIRK tables of orders 2–5 with embeddings 1–4. The first three IMEX tables are the pairs
+constructed by [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§4–6, App. D) for
+convection–diffusion–reaction problems, each an explicit method coupled to an L-stable,
+stiffly accurate ESDIRK of stage order 2 with shared weights and abscissae; see
+[Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md).
+ARKStep also offers a
 "linear" flag (`ARKStepSetLinear`) that performs a single Newton
 iteration per implicit stage when $f^{\mathrm I}$ is linear in $y$, and a
 native interface to XBraid for MGRIT parallel-in-time integration (no
@@ -217,5 +222,6 @@ LLNL Quartz node with Intel Xeon E5-2695 v4 CPUs) unless stated
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.3, §2.5, §5.1 (Table 5), §6.1 (Fig. 3).
 - [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md) — §5.2 (ARKODE-based Brusselator experiments).
 - [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) — §1, footnote 1 (relaxation in recent ARKODE versions).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §4–6, App. D (origin of the ARK3(2)4L[2]SA, ARK4(3)6L[2]SA, ARK5(4)8L[2]SA tables).
 - [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §4 (MRIStep, N_Vector wrappers, solvers), §5–6 (Tables 2–9, Fig. 5).
 - [Fish & Reynolds (2023)](/sources/fish-2023.md) — §1, §5 (multirate controllers, separate code).

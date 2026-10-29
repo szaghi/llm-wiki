@@ -5,7 +5,7 @@ description: "Explicit Runge–Kutta methods whose coefficients let a step run i
 status: established
 aliases: [low-storage RK, LSERK, LSERK-AT, 2N methods, 2N-storage methods, 2R methods, 3S* methods, 3S*+ methods, Williamson methods, register-efficient Runge–Kutta]
 tags: [runge-kutta, explicit, low-storage, step-size-control, ssp, order-conditions]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Low-storage Runge–Kutta methods
@@ -178,6 +178,21 @@ estimate $\hat y_{n+1}-y_{n+1}$ is available directly as $(\hat u-u)/2$ in the l
 Three memory locations suffice under the low-storage assumption of Ketcheson (2010); otherwise
 one more is needed for evaluating $f$.
 
+Storage was an argument for SSP Runge–Kutta methods from the start.
+[Shu & Osher (1988)](/sources/shu-1988.md) prefer one-step Runge–Kutta methods to multi-level
+TVD time discretizations because the latter must store all levels (§II, p. 7), and they note
+that their third-order method (SSPRK(3,3)) needs at stage $i$ only $f$ of the previous stage,
+"so there is no need to store the previous $L(u^{(k)})$, lowering the storage requirement
+significantly" (p. 12).
+[Gottlieb et al. (2001)](/sources/gottlieb-2001.md) (§4.2, Eq. (4.4)) search the Williamson 2N
+form above, with $B^{\mathrm W}_1$ as free parameter and closed-form expressions for
+$A^{\mathrm W}_2,A^{\mathrm W}_3,B^{\mathrm W}_2,B^{\mathrm W}_3$ in terms of it, for
+third-order SSP methods; the best one found, at $B^{\mathrm W}_1=0.924574$ (from Gottlieb–Shu),
+has SSP coefficient 0.32, against 1 for SSPRK(3,3). They found no five-stage fourth-order
+method of the Carpenter–Kennedy 2N classes with positive Shu–Osher coefficients, and state
+that a low-storage method with negative $\beta_{ij}$ "cannot be made SSP", because the
+downwind operator $\tilde L$ destroys the low-storage property.
+
 ## Optimized low-storage pairs
 
 Ranocha et al. (2022) construct six 3S\*$_+$ [embedded pairs](/methods/embedded-runge-kutta-pair.md),
@@ -346,6 +361,8 @@ low-storage form there, is "disproportionally slow" in their memory-bound code.
 
 - [Ranocha et al. (2022)](/sources/ranocha-2022.md) — §2.1 (Algorithms 1–2), Remark 3.1, §5, §5.5.4 (Fig. 5), §6.2, §7, Appendix A (Eqs. (A.1)–(A.2)), Appendix B (Tables 12–17), Suppl. Table 1.
 - [Fekete et al. (2022)](/sources/fekete-2022.md) — §2.3 (SSPRK(10,4) low-storage implementation).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §II, pp. 7, 12 (storage of multi-level versus Runge–Kutta methods; Eq. (2.18)); read as ICASE Report 87-33.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §4.2 (Eq. (4.4), third-order 2N SSP method, no five-stage fourth-order SSP member found).
 - [Bazavov (2026)](/sources/bazavov-2026.md) — §2 (Eqs. (7)–(14), Remark 2), §3–4 (Eqs. (23)–(29), Theorems 1–2, Eqs. (42)–(47), Remark 3), §5 (Theorem 3, Eqs. (59)–(63)), §5.1 (Eqs. (69)–(70), Tables 1–4), §6 (Theorems 4–5, Eqs. (71), (80)–(82)), §6.1, §7–9 (Tables 5–10, Figs. 1–2), §10, App. D–E; arXiv v1.
 - [Doehring et al. (2024)](/sources/doehring-2024.md) — abstract, §9 (Eqs. (9.1)–(9.8)).
 - [Hedayati Nasab & Vermeire (2022)](/sources/hedayatinasab-2022.md) — §3.1 (Eqs. (19)–(21)).

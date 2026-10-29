@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is stiffly accurate when the last row of A 
 status: established
 aliases: [stiffly accurate, SA, stiffly accurate form, globally stiffly accurate, GSA, implicitly stiffly accurate, ISA]
 tags: [stiff, runge-kutta, stability, dae, asymptotic-preserving]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Stiff accuracy
@@ -63,7 +63,15 @@ L-stable ([Orlando & Bonaventura (2025)](/sources/orlando-2025.md), §3.1, Eq. (
 [Orlando et al. (2025b)](/sources/orlando-2025-b.md), §3.1, Eq. (32); both citing
 Boscarino–Russo). The Kennedy–Carpenter ESDIRK used by Orlando & Bonaventura satisfies it
 (§5; it holds only with the minus sign that their Table 1 omits, see
-[IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md)). The same expression is the
+[IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md)); the minus sign is printed in the
+ARK3(2)4L[2]SA tableau of [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (App. D).
+Kennedy & Carpenter (2003, §3.1.2) state the same mechanism in terms of the stability
+function $R=P/Q$ of an ESDIRK, with $Q=(1-\gamma z)^{s-1}$: L-stability needs the coefficients
+of $z^s$ and $z^{s-1}$ in $P$ to vanish; stiff accuracy makes the first vanish, and a zero
+first row of $A$ the second. For their additive pairs a third, coupling coefficient must also
+vanish (see [Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md)).
+They add that stiff accuracy, "when combined with I-stability, generally tolerates stiffness
+better than non-stiffly accurate L-stable methods" (§3). The same expression is the
 "condition (A)" of [Hu & Shu (2025)](/sources/hu-2025.md): the null vector of $A$ has zero
 last component, which they show equivalent to $\hat e^\top\hat A^{-1}\hat a=0$ (Remark 4.2)
 and which makes the last stage reach equilibrium as $\varepsilon\to0$ (App. 7.3); that it
@@ -124,6 +132,16 @@ embedded solution and that of stage 7 equals the solution after stage 6
 
 ## Stiff accuracy in IMEX and asymptotic-preserving schemes
 
+**Origin of the pair condition.** [Ascher et al. (1997)](/sources/ascher-1997.md) (§2,
+Eqs. (2.3)–(2.4)) single out pairs whose explicit last weight vanishes and whose implicit and
+explicit weights both equal the last rows of their tableaux, "(implying that the implicit
+scheme is stiffly accurate and $c_s=1$)", so that $y_{n+1}$ is the last stage, a structure
+"useful for very stiff problems". The pairs (1,1,1), (2,2,2) and (4,4,3) are of this form, and
+in their advection–diffusion test equation exactly these have no step restriction in the
+strongly diffusive limit (§3, Fig. 1); the paper has no name for the pair property. In the
+ISA/GSA terms below, these pairs are GSA *(compiler check, not in the sources: Eq. (2.3) sets both weight
+vectors equal to the last rows of their tableaux)*.
+
 For an IMEX pair $(A^{\mathrm E},b^{\mathrm E})$, $(A^{\mathrm I},b^{\mathrm I})$ the AP
 literature distinguishes **implicitly stiffly accurate** (ISA), $a^{\mathrm I}_{sj}=b^{\mathrm I}_j$,
 from **globally stiffly accurate** (GSA), which adds $a^{\mathrm E}_{sj}=b^{\mathrm E}_j$
@@ -148,6 +166,11 @@ different purposes:
   pair stiffly accurate, but its explicit last row differs from $b$, so it is ISA and not
   GSA. Orlando et al. (2025b, Def. 3.2) define an IMEX pair as stiffly accurate when its
   implicit part is, and use only such pairs.
+* **Algebraic variables.** Kennedy & Carpenter (2003, §8.3, after Hairer et al.) recall
+  the global error $c_1h^{p}+c_2\varepsilon h^{q+1}$ of an SDIRK of order $p$ and stage order
+  $q$ on singular-perturbation problems for the differential variables, independently of stiff
+  accuracy; for the algebraic variables it is $h^{q+1}$ (with $c_2=0$) for methods that are not
+  stiffly accurate and $h^{p}+\varepsilon h^{q}$ for stiffly accurate ones.
 * **Accuracy.** Orlando & Bonaventura (2025, §3.1) link asymptotic accuracy to L-stability
   and obtain L-stability through stiff accuracy (type I and ARS) or through the extra
   condition above (type II).
@@ -208,3 +231,5 @@ include [stage order](/definitions/stage-order.md) 2 on the stages after the sec
 - [Luan (2021)](/sources/luan-2021.md) — §1, §2.1 (homonym: "stiffly accurate" for exponential methods satisfying the stiff order conditions); arXiv v1.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §1, §7 (the same homonym).
 - [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2.1–2.2 (step value matches stage-value boundary data; mass-matrix solve skipped).
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §2 (Eqs. (2.3)–(2.4)), §3 (Fig. 1).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §3, §3.1.2 (Eqs. (28), (31)), §8.3, App. D.

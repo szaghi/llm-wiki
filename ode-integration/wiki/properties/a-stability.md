@@ -5,7 +5,7 @@ description: "Linear stability classes of one-step and linear multistep methods:
 status: established
 aliases: [A-stable, L-stable, A(alpha)-stability, L(alpha)-stability, strong A-stability, strongly A-stable, B-stability, algebraic stability, unconditional linear stability, unconditionally stable, absolute stability, stability angle]
 tags: [stability, stiff, implicit, runge-kutta]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # A-, L-, A(α)- and algebraic stability
@@ -37,6 +37,22 @@ allows $h=O(\Delta x)$; DAEs are "infinitely stiff", so A- and L-stability are
 needed there; and for the wave equation the damping of L-stable methods is a
 weakness (Farrell et al. (2021), §2.1, §4.3).
 
+## Dahlquist's original definition
+
+[Dahlquist (1963)](/sources/dahlquist-1963.md) introduces the term for linear multistep methods:
+"A $k$-step method is called A-stable, if all solutions of (1.2) tend to zero, as $n\to\infty$,
+when the method is applied with fixed positive $h$ to any differential equation of the form
+$dx/dt=qx$ (1.8), where $q$ is a complex constant with negative real part" (§1, p. 29). It is
+the asymptotic form on the open half-plane and says nothing about the imaginary axis; in a note
+added in proof he derives that an A-stable method gives bounded solutions for purely imaginary
+$\lambda$, its characteristic roots then satisfying $\lvert\zeta\rvert\le1$ with simple roots of
+unit modulus (p. 43). He motivates it by [stiff](/definitions/stiffness.md) linear systems with
+fast decaying modes, adds that "in most applications A-stability is not a necessary property",
+and calls it "an extreme formulation of the wishes in such situations" (p. 29). "The concept of
+A-stability has an obvious meaning also outside the class of linear multistep methods": the
+classical fourth-order Runge–Kutta method is not A-stable, because its factor
+$1+z+z^2/2!+z^3/3!+z^4/4!$ tends to infinity as $z\to-\infty$ (pp. 32–33).
+
 ## An asymptotic definition, for methods without a stability function
 
 [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) (Def. 5.1,
@@ -55,6 +71,8 @@ $\operatorname{Re}z<0$ (open half-plane). The convention differs from the one ab
   for which $y_n=\big(\tfrac{2+z}{2-z}\big)^{n-j}P_j(n)$ with a polynomial $P_j$ of
   degree $j$ in $n$ (Lemma 5.2), and which they prove A-stable for every order
   $2j$ (Thm. 5.1).
+- Dahlquist's (1963) definition, stated for multistep methods (section above), has the same
+  form: all solutions tend to zero for every $\lambda$ with negative real part.
 - It is weaker: it allows transient growth $\lvert y_n\rvert>\lvert y_0\rvert$ before
   the decay, through $P_j(n)$, and no bound uniform in $n$ and $z$ is given. The
   region definition guarantees $\lvert y_{n+1}\rvert\le\lvert y_n\rvert$ at every
@@ -79,7 +97,12 @@ $E(y)=\lvert D(iy)\rvert^2-\lvert N(iy)\rvert^2\ge0$ for all real $y$
 (§5, constraints (C.5)–(C.6)) impose $a_{ii}\ge0$, which places the DIRK poles
 $1/a_{ii}$ in the right half-plane, and $\lvert R(iy)\rvert\le1$ on a finite
 sample of the imaginary axis during optimization, then verify A-stability a
-posteriori (Fig. 1). Remark 3.1 of Roberts et al. (2021) reduces an
+posteriori (Fig. 1). [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§3.1.2, Eq. (29))
+use the same E-polynomial test, which they call I-stability: for an ESDIRK with
+$R=P/Q$, $Q(z)=(1-\gamma z)^{s-1}$, $E(y)=Q(iy)Q(-iy)-P(iy)P(-iy)\ge0$; an L-stable ESDIRK needs
+$\gamma>0$, I-stability and vanishing leading coefficients of $P$ (page-local $P$, $Q$).
+[Ketcheson (2019)](/sources/ketcheson-2019.md) (§3.1, arXiv v1) writes the E-polynomial as
+$E(y)=1-\lvert R(iy)\rvert^2$. Remark 3.1 of Roberts et al. (2021) reduces an
 A($\alpha$) check to the boundary of the sector. Bassenne et al. (2021, §3.2,
 Cor. 3.4.1, citing Zlatev et al.) use the same two-part test for explicit
 Runge–Kutta methods preconditioned by [TASE operators](/methods/tase-operators.md):
@@ -90,7 +113,9 @@ sampling only (Fig. 4).
 ## Facts stated by the sources
 
 * **Multistep methods:** A-stable linear multistep methods have order at most
-  2 (Dahlquist's second barrier), whereas A-stable RK methods exist of every
+  2, and the trapezoidal rule alone has the smallest error constant $\frac1{12}$ among them
+  (Dahlquist (1963), Thm. 2.2; [Dahlquist's order barrier](/results/dahlquist-second-barrier.md)),
+  whereas A-stable RK methods exist of every
   order (Farrell et al. (2021), §2.1; [Southworth et al. (2022)](/sources/southworth-2022.md),
   §2.1; [Taddei et al. (2026)](/sources/taddei-2026.md), §1.1). The multistep classes are in the
   section *Linear multistep methods* below.
@@ -184,6 +209,22 @@ sampling only (Fig. 4).
   three- and four-stage Lobatto IIIC methods have the $(0,2)$, $(1,3)$ and $(2,4)$ Padé
   approximants and three-stage Radau IIA the $(2,3)$ one (Table 4.1). See
   [Parareal](/methods/parareal.md).
+* **IMEX additive methods:** Kennedy & Carpenter (2003, §3.1.2, Eq. (31)) show that L-stability
+  of the implicit ESDIRK does not make the additive stability function
+  $R(z^{\mathrm E},z^{\mathrm I})$ ($z^{\mathrm E}$, $z^{\mathrm I}$ page-local scaled eigenvalues of
+  the explicit and implicit parts) vanish as $z^{\mathrm I}\to-\infty$: a coupling coefficient
+  of the term in $z^{\mathrm E}(z^{\mathrm I})^{s-1}$ must vanish too, and "several of the methods
+  given by Ascher et al. and Griepentrog do not account for this and consequently have
+  $R(z^{[E]},-\infty)$ depending linearly on $z^{[E]}$". Their Appendix B lists
+  $R(-\infty)=-0.732(1+z^{\mathrm E})$ for the (2,3,3) pair of
+  [Ascher et al. (1997)](/sources/ascher-1997.md), whose implicit DIRK, "the two-stage,
+  third-order DIRK scheme with the best damping properties" ($\gamma=(3+\sqrt3)/6$), has
+  $R(-\infty)=1-\sqrt3\approx-0.7321$ (Ascher et al. 1997, §2.4). The implicit parts of Ascher et
+  al.'s (2,3,2), (2,2,2), (3,4,3) and (4,4,3) pairs are L-stable DIRKs (§2.5–2.8). In their
+  multigrid test the strongly damping L-stable schemes need the fewest fine-grid iterations per
+  stage at large viscosity, while the midpoint pair (1,2,2), whose implicit part has no
+attenuation at infinity, needs more than three per stage for viscosities $\ge0.03$ (§5, Table 1).
+  See [IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md).
 * **Rosenbrock methods:** Rodas5P and its embedded method are A-stable; the
   embedded method of Rodas5 is not (Steinebach (2023), Figs. 1–2).
 * **Multirate methods:** a scalar test with one eigenvalue per partition
@@ -211,6 +252,12 @@ page-local; Eq. (4.4)). A-, A($\alpha$)- and L-type notions are then defined wit
 place of $\mathcal S$. At $z=0$ the root condition is
 [zero-stability](/definitions/zero-stability.md).
 
+**Criterion.** Dahlquist (1963, §2, Lemma 2.1) proves that a $k$-step method is A-stable iff
+$\varrho(\zeta)/\sigma(\zeta)$ is regular with non-negative real part for $\lvert\zeta\rvert>1$;
+an A-stable method has no zero of $\sigma$ outside the unit disc, but may have simple zeros on
+it. From this, no explicit $k$-step method is A-stable (Thm. 2.1), and the order of an A-stable
+one is at most 2 (Thm. 2.2; [Dahlquist's order barrier](/results/dahlquist-second-barrier.md)).
+
 **Stability angles.** [BDF](/methods/backward-differentiation-formula.md) is A-stable for $k=1,2$
 and A($\alpha$)-stable for $3\le k\le6$:
 
@@ -219,7 +266,9 @@ and A($\alpha$)-stable for $3\le k\le6$:
 | $\alpha$ | $86.03^\circ$ | $73.35^\circ$ | $51.84^\circ$ | $17.84^\circ$ |
 
 ([Akrivis et al. (2021)](/sources/akrivis-2021.md), arXiv v1, §1, for $k\le6$; Glandon et al. (2022),
-Table 6.1, for $k\le5$, in agreement.) The optimized
+Table 6.1, for $k\le5$, in agreement.) Kennedy & Carpenter (2003, §1) call BDF of order 3 and
+above "only L($\alpha$) stable", lacking A-stability but with "a vanishing stability function
+for extremely stiff eigenvalues". The optimized
 [linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md) of Glandon
 et al. reach $87.78^\circ$, $78.07^\circ$ and $73.00^\circ$ (Limm) and $87.39^\circ$,
 $77.91^\circ$ and $70.32^\circ$ (Limm-W) at orders 3–5, and are A-stable at orders 1–2 (Table
@@ -254,6 +303,13 @@ $\operatorname{diag}(b)A+A^\top\operatorname{diag}(b)-bb^\top$ positive
 semidefinite, as Akrivis, Makridakis & Smaragdakis (2025, Eq. (105)) state it
 with the matrix $(b_ia_{ij}+b_ja_{ji}-b_ib_j)$. The sources use it as follows:
 
+* **Algebraic stability and monotonicity.** With $M=\operatorname{diag}(b)A+A^\top\operatorname{diag}(b)-bb^\top$,
+  Ketcheson (2019, §1.1, Eqs. (7)–(8)) recalls that $M\succeq0$ with $b\ge0$ makes a method
+  unconditionally monotonicity preserving for the energy, and $M=0$ (symplecticity) makes it
+  unconditionally conservative; "explicit methods cannot be algebraically stable or symplectic"
+  (§1.1). See [relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md).
+* **No algebraically stable ESDIRK of stage order 2.** Kennedy & Carpenter (2003, §3) state,
+  citing Spijker, that an ESDIRK cannot be algebraically stable once stage order 2 is allowed.
 * Gauss–Legendre and Lobatto IIIC are B-stable (Farrell et al. (2021), §3.2);
   algebraic stability of collocation methods gives $L^2$-stability of the
   corresponding Padé schemes (Sun et al. (2022), §1).
@@ -283,6 +339,11 @@ with the matrix $(b_ia_{ij}+b_ja_{ji}-b_ib_j)$. The sources use it as follows:
 
 ## Qualifications
 
+* Dahlquist (1963), Farrell et al. (2021) and Koyaguerebo-Imé & Bourgault (2022) state
+  A-stability in the asymptotic open-half-plane form; the region form at the top of the page is
+  equivalent for one-step methods with rational $R$ (compiler check above). For multistep
+  methods the boundedness on the imaginary axis is the derived statement of Dahlquist's note added
+  in proof, not part of his definition.
 * Steinebach (2023, §1) calls methods with $R(\infty)=0$ "stiffly stable";
   this is not Gear's region-based definition of stiff stability, and the
   property is what the other sources call damping at infinity (with
@@ -313,6 +374,10 @@ with the matrix $(b_ia_{ij}+b_ja_{ji}-b_ib_j)$. The sources use it as follows:
 
 # Citations
 
+- [Dahlquist (1963)](/sources/dahlquist-1963.md) — §1, p. 29 (definition, motivation); §2 (Lemma 2.1, Thms. 2.1–2.2, RK4, pp. 30–33); note added in proof (p. 43).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — read as NASA/TM-2001-211038: §1 (BDF L($\alpha$)), §3 (algebraic stability of ESDIRK), §3.1.2 (Eqs. (29), (31), I-stability, additive L-stability), App. B.
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §2.4–2.8 (damping of the implicit DIRKs), §5 (Table 1).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — arXiv v1: §1.1 (Eqs. (7)–(8), algebraic stability, explicit methods), §3.1 (E-polynomial).
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §2.1 (A-, L-, B-stability, Dahlquist barrier, heuristics), §3.2 (collocation families, Lobatto IIIC tableau), §4.3.
 - [Steinebach (2023)](/sources/steinebach-2023.md) — §1, §2, §3, Figs. 1–2 (L-stability, "stiffly stable", Rodas5 and Rodas5P).
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — Defs. 3.1–3.2, Thms. 3.1–3.4, Remark 3.1, Fig. 3.1, §3.3, Thm. 5.1, §5.1–5.2, Table 5.1.

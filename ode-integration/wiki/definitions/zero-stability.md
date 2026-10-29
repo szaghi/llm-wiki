@@ -5,7 +5,7 @@ description: "A linear multistep method is zero-stable when the roots of its fir
 status: established
 aliases: [root condition, D-stability, stability at the origin, variable-step zero-stability]
 tags: [linear-multistep, stability, step-size-control]
-timestamp: 2026-10-19T13:16:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Zero-stability
@@ -21,6 +21,24 @@ stability under a Lipschitz condition)". By Dahlquist's equivalence theorem, a c
 multistep method converges on Lipschitz problems iff it is zero-stable; one-step methods have
 $\varrho(\zeta)=\zeta-1$ and are always zero-stable *(compiler remarks, not stated in the
 sources)*.
+
+## Order bounds for stable methods
+
+[Dahlquist (1963)](/sources/dahlquist-1963.md) (§1, p. 28) recalls that for given $k$ the
+polynomials $\varrho$, $\sigma$ can be chosen so that the order is $p=2k$, and no larger, but that
+the natural requirement that $y_n$ be close to $y(t_n)$ for small $h$ and any starting values
+close to the exact ones lowers the attainable order considerably: "no method with $p>k+2$ can
+possess a certain stability property, cf. [Henrici, pp. 217 and 229], which it is reasonable to
+require for any extensive numerical integration". The paper does not name the property; its own
+theorems concern A-stability ([Dahlquist's order barrier](/results/dahlquist-second-barrier.md)).
+
+[Gottlieb et al. (2001)](/sources/gottlieb-2001.md) (§5) cite Dahlquist (1963) for the
+statement that there are no linearly stable $k$-step methods of order $k+1$ for odd $k$, and that
+for even $k$ they "would require negative $\alpha_i$" (their backward-indexed coefficients), and
+call their own SSP barrier (no $k$-step SSP method of order $k+1$; see
+[linear multistep methods](/methods/linear-multistep-method.md)) "consistent with" it. In the
+1963 paper the bound on stable methods appears only as the recalled statement above, credited
+to Henrici.
 
 ## Matrix form
 
@@ -76,6 +94,9 @@ Thm. 1.1). The bounds bound different quantities; see
   [A-stability](/properties/a-stability.md).
 
 # Citations
+
+- [Dahlquist (1963)](/sources/dahlquist-1963.md) — §1, p. 28 (order $2k$, recalled bound $p\le k+2$ for stable methods).
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §5 (Prop. 5.1 and the remark citing Dahlquist).
 
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — §4 (root condition, Eqs. (4.3), (4.5)), §4.1 (variable-step products, two-step Limm at infinity), Assumption 5.2, Remarks 5.6–5.7, §6.
 - [Akrivis et al. (2024)](/sources/akrivis-2024.md) — §1.3 (zero-stability bound $1+\sqrt2$, sharp), footnote 1 (p. 9), Thm. 1.1.

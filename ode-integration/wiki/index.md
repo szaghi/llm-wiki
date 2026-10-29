@@ -18,7 +18,7 @@ $q_{\mathrm w}$ weak stage order, $R(z)$ the stability function, $\mathcal C$
 the SSP coefficient, $\phi_k$ with the factorial normalization), and the
 [update log](/log.md).
 
-**Corpus:** complete — all 118 sources of the archive ingested in six chunks. Chunk 1: two *Acta
+**Corpus:** complete — all 128 sources of the archive ingested in seven chunks. Chunk 1: two *Acta
 Numerica* reviews ([Blanes et al. 2024](/sources/blanes-2024.md) on splitting,
 [Jin 2022](/sources/jin-2022.md) on asymptotic-preserving schemes), the
 B-series paper of [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md), three
@@ -46,7 +46,7 @@ differencing for nondiagonal linear parts. Chunk 6: invariant-domain
 preserving explicit and IMEX time stepping, Lyapunov stability of Patankar
 schemes, fully discrete entropy inequalities, additive polynomial (FIMEX)
 integrators, multirate Runge–Kutta–Chebyshev, N-split operator splitting,
-Irksome extensions, dual time stepping, and learned integrators. The [bibliography](/bibliography.md) lists the works the sources cite.
+Irksome extensions, dual time stepping, and learned integrators. Chunk 7: ten founding papers — stiffness and BDF ([Curtiss & Hirschfelder 1952](/sources/curtiss-1952.md)), A-stability and the order barrier for multistep methods ([Dahlquist 1963](/sources/dahlquist-1963.md)), implicit Runge–Kutta processes ([Butcher 1964](/sources/butcher-1964.md)), the Dormand–Prince pair ([Dormand & Prince 1980](/sources/dormand-1980.md)), TVD Runge–Kutta time discretizations ([Shu & Osher 1988](/sources/shu-1988.md)) and the SSP review ([Gottlieb et al. 2001](/sources/gottlieb-2001.md)), IMEX Runge–Kutta ([Ascher et al. 1997](/sources/ascher-1997.md); [Kennedy & Carpenter 2003](/sources/kennedy-2003.md)), the exponential-integrators review ([Hochbruck & Ostermann 2010](/sources/hochbruck-2010.md)) and relaxation Runge–Kutta ([Ketcheson 2019](/sources/ketcheson-2019.md)). The [bibliography](/bibliography.md) lists the works the sources cite.
 
 ## Reading guide
 
@@ -61,7 +61,7 @@ Irksome extensions, dual time stepping, and learned integrators. The [bibliograp
    [symplecticity](/properties/symplecticity.md),
    [B-convergence](/definitions/b-convergence.md),
    [discrete maximal regularity](/results/discrete-maximal-regularity.md).
-2. **Stiffness and order reduction.** [Stage order](/definitions/stage-order.md),
+2. **Stiffness and order reduction.** [Stiffness](/definitions/stiffness.md), [stage order](/definitions/stage-order.md),
    [order reduction](/definitions/order-reduction.md) and its cure through
    [weak stage order](/definitions/weak-stage-order.md) and
    [boundary conditions for the stages](/methods/runge-kutta-stage-boundary-treatment.md), with its
@@ -82,7 +82,8 @@ Irksome extensions, dual time stepping, and learned integrators. The [bibliograp
    [FitzHugh–Nagumo](/benchmarks/fitzhugh-nagumo-model.md), [flow past a cylinder](/benchmarks/flow-past-cylinder.md),
    the [Cahn–Hilliard equation](/benchmarks/cahn-hilliard-equation.md).
 4. **Nonlinear stability and structure.**
-   [SSP Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
+   [SSP Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md), which began as
+   [total variation diminishing](/definitions/total-variation-diminishing.md) time discretizations,
    versus [strong stability](/properties/strong-stability.md) for linear seminegative
    problems, proved with the [energy method](/methods/runge-kutta-energy-method.md)
    ([diagonal Padé schemes](/results/diagonal-pade-strong-stability.md),
@@ -109,7 +110,7 @@ Irksome extensions, dual time stepping, and learned integrators. The [bibliograp
    [paired explicit (P-ERK) methods](/methods/paired-explicit-runge-kutta.md),
    [internal stability](/definitions/internal-stability.md),
    [mixed precision](/methods/mixed-precision-runge-kutta.md),
-   [embedded pairs](/methods/embedded-runge-kutta-pair.md),
+   [embedded pairs](/methods/embedded-runge-kutta-pair.md) such as the [Dormand–Prince 5(4) pair](/methods/dormand-prince-5-4.md),
    [step-size control](/methods/step-size-control.md),
    [low-storage schemes](/methods/low-storage-runge-kutta.md),
    [dense output](/methods/dense-output.md),
@@ -119,7 +120,7 @@ Irksome extensions, dual time stepping, and learned integrators. The [bibliograp
    [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and the
    [isentropic vortex](/benchmarks/isentropic-vortex.md).
 6. **Additive, partitioned and multirate methods.**
-   [IMEX and additive Runge–Kutta](/methods/imex-runge-kutta.md),
+   [IMEX and additive Runge–Kutta](/methods/imex-runge-kutta.md) (the [Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md)),
    [semi-implicit and linearly implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md),
    [GARK](/methods/generalized-additive-runge-kutta.md),
    [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md),
@@ -155,7 +156,8 @@ Irksome extensions, dual time stepping, and learned integrators. The [bibliograp
    the [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md), the
    [Korteweg–de Vries equation](/benchmarks/korteweg-de-vries-equation.md).
 9. **Linear multistep methods.** [Linear multistep methods](/methods/linear-multistep-method.md),
-   [zero-stability](/definitions/zero-stability.md), the
+   [zero-stability](/definitions/zero-stability.md),
+   [Dahlquist's order barrier for A-stable multistep methods](/results/dahlquist-second-barrier.md), the
    [BDF methods](/methods/backward-differentiation-formula.md),
    [G-stability](/properties/g-stability.md) and the
    [multiplier energy technique](/methods/multiplier-energy-technique.md) with its results on

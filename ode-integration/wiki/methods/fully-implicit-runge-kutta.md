@@ -3,9 +3,9 @@ type: Method
 title: "Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)"
 description: "Runge–Kutta methods with a full Butcher matrix built on Gauss, Radau or Lobatto nodes: Gauss of order $2s$, Radau IIA of order $2s-1$ and Lobatto IIIC of order $2s-2$, with high stage order, A-, L-, B-stability and symplecticity as the family allows; the coupled $sd$-dimensional stage system and its preconditioning decide their cost."
 status: established
-aliases: [IRK, fully implicit Runge–Kutta, Gauss–Legendre, Radau IIA, Lobatto IIIC, Lobatto IIIA, collocation methods, Radau-Right, ADER-DG ODE solver]
+aliases: [IRK, fully implicit Runge–Kutta, implicit Runge–Kutta processes, Hammer–Hollingsworth method, Gauss–Legendre, Radau IIA, Lobatto IIIC, Lobatto IIIA, collocation methods, Radau-Right, ADER-DG ODE solver]
 tags: [runge-kutta, implicit, stiff, stability, linear-algebra, geometric-integration, parallel]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)
@@ -27,6 +27,75 @@ and the second Dahlquist barrier for multistep methods, motivate their use for
 incompressible flow and MHD ([Abu-Labdeh et al. 2023](/sources/abulabdeh-2023.md), §2,
 §3.3) and for fluid–structure interaction ([Taddei et al. 2026](/sources/taddei-2026.md),
 §1.1). Their obstacle is the coupled stage system.
+
+## Origin: Butcher's Gauss processes
+
+[Butcher (1964)](/sources/butcher-1964.md) introduces the general implicit process.
+Against the tradition of explicit processes only, he allows a full matrix $A$ and names three
+classes: implicit (general $A$), semi-explicit ($a_{ij}=0$ for $i<j$) and explicit
+($a_{ij}=0$ for $i\le j$) (§1, p. 50); see [Runge–Kutta method](/definitions/runge-kutta-method.md).
+He does not use the word "collocation"; he presents the methods as processes "based on"
+Gauss–Legendre quadrature. For the quadrature system $y_1'=f(y_2)$, $y_2'=1$ a method
+reduces to the rule $h\sum_ib_if(t_n+c_ih)$, so its order there needs only $B(p)$; with
+the $c_i$ the roots of $P_s(2c-1)$ ($P_s$ the Legendre polynomial of degree $s$,
+page-local) $B(2s)$ holds (§3, pp. 55–57). Using his
+[order theorem](/results/runge-kutta-order-conditions.md) he proves:
+
+- **Theorem 8.** Order $2s$ implies $B(2s)$, $C(s)$ and $D(s)$.
+- **Theorem 9.** Given $B(2s)$, either of $C(s)$, $D(s)$ implies the other, and either
+  implies order $2s$.
+- **Theorem 10.** Given $b$ and $c$ (distinct $c_i$, nonzero $b_i$), either $C(s)$ or
+  $D(s)$ determines $A$ uniquely.
+
+So "for each Gauss–Legendre quadrature formula there corresponds a unique Runge-Kutta
+process with the same order of accuracy" (p. 55). The construction takes the nodes, solves
+$\sum_ja_{ij}c_j^{k-1}=c_i^k/k$ and $\sum_jb_jc_j^{k-1}=1/k$ for $k=1,\dots,s$ (p. 58),
+and Table 2 prints the tableaux in closed form for $s=1,\dots,5$ (orders 2 to 10). In
+registry orientation ($c$ on the left; Butcher prints it to the right of $A$):
+
+$$s=1:\ c_1=a_{11}=\tfrac12,\ b_1=1;\qquad
+s=2:\ c=\begin{pmatrix}\tfrac12-\tfrac{\sqrt3}6\\\tfrac12+\tfrac{\sqrt3}6\end{pmatrix},\
+A=\begin{pmatrix}\tfrac14&\tfrac14-\tfrac{\sqrt3}6\\\tfrac14+\tfrac{\sqrt3}6&\tfrac14\end{pmatrix},\
+b=\begin{pmatrix}\tfrac12\\\tfrac12\end{pmatrix},$$
+
+$$s=3:\ c=\begin{pmatrix}\tfrac12-\tfrac{\sqrt{15}}{10}\\\tfrac12\\\tfrac12+\tfrac{\sqrt{15}}{10}\end{pmatrix},\
+A=\begin{pmatrix}\tfrac5{36}&\tfrac29-\tfrac{\sqrt{15}}{15}&\tfrac5{36}-\tfrac{\sqrt{15}}{30}\\\tfrac5{36}+\tfrac{\sqrt{15}}{24}&\tfrac29&\tfrac5{36}-\tfrac{\sqrt{15}}{24}\\\tfrac5{36}+\tfrac{\sqrt{15}}{30}&\tfrac29+\tfrac{\sqrt{15}}{15}&\tfrac5{36}\end{pmatrix},\
+b=\begin{pmatrix}\tfrac5{18}\\\tfrac49\\\tfrac5{18}\end{pmatrix}.$$
+
+The two-stage method "is the same as one suggested by Hammer and Hollingsworth" (p. 58).
+Theorem 8 gives $C(s)$ for the Gauss methods, hence stage order at least $s$ in the sense
+of [stage order](/definitions/stage-order.md). The paper says nothing about
+A-, B- or L-stability, symplecticity or Padé approximants; those entries of the family table
+below come from later sources.
+
+**Error constants of the Gauss methods.** Butcher (1964, §4, Theorems 11–13) evaluates in
+closed form the coefficient $\Phi-1/\gamma$ of every tree with $2s+1$ vertices: a
+classification into "central" and "non-central" trees reduces each to $\pm$ the value of
+a central one, $-(s!)^4/\bigl([(2s)!]^2\gamma\bigr)$, and for the bushy tree the value is
+$-(s!)^4/\bigl((2s)!\,(2s+1)!\bigr)$. The coefficients $\epsilon_1$, $\epsilon_2$ (page-local)
+of the leading error term $h^{2s+1}\sum\epsilon F$ for the two extreme elementary
+differentials, $f^{(2s)}(f,\dots,f)$ and $J^{2s}f$, are tabulated for $s\le5$ (Table 3):
+$1/\epsilon_1=-24,\,-4320,\,-2\,016\,000,\dots$ and $1/\epsilon_2=12,\,-720,\,100\,800,\dots$ for
+$s=1,2,3$. On $y'=y$ with $s=3$ and $h=0.3$ the predicted error $0.3^7/100800\approx22\times10^{-10}$
+compares with the observed $29\times10^{-10}$ (§5). Butcher compares with Stoller and Morrison's
+processes, which estimate the stage values by another integrator and then apply Gauss
+quadrature: their error coefficients are no larger, "a tendency for the methods of this paper
+to be the less accurate", but they lack suitable starting estimators for $s\ge3$ (pp. 61–62).
+
+**Other three-stage examples.** Butcher (1964, §1, p. 51) prints an implicit order-4 method
+with $c=(0,\tfrac12,1)$, rows $(0,0,0)$, $(\tfrac5{24},\tfrac13,-\tfrac1{24})$,
+$(\tfrac16,\tfrac23,\tfrac16)$ and $b=(\tfrac16,\tfrac23,\tfrac16)$, which he calls
+"equivalent to a process due to R. F. Clippinger and B. Dimsdale and quoted by Kunz"; the
+word "Lobatto" does not appear in the paper. Its rows satisfy $C(3)$ on the nodes
+$(0,\tfrac12,1)$ (row 2: $\tfrac13\cdot\tfrac12-\tfrac1{24}=\tfrac18=c_2^2/2$ and
+$\tfrac13\cdot\tfrac14-\tfrac1{24}=\tfrac1{24}=c_2^3/3$), so it is the three-stage collocation
+method on these nodes, with the zero first row of the Lobatto IIIA entry of the table below
+*(compiler check, not in the sources)*. Next to it he prints a
+semi-explicit order-4 method with the same $b$, $c$ and rows $(0,0,0)$,
+$(\tfrac14,\tfrac14,0)$, $(0,1,0)$, which "appears to have been previously overlooked"
+and is "more convenient for practical use". His appendix proves convergence of a fixed-point
+iteration for the stage equations (Theorem 14); see
+[solving the stage equations](/methods/implicit-stage-solvers.md).
 
 ## Family properties
 
@@ -397,4 +466,5 @@ BDF.
 - [Popov (2024)](/sources/popov-2024.md) — arXiv v1: §1.1–1.2 (Eqs. (11)–(15)), §2.1–2.3 (Table 7, Figs. 11–12).
 - [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — arXiv v2: §1, §3.1 (Eqs. (3.11)–(3.13)), §5, §5.1, §6 (Table 1).
 - [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2.2, §3.1, §4.1–4.3 (Figs. 3–5, 9–11, 14–15), App. A (Eqs. (A.1)–(A.4)).
+- [Butcher (1964)](/sources/butcher-1964.md) — §1 (classes, three-stage examples, p. 51), §3 (Theorems 8–10, Table 2), §4 (Theorems 11–13, Table 3), §5, Appendix (Theorem 14).
 - [Akrivis et al. (2025)](/sources/akrivis-2025.md) — arXiv v2: §1, §2.4 (Eqs. (22)–(27)), §4.2–4.4 (Thm. 8, Props. 11–13, Eqs. (66), (87)–(111)), §5.4 (Figs. 5, 7).

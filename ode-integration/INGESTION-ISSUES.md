@@ -6,6 +6,135 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 7 — founding papers: stiffness, A-stability, implicit RK, Dormand–Prince, TVD/SSP, IMEX, exponential integrators, relaxation (2026-10-29)
+
+Sources (10): curtiss-1952, dahlquist-1963, butcher-1964, dormand-1980,
+shu-1988, ascher-1997, gottlieb-2001, kennedy-2003, hochbruck-2010,
+ketcheson-2019. Added by the human after the archive was complete; 128 of
+128 sources, 144 concept pages, 3999 bibliography entries. Every key
+already existed in the bibliography as a cited work; metadata verified on
+Crossref.
+
+### Versions read (not the version of record)
+
+- `shu-1988`: ICASE Report 87-33 / NASA CR-178304 (May 1987, "Submitted to
+  J. Comput. Phys."), 74 pages. Equation numbers on the pages are the
+  report's.
+- `kennedy-2003`: NASA/TM-2001-211038 (July 2001), 54 pages.
+- `ketcheson-2019`: arXiv:1905.09847v1 (23 May 2019).
+- The other seven are scans or typeset versions of record. The old scans
+  (1952–1980) were transcribed from page images; OCR text was not used for
+  equations or coefficients.
+
+### Contradictions
+
+None opened. Recorded side by side, attributed (no verdict):
+- Scope of the barrier for implicit SSP methods: Gottlieb et al. (2001,
+  Props. 6.2–6.3, forms without explicit terms) next to later recollections
+  ("at most first order", "only $L^2$ stable") and Ketcheson's unconditionally
+  SSP order-2 methods as recalled by Gottlieb et al. (2022)
+  (strong-stability-preserving-runge-kutta, strong-stability).
+- Strong stability of linear Runge–Kutta methods: Gottlieb et al. (2001)
+  prove RK4 (Prop. 3.3) and state $C_s=2$ as an aim; Sun & Shu's broader
+  statement kept beside it.
+- Origin of relaxation: the page's "introduced by Ketcheson (2019)" (as
+  recalled by later sources) next to Ketcheson's own credit to Dekker &
+  Verwer (1984) and later work.
+- Lawson2a order: Caliari et al. (2024) order 2; Hochbruck & Ostermann
+  (2010, Ex. 2.32) "first-order accurate by Theorem 2.17" (stiff order;
+  the tableau does not meet that theorem's assumptions, compiler check).
+- ARS(3,4,3) digits: 0.5529291479 (Ascher et al.) vs 0.5529291480…
+  (Chinomona & Reynolds).
+- DIRK tableau names (Alexander, Nørsett) vs Ascher et al.'s citations of
+  the Hairer–Wanner books; Butcher's 3-stage method credited by Butcher to
+  Clippinger and Dimsdale, "Lobatto" not used.
+- Kennedy & Carpenter: some Ascher pairs violate the extra condition for an
+  L-stable pair; Ascher et al. call only the implicit parts L-stable.
+- PID gains (0.49, −0.34, 0.10): Kennedy & Carpenter divide by the embedded
+  order, Ranocha et al. by that order plus one.
+- Gottlieb et al. (2001, §5) cite Dahlquist (1963) for the odd-$k$ order
+  bound; Dahlquist (p. 28) recalls $p\le k+2$ from Henrici.
+
+### Printed slips (on the Source pages)
+
+- **Shu & Osher (1988), scheme (2.23)** — needs a ruling. As printed in the
+  ICASE report (transcription confirmed against the page image), its Butcher
+  form gives $b^\top Ac=8/45\ne1/6$ (compiler check), so the coefficients
+  do not satisfy the third-order conditions, while the printed CFL $7/30$ is
+  reproduced exactly. The paper calls it a fifth-order method from Lambert's
+  book, p. 143. The JCP version was not read. Options: leave as a recorded
+  slip (current state), or add the JCP version to the archive so the
+  compiler can compare. Also (2.21): last term $\Delta tL(u^{(3)})$ where the
+  scheme with $u^{(2)}$ is classical RK4 with bound $137/200$ (compiler check).
+- Curtiss & Hirschfelder (1952): Eq. (16) sign, Eq. (19) sign and factor
+  2/3, Eq. (23) index, argument order in Eq. (9); footnote 2 not printed.
+- Dahlquist (1963): two equations numbered (1.5); $\mathfrak S_\lambda$ for
+  $\mathfrak S_\delta$ (p. 38); cross-reference and limit-variable slips.
+- Dormand & Prince (1980): reference numbers [12]/[13], [3]/[4]; "(3.3)"
+  used twice.
+- Gottlieb et al. (2001): missing super/subscripts (p. 102), $c$ used for
+  two quantities, name spellings.
+- Kennedy & Carpenter (2003): ARK5 explicit stability limits (0.43, 0.96)
+  in §6 vs (0.43, 0.67) in App. B; Table 8 column heading; Eq. (59) $1/k!$
+  vs $1/k$; App. C value repeated.
+- Hochbruck & Ostermann (2010): six small slips (theorem number, boundary
+  condition, recursion start, $\mathbb C^d$ vs $\mathbb C^m$, missing $h$,
+  equation reference).
+- Ketcheson (2019): index slips (pp. 3, 8), the stage-derivative series on
+  p. 8, the order of the residual in the proof of Thm. 3 (order-$p$
+  conclusion unaffected, compiler check).
+- Ascher et al. (1997): two bounds printed "≤" that hold with equality;
+  Table 1 "per step" vs "per stage"; name spellings in the references.
+
+### Identity and bibliography
+
+1. **`lambert-1972`**: Dormand & Prince and Shu & Osher print Lambert's
+   book as 1973 (Wiley imprint); folded into the existing `lambert-1972`.
+   Re-key to 1973?
+2. **`robertson-1963`** (cited by Dahlquist): no year printed; the key
+   takes the citing paper's year (bundle rule). Verify the year of the
+   *Information Processing* (UNESCO) proceedings and re-key if you want.
+3. **`budd-1999` / `iserles-1999`**: Hochbruck & Ostermann print Iserles &
+   Nørsett's title for Budd & Iserles (Phil. Trans. A 357); kept as printed
+   with a note, so a future `--dupes` run flags this pair (expected).
+4. **`hundsdorfer-2007-c`** (corrected 2nd printing) kept apart by printed
+   year, as in the chunk-6 printings policy (pending decision 2 of chunk 6).
+5. `curtiss-1952` prints no reference list: it stays on `--pending` by
+   construction (as `runge-1895` in another bundle).
+
+### Bundle fit
+
+- `shu-1988`: §II is time integration; §III–IV (flux-based ENO) are spatial
+  discretization and shock capturing, ingested only as the generator of
+  the semi-discrete system.
+
+### Candidates for new pages (kept inline)
+
+Trapezoidal rule (Dahlquist 1963 and many pages); SSP multistep methods
+and the unconditional-SSP barrier (Gottlieb et al. §5–6, now sections);
+the downwind operator; Magnus integrators (Blanes et al. 2024 + Hochbruck
+& Ostermann 2010: two sources); trigonometric (Gautschi-type) integrators
+and exponential Rosenbrock methods (long sections of exponential-integrators,
+now about 900 lines); stiffness leakage, Kaps' problem and the
+Pareschi–Russo problem (Kennedy & Carpenter only); DETEST (Dormand &
+Prince only); Butcher's principal error function.
+
+### Other follow-ups
+
+- The title of `definitions/internal-stability.md` still says "explicit
+  Runge–Kutta methods" while the page now covers DIRK stages: widen it?
+- Verdict wording and non-standard labels ("compiler remark", "not a
+  contradiction", "slip", "correct") older than chunk 7 remain on several
+  pages (SSP, symplecticity, Patankar, low-storage, fully implicit,
+  embedded, step-size control, B-series, stability function): a bundle-wide
+  sweep like the one done for turbulence-modelling is suggested.
+- Tag synonyms reported: imex/additive/gark; embedded-pair/error-estimation;
+  convection-diffusion/advection-diffusion-reaction;
+  dispersion-analysis/dispersion-relation-preserving/von-neumann-analysis.
+  Not merged.
+- Kaps' problem: the differential/algebraic labelling on the DAE page was
+  not checked against the PDF.
+
 ## Chunk 6 — final chunk: invariant domains, Patankar stability, FIMEX, mRKC, splitting, learned integrators (2026-10-20)
 
 Sources (18): pan-2022, quezadadeluna-2022, ern-2022, zhu-2024, muller-2023,

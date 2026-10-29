@@ -132,4 +132,5 @@ Chunk 3 (2026-10-19). This source is cited on:
 
 * [Boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md)
 * [Burgers equation](/benchmarks/burgers-equation.md)
+* [Kennedy–Carpenter additive Runge–Kutta methods (ARK3, ARK4, ARK5)](/methods/kennedy-carpenter-ark-methods.md)
 * [Order reduction](/definitions/order-reduction.md)

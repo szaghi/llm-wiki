@@ -5,7 +5,7 @@ description: "How the nonlinear and linear systems of implicit Runge–Kutta sta
 status: established
 aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation, frozen-coefficient predictor, block back substitution, extended block-Jacobi preconditioner, BJext, Jacobian-free Newton–Krylov, JFNK, matrix-free Newton–Krylov, inexact SDC, Jacobi iteration for Patankar systems, dual time stepping, pseudo-time stepping, pseudo-transient iteration, Rana preconditioner, IA splitting, Butcher transformed stage variables, stage-value formulation]
 tags: [implicit, linear-algebra, stiff, runge-kutta, software, parallel]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Solving the stage equations of implicit Runge–Kutta methods
@@ -67,6 +67,34 @@ methods are "rarely used" for large PDE problems (Southworth et al. §1;
   semi-implicit scheme that solves the nonlinear equation, with no visible difference
   (§3.4, Fig. 13);
   see [semi-implicit IMEX Runge–Kutta methods](/methods/semi-implicit-imex-runge-kutta.md).
+- **Functional (fixed-point) iteration: when it converges.** The founding papers iterate the
+  stage equations by substitution. [Butcher (1964)](/sources/butcher-1964.md) (Appendix,
+  Thm. 14, Eq. (13)) iterates the stage derivatives as
+  $g^{(i)}_N=f\bigl(y_n+h\sum_{j<i}a_{ij}g^{(j)}_N+h\sum_{j\ge i}a_{ij}g^{(j)}_{N-1}\bigr)$
+  (page-local $g^{(i)}_N$, the $N$-th iterate of stage derivative $i$), so stage $i$ uses the
+  current iterates of the earlier stages, and proves: if $f$ is Lipschitz with constant $L$
+  and $\lvert h\rvert<1/(L\mathsf a)$, with $\mathsf a$ (page-local) the largest row sum of
+  $\lvert a_{ij}\rvert$ over $j<i$ plus the largest row sum over $j\ge i$, the stage equations
+  have a unique solution and the iteration converges to it, by the contraction-mapping theorem
+  in the maximum norm. His numerical example, the three-stage Gauss method on $y'=y$ with
+  $h=0.3$, converges to ten decimals in 8 iterations from stage derivatives 1 (§5, p. 62).
+  [Dahlquist (1963)](/sources/dahlquist-1963.md) (p. 38) states for the trapezoidal rule that
+  fixed-point iteration converges, "roughly speaking, only if all eigenvalues of
+  $\frac12h\,\partial f/\partial x$ are located inside the unit circle", and that
+  under-relaxation extends this to eigenvalues with real part below 1; he therefore proves
+  existence and uniqueness of the implicit step by continuation in the step size, not by
+  iteration (Lemmas 3.2–3.3). He adds, crediting H. Keller, that a fixed number $j$ of
+  iterations can make the error grow without bound even when $\lvert h\,\partial f/\partial x\rvert$
+  is small: for $y'=\lambda y$ with $h\lambda$ small and purely imaginary, boundedness depends
+  on $j$ modulo 4 (pp. 42–43).
+- **Modified Newton with a residual or displacement test.** For the ESDIRK stages of their
+  additive pairs, [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§3.2.1,
+  Eqs. (34)–(36)) write stage $i$ as $Y_i=y_n+X_i+h\gamma f^{\mathrm I}(Y_i)$, with $X_i$ the
+  known explicit and implicit contributions of earlier stages (page-local), and iterate with
+  the matrix $I-h\gamma\,\partial f^{\mathrm I}/\partial y$ evaluated at an earlier iterate;
+  the iteration stops when the residual or the displacement falls below $c\epsilon$, with
+  $\epsilon$ the integration tolerance and $c\approx0.005$ (page-local $c$, $\epsilon$). For large
+  systems they point to inexact Newton methods.
 - **Newton even for linear stages.** [Zeifang & Schütz (2022)](/sources/zeifang-2022.md) use
   Newton's method on linear problems too, citing Higham for its beneficial effect on the
   achieved accuracy (§3.2.1, not shown). Their corrector stages start so close to the solution
@@ -133,6 +161,16 @@ one Newton iteration per stage, the cutoff predictor was best, by up to 20% (§5
 Roberts et al. (2021) take stage predictors for the fast micro-steps of compound-fast multirate
 methods from the dense output of the compound step (§4). Abu-Labdeh et al. (2023, §3.2) start
 Newton from the previous step's stage derivatives.
+
+Kennedy & Carpenter (2003, §3.2.2, Eqs. (37)–(38)) predict stage $i$ of step $n+1$ by
+evaluating the previous step's [dense output](/methods/dense-output.md) at
+$\theta_i=1+rc_i$, $r=h_{n+1}/h_n$ (page-local $\theta_i$), i.e. by extrapolating beyond the
+previous step; for large $r$ the trivial guess "may be more prudent". For ARK4(3)6L[2]SA they
+choose the second-order dense output for extrapolation, for stability of the extrapolant at
+$\theta>1$, and the third-order one for interpolation (§5, Tables 5–7). With ARK4(3)6L[2]SA the extrapolated
+starting values give a uniform speedup over the trivial guess for stiffness parameters from 1
+to $10^{-6}$ on a reacting-shock problem (§8.5, Table 16); see
+[Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md).
 
 **Predictors that freeze the nonlinear coefficients.** A predictor can do more than
 supply the initial guess. In the implicit finite-volume scheme
@@ -628,6 +666,19 @@ elements (§8.2–8.4; no hardware stated). See
 - **IMEX.** The explicit part is evaluated once per stage, the implicit part once per Newton
   iteration, which favours IMEX when the nonstiff term is expensive (Reynolds et al. 2023,
   §5.1.2); see [IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
+- **One operator per stage, multigrid per stage.** In an IMEX pair whose implicit part is an
+  SDIRK, the stage matrix $I-ha_{ii}J$ with the Jacobian frozen at $t_n$ is the same at every
+  stage, which is why all the recommended pairs of [Ascher et al. (1997)](/sources/ascher-1997.md)
+  are SDIRK-based (§2). On a 2D viscous Burgers-type system with diffusion implicit they solve
+  each stage's symmetric positive definite system by multigrid V(1,1) cycles to a residual
+  tolerance of 0.003 and count fine-grid iterations (§5, Table 1). They state that the strongly
+  damping L-stable pairs need the fewest iterations per stage at large viscosity and that weakly
+  damping ones need more because "lingering high-frequency modes necessitate more work on the
+  finest grid", most visibly the IMEX midpoint pair (1,2,2), which needs 3.13, 3.29, 3.68
+  iterations at viscosities 0.03, 0.04, 0.05. The printed averages over viscosities 0.01–0.05 are
+  2.58–3.90 for (2,2,2), 3.58–5.87 for (3,4,3), 4.77–7.84 for (4,4,3), 3.68–4.42 for (2,3,3) and
+  2.23–3.68 for (1,2,2). The table is introduced as iterations "at each time step" but discussed
+  per stage.
 - **Locality.** When the implicit terms are local, as for pointwise reactions, Gardner et
   al. (2022) solve each MPI task's block with a task-local Newton solver. The only global
   communication left is a final success check. Speedups over a global Newton–GMRES solve are
@@ -711,6 +762,10 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §1, §2.3 (Eqs. (31)–(34)), §4.2 (Fig. 3), §4.3.
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §4.1–4.4 (Eqs. (4.1)–(4.5)).
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §2.2, §3.4 (Eqs. (18)–(21)), §5.1.2 (Table 1).
+- [Butcher (1964)](/sources/butcher-1964.md) — §5 (p. 62), Appendix (Eq. (13), Thm. 14).
+- [Dahlquist (1963)](/sources/dahlquist-1963.md) — p. 38 (Lemmas 3.2–3.3, remark on fixed-point iteration), pp. 42–43 (iterated trapezoidal rule, remark credited to H. Keller).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §3.2.1–3.2.2 (Eqs. (34)–(38)), §5 (Tables 5–7), §8.5 (Table 16).
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §2 (SDIRK stage operator), §5 (Table 1).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.5, §5 (Eqs. (2)–(3), Table 5), §6 (Table 6), §6.1 (Fig. 3).
 - [Munch et al. (2024)](/sources/munch-2024.md) — §1–7 (Eqs. (1)–(11), Table 2, Figs. 5–18).
 - [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §3.1–3.2, §4 (Fig. 1), §5.1–5.4 (Tables 1–7, Figs. 5–7).

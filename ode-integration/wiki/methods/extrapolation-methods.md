@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Extrapolation methods (Richardson extrapolation of a base integrator)"
-description: "An extrapolation method combines several solutions of a low-order base method over one step, computed with different substep counts, so that their leading errors cancel; written as a Runge–Kutta method it has stages that are base-method steps and non-convex final weights, which the sources exploit for positivity and bound preservation."
+description: "An extrapolation method combines several solutions of a low-order base method, computed with different substep counts, so that their leading errors cancel; per step it is a Runge–Kutta method with base-method stages and non-convex weights, used for positivity and bound preservation, and global extrapolation of the trapezoidal rule gives an A-stable fourth-order procedure."
 status: established
-aliases: [Richardson extrapolation, Aitken–Neville extrapolation, Euler extrapolation, extrapolated Euler, backward Euler extrapolation, ExE-RK5, BE extrapolation, IEX4, implicit Euler extrapolation]
+aliases: [Richardson extrapolation, Richardson extrapolation of the trapezoidal rule, Aitken–Neville extrapolation, Euler extrapolation, extrapolated Euler, backward Euler extrapolation, ExE-RK5, BE extrapolation, IEX4, implicit Euler extrapolation]
 tags: [runge-kutta, explicit, implicit, positivity, ssp]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Extrapolation methods (Richardson extrapolation of a base integrator)
@@ -20,6 +20,28 @@ result as a [Runge–Kutta method](/definitions/runge-kutta-method.md) whose sta
 substep values ([Kuzmin et al. 2022](/sources/kuzmin-2022.md), §3.1.2;
 [Nüßlein et al. 2021](/sources/nusslein-2021.md), §4.1;
 [Quezada de Luna & Ketcheson 2022](/sources/quezadadeluna-2022.md), §7.1).
+
+## Global extrapolation of the trapezoidal rule and A-stability
+
+[Dahlquist (1963)](/sources/dahlquist-1963.md) (§2, p. 33) uses extrapolation over the whole
+integration rather than per step. Let $y(t,h)$ and $y(t,2h)$ (page-local) be trapezoidal-rule
+solutions with steps $h$ and $2h$. "Without using the extrapolated values in the succeeding
+computation", compute at $t=2h,4h,6h,\dots$
+
+$$y^*(t,h)=y(t,h)+\tfrac13\big(y(t,h)-y(t,2h)\big)=\tfrac13\big(4y(t,h)-y(t,2h)\big).$$
+
+He states that "one can prove" that its error is $O(h^4)$ for given $t$ and that the procedure is
+A-stable "since it is obtained by subtraction of the results of two A-stable procedures", and
+offers it as an A-stable procedure of order 4 outside the class covered by
+[his order barrier](/results/dahlquist-second-barrier.md). If the extrapolated values are used in
+the succeeding computation, A-stability is destroyed: with $R(z)=(1+z/2)/(1-z/2)$ the factor per
+interval $2h$ is $\tfrac13\big(4R(z)^2-R(2z)\big)\to\tfrac53>1$ as $z\to-\infty$. *(Compiler
+check, not in the sources: $R(z)\to-1$, so the limit is $\tfrac13(4+1)=\tfrac53$; without feedback
+the value after $m$ intervals is $\tfrac13\big(4R(z)^{2m}-R(2z)^m\big)$, which tends to zero for
+$\operatorname{Re}z<0$, as the asymptotic definition of
+[A-stability](/properties/a-stability.md) requires.)* He names the order 2 of the trapezoidal
+rule as one of its two disadvantages and says that it can be partly compensated by Richardson
+extrapolation (§3, p. 42).
 
 ## Explicit Euler extrapolation as a Runge–Kutta method
 
@@ -107,11 +129,15 @@ The structure splits the method into a positive part and a non-convex combinatio
 - "Internal SSP" is a property of the stages under a forward Euler hypothesis. It is
   unrelated to [internal stability](/definitions/internal-stability.md), the propagation of
   round-off through the stages, despite the shared word.
-- The sources use extrapolation at fixed order inside one step; order and step-size
-  variation by extrapolation tableaux, the classical use of the method, is not treated in
-  them.
+- Apart from Dahlquist's (1963) global extrapolation of the trapezoidal rule, the sources use
+  extrapolation at fixed order inside one step; order and step-size variation by extrapolation
+  tableaux is not treated in them.
+- Dahlquist (1963) gives no proof of the $O(h^4)$ error or of the A-stability of the passive
+  procedure.
 
 # Citations
+
+- [Dahlquist (1963)](/sources/dahlquist-1963.md) — §2, p. 33 (Richardson extrapolation of the trapezoidal rule, with and without feedback); §3, p. 42.
 
 - [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) — §3.1.2 (Algorithm 1, Table 1, Eqs. (36)–(37)), §4, §5.2–5.3 (Tables 3–4), App. A.2 (Eq. (A.2)); arXiv v2.
 - [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — §4.1 (Table 2), §5.2–5.4; arXiv v2.

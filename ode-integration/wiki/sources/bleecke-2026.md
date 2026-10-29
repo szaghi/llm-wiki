@@ -138,6 +138,7 @@ Chunk 2 (2026-10-19). This source is cited on:
 * [ARKODE](/software/arkode.md)
 * [Benjamin–Bona–Mahony equation](/benchmarks/benjamin-bona-mahony-equation.md)
 * [DifferentialEquations.jl](/software/differentialequations-jl.md)
+* [Dormand–Prince 5(4) pair](/methods/dormand-prince-5-4.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md)
 * [Step-size control: error-based controllers, PID filters and CFL control](/methods/step-size-control.md)

@@ -5,7 +5,7 @@ description: "G-stability of a multistep (one-leg) method: a positive definite m
 status: established
 aliases: [G-norm, G-stable, Dahlquist's equivalence theorem, one-leg method, G-stability identity]
 tags: [linear-multistep, stability, stiff, structure-preserving]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # G-stability
@@ -84,6 +84,31 @@ with the total variation of the step ratios, and their theorems assume this vari
 (Eq. (85)). The authors do not call $G_n$ a G-norm; at $r_n=1$ it is $\tfrac32$ times the
 constant-step BDF2 form $G(e_{n-1},e_n)$ above *(compiler check, not in the sources)*.
 
+## Lyapunov norms for the trapezoidal rule (Dahlquist 1963)
+
+[Dahlquist (1963)](/sources/dahlquist-1963.md) (§3) does not define G-stability, but proves
+nonlinear error bounds for the trapezoidal rule by a quadratic form in a time-dependent norm.
+With page-local symbols (the same as on [B-convergence](/definitions/b-convergence.md)): $e_n$
+the difference of two numerical solutions, $g_n=f(t_n,\hat y_n)-f(t_n,y_n)$ the corresponding
+difference of right-hand sides, and $\lVert v\rVert_n^2=v^\top\Sigma(t_n)v$ for a symmetric positive
+definite $d\times d$ matrix $\Sigma(t)$ obtained from a Lyapunov function of the error equation
+(Eq. (3.15)). The trapezoidal recursion reads $e_{n+1}-\tfrac12hg_{n+1}=e_n+\tfrac12hg_n+q_n$
+($q_n$ the perturbations, Eq. (3.14)), and the identity
+
+$$\big\lVert e+\tfrac12hg\big\rVert_n^2-\big\lVert e-\tfrac12hg\big\rVert_{n-1}^2=h\,W\qquad(3.17)$$
+
+defines a discrete analogue $W$ of the derivative of the Lyapunov function, which tends to it as
+$h\to0$ (Eq. (3.18)). Under the one-sided condition $W\le2\mu_\Sigma(\lvert e\rvert^2+\lvert\tfrac12hg\rvert^2)$
+and $h\mu'_\Sigma<1$,
+
+$$\big\lVert e+\tfrac12hg\big\rVert_n^2\le\frac{1+h\mu'_\Sigma}{1-h\mu'_\Sigma}\,\big\lVert e-\tfrac12hg\big\rVert_{n-1}^2\qquad(3.23),$$
+
+so the quantity $\lVert e_n-\tfrac12hg_n\rVert_{n-1}$ is propagated with the factor
+$e^{\rho h}$, $\rho=\frac1{2h}\log\frac{1+h\mu'_\Sigma}{1-h\mu'_\Sigma}$ (Eqs. (3.25)–(3.27)). This
+yields the bound of Theorem 3.1, bounded for all times when $\mu_\Sigma<0$, which Dahlquist calls
+"a generalization of the A-stability property" (pp. 37–41). The matrix acts on the state
+($d\times d$) of a one-step recursion, not on a $k$-step history vector as the G-norm above does.
+
 ## Where the sources use it
 
 - **BDF1–BDF2 on parabolic problems:** directly (Akrivis et al. 2021, §1;
@@ -97,6 +122,9 @@ constant-step BDF2 form $G(e_{n-1},e_n)$ above *(compiler check, not in the sour
 
 ## Qualifications
 
+- **Dahlquist (1963) does not define G-stability.** He works with a $d\times d$ Lyapunov matrix
+  for the trapezoidal rule only; the $k\times k$ G-norm and the one-leg formulation on this page
+  are those recalled by Akrivis et al. (2021).
 - **Dahlquist's own definition is not restated.** The sources state the equivalence through
   identity (G) and the remark that (A) and (G) express A-stability of a multistep method and
   G-stability of its one-leg twin. The definition at the top of this page is supplied by the
@@ -105,6 +133,8 @@ constant-step BDF2 form $G(e_{n-1},e_n)$ above *(compiler check, not in the sour
   were read as arXiv v1 preprints.
 
 # Citations
+
+- [Dahlquist (1963)](/sources/dahlquist-1963.md) — §3 (Eqs. (3.14)–(3.18), (3.23)–(3.27), Thm. 3.1, pp. 37–41).
 
 - [Akrivis et al. (2021)](/sources/akrivis-2021.md) — arXiv v1: §1, Lemma 2.1 and the remark after it, §2–3.
 - [Ma et al. (2026)](/sources/ma-2026.md) — §2.2 (Lemmas 2.1–2.2), Thm. 3.1.

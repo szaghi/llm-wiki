@@ -109,6 +109,7 @@ Chunk 3 (2026-10-19). This source is cited on:
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
+* [Kennedy–Carpenter additive Runge–Kutta methods (ARK3, ARK4, ARK5)](/methods/kennedy-carpenter-ark-methods.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Semi-implicit and linearly implicit IMEX Runge–Kutta methods](/methods/semi-implicit-imex-runge-kutta.md)
 * [Sod shock tube](/benchmarks/sod-shock-tube.md)

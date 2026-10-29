@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Backward differentiation formulas (BDF)"
-description: "The k-step BDF method differentiates the interpolant through the new and k past values: order k, A-stable for k = 1, 2 and A(alpha)-stable up to k = 6, one nonlinear solve per step; fixed- and variable-step forms, energy stability by G-norms and multipliers, step-ratio bounds, software and use in flow problems."
+description: "The k-step BDF method differentiates the interpolant through the new and k past values, introduced for k = 1 to 4 as Curtiss–Hirschfelder forward interpolation for stiff equations: order k, A-stable for k = 1, 2 and A(alpha)-stable up to k = 6, one nonlinear solve per step; fixed- and variable-step forms, energy stability by G-norms and multipliers, step-ratio bounds, software and use in flow problems."
 status: established
-aliases: [BDF, BDFk, backward difference formula, Gear's method, BDF2, variable-step BDF2, variable-coefficient BDF]
+aliases: [BDF, BDFk, backward difference formula, Gear's method, forward interpolation, BDF2, variable-step BDF2, variable-coefficient BDF]
 tags: [linear-multistep, implicit, stiff, stability, step-size-control, dae, parallel]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Backward differentiation formulas (BDF)
@@ -23,6 +23,31 @@ the sources give for its efficiency on stiff and diffusive problems
 ([Gardner et al. (2022)](/sources/gardner-2022.md), §5.1). It is the implicit member of most
 [IMEX multistep schemes](/methods/imex-linear-multistep-methods.md).
 
+## Origin: forward interpolation for stiff equations
+
+[Curtiss & Hirschfelder (1952)](/sources/curtiss-1952.md) introduce BDF1–BDF4, under the name
+"forward interpolation", in the paper that defines [stiff](/definitions/stiffness.md) equations.
+For the scalar equation $y'=(y-G(t))/a(t,y)$ ($G$, $a$ page-local, as on the stiffness page) they
+evaluate the right-hand side at the forward (new) point $t_n$ and replace $y'(t_n)$ by the
+derivative of the polynomial through $y_n,y_{n-1},\dots$: a straight line, quadratic, cubic or
+quartic (§2–3, Eqs. (8)–(10), (17), (20), (22)). Solved for $y_n$, the steps have denominators
+$1-\tfrac{a}{h}$, $1-\tfrac32\tfrac ah$, $1-\tfrac{11}6\tfrac ah$ and $1-\tfrac{25}{12}\tfrac ah$.
+The step is explicit in $y_n$ when $a$ does not depend on $y$ and implicit otherwise (p. 240).
+"Forward" refers to the new point, not to a forward-difference formula.
+
+Their justification is that the scheme "forces $y_n$ to seek out and approximate" the smooth
+solution of the stiff equation "regardless of the starting conditions and regardless of the
+direction of integration" (§2, p. 238; §3, p. 242), shown on $y'=5(y-t^2)$ in both directions
+(Figs. 3–4). A geometric reading, credited to Creighton Buck, makes each step follow the exact
+solution whose tangent at the new point passes through the previous point (§2, p. 240, Fig. 3).
+For $a$ independent of $y$ the linear scheme propagates the error with the factor
+$-b$, $b=\frac{a/h}{1-a/h}$ (Eq. (15)), and "the larger the interval size $\Delta x$, the smaller
+the value of $b$" (§3, p. 241). *(Compiler check, not in the sources: with $z=h/a$,
+$-b=1/(1-z)$, the backward-Euler [stability function](/definitions/stability-function.md).)*
+The error then tends to an asymptote proportional to $a$ times powers of $h$ (Eqs. (16), (19);
+see Qualifications). The paper gives no order, generating polynomials, zero-stability or
+stability angles, no BDF5 or BDF6, and no starting procedure.
+
 ## Coefficients
 
 With the normalization $\sigma(\zeta)=\zeta^k$:
@@ -31,10 +56,14 @@ With the normalization $\sigma(\zeta)=\zeta^k$:
 |---|---|
 | 1 | $y_{n+1}-y_n$ |
 | 2 | $\tfrac32y_{n+2}-2y_{n+1}+\tfrac12y_n$ |
+| 3 | $\tfrac{11}6y_{n+3}-3y_{n+2}+\tfrac32y_{n+1}-\tfrac13y_n$ |
+| 4 | $\tfrac{25}{12}y_{n+4}-4y_{n+3}+3y_{n+2}-\tfrac43y_{n+1}+\tfrac14y_n$ |
 | 6 | $\tfrac1{60}\big(147y_{n+6}-360y_{n+5}+450y_{n+4}-400y_{n+3}+225y_{n+2}-72y_{n+1}+10y_n\big)$ |
 
 (BDF6 from Akrivis et al. 2021, §2; BDF2 from [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md),
-§2.) [Ma et al. (2026)](/sources/ma-2026.md) (Eq. (2.2)) normalize $\alpha_k=1$ instead, which
+§2; BDF1–BDF4 are Curtiss & Hirschfelder's Eqs. (10), (17), (20), (22) multiplied out *(compiler
+check, not in the sources: each reads $\sum_j\alpha_jy_{n-j}=hf(t_n,y_n)$ with the coefficients of the row, indexed back from the new point; the rows for
+$k=1,2$ agree with the other sources)*.) [Ma et al. (2026)](/sources/ma-2026.md) (Eq. (2.2)) normalize $\alpha_k=1$ instead, which
 moves the factor to the right-hand side:
 
 $$y_{n+2}-\tfrac43y_{n+1}+\tfrac13y_n=\tfrac23hf_{n+2},\qquad y_{n+3}-\tfrac{18}{11}y_{n+2}+\tfrac9{11}y_{n+1}-\tfrac2{11}y_n=\tfrac6{11}hf_{n+3}.$$
@@ -50,10 +79,19 @@ $\vartheta_k$ (page-local) the angle of [A($\alpha$)-stability](/properties/a-st
 
 Akrivis et al. (2021, §1) give the angles for $k\le6$, citing Hairer–Wanner and Akrivis–Katsoprinakis
 for the exact values. [Glandon et al. (2022)](/sources/glandon-2022.md) (Table 6.1) give the same
-values for $k\le5$. No BDF of order above 2 is A-stable, by Dahlquist's second barrier;
+values for $k\le5$. No BDF of order above 2 is A-stable, by
+[Dahlquist's order barrier](/results/dahlquist-second-barrier.md);
 [Taddei et al. (2026)](/sources/taddei-2026.md) (§1.1) give this as their reason to prefer
-Radau IIA for high order. The error constants, normalized by $\sigma(1)$, are $1/(k+1)$ in
-modulus (Glandon et al. 2022, Table 6.1).
+Radau IIA for high order. [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§1) state that at
+third order and above BDF are "only L($\alpha$) stable; they lack A-stability but still have a
+vanishing stability function for extremely stiff eigenvalues", and that SBDF methods, which use
+BDF for the implicit part, "may be quite effective for equations whose stiff terms give rise to
+predominately real eigenvalues" but suit transients such as chemical ignition less, "because they
+lack stepsize adjustment"; their comparison with IMEX Runge–Kutta methods is on
+[IMEX linear multistep methods](/methods/imex-linear-multistep-methods.md). The error constants, normalized by $\sigma(1)$, are $1/(k+1)$ in
+modulus (Glandon et al. 2022, Table 6.1); the leading truncation coefficients $\tfrac12$,
+$\tfrac13$, $\tfrac14$, $\tfrac15$ printed by Curtiss & Hirschfelder (1952, Eqs. (14), (18),
+(21), (23)) for $k=1,\dots,4$ have these moduli *(compiler check, not in the sources)*.
 
 ## Variable steps
 
@@ -174,6 +212,15 @@ experiment uses $k>1$; the tests are backward Euler only (§6).
 
 ## Qualifications
 
+- **Curtiss & Hirschfelder's error formulas.** Their asymptotes (Eqs. (16), (19)) and error
+  recursions (Eqs. (18), (21), (23)) are derived for $a$ independent of $y$. The sign of
+  Eq. (16), the sign and coefficients of Eq. (19) and an index in Eq. (23) differ from what the
+  printed recursions give *(compiler check, not in the sources; recorded under Printed slips on
+  the [Source page](/sources/curtiss-1952.md))*; only the proportionality of the asymptotic error to
+  $a$ times powers of $h$ is used on this page. "The series converges for values of $b$ less than
+  unity" (p. 241) is printed without a modulus; for their Fig. 4, $a/h=-\tfrac15$, Eq. (15) gives
+  $b=-\tfrac16$ *(compiler check, not in the sources)*.
+
 - **Normalizations.** Akrivis et al. (2021) normalize $\sigma(\zeta)=\zeta^k$
   ($\alpha_6=147/60$), Ma et al. (2026) normalize $\alpha_k=1$, and Gardner et al. (2022) print
   CVODE's form with $+h\sum\beta$. Gander & Palitta (2024, Table 5.1) normalize $\alpha_k=1$ and
@@ -202,4 +249,6 @@ experiment uses $k>1$; the tests are backward Euler only (§6).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.1–2.2, §5.1 (Table 5).
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §5.1.3.
 - [Gander & Palitta (2024)](/sources/gander-2024.md) — arXiv v2: §5 (Eqs. (5.1)–(5.6), Table 5.1, Prop. 5.1), §6.
+- [Curtiss & Hirschfelder (1952)](/sources/curtiss-1952.md) — §2 (Eqs. (8)–(10), pp. 238–240, Figs. 3–4); §3 (Eqs. (11)–(23), pp. 240–242).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — read as NASA/TM-2001-211038: §1 (L($\alpha$)-stability of BDF, SBDF).
 - [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) — arXiv v3: §4–5 (Eqs. (9)–(19), Thm. 1, Remark 1), §7 (Eqs. (23)–(26), Remark 3), §8.1 (Table 1), §8.4.2, §9.

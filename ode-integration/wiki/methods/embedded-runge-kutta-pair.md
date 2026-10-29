@@ -5,7 +5,7 @@ description: "An embedded pair adds a second weight vector to a Runge–Kutta ta
 status: established
 aliases: [embedded pair, embedded method, Runge–Kutta pair, p(p-hat) pair, FSAL, first same as last, local extrapolation, null rule, nested Runge–Kutta methods]
 tags: [runge-kutta, step-size-control, explicit, ssp, embedded-pair]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Embedded Runge–Kutta pairs and the FSAL property
@@ -37,6 +37,21 @@ assume it, and [Reynolds et al. (2023)](/sources/reynolds-2023.md) describe the
 $p-1$" (§2.1). Several classical pairs advance the *lower* order instead: Fekete et al.
 list RKF23, Fehlberg12, Ceschino24 (second order advanced, fourth-order estimator) and
 Fehlberg45 (fourth order advanced, fifth-order estimator) among their baselines (§3.1).
+
+[Dormand & Prince (1980)](/sources/dormand-1980.md) (§1, Eq. (1.6)) design their pair for
+this mode: both formulas start from the higher-order solution, which is advanced ("RKq(p)
+instead of RKp(q) mode"), and the difference of the two serves as the estimate; they cite
+"practical results" of Shampine & Watts (1976) and Jackson, Enright & Hull (1977) for
+preferring it. Their design reverses common practice in a second way: the
+lower-order formula uses seven stages and the higher-order one six, since "It is common
+practice that the higher order formula uses more stages than the lower order formula but in
+this work we shall also allow the converse to be true" (§1–2). They write hats on the
+*higher*-order quantities, the reverse of the registry convention used on this page. The ARK
+pairs of [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) are also used in local
+extrapolation (§2.1.3), and the paper allows pairs with $\hat p=p-2$, for which "a priori
+quality criteria … does not appear to have been derived" for first-order ODEs (§2.1.3); its
+I-controller for such pairs carries an extra factor, after Tsitouras and Papakostas
+(Eq. (46)).
 
 The estimate is the local error of the embedded method, not of the advanced solution:
 $y_{n+1}-\hat y_{n+1}=O(h^{\hat p+1})$, which is why controller exponents use
@@ -72,11 +87,20 @@ baseline in their comparisons.
 Ranocha et al. find FSAL pairs "often more efficient" than non-FSAL ones, especially at loose
 tolerances, and recommend their new FSAL low-storage pairs for stability-limited hyperbolic
 problems (§6.2). [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) attribute the FSAL
-technique to Dormand and Prince (§1).
+technique to Dormand and Prince (§1). Dormand & Prince (1980, Eq. (2.1), §2) use the device
+without the name "FSAL": their seventh stage has $c_7=1$ and $a_{7j}=b_j$ for $j\le6$ (registry
+convention, $b$ the fifth-order weights, $b_7=0$), so "the first function evaluation at the nth
+step is the same as the last evaluation at the previous step", and "After the first step the
+effective number of function evaluations per step is still six although one extra function
+evaluation is lost after any step rejection". They credit the device to Fehlberg (1972) and to
+their own 1978 paper. Their §5 judges the trade worthwhile: the seventh evaluation buys a free
+parameter that gives either smaller truncation terms or larger stability regions; see
+[Dormand–Prince 5(4)](/methods/dormand-prince-5-4.md).
 
 ### FSAL and relaxation
 
-A [relaxation Runge–Kutta method](/methods/relaxation-runge-kutta.md) continues from
+[Ketcheson (2019)](/sources/ketcheson-2019.md) (§5; read as arXiv:1905.09847v1) states that the embedded error estimators of the base method can be
+used with relaxation unchanged; his experiments run fixed steps and do not use them. A [relaxation Runge–Kutta method](/methods/relaxation-runge-kutta.md) continues from
 $y^{\gamma}_{n+1}=y_n+\gamma_n(y_{n+1}-y_n)$, so the first stage of the next step is
 $f(y^{\gamma}_{n+1})$, not the FSAL value $f(y_{n+1})$. Relaxing accepted steps on top of an
 unchanged FSAL pair, as in OrdinaryDiffEq.jl and SUNDIALS, therefore costs one extra evaluation
@@ -130,6 +154,11 @@ Their examples (§3–4):
 | (5,3,3) method of Biswas et al. (2025) | $\dim\ker G_3=1$, $\dim\ker G_2=3$ | one order-3 family, three order-2 directions |
 | Bogacki–Shampine 3(2) | $\dim\ker G_2=2$ | two-parameter family of estimators |
 
+Dormand & Prince (1980, §2–3) also describe the order-4 weights of their pair as a
+one-parameter family: once $A$ and $c$ are fixed, they follow from linear conditions "given a
+value for" the seventh weight, "which is arbitrary"; they use it to "tune" the embedded process
+($\tfrac1{40}$ for RK5(4)7M).
+
 The RK4 row restates, as full rank of $G_3$, the classical result that a four-stage
 fourth-order explicit method cannot be nested with an order-3 embedding, which they cite from
 Hairer–Nørsett–Wanner; the rank is asserted, not proved (§3). Along the Dormand–Prince family
@@ -162,14 +191,41 @@ it is accurate enough.
 
 The sources agree that a usable embedding needs more than order $\hat p$:
 
+- **Not too accurate an estimator.** Dormand & Prince (1980, §1) object to Fehlberg's pairs,
+  which make the principal truncation term of the *lower*-order formula small: "Since this
+  term gives the local error estimate an artificially small term could lead to poor step size
+  control". They minimize the higher-order formula's term instead, while noting that
+  Fehlberg's practical tests indicate good results in lower-order mode for that choice, "in
+  spite of our comments in section 1" (§3).
+- **No coincidence on special problems.** Embedded pairs of high order by Fehlberg ($p>5$) and
+  by Dormand and Prince (1978) give the same approximation from both formulas on quadrature
+  problems $y'=f(t)$, so the estimate vanishes; Shampine modified Fehlberg's RKF7 to avoid
+  this, but "it is preferable to develop formulae which are free from this deficiency", and the
+  1980 pairs "are effective in the quadrature (or near quadrature) case" (Dormand & Prince
+  1980, p. 22). For their six-stage variant the two weight vectors would coincide unless a
+  $4\times4$ matrix is singular, which fixes $c_4$ (p. 24). Steinebach (2023) reports the same
+  coincidence for Rodas5 on the quadrature problem $y'=\cos t$ (below).
 - **Non-defectiveness.** Fekete et al. require the embedded method to violate *every*
   order-$p$ condition; a defective embedding has vanishing order-$p$ error coefficients, so the
   Kennedy–Carpenter–Lewis ratio $C^{(p+1)}$ diverges and the estimate is meaningless
   (§2, property (ii), Remark 2).
 - **Error measures.** Both Fekete et al. (§2) and Ranocha et al. (Suppl. Table 1) score pairs
   with the Kennedy–Carpenter–Lewis quantities: the principal error norm of the embedded method,
-  the ratios $B$ and $C$ (targets near 1), and the largest coefficient $D$.
-- **Stability of the estimator.** Ranocha et al. design embedded methods whose stability region
+  the ratios $B$ and $C$ (targets near 1), and the largest coefficient $D$. Kennedy &
+  Carpenter (2003, §2.1.3, Eqs. (7)–(11)) define them for additive pairs: with $\hat A^{(\hat p+1)}$
+  the embedded principal error norm, $B=\hat A^{(\hat p+2)}/\hat A^{(\hat p+1)}$,
+  $C=\lVert\hat\tau^{(\hat p+2)}-\tau^{(\hat p+2)}\rVert_2/\hat A^{(\hat p+1)}$ and
+  $E=A^{(\hat p+2)}/\hat A^{(\hat p+1)}$ "ideally" of order one for $\hat p=p-1$ pairs, and the
+  largest coefficient magnitude $D$ "usually kept less than 20" ($A$, $B$, $C$, $D$, $E$, $\tau$
+  page-local here, as on that paper's Source page). Their App. C lists these for the embedded
+  methods of their [ARK pairs](/methods/kennedy-carpenter-ark-methods.md).
+- **Stability of the estimator.** Dormand & Prince (1980, pp. 22–24) already ask that "the
+  region of absolute stability should be enlarged for both formulae". They answer Alt's
+  argument that "high stability for the lower order formula is unnecessary when local
+  extrapolation is used" with "an absolute stability failure on the lower order formula could
+  cause severe problems in step size control, resulting in a loss of computational efficiency.
+  Consequently it is preferable to make the stability region of the lower order formula
+  comparable to that of the higher order formula". Ranocha et al. design embedded methods whose stability region
   *contains* that of the main method, as for BS3(2)3F; they attribute the poor showing of the
   Kennedy–Carpenter–Lewis 2R pairs partly to embedded regions smaller than the main one in
   places (§5.5.4, Fig. 5). Fekete et al. likewise favour embeddings with large stability regions
@@ -349,7 +405,9 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
   not in the sources)*.
 - Fekete et al. print the Dormand–Prince pair as using "six function evaluations" (§3.1) and as
   "seven-stage" (§3.2.2); both are consistent with a seven-stage FSAL pair counted with and
-  without the reused stage *(compiler check, not in the source)*.
+  without the reused stage, as Dormand & Prince (1980, §2) themselves state ("the effective
+  number of function evaluations per step is still six"). The original name RK5(4)7M counts
+  seven stages; Ranocha et al.'s DP5(4)6F counts six effective evaluations.
 - **Suitability of the SSP embeddings for adaptive control: a qualification, not a
   contradiction.** Fekete et al. (2022) recommend their SSPRK(10,4) and SSPRK(4,3) pairs
   for adaptive control with a PID controller, on the evidence of work–precision tests at
@@ -369,12 +427,15 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
   Jacobian along the stability boundary for each recommended embedding with Fekete et al.'s
   PID gains. *(Recorded as an Open contradiction by the drafter; reclassified by the chunk-1
   deep lint after checking Ranocha et al. §5 on the PDF.)*
-- **The new Dormand–Prince embedding is not a more stable integrator.** Under local
-  extrapolation the Dormand–Prince pair advances the fifth-order solution, so the wider real
-  stability interval of the order-4 embedding printed by Belardo et al. (2026, Fig. 3) changes
-  the estimator, not the stability of the integration. The paper does not say which solution is
-  propagated for that pair, nor compare error constants, on which Dormand and Prince chose
-  their embedding *(compiler note, not in the sources)*.
+- **What a wider Dormand–Prince embedding changes.** Dormand & Prince (1980, Eq. (1.6), §1)
+  advance the fifth-order solution, so the wider real stability interval of the order-4
+  embedding printed by Belardo et al. (2026, Fig. 3) belongs to the estimator. Dormand & Prince
+  (pp. 23–24) state why the estimator's stability matters: a stability failure of the
+  lower-order formula harms step-size control (see Design criteria). Belardo et al. do not say
+  which solution is propagated for that pair. Dormand & Prince chose $c_3,c_4,c_5$ on the
+  error constants of the fifth-order formula and the free embedded weight $b_7$ (their
+  notation) to "tune" the error prediction (§3), not on the error constant of the embedding;
+  Belardo et al. compare no error constants.
 - Belardo et al. (2026) print several values that their own formulas do not reproduce, as
   checked on the Source page: the midpoint embedding's maximal real stability interval is
   given as "7" at $k=1$, while the one-parameter family gives $1/\alpha$ with
@@ -413,3 +474,6 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
 - [Saupe et al. (2025)](/sources/saupe-2025.md) — §2.2 (Eqs. (14)–(15), Algorithm 1), §4.2 (Fig. 10); arXiv v2.
 - [Popov (2024)](/sources/popov-2024.md) — §2.3 (reference solvers); arXiv v1.
 - [Pan et al. (2022)](/sources/pan-2022.md) — §2.1.2 (Eqs. (10)–(15)), §2.4, App. A (Tables A1–A4).
+- [Dormand & Prince (1980)](/sources/dormand-1980.md) — §1 (Eq. (1.6), local extrapolation, Fehlberg's choice), §2 (Eq. (2.1), seventh stage, one-parameter embedding), pp. 22–24 (quadrature failure, stability of both formulas), §3, §5.
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — §2.1.3 (Eqs. (7)–(11)), Eq. (46), App. C; read as NASA/TM-2001-211038.
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §5 (estimators under relaxation); read as arXiv:1905.09847v1.

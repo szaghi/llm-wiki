@@ -5,7 +5,7 @@ description: "Additive Runge–Kutta methods integrate y' = fE + fI with an expl
 status: established
 aliases: [IMEX, ImEx, IMEX-RK, ImEx-ARK, ARK, additive Runge–Kutta, implicit-explicit Runge–Kutta, type I IMEX, type II IMEX, type CK, type ARS, globally stiffly accurate IMEX, AIMEX, accelerated IMEX, IMEX3,2]
 tags: [imex, runge-kutta, stiff, implicit, explicit, asymptotic-preserving]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # IMEX and additive Runge–Kutta methods
@@ -16,7 +16,15 @@ $f^{\mathrm I}$ stiff, by applying an explicit tableau
 $(A^{\mathrm E},b^{\mathrm E},c^{\mathrm E})$ to $f^{\mathrm E}$ and a diagonally
 implicit tableau $(A^{\mathrm I},b^{\mathrm I},c^{\mathrm I})$ to $f^{\mathrm I}$, on one
 shared set of $s$ stage values. Each stage then needs one implicit solve in
-$f^{\mathrm I}$ only, while $f^{\mathrm E}$ is evaluated explicitly. The sources use
+$f^{\mathrm I}$ only, while $f^{\mathrm E}$ is evaluated explicitly. Two founding papers
+construct named families of pairs:
+[Ascher et al. (1997)](/sources/ascher-1997.md) build the ARS pairs for
+convection–diffusion, with convection explicit and diffusion implicit, motivated by the
+step-size restrictions of IMEX multistep schemes (§1), and
+[Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) analyse $N$-additive methods in
+general and build the
+[ARK3(2)4L[2]SA, ARK4(3)6L[2]SA and ARK5(4)8L[2]SA pairs](/methods/kennedy-carpenter-ark-methods.md)
+for convection–diffusion–reaction systems with stiff chemistry (§1–6). The sources use
 IMEX methods as production integrators
 ([Reynolds et al. 2023](/sources/reynolds-2023.md);
 [Gardner et al. 2022](/sources/gardner-2022.md)), as the base of IMEX multirate
@@ -56,16 +64,49 @@ lower triangular and $A^{\mathrm I}$ lower triangular, i.e. a
 $Y_i-h_na^{\mathrm I}_{ii}f^{\mathrm I}(t_n+c^{\mathrm I}_ih_n,Y_i)=\text{known data}$.
 With a mass matrix, $My'=f^{\mathrm E}+f^{\mathrm I}$ is treated through
 $M^{-1}f^{\mathrm E}$ and $M^{-1}f^{\mathrm I}$ with $M$ nonsingular and independent
-of $y$ (Reynolds et al. 2023, eqs. 5–6).
+of $y$ (Reynolds et al. 2023, eqs. 5–6). Kennedy & Carpenter (2003, §2.1, Eqs. (2)–(4))
+write the general $N$-additive form $y'=\sum_{\nu=1}^Nf^{[\nu]}(y)$ with one tableau per term
+on shared stage values ($[\nu]$ page-local), and use $N=2$, an explicit method plus an
+[ESDIRK](/methods/diagonally-implicit-runge-kutta.md), for their pairs (§3).
+
+**The Ascher–Ruuth–Spiteri form.** Ascher et al. (1997, §2, Eqs. (2.1a–e)) couple an
+$s$-stage DIRK for $f^{\mathrm I}$ with an $(s+1)$-stage explicit method for
+$f^{\mathrm E}$. The DIRK is padded with a zero first row and column, so that the two tableaux
+share the abscissae $c=(0,c_1,\dots,c_s)$ of the padded form, which "simplifies significantly
+the form of the order conditions … due to coupling" (§2). Each step evaluates
+$f^{\mathrm E}(y_n)$, then for $i=1,\dots,s$ solves one implicit stage in $f^{\mathrm I}$
+alone and evaluates $f^{\mathrm E}$ at the new stage. They single out two sub-families:
+
+1. explicit weights equal to the padded implicit weights (so the explicit first weight is 0),
+   giving $y_{n+1}=y_n+h\sum_{j=1}^sb_j\big(f^{\mathrm I}(Y_j)+f^{\mathrm E}(Y_j)\big)$ over the
+   $s$ implicit stages (Eq. (2.2));
+2. the last explicit weight zero and both weight vectors equal to the last rows of their
+   tableaux (Eq. (2.3)), "implying that the implicit scheme is stiffly accurate and
+   $c_s=1$", so that $y_{n+1}$ is the last stage (Eq. (2.4)), "useful for very stiff
+   problems".
+
+With the Jacobian of $f^{\mathrm I}$ frozen at $t_n$, the stage matrix
+$I-ha^{\mathrm I}_{ii}J^{\mathrm I}$ is the same for all stages iff the diagonal is constant;
+the search allowed varying diagonals, but every recommended pair is SDIRK-based "since there
+were sufficient excess degrees of freedom" (§2).
 
 **Conventions differ in the sources.** Hu & Shu (2025), Boscheri & Pareschi (2021),
 Southworth et al. (2024) and Orlando et al. (2025b) put the tilde on the explicit tableau;
 Orlando & Bonaventura (2025) put it on the implicit one; Birke et al. (2024) hat the
 explicit one; Vermeire & Hedayati Nasab (2021) hat the implicit one, and Ern & Guermond
-(2023) write superscripts e and i. This page writes superscripts E and I throughout. Names of the form
+(2023) write superscripts e and i. Ascher et al. (1997) call the explicit part $f$ and the
+implicit part $g$, put the hat on the explicit tableau and the tilde on the padded implicit
+one (§2); Kennedy & Carpenter (2003) write superscripts $[E]$ and $[I]$. This page writes
+superscripts E and I throughout. Names of the form
 $(s,\sigma,p)$ give implicit stages, explicit stages and order in the Pareschi–Russo
 convention; Ascher–Ruuth–Spiteri names count the implicit stages without the explicit
-first one. Two further labels occur: IMEX$s,p$ (explicit stages, order) in Vermeire &
+first one. In Ascher et al. (1997, §2, p. 155) $\sigma$ is the number of explicit stages
+evaluated: $\sigma=s+1$ in sub-family 1 and $\sigma=s$ in sub-family 2, where the
+last explicit stage is not needed, so (2,2,2) and (4,4,3) count $\sigma=s$ although their
+explicit tableaux are printed with $s+1$ rows. Kennedy & Carpenter (2003, §3) name their
+pairs ARK$p(\hat p)s$S[$q$]X: orders of the main and embedded methods, stages, a stability
+label, the stage order of the implicit part and other properties (see
+[Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md)). Two further labels occur: IMEX$s,p$ (explicit stages, order) in Vermeire &
 Hedayati Nasab (2021, §2.1), and IMEX$(s,p;c_{\mathrm{eff}})$ with an efficiency ratio as
 third entry in Ern & Guermond (2023, §4), which clashes with the Ascher–Ruuth–Spiteri
 triple.
@@ -94,6 +135,15 @@ Eq. (2.9)):
 - **type ARS**: type II with $\hat a=0$ and $b^{\mathrm I}_1=0$, so the implicit method
   reduces to $s-1$ stages.
 
+The two founding papers use no "type" terminology. Ascher et al. (1997, §2) pad every DIRK
+with a zero first row and column, which has the type-ARS structure *(compiler check, not in the
+sources: the padded first column and first implicit weight are zero)*, and classify their pairs by
+the sub-families 1 and 2 above; in sub-family 2 the explicit first weight need not vanish
+((2,2,2) has $b^{\mathrm E}_1=\delta\neq0$, §2.6). Kennedy & Carpenter (2003, §3) pair an
+explicit method with an ESDIRK whose first stage is explicit and whose second row is
+$(\gamma,\gamma)$, i.e. a nonzero first column, the structure the AP literature calls type II
+or type CK *(compiler check, not in the sources: $a^{\mathrm I}_{1j}=0$, $a^{\mathrm I}_{21}=\gamma\neq0$)*.
+
 A pair is *implicitly stiffly accurate* (ISA) if $a^{\mathrm I}_{sj}=b^{\mathrm I}_j$ and
 *globally stiffly accurate* (GSA) if in addition $a^{\mathrm E}_{sj}=b^{\mathrm E}_j$, which
 gives $Y_s=y_{n+1}$ (Hu & Shu 2025, footnote 1; see
@@ -118,13 +168,23 @@ formulation, but only type II stable on a test with time-dependent boundary data
 
 ## Structural views
 
+- **As a partitioned or splitting method.** Ascher et al. (1997, §1, Eq. (1.3)) write the
+  pair as a partitioned Runge–Kutta method for $y=v+w$, $v'=f^{\mathrm E}(v+w)$,
+  $w'=f^{\mathrm I}(v+w)$, where $v$ and $w$ need not be known individually, and add that IMEX
+  Runge–Kutta schemes "can also be seen as a particular class of splitting methods".
+- **Hamiltonian use.** For a separable Hamiltonian with $f^{\mathrm E}=(H_p,0)^\top$ and
+  $f^{\mathrm I}=(0,-H_q)^\top$, the IMEX midpoint pair (1,2,2) below is explicit, "can also be
+  shown to be symplectic", and is identical to the leap-frog/Verlet scheme, which Ascher et al.
+  (1997, §2.3, Example 2) derive; see [symplecticity](/properties/symplecticity.md).
 - **As a GARK method.** An ARK method is the
   [GARK method](/methods/generalized-additive-runge-kutta.md) with
   $A^{\{\mathrm I,\mathrm E\}}=A^{\{\mathrm E,\mathrm E\}}=A^{\mathrm E}$ and
   $A^{\{\mathrm E,\mathrm I\}}=A^{\{\mathrm I,\mathrm I\}}=A^{\mathrm I}$ (Chinomona &
   Reynolds 2021, §2.1, citing Sandu & Günther). Its order conditions are those of
   the two tables plus the coupling conditions in which both tableaux appear along
-  one tree.
+  one tree. Kennedy & Carpenter (2003, §2.1.1, App. A), after Araújo, Murua and
+  Sanz-Serna, state them with $N$-coloured trees and count the order conditions of an
+  $N$-additive method at each order through the generating function of their Eq. (6).
 - **As a composition of Euler steps.** The one-step IMEX Euler method of Ascher
   et al. is the composition of an explicit Euler step on $f^{\mathrm E}$ and an
   implicit Euler step on $f^{\mathrm I}$, and many second-order IMEX schemes have the
@@ -192,18 +252,32 @@ the two tableaux *(compiler check, not in the sources)*. In particular a pair wi
 $b$, $c$ and $b^\top c=\frac12$ is second order with no coupling condition, which covers the
 accelerated pairs below.
 
+Kennedy & Carpenter (2003, §2.1.2, Tables 1–4) count the coupling conditions. Without
+$b^{\mathrm E}=b^{\mathrm I}$ or $c^{\mathrm E}=c^{\mathrm I}$, $N$ methods couple without
+coupling error only to first order; with one of the two, to second order; with both, any
+number of third-order methods with the same number of stages couple without coupling error.
+With both simplifications a 2-additive method has 2, 13, 63 and 272 coupling conditions at
+orders 4, 5, 6 and 7 (Table 4), in agreement with the two order-4 coupling conditions above.
+An $N$-additive method has at most $Ns(s+1)$ independent coefficients (§2.1.2).
+
 ## Named methods in the sources
 
 - **Kennedy–Carpenter ARK methods**, the ARKODE defaults: ARK3(2)4L[2]SA,
   ARK4(3)6L[2]SA and ARK5(4)8L[2]SA, of orders 3, 4, 5 with embeddings 2, 3, 4,
-  and ARK4(3)7L[2]SA1 (Reynolds et al. 2023, §2.2). The ESDIRK part of
+  and ARK4(3)7L[2]SA1 (Reynolds et al. 2023, §2.2). The first three are constructed in
+  Kennedy & Carpenter (2003, §4–6, App. D), with shared $b$, $\hat b$, $c$, an L-stable,
+  stiffly accurate, stage-order-2 ESDIRK and error-free coupling to full order; ARK4(3)7L[2]SA1
+  is not in that paper. Coefficients, design conditions and tests are on
+  [Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md). The ESDIRK part of
   ARK5(4)8L[2]SA is ARKODE's default fifth-order DIRK, used for reference
   solutions. ARK3(2)4L[2]SA, with diagonal $\gamma=\frac{1767732205903}{4055673282236}\approx0.4358665215$
   and $c^{\mathrm I}_2=2\gamma$, is type II, stiffly accurate and has $R_\infty=0$; it is the
   third-order scheme of Orlando & Bonaventura (2025, Table 1) and the IMEX-RK(3,3,3) of
   Orlando et al. (2025b, Table 21), which both attribute to Kennedy and Carpenter (the match
-  with ARK3(2)4L[2]SA by its diagonal and abscissae is a *compiler identification, not in
-  the sources*). Orlando et al. also use a seven-stage type-II
+  with ARK3(2)4L[2]SA by its diagonal and abscissae is a *compiler check, not in
+  the sources*). Kennedy & Carpenter (2003, App. D) print for ARK3(2)4L[2]SA the same
+  $\gamma$, $c=(0,2\gamma,\frac35,1)$ and $a^{\mathrm I}_{32}=-\frac{640167445237}{6845629431997}$,
+  with the minus sign (see Qualifications). Orlando et al. also use a seven-stage type-II
   fourth-order Kennedy–Carpenter (2019) pair with $\gamma=\frac{247}{2000}$, their
   IMEX-RK(6,6,4) (Table 23).
 - **ARS(3,4,3)** of Ascher, Ruuth & Spiteri, printed to 40 digits by Chinomona &
@@ -214,7 +288,22 @@ accelerated pairs below.
   $(0,\gamma_{\mathrm{ARS}})$, $(0,\tfrac{1-\gamma_{\mathrm{ARS}}}2,\gamma_{\mathrm{ARS}})$,
   $(0,b_2,b_3,\gamma_{\mathrm{ARS}})$, where $b_2=-\tfrac32\gamma_{\mathrm{ARS}}^2+4\gamma_{\mathrm{ARS}}-\tfrac14$ and
   $b_3=\tfrac32\gamma_{\mathrm{ARS}}^2-5\gamma_{\mathrm{ARS}}+\tfrac54$; both tables share
-  $b=(0,b_2,b_3,\gamma_{\mathrm{ARS}})$. It is the base of IMEX-MRI-GARK3a/3b. The
+  $b=(0,b_2,b_3,\gamma_{\mathrm{ARS}})$. It is the base of IMEX-MRI-GARK3a/3b.
+  Ascher et al. (1997, §2.7) give the same implicit table, with $\gamma_{\mathrm{ARS}}$ the middle
+  root of $6x^3-18x^2+9x-1=0$ and the same weight formulas, and the explicit table as a
+  two-parameter family with free $a^{\mathrm E}_{42}$, $a^{\mathrm E}_{43}$ (padded indices),
+  $$\begin{aligned}
+  a^{\mathrm E}_{31}&=\bigl(1-\tfrac92\gamma+\tfrac32\gamma^2\bigr)a^{\mathrm E}_{42}+\bigl(\tfrac{11}4-\tfrac{21}2\gamma+\tfrac{15}4\gamma^2\bigr)a^{\mathrm E}_{43}-\tfrac72+13\gamma-\tfrac92\gamma^2,\\
+  a^{\mathrm E}_{32}&=\bigl(-1+\tfrac92\gamma-\tfrac32\gamma^2\bigr)a^{\mathrm E}_{42}+\bigl(-\tfrac{11}4+\tfrac{21}2\gamma-\tfrac{15}4\gamma^2\bigr)a^{\mathrm E}_{43}+4-\tfrac{25}2\gamma+\tfrac92\gamma^2,\\
+  a^{\mathrm E}_{41}&=1-a^{\mathrm E}_{42}-a^{\mathrm E}_{43},
+  \end{aligned}$$
+  with $\gamma=\gamma_{\mathrm{ARS}}$, the two free entries chosen so that the explicit
+  stability polynomial matches the exponential to fourth order, "the same (desirable)
+  stability region as all four-stage, fourth-order ERK schemes". They print
+  $a^{\mathrm E}_{42}=a^{\mathrm E}_{43}=0.5529291479$, $a^{\mathrm E}_{31}=0.3212788860$,
+  $a^{\mathrm E}_{32}=0.3966543747$, $a^{\mathrm E}_{41}=-0.105858296$; Chinomona & Reynolds
+  print $\alpha_{\mathrm{ARS}}=0.5529291480\ldots$ to 40 digits. The pair is in sub-family 1
+  ($b^{\mathrm E}=b^{\mathrm I}$) and third order. The
   type-I pairs SA DIRK(3,4,3), IMEX-RK(4,3,3) and I-IMEX(3,4,3) keep these weights and
   diagonal but make the first stage implicit ($a^{\mathrm I}_{11}=\gamma_{\mathrm{ARS}}$);
   they are tabulated on [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
@@ -227,11 +316,16 @@ accelerated pairs below.
   The commonly used $a^{\mathrm E}_{32}=1+\frac{2\sqrt2}3$ (after Persson) is Ern & Guermond's
   $\delta=-\frac23\sqrt2$ in the rows $(\gamma)$, $(\delta,1-\delta)$ (2023, Eq. (78)); the
   explicit stability polynomial is $1+z+\frac{z^2}2+a^{\mathrm E}_{32}\gamma^2z^3$ *(compiler
-  checks, not in the sources)*.
+  checks, not in the sources)*. Ascher et al. (1997, §2.5) print the explicit rows $(\gamma)$,
+  $(\delta,1-\delta)$ with $\delta=-2\sqrt2/3$, chosen "to match the terms of the exponential
+  in the stability function up to third order", which gives the stability region of a
+  three-stage third-order explicit method; the pair is second order, sub-family 1.
 - **ARS(2,2,2)**: $c=(0,\gamma,1)$, explicit rows $(\gamma)$, $(\delta,1-\delta)$,
   $b^{\mathrm E}=(\delta,1-\delta,0)$; implicit rows $(0)$, $(0,\gamma)$,
   $(0,1-\gamma,\gamma)$, $b^{\mathrm I}=(0,1-\gamma,\gamma)$; $\gamma=1-\frac{\sqrt2}2$,
   $\delta=1-\frac1{2\gamma}$ (page-local $\delta$); type ARS, GSA (Hu & Shu 2025, App. 7.2).
+  The same coefficients are printed by Ascher et al. (1997, §2.6), as a sub-family-2 pair of
+  second order.
 - **ARS(4,4,3)**: $c=(0,\frac12,\frac23,\frac12,1)$, implicit diagonal $\frac12$,
   $b^{\mathrm E}=(\frac14,\frac74,\frac34,-\frac74,0)$, $b^{\mathrm I}=(0,\frac32,-\frac32,\frac12,\frac12)$;
   GSA, third order but only uniformly second order on relaxation systems (Hu & Shu 2025,
@@ -246,9 +340,32 @@ accelerated pairs below.
   Tan et al. (2022) take it from Wang, Zhang, Wang & Shu (2020) and Tan et al. (2025) call it
   "a third order IMEX Runge-Kutta method introduced in" Ascher, Ruuth & Spiteri; its
   identification as ARS(4,4,3) rests on an entry-by-entry comparison with Hu & Shu's
-  ARS(4,4,3) data in the previous item *(compiler check)*. Both use it as the integrator of the
+  ARS(4,4,3) data in the previous item *(compiler check)*. Ascher et al. (1997, §2.8) print
+  the same explicit and implicit rows, entry by entry, as their (4,4,3) pair; they fix the
+  free choices $c_1=\frac12$, $c_3=\frac12$, $b_4=\frac12$ (unpadded implicit indices) and
+  $a^{\mathrm E}_{43}=\frac12$, choose a diagonal "close to that of the four-stage,
+  fourth-order, L-stable DIRK", and report that "no pair consisting of a three-stage, L-stable
+  DIRK and a four-stage ERK satisfying (2.3) with a combined third-order accuracy could be
+  found". Tan et al. use it as the integrator of the
   [explicit–implicit–null method](/methods/explicit-implicit-null-method.md), with an
   order asserted, not verified, in time.
+- **The other Ascher–Ruuth–Spiteri pairs** (Ascher et al. 1997, §2.1–2.4; padded tableaux,
+  shared $c$):
+  - (1,1,1), forward–backward Euler: $y_{n+1}=y_n+h\big(f^{\mathrm E}(y_n)+f^{\mathrm I}(y_{n+1})\big)$,
+    "the linear one-step IMEX" scheme, sub-family 2;
+  - (1,2,1): $Y_1=y_n+hf^{\mathrm I}(Y_1)+hf^{\mathrm E}(y_n)$,
+    $y_{n+1}=y_n+h\big(f^{\mathrm I}(Y_1)+f^{\mathrm E}(Y_1)\big)$, one extra explicit evaluation,
+    sub-family 1;
+  - (1,2,2), implicit–explicit midpoint: $c=(0,\frac12)$, explicit midpoint for
+    $f^{\mathrm E}$ and implicit midpoint for $f^{\mathrm I}$, second order "because the two
+    schemes … are each second-order accurate and" the abscissae agree; it "performs usually
+    comparably to the unreasonably popular CNAB" and has better symmetry properties; its implicit
+    part has no attenuation at infinity;
+  - (2,3,3): implicit part the two-stage third-order DIRK with
+    $\gamma=\frac{3+\sqrt3}6$, rows $(\gamma)$, $(1-2\gamma,\gamma)$, $b=(\frac12,\frac12)$, "the
+    two-stage, third-order DIRK scheme with the best damping properties", with
+    $R(-\infty)=1-\sqrt3\approx-0.7321$; explicit rows $(\gamma)$, $(\gamma-1,2(1-\gamma))$,
+    $b^{\mathrm E}=(0,\frac12,\frac12)$; third order, sub-family 1.
 - **BHR(5,5,3)\***: the Boscarino–Russo pair BHR(5,5,3) with $c_4=1.5$ instead of
   $\approx2.3402$; type CK, ISA, not GSA, $\gamma\approx0.435866521508460$,
   $c=(0,2\gamma,2\gamma,1.5,1)$, $b^{\mathrm E}=b^{\mathrm I}$; the only pair proved
@@ -415,6 +532,46 @@ See [invariant-domain-preserving time stepping](/methods/invariant-domain-preser
 
 ## Linear stability in applications
 
+**Advection–diffusion test equation.** Ascher et al. (1997, §3) analyse their pairs on
+$y'=\mathrm i\omega y+\lambda_{\mathrm d}y$ with real $\omega>0$, $\lambda_{\mathrm d}\le0$
+(page-local; the paper writes $\beta$, $\alpha$), the imaginary term explicit and the real one
+implicit, the [von Neumann](/definitions/von-neumann-stability-analysis.md) reduction of
+centred advection–diffusion. With $\xi=h\lambda_{\mathrm d}$ and $\vartheta=h\omega$
+(page-local) the step is $y_{n+1}=R\,y_n$; (1,1,1) gives
+$R=\frac{1+\mathrm i\vartheta}{1-\xi}$, unstable on the imaginary axis for every
+$\vartheta\neq0$, and (1,2,1) gives $\lvert R\rvert^2=1-\vartheta^2+\vartheta^4$ there, stable
+iff $\lvert\vartheta\rvert\le1$, a restriction that remains as $\xi\to-\infty$ (§3). Plotting
+the largest stable $\vartheta$ against $\lambda_{\mathrm d}/\omega\in[-10^2,-10^{-2}]$ (Figs.
+1–2), the sub-family-2 pairs (1,1,1), (2,2,2), (4,4,3) have no step restriction as
+$\lambda_{\mathrm d}\to-\infty$, like SBDF, while the sub-family-1 pairs keep one, "typically"
+$\vartheta<1$; (3,4,3) suggests "a
+potential advantage, in terms of allowable time steps, over a large range of parameter
+values".
+
+**Additive stability function.** Kennedy & Carpenter (2003, §2.1.5, §3.1.2, Eqs. (15),
+(26)–(31)) use the two-variable function
+$R(z_{\mathrm E},z_{\mathrm I})=\det\bigl(I-z_{\mathrm E}A^{\mathrm E}-z_{\mathrm I}A^{\mathrm I}+\mathbf 1(z_{\mathrm E}b^{\mathrm E}+z_{\mathrm I}b^{\mathrm I})^\top\bigr)/\det\bigl(I-z_{\mathrm I}A^{\mathrm I}\bigr)$
+($z_{\mathrm E}$, $z_{\mathrm I}$ page-local) and show that, for an explicit method coupled with
+an ESDIRK, $R(z_{\mathrm E},-\infty)=0$ for every $z_{\mathrm E}$ needs, besides the two
+conditions that make the ESDIRK L-stable, one coupling coefficient of the numerator to vanish.
+"Several of the methods given by Ascher et al. and Griepentrog do not account for this and
+consequently have $R(z^{[E]},-\infty)$ depending linearly on $z^{[E]}$" (§3.1.2); App. B
+lists $R(z_{\mathrm E},-\infty)=-0.732(1+z_{\mathrm E})$ for Ascher (2,3,3) and
+$0.106z_{\mathrm E}$ for Ascher (3,4,3). Ascher et al. (1997) do not claim L-stability of the
+pairs: they call the DIRK parts of (2,3,2), (2,2,2), (3,4,3), (4,4,3) L-stable and rate the
+pairs by the test equation above. Details on
+[Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md).
+
+**Stiffness leakage.** Kennedy & Carpenter (2003, §8.1) call a pair's stiffness separable
+only if the stiff terms do not "stiffen the nonstiff terms", and measure leakage by the
+largest stable Courant number as the reaction stiffness grows on a reacting-shock problem. Five
+IMEX pairs of Zhong, Yoh and Shen leak catastrophically (largest stable Courant number 0.36–0.57 in
+the column headed $\varepsilon=10^0$, 0.0 in the column headed $\varepsilon=10^6$, Table 8), Griepentrog's pairs break under
+nonequilibrium data, and the authors point to the internal stability values $-2.464$ and
+$-4.909$ of their final stages ([internal stability](/definitions/internal-stability.md); Tables 9–10), and with
+nonequilibrium data and exothermic chemistry every additive pair leaks at fixed step while
+SBDF2–4 show insignificant leakage (Tables 11, 13).
+
 The sources report pair-dependent stability failures that the scalar
 [stability function](/definitions/stability-function.md) of each tableau does not reveal:
 
@@ -423,7 +580,9 @@ The sources report pair-dependent stability failures that the scalar
   IMEX(1,1,1), (2,2,2) and (4,4,3), were reasonably stable; IMEX(1,2,1) is "very unstable"
   at the forward-Euler advective limit, shown by the eigenvalues of the step matrix
   (Buvoli & Southworth 2023, §6.3.1, Fig. 7). At diffusion coefficient 0.01 and $h=0.01$
-  only IMEX(1,1,1) and IMEX(4,4,3) did not diverge (Table 1).
+  only IMEX(1,1,1) and IMEX(4,4,3) did not diverge (Table 1). The pairs found stable are the
+  sub-family-2 pairs that Ascher et al. (1997, §3, Fig. 1) find free of a step restriction in
+  the strongly diffusive limit of their test equation.
 - **Linearly implicit splitting.** On the stiff [Van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md)
   with $f^{\mathrm I}=J_ny$, $f^{\mathrm E}=f-J_ny$ (exact Jacobian), every IMEX-RK pair tested
   needed much smaller steps to be stable than the FIMEX methods (Buvoli & Southworth 2023,
@@ -544,7 +703,13 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
   order in the second; they place it in the pre-asymptotic range $\varepsilon<h$, after
   Boscarino–Pareschi. It is also observed by
   Gottlieb et al. (2022, Remark 4, §3.5) and, for ARS(4,4,3), by Hu & Shu (2025, §6,
-  Fig. 1); Orlando & Bonaventura (2025, §5.1, Table 5) attribute part of a loss of the
+  Fig. 1). Kennedy & Carpenter (2003, §8.3a, Figs. 8–12, Table 15) observe it for every
+  additive pair of classical order above 2 on Kaps', Van der Pol and Pareschi–Russo
+  problems, worst at $\varepsilon\approx h$, and not for the IMEX-BDF schemes; stage order 2
+  of the implicit part does not raise the order of the differential variables. Ascher et al.
+  (1997, §1) do not expect their pairs to compete with SBDF when the implicit term is dominant
+  and very stiff, since "the effective order of DIRK schemes drops to 1 for very stiff ODEs".
+  Orlando & Bonaventura (2025, §5.1, Table 5) attribute part of a loss of the
   $O(\mathrm{Ma}^2)$ density scaling of their fourth-order pair below $\mathrm{Ma}=10^{-4}$
   to order reduction. See [order reduction](/definitions/order-reduction.md).
 - **Operator splitting instead of IMEX.** [Toh et al. (2026)](/sources/toh-2026.md) (§3,
@@ -564,6 +729,21 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
   explicit reactions and one Newton iteration the cutoff predictor gains up to 20%
   ([dense output](/methods/dense-output.md),
   [implicit stage solvers](/methods/implicit-stage-solvers.md)).
+- **Multigrid per stage.** On a 2D viscous Burgers-type system with diffusion implicit and
+  one multigrid solve per stage (V(1,1) cycles, residual tolerance 0.003), Ascher et al. (1997,
+  §5, Table 1) find that weakly damping pairs need more fine-grid iterations because
+  "lingering high-frequency modes necessitate more work on the finest grid": (1,2,2) needs
+  3.13–3.68 iterations for viscosity $\ge0.03$ against 2.58–2.81 for (2,2,2). The L-stable
+  (4,4,3) needs 4.77–7.84, more than (1,2,2) and (2,3,3) at every printed viscosity
+  ([implicit stage solvers](/methods/implicit-stage-solvers.md)).
+- **Against multistep IMEX.** On 1D variable-coefficient advection–diffusion (3,4,3) "is more
+  accurate and stable in this example than the popular CNAB scheme with one-third the step
+  size", and at small viscosity the third-order pairs have errors "always smaller than those
+  arising for the two-step IMEX schemes" of Ascher–Ruuth–Wetton "even though twice the time
+  step is applied" (Ascher et al. 1997, §4.1, Figs. 4–5). On a reacting-shock problem SBDF3/4
+  are slightly more efficient than the Kennedy–Carpenter pairs but have no error control
+  (Kennedy & Carpenter 2003, §8.2, §9); see
+  [IMEX linear multistep methods](/methods/imex-linear-multistep-methods.md).
 - **Task-local nonlinear solves.** When the implicit part is pointwise local (e.g.
   reactions), a custom nonlinear solver can solve each MPI task's block
   independently. On a stiff advection–reaction Brusselator with ARKODE's default
@@ -602,7 +782,16 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
   $a^{\mathrm I}_{32}$ is printed as $+\frac{640167445237}{6845629431997}$; the row then
   sums to 0.787 instead of $c_3=\frac35$ and $R_\infty\approx0.957$ instead of the stated
   $0$. With a minus sign the row sum is $\frac35$ and $R_\infty\approx0$ *(compiler
-  check)*, as in the same tableau printed by Orlando et al. (2025b, Table 21).
+  check)*, as in the same tableau printed by Orlando et al. (2025b, Table 21) and in the
+  ARK3(2)4L[2]SA tableau of Kennedy & Carpenter (2003, App. D).
+- **Digits of ARS(3,4,3).** Ascher et al. (1997, §2.7) print
+  $a^{\mathrm E}_{42}=a^{\mathrm E}_{43}=0.5529291479$; Chinomona & Reynolds (2021, §4.1) print
+  a 40-digit value beginning $0.5529291480$. Both are recorded above.
+- **Attributions of the implicit parts.** Ascher et al. (1997, §2.4–2.5, §2.7) take the
+  two-stage third-order DIRK from Hairer–Nørsett–Wanner (p. 207) and the stiffly accurate
+  two- and three-stage DIRKs from Hairer–Wanner (p. 106); the names attached to these DIRKs on
+  [diagonally implicit Runge–Kutta](/methods/diagonally-implicit-runge-kutta.md) come from
+  other sources.
 - **Type II with ill-prepared data.** Orlando & Bonaventura's Table 1 pair is type II
   non-ARS, hence by their own §3.1 only weakly AP, yet their colliding-pulse and
   density-layering tests start from pressure data that are not well prepared; the paper
@@ -639,6 +828,8 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
 
 # Citations
 
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §1 (Eq. (1.3)), §2 (Eqs. (2.1)–(2.4), p. 155 naming), §2.1–2.8 (pairs (1,1,1) to (4,4,3), Example 2), §3 (Eqs. (3.1)–(3.2), Figs. 1–2), §4.1 (Figs. 3–5), §5 (Table 1).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §1, §2.1 (Eqs. (2)–(6)), §2.1.2 (Tables 1–4), §2.1.5, §3 (naming), §3.1.2 (Eqs. (26)–(31)), §4–6, §8.1 (Tables 8–13), §8.2–8.3 (Figs. 8–12, Table 15), §9, App. B, App. D.
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §2.2 (eqs. 5–7), §3.4, §5.1.2 (Table 1), §5.2 (Fig. 3).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.3, §2.5, §6.1 (Fig. 3).
 - [Chinomona & Reynolds (2021)](/sources/chinomona-2021.md) — §2.1, §4.1 (ARS(3,4,3)).

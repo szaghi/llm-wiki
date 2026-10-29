@@ -133,6 +133,7 @@ Chunk 3 (2026-10-19). This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
 * [Backward differentiation formulas (BDF)](/methods/backward-differentiation-formula.md)
+* [Dahlquist's order barrier for A-stable multistep methods](/results/dahlquist-second-barrier.md)
 * [Energy stability of the six-step BDF method](/results/bdf6-energy-stability.md)
 * [G-stability](/properties/g-stability.md)
 * [Linear multistep methods](/methods/linear-multistep-method.md)

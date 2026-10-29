@@ -218,6 +218,7 @@ duplicates or unparseable items.
 
 Chunk 2 (2026-10-19). This source is cited on:
 
+* [Dormand–Prince 5(4) pair](/methods/dormand-prince-5-4.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Runge–Kutta order conditions and simplifying assumptions](/results/runge-kutta-order-conditions.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)

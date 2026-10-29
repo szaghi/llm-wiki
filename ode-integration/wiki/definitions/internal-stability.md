@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Internal stability of explicit Runge–Kutta methods"
-description: "Internal stability is the stability of perturbations introduced at the stages, by round-off or inexact evaluations, as they propagate through the remaining stages of one step; it is measured by internal stability polynomials and an amplification factor, depends on the realization and not only on the stability polynomial, and limits many-stage and low-precision methods."
+description: "Internal stability is the stability of perturbations introduced at the stages, by round-off or inexact evaluations, as they propagate through the remaining stages of one step; measured by internal stability polynomials and an amplification factor, it depends on the realization and limits many-stage and low-precision methods; for DIRK-type stages it is a stage-wise stability function at the stiff limit."
 status: established
 aliases: [internal stability polynomials, internal amplification factor, maximum internal amplification factor, round-off propagation within a step, stage-wise stability]
 tags: [stability, explicit, runge-kutta, round-off]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Internal stability of explicit Runge–Kutta methods
@@ -56,6 +56,40 @@ as the method's internal stability (§2, Eq. (13)). See
 The vector $(I-zA)^{-1}\mathbf 1$ that gives the stage values of the linear test
 problem, called the internal stability function in multirate analysis, is a related
 but different object ([Roberts et al. 2021](/sources/roberts-2021.md), §3.4).
+
+## Internal stability of diagonally implicit stages
+
+For implicit methods the word names a stage-wise stability function at the stiff limit.
+[Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§3.1.2, Eq. (30), after Verwer)
+define for a DIRK-type implicit tableau the **internal stability function of stage $n$**,
+
+$$R^{(n)}_{\mathrm{int}}(z)=\frac{\det\bigl(I-zA_{[n]}+z\mathbf 1a_{[n]}^\top\bigr)}{\det\bigl(I-zA_{[n]}\bigr)},$$
+
+with $A_{[n]}$ the leading $n\times n$ block of $A$ and $a_{[n]}=(a_{n1},\dots,a_{nn})^\top$ its
+$n$-th row (page-local symbols; the paper writes calligraphic $\mathcal A$, $\mathcal B$),
+i.e. the stability function of the $n$-stage method whose weights are row $n$ of $A$. On
+$y'=\lambda y$ it is the factor $Y_n=R^{(n)}_{\mathrm{int}}(z)y_n$, the $n$-th component of
+the vector $(I-zA)^{-1}\mathbf 1$ above *(compiler check, not in the sources: for lower-triangular
+$A$, $Y_n=\bigl(1+za_{[n]}^\top(I-zA_{[n]})^{-1}\mathbf 1\bigr)y_n$, and this factor equals the
+determinant ratio)*. The quantity of concern is $R^{(n)}_{\mathrm{int}}(-\infty)$, the
+amplification of stage $n$ for infinitely stiff components:
+
+- SDIRKs have $R^{(n)}_{\mathrm{int}}(-\infty)=0$ at every stage; ESDIRKs, with $a_{11}=0$,
+  generally do not (§3.1.2). Pairs with a zero-padded implicit tableau (Ascher et al., Calvo
+  et al.) have $R^{(n)}_{\mathrm{int}}(-\infty)=0$ at every stage, at the price of stage order 1
+  because $a_{21}\neq a_{22}$ (§8.1).
+- The ESDIRKs of the [Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md)
+  have values of modulus at most 1 (e.g. $+1,-1,-0.806$ for ARK3(2)4L[2]SA), while
+  Griepentrog's three- and four-stage methods reach $-2.464$ at stage 3 and $-4.909$ at
+  stage 4 (Tables 10, 12).
+- Griepentrog's methods break on a stiff reacting-shock problem with nonequilibrium initial
+  data (largest stable Courant number 0.37 and 0.44 at $\varepsilon=10^0$, 0.0 at
+  $\varepsilon=10^{-8}$, Table 9). Kennedy & Carpenter point to the final-stage values of
+  Table 10 and write: "If internal stability of the implicit method is a principal contributor
+  to the breakdown of these methods, it is not surprising that the zero padded A matrices found
+  in the methods of Ascher et al. and Calvo et al. do not leak stiffness badly" (§8.1); see [IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md).
+- A zero first column of the implicit tableau means that the initial value of an algebraic
+  variable is not propagated through the stages, which helps on Kreiss's problem (§3.1.2).
 
 ## Amplification factor and the round-off test
 
@@ -178,4 +212,5 @@ three-stage methods remains a hypothesis of that source *(compiler remark, not i
 - [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §2 (Eq. 13, internal stability by construction).
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §3.4 (stage-value internal stability function, contrast).
 - [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — internal stability not analysed for 16-stage methods.
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §3.1.2 (Eq. (30)), §8.1 (Tables 9–10, 12).
 - [Kemm (2024)](/sources/kemm-2024.md) — §1, §3.1, §4.1, §4.4, §5, Figs. 4–5, 12 ("unstable first stage value" thesis).

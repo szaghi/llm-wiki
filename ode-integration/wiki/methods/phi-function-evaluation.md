@@ -3,9 +3,9 @@ type: Method
 title: "Evaluating φ-functions: Leja interpolation, Krylov and related methods"
 description: "An exponential integrator spends its time on actions of φ-functions on vectors; the page compares Krylov projection (phipm, KIOPS, EPIC), polynomial interpolation at Leja points, structure-exploiting evaluation (FFT, μ-mode, diagonal operators) and dense precomputation by auxiliary time integration, with the cost models, tolerances and measured speed-ups the sources report."
 status: established
-aliases: [matrix-function action, φ-function action, phi-function evaluation, Leja interpolation, Leja method, Krylov exponential, KIOPS, phipm, phipm_simul_iom, EPIC, μ-mode integrator, auxiliary-problem integration, precomputed ETD matrices, Horner Taylor recursion]
+aliases: [matrix-function action, φ-function action, phi-function evaluation, Leja interpolation, Leja method, Krylov exponential, KIOPS, phipm, phipm_simul_iom, EPIC, Chebyshev approximation, Arnoldi approximation, contour integral, Expokit, EXPINT, μ-mode integrator, auxiliary-problem integration, precomputed ETD matrices, Horner Taylor recursion]
 tags: [exponential, linear-algebra, stiff, software]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Evaluating φ-functions: Leja interpolation, Krylov and related methods
@@ -63,7 +63,15 @@ order of the integrator. Deka & Einkemmer use the Krylov-based EPIC library (Tok
 **Krylov-friendly method design.** EPIRK methods are built so that one Krylov basis can be
 reused, and so that higher-index $\phi_k$, whose Krylov approximations converge faster,
 appear in the later stages. Those design conditions are redundant for interpolation
-methods (Deka & Einkemmer 2022, §5.3, after Tokman & Loffeld 2010).
+methods (Deka & Einkemmer 2022, §5.3, after Tokman & Loffeld 2010). The same concern shapes
+the reformulation of exponential Rosenbrock methods by
+[Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) (§2.4, Eq. (2.48)): every stage is
+a perturbed exponential Rosenbrock–Euler step whose corrections $D_j$ are small in norm, so
+"only one computationally expensive Krylov approximation will be required in each time
+step, namely that involving" $f(y_n)$, and in their
+exponential Adams methods the backward differences $\nabla^jG_n=\mathcal O(h^j)$ make the
+higher-order terms cheap to approximate (§2.5; see
+[exponential integrators](/methods/exponential-integrators.md)).
 
 ## Polynomial interpolation at Leja points
 
@@ -79,7 +87,13 @@ $p_m=p_{m-1}+d_m\pi_{m-1}$, where $\pi_m$ is the nodal product and $d_m$ are div
 differences (page-local). Each new point therefore costs one more matrix–vector product,
 whereas Chebyshev interpolation would need re-evaluation at all nodes. The spectrum is
 mapped onto $K$ by a shift of $\Lambda/2$ and a scale of $\Lambda/4$, where $\Lambda$
-(page-local) estimates the extreme eigenvalue of the Jacobian.
+(page-local) estimates the extreme eigenvalue of the Jacobian. Hochbruck & Ostermann (2010,
+§4.3) describe the same construction (reference Leja points on $[-2,2]$ with $\xi_0=2$, the
+Newton form as a two-term recurrence, Eq. (4.6)), credit it to Caliari, Vianello &
+Bergamaschi (2004) and, for $\phi_k$ with $k>1$, to Caliari (2007), recall superlinear
+convergence on confocal ellipses and sub-stepping (Caliari & Ostermann 2009), and note that
+the method needs a priori information on the field of values, for instance from Gerschgorin
+discs.
 
 **Matrix-free variant** (Deka & Einkemmer 2022, contribution, §2.3, §3.1, §4.2.1). Jacobian–vector
 products are forward finite differences of the right-hand side. $\Lambda$ comes from power
@@ -123,6 +137,48 @@ hardware is not stated:
 
 The ranking is therefore scheme-dependent. The introduction's "up to a factor of three"
 understates the body's factors of 6, 8 and 6.4 (§1 versus §4.2, §5.2).
+
+## Error bounds and further approaches (Hochbruck & Ostermann 2010, §4)
+
+Hochbruck & Ostermann's survey recalls the convergence theory behind the polynomial and Krylov
+approaches; the bounds below are for $e^{hL}v$, with $\varrho$ the half-width or length of the
+spectral interval and $m$ the number of terms or Krylov steps (page-local $\varrho$, $m$).
+
+- **Chebyshev series** (§4.1). Truncated Chebyshev expansions, evaluated by the Clenshaw
+  algorithm, need the spectrum in advance. For $-L$ Hermitian positive semidefinite with
+  spectrum in $[0,\varrho]$ the error after $m\le h\varrho$ terms is at most
+  $2e^{-\beta m^2/(h\varrho)}\big(1+\sqrt{h\varrho\pi/(4\beta)}\big)+2\delta^{h\varrho}/(1-\delta)$
+  with $\beta=2/(1+\sqrt5)\approx0.618$, $\delta=e^\beta/(2+\sqrt5)\approx0.438$ (Thm. 4.1, after
+  Stewart & Leyk 1996; page-local $\beta$, $\delta$), a bound they call not optimal (Remark
+  4.2); a skew-Hermitian bound is Thm. 4.3 (after Lubich 2008). General matrices need Faber
+  series.
+- **Krylov (Arnoldi) approximation** (§4.2). With the Arnoldi basis $V_m$ and Hessenberg matrix
+  $\mathsf H_m$ of $hL$ and $v$ (page-local), $\phi(hL)v\approx V_m\phi(\mathsf H_m)e_1$ as printed (Eq. (4.5)),
+  which they derive as a Galerkin approximation of the Cauchy-integral representation
+  (Eqs. (4.2)–(4.5)); the small $\phi(\mathsf H_m)e_1$ is computed by diagonalization, Padé or
+  contour methods. "A remarkable property is that the convergence is always superlinear", but
+  its onset depends on the field of values: for $-L$ Hermitian positive semidefinite with
+  spectrum in $[0,\varrho]$ the superlinear regime starts at $m\ge\sqrt{\varrho h}$
+  (Thm. 4.4, after Hochbruck & Lubich 1997), for skew-Hermitian $L$ with spectrum in an
+  interval of half-length $\varrho$ only at $m\ge\varrho h$ (Thm. 4.5, with bound
+  $8e^{-(\varrho h)^2/(4m)}(e\varrho h/(2m))^m$), and for a field of values in a wedge of
+  half-angle $\theta$ at $m\ge(h\lVert L\rVert)^{\pi/(2(\pi-\theta))}$ (page-local $\theta$).
+  Restarted variants exist (Eiermann & Ernst 2006; Niehoff 2007).
+- **Contour integrals and rational methods** (§4.4). "A major disadvantage of polynomial
+  approximations is that the required degree of the polynomials grows with the norm of $A$";
+  when shifted systems $(zI-hL)$ are cheap to solve, rational approximations are the
+  alternative. The best rational approximation of the exponential on the negative real line
+  "converges geometrically with rate $1/9.28903\ldots$" (as recalled from Schmelzer & Trefethen
+  2007). They list rational and extended Krylov methods and the Laplace-inversion method of
+  López-Fernández, Palencia & Schädle (2006), a trapezoidal rule on a hyperbolic contour with an
+  error bound decaying exponentially in the number of nodes (Thm. 4.6); for $\phi_k$ it needs one
+  linear solve with $zI-hL$ per node (López-Fernández 2009).
+- **Software in 2010** (§4.5): exp4 (Hochbruck, Lubich & Selhofer 1998; variable step,
+  MATLAB and C, dense or Krylov), EXPINT (Berland, Skaflestad & Wright; MATLAB, constant step,
+  φ-functions by extended scaling and squaring), Expokit (Sidje 1998; MATLAB and Fortran,
+  Krylov), the SPARSKIT routines EXPPRO and PHIPRO (Saad), and phipm (Niesen & Wright; MATLAB,
+  Krylov). "Most of the mathematical software for exponential integrators is still in its
+  infancy."
 
 ## Exploiting structure: FFT and μ-mode products
 
@@ -212,6 +268,11 @@ future work (§5.3); Caliari et al. (2024, §1) list rational Krylov and others.
   $1.28\times10^{-6}$; and the auxiliary step $1.25\times10^{-6}$ of the Fokker–Planck runs
   exceeds the maximal stable predictor–corrector step $1.2\times10^{-6}$ of their Table 1, while
   the text does not say which of the two integrators was used.
+- Hochbruck & Ostermann (2010, p. 268) write that the wedge case $\theta=0$ corresponds to
+  Theorem 4.4 "while Theorem 4.4 treats the case $\theta=\pi/2$"; the onset exponent
+  $\pi/(2(\pi-\theta))$ equals $\tfrac12$ at $\theta=0$ and $1$ at $\theta=\pi/2$, the onsets
+  of their Theorems 4.4 and 4.5 respectively, so the second reference is read as Theorem 4.5
+  *(compiler check, not in the sources)*.
 - Printed slips: Luan (2021, §5) lists the scalings of one expRK5s10 call as
   $[c_9,c_{10},c_8]$, which is not increasing as the routine requires. Deka & Einkemmer
   (2022) use $\alpha$ both for the eigenvalue estimate (§2.3) and for a controller
@@ -224,4 +285,5 @@ future work (§5.3); Caliari et al. (2024, §1) list rational Krylov and others.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §5.3–5.5, §6.3 (single KIOPS projection, embedded estimate with two calls, Krylov dense output).
 - [Permyakova & Goldobin (2025)](/sources/permyakova-2025.md) — §2 Eqs. 5–9 (auxiliary problems, cancellation), §3.1–3.3 (auxiliary steps, sparsity, Figs. 2, 5), §4, App. A Eqs. A.1–A.7 (Horner recursion, truncation, strong vs soft accuracy, Figs. 10–11); arXiv v2.
 - [Buvoli & Minion (2024)](/sources/buvoli-2024.md) — §3.1, §7 (diagonal operators, methods cited); arXiv v2.
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §2.4 Eq. (2.48), §2.5 Eq. (2.70) (Krylov-motivated reformulations); §4.1 Thms. 4.1, 4.3, Remark 4.2 (Chebyshev); §4.2 Eqs. (4.2)–(4.5), Thms. 4.4–4.5, p. 268 (Krylov); §4.3 Eq. (4.6) (Leja); §4.4 Thm. 4.6 (contour integrals); §4.5 (software); version of record.
 - [Caliari et al. (2024)](/sources/caliari-2024.md) — §1, §3, §5.1–5.2 (FFT, μ-mode/Kronecker sums, kiops tolerance, Figs. 6, 8–9); arXiv v2.

@@ -5,7 +5,7 @@ description: "Linearly implicit one-step methods that replace the nonlinear stag
 status: established
 aliases: [ROW method, Rosenbrock method, linearly implicit Runge–Kutta, W-method, Rodas, ROS3P]
 tags: [stiff, implicit, dae, order-reduction, order-conditions]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Rosenbrock–Wanner (ROW) and W-methods
@@ -146,6 +146,18 @@ employ" (§1.1). The technique splits $J=W+(J-W)$, with $W$ the matrix used in t
 pair. It is borrowed from unconditional-stability analyses of IMEX multistep methods; see
 [TASE operators](/methods/tase-operators.md).
 
+## Relation to exponential Rosenbrock methods
+
+[Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) (§1) place Rosenbrock and
+W-methods among the classes that arose when the direct approximation of the matrix
+exponential and of $\phi_1$ "was not regarded as practical for large matrices", so that these
+functions "were approximated by rational (Padé) approximations which
+resulted in implicit or semi-implicit Runge–Kutta methods, Rosenbrock methods or W-schemes";
+the [exponential Rosenbrock methods](/methods/exponential-integrators.md) of their §2.4 keep
+the per-step Jacobian but evaluate the φ-functions themselves, and use the same augmentation
+of a non-autonomous problem by the time variable, which they call "standard for Rosenbrock
+methods as well" (§2.4).
+
 ## Multistep analogue: Limm and Limm-W
 
 [Glandon et al. (2022)](/sources/glandon-2022.md) build
@@ -227,4 +239,5 @@ parabolic conditions above, have not been studied in the sources.
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §1, §5 (ROW B-series in BSeries.jl).
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §1; §2.5; §4.4.1 (Eqs. (42)–(43); TASE as a linearly implicit scheme).
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — §1–2, Thms. 3.3, 3.7, Remarks 3.4, 3.8, §8.2–8.3 (Limm as the multistep analogue; RODAS4 baseline).
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §1 (rational approximation origin of Rosenbrock and W-methods), §2.4 (augmentation by time, exponential Rosenbrock methods); version of record.
 - [Conte et al. (2024)](/sources/conte-2024.md) — §1, §1.1, §2 (Remark 2.1), §7 (W-methods, ROS2/3/4 comparisons, Figs. 7, 9).

@@ -143,8 +143,10 @@ No printed duplicates.
 
 Chunk 2 (2026-10-19). This source is cited on:
 
+* [Dormand–Prince 5(4) pair](/methods/dormand-prince-5-4.md)
 * [Entropy stability and conservation of the fully discrete scheme](/properties/entropy-stability.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
+* [Kennedy–Carpenter additive Runge–Kutta methods (ARK3, ARK4, ARK5)](/methods/kennedy-carpenter-ark-methods.md)
 * [Kepler problem](/benchmarks/kepler-problem.md)
 * [Korteweg–de Vries equation](/benchmarks/korteweg-de-vries-equation.md)
 * [Relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md)

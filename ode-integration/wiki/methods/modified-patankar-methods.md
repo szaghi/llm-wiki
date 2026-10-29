@@ -5,7 +5,7 @@ description: "Patankar-type schemes weight each production and destruction term 
 status: established
 aliases: [Patankar-type methods, Patankar trick, modified Patankar schemes, modified Patankar–Runge–Kutta, MPRK, MPRK22, MPRK22ncs, MPRK43, MPRKSO, SSPMPRK, MPE, modified Patankar–Euler, Patankar–Euler, modified Patankar deferred correction, mPDeC, MPDeC, modified Patankar linear multistep, MPLM, modified Patankar multistep, MPMS2, MPMS3, Patankar predictor–corrector, Patankar weight denominator]
 tags: [positivity, structure-preserving, stiff, implicit, deferred-correction, linear-multistep]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Modified Patankar methods (MPRK, MPDeC, MP linear multistep, Patankar predictor–corrector)
@@ -193,7 +193,11 @@ schemes in the sources, presented as the first in the literature (§5), weight t
 [SSP](/methods/strong-stability-preserving-runge-kutta.md) multistep methods of
 Gottlieb–Shu–Tadmor, $y_{n+1}=\tfrac14y_{n-2}+\tfrac34y_n+\tfrac32hf(y_n)$ (order 2) and
 $y_{n+1}=\tfrac{11}{27}y_{n-3}+\tfrac49hf(y_{n-3})+\tfrac{16}{27}y_n+\tfrac{16}9hf(y_n)$
-(order 3), whose SSP coefficients are $\tfrac12$ and $\tfrac13$ (Eqs. (2.5)–(2.6), §3.3):
+(order 3), whose SSP coefficients are $\tfrac12$ and $\tfrac13$ (Eqs. (2.5)–(2.6), §3.3).
+[Gottlieb et al. (2001)](/sources/gottlieb-2001.md) print both base methods as schemes 2 and
+6 of their Table 5.1, credit them to Shu (1988, SIAM J. Sci. Statist. Comput.), and prove the
+coefficients optimal: $\tfrac12$ among three-step second-order and $\tfrac13$ among four-step
+third-order explicit multistep methods with nonnegative $\beta$ coefficients (§5, Props. 5.3–5.4):
 
 $$\begin{aligned}
 \text{MPMS2:}\quad y^{n+1}_i&=\tfrac14y^{n-2}_i+\tfrac34y^n_i+\tfrac32h\sum_j\Bigl(p_{ij}(y_n)\frac{y^{n+1}_j}{\varpi_j}-d_{ij}(y_n)\frac{y^{n+1}_i}{\varpi_i}\Bigr),\\
@@ -493,7 +497,8 @@ nonnegative states that satisfy the linear invariants. The overview is on
   $\bar\beta=(\tfrac32,0,0)$ gives second order, the classical three-step SSP multistep scheme.
   Zhu et al. (2024) themselves print the latter, $\tfrac32hf(y_n)$ with $y_n$ the most
   recent level (Eqs. (2.5), (2.7)–(2.8)), so the slip is Izzo et al.'s *(compiler check of
-  Zhu et al., arXiv v1, p. 6)*.
+  Zhu et al., arXiv v1, p. 6)*. Gottlieb et al. (2001, Table 5.1, scheme 2) print the same
+  coefficients as Zhu et al., $\bar\alpha=(\tfrac34,0,\tfrac14)$, $\bar\beta=(\tfrac32,0,0)$.
   In Table 4 the MPE error at the finest step is printed $2.21\cdot10^{-4}$ with observed
   order 1.00 after $4.42\cdot10^{-2}$; order 1 needs $2.21\cdot10^{-2}$.
 - **Scope of Zhu et al.'s claims (2024).** Unconditional positivity of MPMS2 and MPMS3 is
@@ -523,5 +528,6 @@ nonnegative states that satisfy the linear invariants. The overview is on
 - [Izzo et al. (2025)](/sources/izzo-2025.md) — §1, §2 (Def. 2.1, Eqs. (2.7)–(2.10), Lemmas 2.2–2.3), §3 (Thms. 3.1–3.6, Eqs. (3.12), (3.19)–(3.20), Lemma 3.4), §4 (Tables 1–6, Figs. 4–20), §5, App. A; arXiv v1.
 - [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §1, §2.1, §3.3–3.4 (Defs. 3.13, 3.15, Lemma 3.14, Remarks 3.17–3.22, Eqs. (24)–(27), Prop. 3.23), §4.2 (tableaux), §5 (Figs. 2–8, Tables 4–6), §6.
 - [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — §1 (Bolley–Crouzeix barrier, MPRK and DSRK); arXiv v2.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §5 (Props. 5.3–5.4, Table 5.1, schemes 2 and 6).
 - [Zhu et al. (2024)](/sources/zhu-2024.md) — §1 (Eq. (1.5)), §2.1 (Eqs. (2.2)–(2.3)), §2.2 (Eqs. (2.5)–(2.21), Lemmas 2.1–2.2, Thms. 2.3–2.4), §3.3–3.5 (Eqs. (3.8)–(3.9), Remark 3.1, Thm. 3.3), §4.1 (Tables 1–2, Fig. 1, Remark 4.1), §4.2–4.3, §5; arXiv v1.
 - [Izgin et al. (2022)](/sources/izgin-2022.md) — §1, Eq. (6), Thm. 2.9, §3 (Lemmas 3.6, 3.8, 3.10, Cors. 3.9, 3.11), §3.1, §4 (Fig. 4), §5; arXiv v1.

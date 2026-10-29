@@ -113,6 +113,7 @@ Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 * [Generalized additive Runge–Kutta (GARK) methods and internal consistency](/methods/generalized-additive-runge-kutta.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
 * [Internal stability of explicit Runge–Kutta methods](/definitions/internal-stability.md)
+* [Kennedy–Carpenter additive Runge–Kutta methods (ARK3, ARK4, ARK5)](/methods/kennedy-carpenter-ark-methods.md)
 * [Linear stability of multirate methods and joint stability regions](/definitions/multirate-linear-stability.md)
 * [Multirate GARK methods (MrGARK, compound-fast, multirate backward Euler)](/methods/multirate-gark.md)
 * [Multirate infinitesimal methods (MIS, MRI-GARK)](/methods/multirate-infinitesimal-methods.md)

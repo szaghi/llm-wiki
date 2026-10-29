@@ -5,7 +5,7 @@ description: "A one-step method is strongly stable on $y'=Ly$ with $\\langle Lv,
 status: established
 aliases: [monotonicity, monotonicity-preserving, monotonicity stability, contractivity in an inner-product norm, L2 stability, weak(kappa) stability]
 tags: [stability, strong-stability, runge-kutta, structure-preserving, explicit, implicit]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Strong stability (monotonicity) of Runge–Kutta methods for linear seminegative problems
@@ -30,7 +30,28 @@ strongly stable** if this holds for all $h\ge0$ (Sun et al. 2022, §1, Eq. (3.12
 same property monotonicity, monotonicity-preserving or contractivity; Xu and
 coauthors call it monotonicity stability (Sun et al. 2022, §1). Strong stability is
 the discrete form of the entropy inequality for the square entropy (Sun & Shu 2021,
-§1). Weaker notions:
+§1). [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) (§2.1, footnote 1) use "strong
+stability" for "no temporal growth", $\lVert y_{n+1}\rVert\le\lVert y_n\rVert$, as opposed
+to stability $\lVert y_n\rVert\le\mathrm{Const}\cdot\lVert y_0\rVert$ with a constant that may
+exceed 1.
+
+[Ketcheson (2019)](/sources/ketcheson-2019.md) (§1, Eqs. (2)–(5)) states the property for
+nonlinear, non-autonomous problems: $y'=f(t,y)$ is *dissipative* if
+$\langle y,f(t,y)\rangle\le0$ and *conservative* if $\langle y,f(t,y)\rangle=0$; a method is
+*monotonicity preserving* if it guarantees $\lVert y_{n+1}\rVert\le\lVert y_n\rVert$ for all
+dissipative problems, and *conservative* if it guarantees $\lVert y_{n+1}\rVert=\lVert y_n\rVert$
+for all conservative ones. For a Runge–Kutta method the energy change is
+
+$$\lVert y_{n+1}\rVert^2-\lVert y_n\rVert^2=2h\sum_jb_j\langle Y_j,f_j\rangle-h^2\sum_{i,j}m_{ij}\langle f_i,f_j\rangle,\qquad M=BA+A^\top B-bb^\top,$$
+
+with $f_i=f(t_n+c_ih,Y_i)$ and $B=\mathrm{diag}(b)$ (page-local $m_{ij}$ the entries of the
+algebraic-stability matrix; Eqs. (7)–(8)). Algebraic stability ($M\succeq0$, $b\ge0$) gives
+unconditional monotonicity, $M=0$ unconditional conservation, and "explicit methods cannot
+be algebraically stable or symplectic" (§1.1). Ketcheson adds that for conservative problems
+"no explicit Runge–Kutta method of any order can enforce discrete conservation, even for
+linear autonomous problems", and that for general nonlinear autonomous dissipative systems
+"no methods of order greater than one are known to be monotonicity preserving" (§1, citing
+Ranocha). Weaker notions:
 
 - **weak stability**, $\lVert y_{n+1}\rVert\le(1+Ch)\lVert y_n\rVert$, which only gives
   $\lVert y_n\rVert\le e^{Ct_n}\lVert y_0\rVert$ (Sun & Shu 2021, §1);
@@ -58,7 +79,12 @@ $$L=-\begin{pmatrix}1&2&2\\0&1&2\\0&0&1\end{pmatrix},$$
 
 whose eigenvalues are all $-1$, yet on which the $p$-stage, order-$p$ explicit methods
 with $p=1,2,4$ increase the norm for every small $h$ tested (Sun & Shu 2021, §6.1.1,
-Table 6.3); Sun et al. (2022, Ex. 6.1) use the same matrix.
+Table 6.3); Sun et al. (2022, Ex. 6.1) use the same matrix. Ketcheson (2019, §4.2, Eq.
+(25), Fig. 5) uses it too: he recalls from Sun & Shu that classical RK4 "is not monotone for
+this problem, no matter how small one takes $\Delta t$", reports that the largest singular
+value of $R(hL)$ is "approximately 1.001" at $h=0.5$, and shows that one RK4 step from the
+corresponding right singular vector increases the norm at $h=0.5$ and $h=0.7$, while the
+relaxed method RRK(4,4) is monotone at both steps.
 
 ## Criteria from the energy identity
 
@@ -132,7 +158,11 @@ high-order dissipative (and, for even $p$, dispersive) term to the operator or a
 post-step filter (Sun & Shu 2021), and relaxation Runge–Kutta, which rescales the
 update to enforce the energy law and is cited by both sources as the alternative
 (Sun & Shu 2021, §1, §5; Sun et al. 2022, §1). Sun & Shu's adaptive filter of §5 is
-modelled on the relaxation procedure.
+modelled on the relaxation procedure. In the founding paper of
+[relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md), the relaxed method
+built on any Runge–Kutta method of order $\ge2$ is conservative, and with nonnegative weights
+monotonicity preserving as long as $h$ is chosen so that $\gamma_n\ge0$ (Ketcheson 2019, §2,
+Thm. 2); the property is obtained for nonlinear dissipative problems, not only linear ones.
 
 ## Nonlinear problems: third-order RKDG on Burgers
 
@@ -160,11 +190,24 @@ The two notions share the words "strong stability" and are distinct.
 [Strong stability preservation](/methods/strong-stability-preserving-runge-kutta.md)
 assumes that forward Euler is contractive for a convex functional up to
 $h_{\mathrm{FE}}$ and proves $\lVert y_{n+1}\rVert\le\lVert y_n\rVert$ for
-$h\le\mathcal Ch_{\mathrm{FE}}$, for nonlinear $f$ and any convex functional. Strong
+$h\le\mathcal Ch_{\mathrm{FE}}$, for nonlinear $f$ and any convex functional; its origin
+is the [total variation](/definitions/total-variation-diminishing.md) of
+[Shu & Osher (1988)](/sources/shu-1988.md) (§II, Prop. 2.1, Remark 2.1), a convex functional
+that is not an inner-product norm. Strong
 stability, as here, is a property of the method on linear seminegative operators in
 an inner-product norm, with no forward Euler hypothesis. For coercive $L$ the forward
 Euler hypothesis holds and SSP theory proves that every linear Runge–Kutta method is
-strongly stable (Gottlieb–Shu–Tadmor, as recalled by Sun & Shu 2021, §1). For merely
+strongly stable (Gottlieb–Shu–Tadmor, as recalled by Sun & Shu 2021, §1). Gottlieb et al.
+(2001, §3.2) define the coercivity constant
+$\eta_{\mathrm c}=\inf_{\lVert v\rVert=1}-\mathrm{Re}\langle Lv,v\rangle/\lVert Lv\rVert^2>0$ (page-local;
+Assumption 3.1, Eq. (3.7)), show that forward Euler is contractive iff $h\le2\eta_{\mathrm c}$, and
+state as their aim the strong stability of "the general $m$-stage, $m$th-order accurate
+Runge–Kutta scheme" under that bound; the degree-$s$ Taylor polynomial is a convex
+combination of powers of $I+hL$ (Prop. 3.2). The printed proof treats classical RK4 for
+time-dependent $L(t)$ with $\lVert L(t)-L(t')\rVert\le K\lvert t-t'\rvert/\eta_{\mathrm c}(t)$: the growth
+bound $\lVert y_n\rVert\le e^{3Kt_n}\lVert y_0\rVert$ holds under $h_n\le2\eta_{\mathrm c}(t_n)$ (Prop.
+3.3), and the Remark after it states "our uniform $C_s=2$" against the step constant
+$\frac1{31}$ of Levy–Tadmor for RK4. For merely
 seminegative $L$ (energy-conserving or weakly dissipative semi-discretizations such as
 central or skew operators) forward Euler is never contractive, SSP theory says
 nothing, and strong stability must be checked by the energy method (Sun et al. 2022,
@@ -192,4 +235,7 @@ property, which in the implicit setting connects to B- and
 
 - [Sun et al. (2022)](/sources/sun-2022.md) — §1 (definitions, von Neumann lemma, A-stability, SSP contrast), Lemma 3.6, Thms. 3.5, 3.7, Remark 3.8, §4 Exs. 4.1–4.6, Thms. 5.1–5.2, Ex. 6.1.
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §1 (Eq. 1.3, weak stability, recalled explicit results, coercive case), Def. 2.1, Props. 2.1–2.2, Thms. 3.1–3.2, §5, §6.1.1 (Tables 6.1, 6.3).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §II (Prop. 2.1, Remark 2.1); read as ICASE Report 87-33.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §2.1 (footnote 1), §3.2 (Assumption 3.1, Eq. (3.7), Props. 3.2–3.3).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §1 (Eqs. (2)–(5)), §1.1 (Eqs. (7)–(8)), §2 (Thm. 2), §4.2 (Eq. (25), Fig. 5); arXiv v1.
 - [Wei & Shu (2026)](/sources/wei-2026.md) — §1, §2 (Eq. (13)), §3 (Thm. 1, Remark 1, Thms. 3, 5), App. A (Thm. A.2); author manuscript.

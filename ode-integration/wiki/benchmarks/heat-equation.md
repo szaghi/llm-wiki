@@ -5,7 +5,7 @@ description: "The linear heat equation u_t = Delta u + g, semi-discretized to y'
 status: established
 aliases: [diffusion equation, linear diffusion, 2D heat equation, 1D heat equation]
 tags: [stiff, parallel, verification, linear-algebra]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Heat equation
@@ -129,6 +129,16 @@ The heat equation recurs as a stiff linear test throughout the bundle:
 - [Blanes et al. (2024)](/sources/blanes-2024.md) (§6.1, Eq. 6.13): dimensional (LOD/ADI) splitting of the 2D
   problem, as an illustration of the construction with no numerical run (see
   [operator splitting](/methods/operator-splitting.md)).
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) (§2.1, Ex. 2.1): the 1D
+  equation on $(0,\pi)$ with homogeneous Dirichlet data and $u_0\in L^2$ motivates the
+  semigroup framework of their convergence theory for
+  [exponential integrators](/methods/exponential-integrators.md). With $L=\partial_{xx}$ on
+  $H^2\cap H^1_0$ (eigenfunctions $\sin kx$, eigenvalues $-k^2$) they show
+  $\lVert e^{tL}\rVert\le e^{-t}\le1$ and the parabolic smoothing bound
+  $\lVert(-tL)^\gamma e^{tL}\rVert=\sup_k(tk^2)^\gamma e^{-tk^2}\le C(\gamma)$ in $L^2$
+  (Eq. (2.5); page-local $\gamma$), the property behind their stiff-order bounds (see
+  [stiff order conditions](/results/exponential-runge-kutta-stiff-order-conditions.md)); with
+  Neumann data the eigenfunctions are $\cos kx$. There is no numerical run.
 - [Goswami et al. (2023)](/sources/goswami-2023.md) (§2–3, Eq. (1)): the 1D equation
   $u_t=\nu u_{xx}$ ($\nu$ the diffusivity, page-local) is the model problem of their
   truncation-error analysis of [low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md)
@@ -138,6 +148,9 @@ The heat equation recurs as a stiff linear test throughout the bundle:
 
 ## Qualifications
 
+- Hochbruck & Ostermann (2010, Ex. 2.1) print the Neumann domain as
+  $\{v\in H^2\mid v_x(0)=v_x(1)=0\}$ while the interval is $(0,\pi)$; the condition is read at
+  $x=\pi$, as their eigenfunctions $\cos kx$ require *(compiler check, not in the sources)*.
 - Gander & Palitta's Theorem 3.1 covers this problem; their comparisons of ParaDiag
   variants, however, use a nonsymmetric advection–diffusion problem, where it does not
   apply.
@@ -168,3 +181,4 @@ The heat equation recurs as a stiff linear test throughout the bundle:
 - [Abdulle et al. (2022)](/sources/abdulle-2022.md) — arXiv v6: §5.2 (Fig. 12), §5.3 (Eq. (5.4), Figs. 13–16).
 - [Akrivis et al. (2025)](/sources/akrivis-2025.md) — arXiv v2: §4, §5.4.1–5.4.2 (Eqs. (126)–(129), Figs. 1–5).
 - [Goswami et al. (2023)](/sources/goswami-2023.md) — §2–3 (Eq. (1)).
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §2.1, Ex. 2.1, Eqs. (2.2)–(2.5); version of record.

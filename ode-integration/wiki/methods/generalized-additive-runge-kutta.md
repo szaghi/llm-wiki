@@ -5,7 +5,7 @@ description: "GARK methods give each additive partition of the right-hand side i
 status: established
 aliases: [GARK, generalized-structure additive Runge–Kutta, generalized additively partitioned Runge–Kutta, internal consistency]
 tags: [runge-kutta, imex, multirate, order-conditions, stability, gark]
-timestamp: 2026-10-19T19:14:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Generalized additive Runge–Kutta (GARK) methods and internal consistency
@@ -107,6 +107,24 @@ hold automatically and the rest reduce to six conditions on the slow coefficient
 order two of the four coupling conditions are automatic and two coincide (Fish et al. 2024,
 Thms. 2.5–2.6).
 
+**The shared-stage case.** For $N$-additive Runge–Kutta methods, the case in which all
+partitions share their stages, [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md)
+(§2.1.1–2.1.2, Eq. (6), Tables 1–4, App. A), after Araújo, Murua and Sanz-Serna, write the
+order conditions on $N$-coloured trees and count them: the number at order $i$ is $N$ times
+the coefficient $\alpha^{[N]}_i$ of the generating function
+$\sum_i\alpha^{[N]}_ix^{i-1}=\prod_i(1-x^i)^{-N\alpha^{[N]}_i}$ (page-local symbols), e.g.
+$\alpha^{[2]}=\{1,2,7,26,107,458\}$ for orders 1–6. Without simplifying assumptions the
+partitions couple without coupling error only to first order; with equal weights
+$b^{[\nu]}=b^{[\mu]}$ or with equal abscissae $c^{[\nu]}=c^{[\mu]}$ ($[\nu]$ page-local
+partition index) to second order; with both, any number of third-order methods with the same
+stage count couple with no coupling error. Embedded in the GARK form, equal abscissae of an
+additive method are internal consistency, $A^{\{q,q\}}\mathbf 1=A^{\{q,r\}}\mathbf 1$
+*(compiler check, not in the sources: with shared stages $A^{\{q,r\}}=A^{[r]}$, so both sides
+are abscissa vectors $c^{[q]}$ and $c^{[r]}$)*. Kennedy & Carpenter do
+not use the term GARK. With both simplifications two partitions have 2, 13, 63 and 272
+coupling conditions at orders 4–7 (Table 4); see
+[Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md).
+
 ## Linear stability
 
 Two partitions with the scalar test problem
@@ -124,6 +142,17 @@ Every result there is stated for general GARK methods, not only for multirate
 ones; in particular no consistent **decoupled** GARK method is A-stable for the
 real 2D test problem (Roberts et al. 2021, Thm. 3.4;
 [barriers](/results/multirate-a-stability-barriers.md)).
+
+For shared stages and $N$ partitions, Kennedy & Carpenter (2003, §2.1.5, Eqs. (14)–(17))
+write the scalar test $y'=\sum_\nu\lambda^{[\nu]}y$ with $z^{[\nu]}=h\lambda^{[\nu]}$
+(page-local) and
+$R=\det\bigl(I-\sum_\nu z^{[\nu]}A^{[\nu]}+\sum_\nu z^{[\nu]}\mathbf 1b^{[\nu]\top}\bigr)/\det\bigl(I-\sum_\nu z^{[\nu]}A^{[\nu]}\bigr)$;
+they note a
+time-dependent generalization (a K-function, Eq. (19)) and do not pursue nonlinear stability.
+They also state that an $N$-additive method conserves linear invariants in general only if
+all $b^{[\nu]}$ coincide, and certain quadratic ones only if in addition
+$b^{[\nu]}_ia^{[\nu]}_{ij}+b^{[\mu]}_ja^{[\mu]}_{ji}-b^{[\nu]}_ib^{[\mu]}_j=0$ for all pairs
+(§2.1.6, Eq. (20)).
 
 ## Implementation structure
 
@@ -193,3 +222,4 @@ component by doubling the unknowns with a non-unique initial split (§2.1.3).
 - [Biswas et al. (2025)](/sources/biswas-2025.md) — §4, Thm. 4.1, eq. 4.2.
 - [Fish et al. (2024)](/sources/fish-2024.md) — §2 (eqs. 2.5–2.8, Thms. 2.3, 2.5–2.6).
 - [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §2.1.3–2.1.4.
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §2.1.1–2.1.2 (Eq. (6), Tables 1–4), §2.1.5 (Eqs. (14)–(19)), §2.1.6 (Eq. (20)), App. A.

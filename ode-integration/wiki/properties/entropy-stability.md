@@ -5,7 +5,7 @@ description: "A fully discrete scheme is entropy stable when a convex entropy of
 status: established
 aliases: [entropy conservation, entropy dissipation, fully discrete entropy stability, energy stability, invariant preservation, entropy-stable time integration, cell entropy inequality, local entropy inequality]
 tags: [structure-preserving, stability, runge-kutta, geometric-integration, entropy-stability, relaxation]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Entropy stability and conservation of the fully discrete scheme
@@ -65,6 +65,12 @@ are on that page and on
   Hairer–Lubich–Wanner). Classical explicit Runge–Kutta and linear multistep
   methods cannot preserve general quadratic invariants (Kang & Constantinescu
   (2022), footnote 2). See [symplecticity](/properties/symplecticity.md).
+* For the square entropy $\eta=\lVert y\rVert^2$ a Runge–Kutta step changes the energy by
+  the quadrature term $2h\sum_jb_j\langle Y_j,f(Y_j)\rangle$ plus a spurious quadratic form
+  with matrix $M=BA+A^\top B-bb^\top$, $B=\mathrm{diag}(b)$; for conservative problems "no
+  explicit Runge–Kutta method of any order can enforce discrete conservation, even for linear
+  autonomous problems", and explicit methods "cannot be algebraically stable or symplectic"
+  ([Ketcheson (2019)](/sources/ketcheson-2019.md), §1, §1.1, Eqs. (7)–(8)).
 * No Runge–Kutta method is energy preserving for every Hamiltonian system,
   although an explicit method can be for one specific system
   ([de León et al. (2025)](/sources/deleon-2025.md), §1, citing
@@ -78,9 +84,9 @@ are on that page and on
 
 | Route | Property obtained | Source |
 |---|---|---|
-| [Relaxation](/methods/relaxation-runge-kutta.md): rescale the update by a root $\gamma_n$ of a scalar entropy equation | conservation or dissipation for any convex $\eta$, explicit or IMEX base, $b_i\ge0$ for dissipation | Kang & Constantinescu (2022); Bencomo & Chan (2023); [Al Jahdali et al. (2022)](/sources/aljahdali-2022.md); Gaburro et al. (2023) |
+| [Relaxation](/methods/relaxation-runge-kutta.md): rescale the update by a root $\gamma_n$ of a scalar entropy equation | conservation or dissipation for any convex $\eta$, explicit or IMEX base, $b_i\ge0$ for dissipation | Ketcheson (2019) (inner-product norms); Kang & Constantinescu (2022); Bencomo & Chan (2023); [Al Jahdali et al. (2022)](/sources/aljahdali-2022.md); Gaburro et al. (2023) |
 | Multiple relaxation | conservation of several invariants at once | Biswas & Ketcheson (2023) |
-| [SSP](/methods/strong-stability-preserving-runge-kutta.md) with the entropy as convex functional | $\eta(y_{n+1})\le\eta(y_n)$ under a step restriction, if forward Euler is entropy stable | [Gottlieb et al. (2022)](/sources/gottlieb-2022.md), Remark 3 |
+| [SSP](/methods/strong-stability-preserving-runge-kutta.md) with the entropy as convex functional | $\eta(y_{n+1})\le\eta(y_n)$ under a step restriction, if forward Euler is entropy stable | [Gottlieb et al. (2001)](/sources/gottlieb-2001.md), §2.1; [Gottlieb et al. (2022)](/sources/gottlieb-2022.md), Remark 3 |
 | Superviscosity filter | $\lVert y_{n+1}\rVert\le\lVert y_n\rVert$ (square entropy) | Sun & Shu (2021), §5 |
 | Symplectic Runge–Kutta methods (necessarily implicit) | exact quadratic invariants | Biswas & Ketcheson (2023), §1 |
 | [Pseudo-energy preservation](/methods/pseudo-energy-preserving-runge-kutta.md) | energy error $O(h^{q+1})$ per step with $q>p$ | de León et al. (2025) |
@@ -88,7 +94,10 @@ are on that page and on
 | Energy identity with a splitting of the Runge–Kutta quadratic form | **cell-by-cell** square-entropy inequality for explicit third-order RKDG with $c_3=1$, $b>0$, under $h\le C\Delta x$ | [Wei & Shu (2026)](/sources/wei-2026.md) |
 | Backward Euler (BDF1) with entropy-dissipative spatial terms, solved by dual time stepping | entropy inequality at the converged pseudotime solution, if the pseudotime residual is below the BDF1 entropy dissipation | [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) |
 
-**SSP route.** Gottlieb et al. (2022, Remark 3, Eqs. (53)–(56)) take the
+**SSP route.** The SSP argument rests only on convexity, so "any convex function will be
+preserved", cell entropies included (Gottlieb et al. 2001, §2.1, citing work on cell entropy
+inequalities). The same paper recalls that the square-entropy cell inequality of DG of any
+order holds under backward Euler and Crank–Nicolson for every step size (§6.1). Gottlieb et al. (2022, Remark 3, Eqs. (53)–(56)) take the
 discrete kinetic entropy $\sum_k\Delta x\int f_k\log f_k\,\mathrm dv$ as the
 convex functional in their SSP theorem for IMEX multiderivative methods; for
 the Broadwell and BGK models with first-order upwind transport this gives
@@ -100,6 +109,15 @@ $$\eta(y^{\gamma}_{n+1})-\eta(y_n)=\underbrace{\eta(y^{\gamma}_{n+1})-\eta(y_n)-
 
 and the last term is $\le0$ when the semi-discretization is dissipative,
 $b_i\ge0$ and $\gamma_n>0$ (Kang & Constantinescu (2022), §2.1). For
+$\eta=\lVert y\rVert^2$ the same identity is in the founding paper,
+$\lVert y^{\gamma}_{n+1}\rVert^2-\lVert y_n\rVert^2=2\gamma_nh\sum_jb_j\langle Y_j,f(Y_j)\rangle$
+(Ketcheson 2019, §2, Eqs. (10)–(11)), stated there with monotonicity for $b\ge0$ as long as
+$\gamma_n\ge0$ (Thm. 2). Ketcheson concludes that relaxation combined with an entropy-stable
+spatial discretization gives "a fully-discrete, explicit scheme that is provably entropy
+stable (for quadratic entropies)" (§5); on inviscid Burgers with Tadmor's energy-conservative
+flux the relaxed methods conserve the energy to round-off, and with a dissipative flux they
+"dramatically" improve the global dissipation against the "excessive dissipation" of the
+baseline methods (§4.4, Figs. 8, 10). For
 conservation laws the inner products become the cell entropy balances: Gaburro
 et al. (2023, §4.1, Eqs. (21)–(22)) add Abgrall's cell-wise correction
 $\alpha\int\nabla\psi\,A_0\nabla v_h$ so that each cell's central-flux entropy
@@ -206,6 +224,8 @@ phases for pseudo-energy-preserving methods.
 - [Gaburro et al. (2023)](/sources/gaburro-2023.md) — Eqs. (1)–(5), §4.1 (Eqs. (15)–(22)), §4.2, §5 (Figs. 12, 16), §6.
 - [Al Jahdali et al. (2022)](/sources/aljahdali-2022.md) — §3 (Table 4), §4.
 - [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §1, Eq. (9), §6.1–6.2, §7.
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §1, §1.1 (Eqs. (7)–(8)), §2 (Eqs. (10)–(11), Thm. 2), §4.4 (Figs. 8, 10), §5; arXiv v1.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §2.1 (any convex functional, cell entropy), §6.1 (cell entropy under backward Euler and Crank–Nicolson).
 - [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — Remark 3 (Eqs. (53)–(56)).
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §1, §5.
 - [de León et al. (2025)](/sources/deleon-2025.md) — §1, §4.

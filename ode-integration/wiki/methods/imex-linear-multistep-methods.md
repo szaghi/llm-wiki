@@ -5,7 +5,7 @@ description: "IMEX multistep methods treat a stiff part implicitly with BDF and 
 status: established
 aliases: [IMEX-BDF, SBDF, semi-implicit BDF, implicit-explicit multistep method, IMEX LMM, extrapolated BDF, linearly implicit BDF]
 tags: [linear-multistep, imex, implicit, stiff, asymptotic-preserving, stability]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # IMEX linear multistep and IMEX-BDF methods
@@ -36,6 +36,44 @@ Ma et al. (2026, §2.2) print $k=1,2,3$ with $\alpha_k=1$:
 For $k=2$ and $k=3$ the explicit weights are $\beta_k$ times the extrapolation weights $(-1,2)$
 and $(1,-3,3)$ *(compiler check)*. $k=1$ is IMEX Euler. Ma et al. use $k=4$ but do not print its
 coefficients.
+
+[Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§8, after Ascher–Ruuth–Wetton) write
+SBDF$k$ for general $k$ with the $k$-step BDF coefficients and the weight
+$\beta_k(-1)^j\frac{k!}{(k-j-1)!\,(j+1)!}$ on $f^{\mathrm E}(t_{n-j},y_{n-j})$,
+$j=0,\dots,k-1$, counting back from the newest value; for $k=2,3$ these are the weights of the
+table *(compiler check, not in the sources: $k=3$, $\tfrac6{11}\cdot(3,-3,1)=(\tfrac{18}{11},-\tfrac{18}{11},\tfrac6{11})$)*. They note that BDF of order 3 and higher is only
+$L(\alpha)$-stable ([A-stability](/properties/a-stability.md)) and that SBDF lacks step-size
+adjustment.
+
+## Comparison with IMEX Runge–Kutta methods
+
+The two founding IMEX Runge–Kutta papers measure their pairs against IMEX multistep schemes.
+
+- **Motivation.** [Ascher et al. (1997)](/sources/ascher-1997.md) (abstract, §1) state that IMEX
+  multistep schemes "tend to have undesirable time-step restrictions when applied to
+  convection-diffusion problems, unless diffusion strongly dominates and an appropriate BDF-based
+  scheme is selected", citing their earlier Ascher–Ruuth–Wetton study; that a dissipative
+  multistep treatment of the hyperbolic term needs "order (or more accurately, backward steps)
+  at least 3", with restrictions growing with order; and that SBDF has "optimal damping
+  properties" for diffusion-dominated problems.
+- **Ascher et al.'s experiments.** On 1D advection–diffusion their third-order IMEX
+  Runge–Kutta pair (3,4,3) is "more accurate and stable in this example than the popular CNAB
+  scheme with one-third the step size", and at small viscosity the third-order pairs have errors
+  "always smaller than those arising for the two-step IMEX schemes" of the earlier study "even
+  though twice the time step is applied" (§4.1, Figs. 4–5). They do not expect the Runge–Kutta
+  pairs to compete with SBDF when the implicit term dominates and is very stiff, since the
+  effective order of DIRK schemes "drops to 1 for very stiff ODEs" (§1). CNAB
+  (Crank–Nicolson for the implicit, Adams–Bashforth for the explicit term) is not written out.
+- **Kennedy & Carpenter's experiments.** On a reacting-shock problem SBDF2/3/4 show
+  insignificant stiffness leakage (largest stable Courant number 0.20/0.14/0.11 at
+  $\varepsilon=10^0$, 0.09 at $\varepsilon=10^{-6}$), where every IMEX additive Runge–Kutta pair leaks at
+  fixed step (§8.1, Tables 11, 13). SBDF shows no order reduction on Kaps', Van der Pol and
+  Pareschi–Russo problems, where the Runge–Kutta pairs of order above 2 do (§8.3a). SBDF3 and
+  SBDF4 are slightly more efficient than the IMEX Runge–Kutta pairs but lack error estimation
+  and step-size control, and Ascher et al.'s (2,3,2) is "substantially more efficient" than
+  SBDF2 (§8.2, Figs. 6–7, §9). See
+  [Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md) and
+  [IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md).
 
 ## Explicit or linearly implicit nonlinear term
 
@@ -142,3 +180,5 @@ for the explicit extrapolation, and the authors do not justify the reuse; see
 - [Ma et al. (2026)](/sources/ma-2026.md) — §1, §2.2 (Eq. (2.2), Lemma 2.1), Thms. 3.1, 3.3, Cor. 3.1, §4 (Tables 4.1–4.3).
 - [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md) — §1, §2 (Eqs. (20)–(24)), Lemmas 3–4, 6, Thms. 1–4, Remarks 2–3, §4 (Figs. 5, 8), §5.
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — §5 (Eq. (5.1), Thm. 5.8).
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — abstract, §1, §4.1 (Figs. 4–5).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §8 (SBDF formula), §8.1 (Tables 11, 13), §8.2 (Figs. 6–7), §8.3a, §9.

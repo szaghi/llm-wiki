@@ -174,6 +174,7 @@ No DOIs are printed.
 
 Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
+* [Dormand–Prince 5(4) pair](/methods/dormand-prince-5-4.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md)
 * [Runge–Kutta method](/definitions/runge-kutta-method.md)

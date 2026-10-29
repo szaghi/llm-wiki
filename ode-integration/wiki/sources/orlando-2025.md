@@ -112,6 +112,8 @@ Chunk 3 (2026-10-19). This source is cited on:
 * [Gresho vortex](/benchmarks/gresho-vortex.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
+* [Kennedy–Carpenter additive Runge–Kutta methods (ARK3, ARK4, ARK5)](/methods/kennedy-carpenter-ark-methods.md)
 * [Stiff accuracy](/properties/stiff-accuracy.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
+* [Total variation diminishing (TVD) time stepping](/definitions/total-variation-diminishing.md)
 * [Uniform accuracy of IMEX schemes for hyperbolic relaxation systems](/results/uniform-accuracy-relaxation-systems.md)

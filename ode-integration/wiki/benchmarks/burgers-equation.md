@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation"
-description: "Inviscid Burgers u_t + (u²/2)_x = 0 and viscous Burgers with manufactured or periodic solutions; the sources use it to test relaxation, superviscosity filtering, IMEX and multirate entropy behaviour, order reduction from boundary data, TASE stability, bound-preserving and invariant-domain-preserving limiting, single-stage Lax–Wendroff and multiderivative schemes, asynchronous low-storage Runge–Kutta and Parareal; one source proves a cell entropy inequality on it."
+description: "Inviscid Burgers u_t + (u²/2)_x = 0 and viscous Burgers; the sources use it to test TVD and SSP time stepping, relaxation, superviscosity filtering, IMEX and multirate entropy behaviour, order reduction from boundary data, TASE stability, bound- and invariant-domain-preserving limiting, single-stage Lax–Wendroff and multiderivative schemes, asynchronous low-storage Runge–Kutta and Parareal; one source proves a cell entropy inequality on it."
 status: established
 aliases: [inviscid Burgers equation, viscous Burgers equation, Bateman–Burgers equation]
 tags: [structure-preserving, order-reduction, verification, stiff]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Burgers equation
@@ -52,6 +52,39 @@ Courant number).
   [nonlinearly partitioned Runge–Kutta](/methods/nonlinearly-partitioned-runge-kutta.md)).
 
 ## Test configurations
+
+* **Founding SSP tests** ([Shu & Osher (1988)](/sources/shu-1988.md), §IV, Examples 1–2):
+  $u_0=\tfrac14+\tfrac12\sin\pi x$ on $[-1,1]$, periodic, smooth until $t=2/\pi$, then a moving
+  shock interacting with a rarefaction; flux-based ENO with Lax–Friedrichs splitting, third
+  order in space with SSPRK(3,3) (CFL 0.8) and fourth order with classical RK4 in Shu–Osher form
+  (CFL 0.6). At $t=0.3$, with $\Delta x=\tfrac1{10},\tfrac1{20},\tfrac1{40}$, the printed
+  $L_1$ orders are 3.66, 3.13 (third order) and 4.41, 4.76 (fourth order), and the $L_\infty$
+  orders 3.50, 2.89 and 4.25, 4.35 (Table 1); errors away from the shock after it forms are of
+  the same size as in the smooth case (Table 2). The 2D version
+  $u_t+(\tfrac{u^2}2)_x+(\tfrac{u^2}2)_y=0$, $u_0=\tfrac14+\tfrac12\sin\pi\tfrac{x+y}2$ on
+  $[-2,2]^2$, is run dimension by dimension at half the 1D CFL numbers (0.4 and 0.3), with
+  similar orders (Tables 3–4). A Riemann problem $u_{\rm left}=\tfrac12$, $u_{\rm right}=-1$
+  served to reject a non-conservative ENO variant (p. 20; no data printed).
+* **Riemann problem, SSP versus non-SSP** ([Gottlieb et al. (2001)](/sources/gottlieb-2001.md),
+  §2.1, Eqs. (2.7)–(2.8), Fig. 2.1, reproduced from Gottlieb–Shu): $u_0=1$ for $x\le0$ and
+  $-0.5$ for $x>0$, second-order TVD MUSCL in space, output after the shock has moved 50 mesh
+  points; CFL number and mesh are not printed. An SSP second-order Runge–Kutta method gives a
+  non-oscillatory shock, a second-order method that is linearly stable but not SSP an
+  overshoot. See [TVD time stepping](/definitions/total-variation-diminishing.md).
+* **Energy-conservative and dissipative fluxes** ([Ketcheson (2019)](/sources/ketcheson-2019.md),
+  §4.4, Eqs. (27)–(29)): $u_0=e^{-30x^2}$ on $[-1,1]$, periodic, 50 points, flux
+  differencing with Tadmor's flux $F_{i+1/2}=\tfrac16(u_i^2+u_iu_{i+1}+u_{i+1}^2)$, or the same
+  minus $\epsilon(u_{i+1}-u_i)$ with $\epsilon=\tfrac1{100}$ (page-local $F$, $\epsilon$);
+  $h=0.3\Delta x$ (conservative) and $0.2\Delta x$ (dissipative) to $t=0.2$, convergence at
+  $t=0.03$, "just before shock formation".
+* **Viscous, Dirichlet, and 2D viscous system** ([Ascher et al. (1997)](/sources/ascher-1997.md),
+  §4.2, §5): $u_t+uu_x=\kappa u_{xx}$ on $(0,1)$ with homogeneous Dirichlet data and
+  $u_0=\sin\pi x$, giving "qualitatively similar results" to their linear advection–diffusion
+  test (no data printed), with upwinding needed for small $\kappa$; and the periodic 2D system
+  $\mathbf u_t+(\mathbf u\cdot\nabla)\mathbf u=\kappa\Delta\mathbf u$ on $[0,1]^2$,
+  $u_0=v_0=\sin2\pi(x+y)+0.005\cos2\pi(64x+63y)$, centred differences with $\Delta x=1/128$,
+  $h=0.00625$, convection explicit and diffusion implicit with multigrid V(1,1) cycles per
+  stage (page-local $\mathbf u=(u,v)$).
 
 * **Gaussian data** (Kang & Constantinescu (2022), Eq. (3)):
   $u_0=e^{-10x^2}$ on $[-1,1]$, periodic; a shock forms before $t=1$.
@@ -145,6 +178,20 @@ and [entropy stability](/properties/entropy-stability.md).
   the shock, IDT errors are at least 60 times larger and its shock lags,
   more so with the limiter (Table 4, Fig. 13). See
   [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md).
+* **Founding evidence for SSP time stepping.** Shu & Osher's runs show full third and fourth
+  order in smooth regions and sharp shocks with SSPRK(3,3) and RK4 in Shu–Osher form (Shu &
+  Osher (1988), Tables 1–4); Gottlieb et al.'s Riemann test shows the overshoot of a non-SSP
+  second-order method (Gottlieb et al. (2001), Fig. 2.1). See
+  [SSP Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md).
+* **Relaxation in the founding paper.** With the conservative flux the relaxed methods keep the
+  energy to round-off at $h=0.3\Delta x$ (Fig. 8); at $t=0.03$ all RRK methods reach the base
+  order and IDT loses one order (text), "in some cases" in the figure caption (Fig. 9); with the
+  dissipative flux relaxation "dramatically improves" the global dissipation against the
+  "excessive dissipation" of the plain methods (Ketcheson (2019), §4.4, Figs. 10–11).
+* **Multigrid cost of IMEX pairs.** On the 2D viscous system, average fine-grid V-cycles per
+  stage range from 1.19–1.97 for the first-order forward–backward Euler pairs to 4.77–7.84 for
+  the L-stable four-stage third-order pair (4,4,3), over $\kappa=0.01$–$0.05$ (Ascher et al.
+  (1997), §5, Table 1); see [IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
 * **Energy behaviour of plain methods.** With the entropy-conservative flux,
   relaxed and IDT methods hold the energy to $O(10^{-13})$; plain IMEX loses
   energy slightly, which the authors attribute to IMEX acting as a
@@ -283,6 +330,11 @@ and [entropy stability](/properties/entropy-stability.md).
   a consequence of the relaxed step lengths.
 
 # Citations
+
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §IV (Examples 1–2, Eqs. (4.1)–(4.2), Tables 1–4), p. 20; read as ICASE Report 87-33.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §2.1 (Eqs. (2.7)–(2.8), Fig. 2.1).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §4.4 (Eqs. (27)–(29), Figs. 8–11); arXiv v1.
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §4.2 (Eq. (4.2)), §5 (Eq. (5.1), Table 1).
 
 - [Kang & Constantinescu (2022)](/sources/kang-2022.md) — §1.2.4–1.2.5, §2 (Remark 1), Remark 3 (Eq. (11)), §3 (Eq. (3), Tables 2–4, Figs. 5–16).
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §6.3 (Eqs. (6.11)–(6.12), Table 6.7, Figs. 6.8–6.10).

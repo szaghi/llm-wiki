@@ -5,7 +5,7 @@ description: "MERK and MERB methods turn the φ-function weights of an exponenti
 status: established
 aliases: [MERK, MERB, multirate exponential Runge–Kutta, multirate exponential Rosenbrock, MERB2, MERB3, MERB4, MERB5, MERB6]
 tags: [multirate, exponential, runge-kutta, order-conditions]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Multirate exponential Runge–Kutta and Rosenbrock methods (MERK, MERB)
@@ -44,6 +44,12 @@ the stiff ExpRB order conditions of Luan & Ostermann: **seven** conditions up to
 (Table 1, Remark 2.1); for $s=2$ the order-3 condition reads
 $b_2c_2^2=2\phi_3$ (scalar arguments $HJ_n$). The stiff order conditions themselves are on
 [stiff order conditions of exponential Runge–Kutta methods](/results/exponential-runge-kutta-stiff-order-conditions.md).
+The base format, its reformulation with the differences $D_i$, the second-order exponential
+Rosenbrock–Euler method (MERB2's base) and exprb32 with $c_2=1$ (MERB3's base before
+generalization) are printed by [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) (§2.4,
+Eqs. (2.46)–(2.53), Thm. 2.22, Ex. 2.23), whose convergence theorem, like that of Luan et al.,
+assumes only a strongly continuous semigroup; see
+[exponential integrators](/methods/exponential-integrators.md).
 
 ## Construction lemma (Luan et al. 2022, Lemma 2.2)
 
@@ -152,5 +158,6 @@ solution, MATLAB, optimal $m$ found by scanning.
 # Citations
 
 - [Luan et al. (2022)](/sources/luan-2022.md) — §1, §2.1 (eqs. 2.1–2.7, Table 1, Remark 2.1), §2.2 (Lemma 2.2, eqs. 2.13–2.17, Remark 2.3), §2.3 (Thms. 2.4, 2.12, Remark 2.13), §2.4 (eqs. 2.59–2.66), §2.5 (Algorithm 2.1), §3 (Table 2, Figs. 1–6), §4.
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §2.4 (exponential Rosenbrock base: Eqs. (2.46)–(2.53), Thm. 2.22, Ex. 2.23); version of record.
 - [Fish et al. (2024)](/sources/fish-2024.md) — §5 (eqs. 5.1–5.2, Apps. D–E), §6.1 (Fig. 5).
 - [Fish & Reynolds (2023)](/sources/fish-2023.md) — §1, §4.2 (MERK and MERB as infinitesimal families; only MRI-GARK has embeddings).

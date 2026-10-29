@@ -5,7 +5,7 @@ description: "Adaptive time stepping: a scaled norm of the embedded local-error 
 status: established
 aliases: [adaptive time stepping, balanced adaptive time stepping, space–time error balancing, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection, H-M controller, multirate step-size control, cost-based step-size control, LASA, adaptive SDC, Delta t-adaptivity, Delta t-k-adaptivity, p-adaptive deferred correction, order adaptivity]
 tags: [step-size-control, explicit, runge-kutta, software]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Step-size control: error-based controllers, PID filters and CFL control
@@ -76,7 +76,7 @@ sources, translated to this sign convention:
 | PI | $(0.8,-0.31,0)$ | Fekete et al. (2022), Eq. (21) |
 | PID | $(0.58,-0.21,0.10)$ | Fekete et al. (2022), Eq. (22) |
 | PI42 / PI33 / PI34 | $(0.60,-0.20,0)$ / $(0.66,-0.33,0)$ / $(0.70,-0.40,0)$ | Ranocha et al. (2022), Table 1 |
-| PID of Kennedy–Carpenter | $(0.49,-0.34,0.10)$ | Ranocha et al. (2022), §2.2 |
+| PID of Kennedy–Carpenter | $(0.49,-0.34,0.10)$ | Ranocha et al. (2022), §2.2; Kennedy & Carpenter (2003), Eqs. (41)–(43), with $k=\hat p$ (see below) |
 | PID of Fekete et al., reused | $(0.58,-0.21,0.10)$ | Vermeire (2023), Eq. (33) |
 | PI42 of Ranocha et al., reused | $(0.6,-0.2,0)$ | [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md), §5.2 |
 | per-pair controllers of Ranocha et al. (2022), reused | Table 11 below | Ranocha et al. (2025), Tables 1–6 |
@@ -89,6 +89,25 @@ default parameters were tuned by "an exhaustive genetic optimization" over dozen
 problems, including most of the Bari "Test Set for IVP Solvers", but the controller formulas
 and values are not printed (Reynolds et al. 2023, §3.2).
 
+**The Kennedy–Carpenter controllers.** [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md)
+(§3.2.3, Eqs. (39)–(43); read as NASA/TM-2001-211038), building on Gustafsson and Söderlind,
+print I, PI, PID and predictive (PC) controllers with safety factor about 0.9 and the max norm
+of $y_{n+1}-\hat y_{n+1}$ (optionally smoothed by the Newton matrix, Eq. (44)). Their PID gains
+$k_I=0.25$, $k_P=0.14$, $k_D=0.10$ (page-local) give, at constant step, the exponents
+$0.49/\hat p$, $-0.34/\hat p$, $0.10/\hat p$ on $\mathrm{err}_n$, $\mathrm{err}_{n-1}$,
+$\mathrm{err}_{n-2}$, with $\hat p$ the embedded order; in the form above this is
+$(\beta_1,\beta_2,\beta_3)=(0.49,-0.34,0.10)$ with $k=\hat p$, while Ranocha et al. quote the
+same triple with $k=\min(p,\hat p)+1=\hat p+1$ for these pairs. Their I controller, by contrast,
+uses $1/(\hat p+1)$ (Eq. (39)). The characteristic roots of the chosen PID filter are
+$-0.518$, $0.247$, $0.781$, and Eq. (43) adjusts the exponents to the step ratio so that the
+gains stay fixed when the step changes. They chose PID because many stability-optimized
+explicit methods are "SC-unstable with a PI-controller for eigenvalues on the real axis"
+(citing Kennedy–Carpenter–Lewis), and their gains are step-size-control stable at all boundary
+points of the explicit part's stability region in the left half-plane for each of their three
+[ARK pairs](/methods/kennedy-carpenter-ark-methods.md). A PIDD$^2$ controller did not help. In
+the same paper PI and PID are called "appropriate to explicit methods", while implicit methods
+use I or PC controllers.
+
 **Exponent denominator.** Ranocha et al. use $k=\min(p,\hat p)+1$, usually $k=p$ under local
 extrapolation (§2.2), and Ranocha et al. (2025) keep this choice, which equals the main order
 for their pairs (§2.3); Fekete et al. print $p$ without saying whether the main or the embedded
@@ -96,7 +115,17 @@ order is meant (§3.1), and so does Vermeire (2023, Eq. (33)), where the main or
 embedded order 1, a factor of two in the exponents; ARKODE uses the embedding order by default
 and the main order on request (Reynolds et al. §3.2).
 
-**Elementary controller.** Belardo et al. (2026, §4) use "the controller of the ode23tx
+**Elementary controller.** [Dormand & Prince (1980)](/sources/dormand-1980.md) (§1) print
+two "widely used" controllers, cited to Hull et al., with safety factor 0.9, tolerance
+$\mathrm{TOL}$ (page-local; the maximum allowable local error) and the max norm of
+$E_{n+1}=y_{n+1}-\hat y_{n+1}$ ($E_{n+1}$ page-local):
+
+$$h_{n+1}=0.9\,h_n\Bigl(\frac{\mathrm{TOL}}{\lVert E_{n+1}\rVert_\infty}\Bigr)^{1/(\hat p+1)}\ \text{(error per step)},\qquad
+h_{n+1}=0.9\,h_n\Bigl(\frac{\mathrm{TOL}}{\lVert E_{n+1}/h_n\rVert_\infty}\Bigr)^{1/\hat p}\ \text{(error per unit step)},$$
+
+with $\hat p$ the order of the lower formula (4 for their 5(4) pairs). Fekete et al. and
+Vermeire use the same factor 0.9 (below).
+Belardo et al. (2026, §4) use "the controller of the ode23tx
 textbook code", printed as $h_{n+1}=h_n\min\bigl(5,\,0.8(\mathrm{rtol}/\mathrm{err}_n)^{1/3}\bigr)$
 with acceptance iff $\mathrm{err}_n\le1$, for the third-order Bogacki–Shampine pair (see
 Qualifications).
@@ -205,13 +234,26 @@ Recommended controllers (Table 11, excerpt):
 - Ranocha et al. (2022): for BS3(2)3F all classical controllers of their Table 1 perform
   reasonably, PI42 slightly best; for DP5(4)6F an optimized controller is not significantly
   better than PI34 (§5.5.1).
+- Kennedy & Carpenter (2003, §8.4), IMEX ARK pairs on the
+  [van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md) and a reacting shock: the PC
+  controller is ineffective (step-change instability), I marginal, PI and PID guide the
+  integration through the boundary layers and the chemical equilibration, and PID "behaves
+  best"; the controller is "remarkably insensitive to the stiffness". The authors offer no
+  theory for the ranking.
+- Dormand & Prince (1980, §4) use the two-body problem D5 of the DETEST set (eccentricity
+  0.9) as "a severe test for the step-size control procedure since the step length must vary
+  by about two orders of magnitude"; see [Kepler problem](/benchmarks/kepler-problem.md) and
+  [Dormand–Prince 5(4)](/methods/dormand-prince-5-4.md).
 
 ## Error-based versus CFL-based control
 
 CFL control sets $h_n=\nu\min_i\Delta x_i/v_{\max,i}$, with $v_{\max,i}$ the local maximal wave
 speed (page-local), normalized so that a real stability interval of length 2 corresponds to
 $\nu=1$ (Ranocha et al. 2022, §3, Eqs. (3.1)–(3.2)). Its cost is linearly sensitive to $\nu$
-and to the mesh, and $\nu$ must be tuned per method and grid. Ranocha et al. (2022) compare
+and to the mesh, and $\nu$ must be tuned per method and grid. Kennedy & Carpenter (2003,
+§3.2.3, Eq. (45)) combine the two: the step is the minimum of the error-controlled step, an
+inviscid (imaginary-axis) and a viscous (real-axis) stability step built from the explicit
+part's stability limits, and a step limited by the Newton iteration. Ranocha et al. (2022) compare
 the two:
 
 - **Linear advection** (§3, Figs. 2–3). A PI controller automatically settles at the maximal
@@ -674,13 +716,17 @@ for the modification:
 
 ## Qualifications
 
-- **Rankings of controllers differ between sources.** Fekete et al. find PID best (as does
+- **Rankings of controllers differ between sources.** Fekete et al. and Kennedy & Carpenter
+  (2003, §8.4) find PID best (as does
   Vermeire (2023, §5) for stability-limit tracking, by rejected steps, without numbers), Reynolds et
   al. find PI and Gustafsson best with PID in between, and Ranocha et al. find the best
   parameters pair- and problem-dependent. The claims rest on different test sets, pairs and gain
   values, so they are not incompatible; Ranocha et al.'s step-size-control-stability analysis is
   the stated mechanism for pair dependence. Reynolds et al. keep PID as ARKODE's default
   although their own test favours PI.
+- Kennedy & Carpenter (2003) normalize the I controller by $\hat p+1$ (Eq. (39)) and the PI,
+  PID and PC controllers by $\hat p$ (Eqs. (40)–(42)); gains quoted from the paper must be read
+  with the matching denominator.
 - Fekete et al. attribute their controller defaults to "SUNDIALS/CVODE". [CVODE](/software/cvode.md)
   is the variable-order BDF/Adams package (Gardner et al. 2022, §2.1); the SUNDIALS package that
   offers I, PI, PID and Gustafsson controllers is ARKODE (Reynolds et al. 2023, §3.2). The
@@ -783,3 +829,5 @@ for the modification:
 - [Pan et al. (2022)](/sources/pan-2022.md) — §2.1.2 (Eq. (15)), §2.1.5 (Eqs. (24)–(28)), §2.2 (Eqs. (29)–(36)), §2.3 (Eq. (37)), §2.4, §3.1–3.4 (Figs. 3–16, Tables 2–4), §4.
 - [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §5 (future work).
 - [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) — arXiv v3: §8, §8.2 (Table 2).
+- [Dormand & Prince (1980)](/sources/dormand-1980.md) — §1 (error-per-step and error-per-unit-step controllers), §4 (DETEST, problem D5).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — §3.2.3 (Eqs. (39)–(46)), §8.4; read as NASA/TM-2001-211038.

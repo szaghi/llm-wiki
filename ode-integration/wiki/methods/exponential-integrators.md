@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Exponential integrators and φ-functions"
-description: "Exponential integrators treat a stiff linear part exactly through its exponential and the φ-functions; the page records the φ-function conventions, the exponential Runge–Kutta (Cox–Matthews, Krogstad, stiffly accurate), Rosenbrock, EPIRK and stiffness-resilient families, nondiagonal and partial linear operators, repartitioning for purely imaginary spectra and Parareal, multirate infinitesimal structure, stiff kinetic relaxation, structural dynamics and Magnus methods."
+description: "Exponential integrators treat a stiff linear part exactly through its exponential and the φ-functions; the page records the φ-function conventions, exponential quadrature, Runge–Kutta, Rosenbrock, Adams, general linear, EPIRK and stiffness-resilient families, partial and nondiagonal linear operators, repartitioning, Parareal, multirate infinitesimal structure, kinetic relaxation, structural dynamics, Magnus and trigonometric (Gautschi-type) integrators."
 status: established
-aliases: [phi-functions, exponential Runge–Kutta, ExpRK, exponential time differencing, ETD, ETD2RK, ETD3RK, ETD4RK, ETDRK4, Cox–Matthews scheme, Krogstad scheme, repartitioned exponential integrator, exponential Rosenbrock, ExpRB, EXPRB, EPIRK, exponential Euler, exponential Rosenbrock–Euler, stiffness resilient exponential integrators, SREXP, integrating factor method, Magnus integrator, commutator-free quasi-Magnus, CFQM, exponential midpoint rule, precise integration method]
+aliases: [phi-functions, exponential Runge–Kutta, ExpRK, exponential time differencing, ETD, ETD2RK, ETD3RK, ETD4RK, ETDRK4, Cox–Matthews scheme, Krogstad scheme, Strehmel–Weiner scheme, repartitioned exponential integrator, exponential Rosenbrock, ExpRB, EXPRB, exprb32, exprb43, exp4, EPIRK, exponential Euler, exponential Rosenbrock–Euler, exponential quadrature rule, exponential Adams method, exponential multistep method, exponential general linear method, stiffness resilient exponential integrators, SREXP, integrating factor method, Magnus integrator, commutator-free quasi-Magnus, CFQM, exponential midpoint rule, precise integration method, trigonometric integrator, Gautschi-type method, Deuflhard method, impulse method, mollified impulse method]
 tags: [exponential, stiff, kinetic, asymptotic-preserving, multirate, order-conditions]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Exponential integrators and φ-functions
@@ -17,15 +17,32 @@ imposes no step-size restriction. The functions involved are the **φ-functions*
 
 $$\phi_0(z)=e^z,\qquad \phi_k(z)=\int_0^1e^{(1-\theta)z}\frac{\theta^{k-1}}{(k-1)!}\,d\theta\quad(k\ge1),$$
 
-which satisfy $\phi_k(0)=1/k!$ and $\phi_{k+1}(z)=\big(\phi_k(z)-1/k!\big)/z$; they arise
-from the variation-of-constants formula
+which satisfy $\phi_k(0)=1/k!$ and $\phi_{k+1}(z)=\big(\phi_k(z)-1/k!\big)/z$. They arise
+from the variation-of-constants (Volterra) formula
 $y(t_n+h)=e^{hL}y_n+h\int_0^1e^{(1-\theta)hL}N\big(t_n+\theta h,y(t_n+\theta h)\big)\,d\theta$
-when $N$ is replaced by a polynomial in $\theta$ *(compiler statement of the standard
-background; the sources use the formula without stating it in this form)*. Exponential
+when $N$ is replaced by a polynomial in $\theta$. [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md)
+state the formula (§1, Eq. (1.5)) and build every method of their survey on it. Their
+"basic idea" is "to identify a prototypical differential equation that has stiffness
+properties similar to those of the underlying equation (1.1) and that can be solved
+exactly", typically a linearization, and to treat the remainder through this formula. They write the problem as $u'+Au=g(t,u)$, so their matrix functions
+are evaluated at $-hA$; on this page $L=-A$ and $N=g$ throughout. Their survey covers two
+classes of stiff problems: those whose Jacobian has eigenvalues with large negative real
+part, typified by semilinear parabolic problems, and highly oscillatory problems with large
+purely imaginary eigenvalues (§1). Exponential
 Runge–Kutta, exponential Rosenbrock and EPIRK methods are named by Chinomona & Reynolds,
 alongside IMEX additive Runge–Kutta methods and general linear methods, as the main
 families for problems that couple stiff and non-stiff processes
 ([Chinomona & Reynolds 2021](/sources/chinomona-2021.md), §1).
+
+**History, as given by Hochbruck & Ostermann (2010, §6).** Exponential integrators "were
+first considered by Hersch (1958)"; Certaine (1960) gave exponential multistep methods, Pope
+(1963) the exponential Rosenbrock–Euler method, Lawson (1967) and Ehle & Lawson (1975) the
+first exponential Runge–Kutta methods, Nørsett (1969) explicit exponential Adams methods,
+and Friedli (1978) the first methods with more than one φ-function. "The term 'exponential
+integrators' was coined in the seminal paper by Hochbruck, Lubich and Selhofer (1998)." In
+the early stiff literature the exponential and $\phi_1$ were replaced by rational (Padé)
+approximations, which gave implicit and semi-implicit Runge–Kutta, Rosenbrock and W-methods
+(§1; see [Rosenbrock–Wanner methods](/methods/rosenbrock-wanner-method.md)).
 
 Three sources develop the order theory. [Luan (2021)](/sources/luan-2021.md) works with the
 stiff order conditions of exponential Runge–Kutta methods and proves a convergence theorem
@@ -42,9 +59,13 @@ exponential method lies in the actions of φ-functions on vectors, treated at
 Chinomona & Reynolds (2021, §3) define $\varphi_k(z)=\int_0^1e^{z(1-t)}t^{k-1}\,dt$ without
 the factor $1/(k-1)!$, with the recursion $\varphi_{k+1}(z)=(k\varphi_k(z)-1)/z$. Their
 functions are $(k-1)!\,\phi_k$ in the registry normalisation above; the two recursions are
-equivalent. This is a convention difference, not a disagreement. These sources use the
+equivalent. These sources use the
 registry normalisation:
 
+- Hochbruck & Ostermann (2010, §2.2, Eqs. (2.10)–(2.11)), at argument $-hA=hL$, with the
+  tableau shorthand $\varphi_{j,k}=\varphi_j(-c_khA)$, $\varphi_j=\varphi_j(-hA)$, i.e.
+  $\phi_{j,k}=\phi_j(c_khL)$, $\phi_j=\phi_j(hL)$ below (in their Rosenbrock tableaux the
+  argument is $hJ_n$);
 - Luan (2021, Eq. 1.4);
 - Luan et al. (2022, Eq. 2.4), in an $h$-scaled integral form;
 - [Deka & Einkemmer (2022)](/sources/deka-2022.md) (§2), by the recursion
@@ -62,7 +83,49 @@ $\int_0^he^{(h-s)L}s^{k-1}\,ds=(k-1)!\,h^k\phi_k(hL)$ and with $e^{hL}=\phi_0(hL
 *(compiler translation, by the substitution $s=h\theta$; it agrees with their recurrence (9)
 and the leading series term $h^k/k$ of their Eq. A.2)*.
 
+## Exponential quadrature rules (linear problems)
+
+For a linear problem with a time-dependent forcing, $y'=Ly+N(t)$, Hochbruck & Ostermann
+(2010, §2.2, Eqs. (2.9), (2.12)) interpolate $N$ at nodes $c_1,\dots,c_s$ inside the step:
+$y_{n+1}=e^{h_nL}y_n+h_n\sum_{i=1}^sb_i(h_nL)N(t_n+c_ih_n)$ (variable steps $h_n$). The
+collocation choice is $b_i(hL)=\int_0^1e^{(1-\theta)hL}\ell_i(\theta)\,d\theta$ with
+$\ell_i$ the Lagrange polynomials of the nodes (page-local $\ell_i$). Their Theorem 2.7: if
+the weights are uniformly bounded and
+$\sum_ib_i(hL)\,c_i^{j-1}/(j-1)!=\phi_j(hL)$ for $j=1,\dots,p$ (Eqs. (2.17)–(2.18)), the
+method converges with order $p$, with error bounded by
+$C\sum_jh_j^p\int_{t_j}^{t_{j+1}}\lVert N^{(p)}(\tau)\rVert\,d\tau$ for any step-size
+sequence, under only the $C_0$-semigroup bound $\lVert e^{tL}\rVert\le Ce^{\omega t}$
+(Assumption 2.2; page-local $C$, $\omega$). The collocation rule has order $s$ (Cor. 2.8).
+Examples (Exs. 2.5–2.6): $s=1$,
+$y_{n+1}=y_n+h\phi_1(hL)\big(Ly_n+N(t_n+c_1h)\big)$, is the exponential Euler quadrature rule
+for $c_1=0$ and the exponential midpoint rule for $c_1=\tfrac12$; $s=2$ with $c_1=0$,
+$c_2=1$ is the exponential trapezoidal rule. The bound $\lVert e^{tL}\rVert\le C$ with
+$C=1$, $\omega=0$ holds in the Euclidean norm for Hermitian negative semidefinite and for
+skew-Hermitian $L$ independently of the dimension, which is what makes the temporal
+results mesh-independent (Ex. 2.3).
+
 ## Exponential Runge–Kutta methods
+
+**General format** (Hochbruck & Ostermann 2010, §2.3, Eqs. (2.20)–(2.25)). In value form an
+$s$-stage exponential Runge–Kutta method is
+$Y_i=\chi_i(hL)y_n+h\sum_ja_{ij}(hL)N(t_n+c_jh,Y_j)$,
+$y_{n+1}=\chi(hL)y_n+h\sum_ib_i(hL)N(t_n+c_ih,Y_i)$ (page-local $\chi$, $\chi_i$ with
+$\chi(0)=\chi_i(0)=1$). The underlying Runge–Kutta method has coefficients $a_{ij}(0)$,
+$b_i(0)$, assumed to satisfy $\sum_jb_j(0)=1$, $\sum_ja_{ij}(0)=c_i$. The method preserves
+equilibria iff $\sum_jb_j(z)=(\chi(z)-1)/z$ and $\sum_ja_{ij}(z)=(\chi_i(z)-1)/z$
+(Eq. (2.21)). The main choice $\chi=e^z$, $\chi_i=e^{c_iz}$ turns these into the
+**simplifying assumptions**
+
+$$\sum_jb_j(z)=\phi_1(z),\qquad \sum_ja_{ij}(z)=c_i\phi_1(c_iz)\qquad\text{(Eq. (2.23))},$$
+
+which Hochbruck & Ostermann assume throughout their §2.3; they also make the methods
+invariant under transformation to autonomous form. Explicit methods have $c_1=0$ and
+$a_{ij}=0$ for $j\ge i$. Eliminating $\chi$ gives the difference form below (Eq. (2.25)).
+Explicit methods cannot satisfy the stage conditions of order 2 at every stage, so "the
+internal stages are of order one only" (p. 226), which "makes the construction of
+higher-order methods quite involved". The explicit form goes back to Friedli (1978), whose
+"non-stiff order conditions" are "not sufficient to analyse parabolic problems" (p. 221, as
+recalled).
 
 For $y'=Ly+N(t,y)$ an explicit exponential Runge–Kutta (ExpRK) method has stages
 $Y_i=y_n+c_ih\phi_1(c_ihL)f(t_n,y_n)+h\sum_{j=2}^{i-1}a_{ij}(hL)D_j$ and update
@@ -74,15 +137,29 @@ Methods derived from Taylor-expanded ("classical") conditions have error terms t
 on $\lVert L\rVert$. Methods satisfying the stiff conditions do not, and Luan, after
 Hochbruck–Ostermann, calls them "stiffly accurate". That is a different notion from
 [stiff accuracy](/properties/stiff-accuracy.md) of a Runge–Kutta tableau (Luan 2021, §1).
+The 2010 survey of Hochbruck & Ostermann speaks of the **stiff order** of a method, the
+order of a global error bound $Ch^p$ whose constant depends neither on the stiffness nor on
+$h$ (§1, p. 212); the phrase "stiffly accurate" does not occur in it.
 
 **Low orders.** In the notation above (Luan 2021, §2.2, Eqs. 2.5–2.6; Caliari et al. 2024,
 Appendix):
 
 - exponential Euler, $y_{n+1}=y_n+h\phi_1(hL)f(t_n,y_n)$, is first order in general (Deka &
-  Einkemmer 2022, §2; Caliari et al. 2024, Appendix);
+  Einkemmer 2022, §2; Caliari et al. 2024, Appendix). Hochbruck & Ostermann (2010, Thm. 2.14)
+  prove stiff order 1 for semilinear parabolic problems (analytic semigroup, $N$ locally
+  Lipschitz from the domain of a fractional power of $-L$, Assumptions 2.9–2.10), with error
+  $\le Ch\sup_t\lVert(-L)^{\varsigma-1}\tfrac{d}{dt}N(t,y(t))\rVert$ in that norm (page-local
+  regularity index $\varsigma$);
 - second order (expRK2s2, the scheme "erk2p2" of Caliari et al.): $Y_2=y_n+c_2h\phi_1(c_2hL)f(t_n,y_n)$ and
   $y_{n+1}=y_n+h\phi_1(hL)f(t_n,y_n)+\tfrac h{c_2}\phi_2(hL)D_2$, $0<c_2\le1$. The variant
-  "erk2p1" replaces the last term by $\tfrac h{2c_2}\phi_1(hL)D_2$ and avoids $\phi_2$;
+  "erk2p1" replaces the last term by $\tfrac h{2c_2}\phi_1(hL)D_2$ and avoids $\phi_2$.
+  These are the one-parameter families (2.39) and (2.40) of Hochbruck & Ostermann (2010,
+  Ex. 2.18; $b_1=\phi_1-\tfrac1{c_2}\phi_2$, $b_2=\tfrac1{c_2}\phi_2$, resp.
+  $b_1=(1-\tfrac1{2c_2})\phi_1$, $b_2=\tfrac1{2c_2}\phi_1$, $a_{21}=c_2\phi_{1,2}$ in value
+  form) *(compiler check, not in the sources)*. They state that second order needs at least two stages,
+  that (2.40) with $c_2=\tfrac12$ has $b_1=0$, and that both families are B-consistent of
+  order one, as recalled from Strehmel & Weiner (1992) (see
+  [B-convergence](/definitions/b-convergence.md));
 - third order (expRK3s3): $Y_3=y_n+\tfrac23h\phi_1(\tfrac23hL)f(t_n,y_n)+\tfrac{4}{9c_2}h\phi_2(\tfrac23hL)D_2$
   and $y_{n+1}=y_n+h\phi_1(hL)f(t_n,y_n)+\tfrac32h\phi_2(hL)D_3$, with $c_2\ne\tfrac23$.
 
@@ -153,8 +230,19 @@ check, not in the sources)*. The named schemes are:
 | Cox–Matthews ETD3RK (ERK3) | $(0,\tfrac12,1)$ | $a_{21}=\tfrac12\phi_{1,2}$; $a_{31}=-\phi_1$, $a_{32}=2\phi_1$ | $(\phi_1-3\phi_2+4\phi_3,\ 4\phi_2-8\phi_3,\ 4\phi_3-\phi_2)$ |
 | Cox–Matthews ETD4RK (ETDRK4) | $(0,\tfrac12,\tfrac12,1)$ | $a_{21}=a_{32}=\tfrac12\phi_{1,2}$; $a_{41}=\tfrac12\phi_{1,2}(\phi_{0,2}-I)$, $a_{43}=\phi_{1,2}$ | $(\phi_1-3\phi_2+4\phi_3,\ 2\phi_2-4\phi_3,\ 2\phi_2-4\phi_3,\ 4\phi_3-\phi_2)$ |
 | Krogstad (ERK4) | $(0,\tfrac12,\tfrac12,1)$ | $a_{21}=\tfrac12\phi_{1,2}$; $a_{31}=\tfrac12\phi_{1,2}-\phi_{2,2}$, $a_{32}=\phi_{2,2}$; $a_{41}=\phi_1-2\phi_2$, $a_{43}=2\phi_2$ | as ETD4RK |
+| Strehmel–Weiner (1992, Ex. 4.5.5) | $(0,\tfrac12,\tfrac12,1)$ | $a_{21}=\tfrac12\phi_{1,2}$; $a_{31}=\tfrac12\phi_{1,2}-\tfrac12\phi_{2,2}$, $a_{32}=\tfrac12\phi_{2,2}$; $a_{41}=\phi_1-2\phi_2$, $a_{42}=-2\phi_2$, $a_{43}=4\phi_2$ | $(\phi_1-3\phi_2+4\phi_3,\ 0,\ 4\phi_2-8\phi_3,\ 4\phi_3-\phi_2)$ |
+| expRK4s5 (Hochbruck–Ostermann 2005) | $(0,\tfrac12,\tfrac12,1,\tfrac12)$ | as Krogstad in rows 2–3; $a_{41}=\phi_1-2\phi_2$, $a_{42}=a_{43}=\phi_2$; $a_{52}=a_{53}=\tfrac12\phi_{2,2}-\phi_3+\tfrac14\phi_2-\tfrac12\phi_{3,2}$, $a_{54}=\tfrac14\phi_{2,2}-a_{52}$, $a_{51}=\tfrac12\phi_{1,2}-2a_{52}-a_{54}$ | $(\phi_1-3\phi_2+4\phi_3,\ 0,\ 0,\ 4\phi_3-\phi_2,\ 4\phi_2-8\phi_3)$ |
 
-The ERK1–ERK3 and Krogstad rows are Buvoli & Minion's tableaux (App. A). The ETD4RK row is
+The ERK1–ERK3 and Krogstad rows are Buvoli & Minion's tableaux (App. A). Hochbruck &
+Ostermann (2010, Eqs. (2.41)–(2.43), p. 229) print the ETD4RK, Krogstad, Strehmel–Weiner and
+five-stage rows; their ETD4RK and Krogstad tableaux agree with the rows above once
+$\phi_{j,3}=\phi_{j,2}$ ($c_3=c_2$) and $\phi_{j,4}=\phi_j$ ($c_4=1$) are used, and the
+Strehmel–Weiner and expRK4s5 rows are theirs written with the same identities
+($\phi_{j,5}=\phi_{j,2}$) *(compiler check, not in the sources)*. Against their stiff order conditions,
+ETD4RK can drop to order two "in the worst case", Krogstad's and the Strehmel–Weiner scheme to
+order three, and the five-stage method has order four (Ex. 2.19, p. 229); the conditions and
+these statements are on the
+[result page](/results/exponential-runge-kutta-stiff-order-conditions.md). The ETD4RK row is
 Permyakova & Goldobin's Eq. (4), the original Cox–Matthews scheme, translated: its last stage
 is built from the first internal stage, $Y_4=e^{hL/2}Y_2+\tfrac h2\phi_1(\tfrac12hL)\big(2N(Y_3)-N(y_n)\big)$,
 which gives the $a_{41}$ above *(compiler translation)*. Their ETD3RK (Eq. 3) coincides with
@@ -181,7 +269,44 @@ $\mathcal O(h^2)$:
   [result page](/results/exponential-runge-kutta-stiff-order-conditions.md));
 - the exponential Rosenbrock–Euler method $y_{n+1}=y_n+h\phi_1(hJ_n)f(t_n,y_n)+h^2\phi_2(hJ_n)V_n$
   is second order, because it uses the Jacobian (Luan et al. 2022, §2.4.1; Deka & Einkemmer
-  2022, §2.1, Eq. 3; Caliari et al. 2024, Appendix).
+  2022, §2.1, Eq. 3; Caliari et al. 2024, Appendix). Hochbruck & Ostermann (2010, §2.4)
+  prove it second-order convergent as the worked case of their Theorem 2.22 and credit the
+  method, in this non-autonomous form, to Pope (1963).
+
+**Original formulation** (Hochbruck & Ostermann 2010, §2.4, Eqs. (2.44)–(2.53)). For
+$y'=f(y)$ the method is the explicit ExpRK value format applied to $y'=J_ny+N_n(y)$ at every
+step, with arguments $c_ihJ_n$. Under the simplifying assumptions it can be rewritten so that
+"each stage of the method consists of a perturbed exponential Rosenbrock–Euler step",
+$Y_i=y_n+c_ih\phi_1(c_ihJ_n)f(y_n)+h\sum_{j=2}^{i-1}a_{ij}(hJ_n)D_j$, with
+$D_j=N_n(Y_j)-N_n(y_n)$ small in norm, so that only the term with $f(y_n)$ needs an
+expensive Krylov approximation (Eq. (2.48); see
+[evaluating φ-functions](/methods/phi-function-evaluation.md)). Such methods preserve
+equilibria, have small defects and simple stiff order conditions (four up to order 4,
+Table 2.3). A non-autonomous problem is made autonomous by adding $t$ as a variable, "standard
+for Rosenbrock methods as well", although it "changes a linear non-autonomous problem into a
+nonlinear one"; the φ-functions of the augmented Jacobian have the block form
+$\begin{pmatrix}\phi_k(0)&0\\h\phi_{k+1}(hJ_n)V_n&\phi_k(hJ_n)\end{pmatrix}$, which yields the
+$h^2c_i^2\phi_2(c_ihJ_n)V_n$ terms above (Eqs. (2.50)–(2.52)). Consequences of the order
+conditions they draw (§2.4, Ex. 2.25): the weights of every third-order method depend on
+$\phi_3$, those of every fourth-order method on $\phi_3$ and $\phi_4$; and the
+exponential Rosenbrock-type methods of Hochbruck, Lubich & Selhofer (1998), which use
+$\phi_1$ only, "cannot have order larger than two", although their exp4 has classical order
+four (three stages, implemented as seven with three function evaluations). Tokman's EPI
+methods use the same linearization (§2.4).
+
+- **exprb32** (Ex. 2.23): $c=(0,1)$, $a_{21}=\phi_1$, $b=(\phi_1-2\phi_3,\ 2\phi_3)$, with the
+  exponential Rosenbrock–Euler method ($\hat b_1=\phi_1$) as embedded second-order
+  estimate; order 3. Its $b_2=2\phi_3$ is the $c_2=1$ case of the weight
+  $\tfrac2{c_2^2}\phi_3$ below.
+- **exprb43** (Ex. 2.24): $c=(0,\tfrac12,1)$, $a_{21}=\tfrac12\phi_1(\tfrac12hJ_n)$, $a_{31}=0$,
+  $a_{32}=\phi_1$, $b=(\phi_1-14\phi_3+36\phi_4,\ 16\phi_3-48\phi_4,\ -2\phi_3+12\phi_4)$,
+  embedded $\hat b=(\phi_1-14\phi_3,\ 16\phi_3,\ -2\phi_3)$ of order 3; order 4. In difference
+  form this is the EXPRB43 of Deka & Einkemmer below, and it satisfies
+  $\sum_ib_ic_i^2=2\phi_3$, $\sum_ib_ic_i^3=6\phi_4$:
+  $\tfrac14(16\phi_3-48\phi_4)+(-2\phi_3+12\phi_4)=2\phi_3$ and
+  $\tfrac18(16\phi_3-48\phi_4)+(-2\phi_3+12\phi_4)=6\phi_4$ *(compiler check, not in the
+  sources)*. "The internal stages of the above methods are just exponential Rosenbrock–Euler
+  steps."
 
 **Schemes generalized to non-autonomous form with free nodes** (Luan et al. 2022, §2.4):
 
@@ -232,6 +357,55 @@ conditions)*. Their embedded solutions are:
 They count 5 matrix-function evaluations per step for EXPRB43 and 10 for EXPRB54s4 (§5.3).
 On their resistive-MHD reconnection problem the fifth-order EXPRB54s4 with Leja
 interpolation is worse than EXPRB43, despite its higher order (§5.3, Fig. 13).
+
+## Exponential multistep and general linear methods
+
+**Exponential Adams methods** (Hochbruck & Ostermann 2010, §2.5, after Certaine 1960 and
+Nørsett 1969, whose aim was A-stable generalizations of the explicit Adams methods). The
+nonlinearity is interpolated at the past points $t_{n-k+1},\dots,t_n$, with
+$G_j=N(t_j,y_j)$ and backward differences $\nabla^jG_n$ (page-local):
+
+$$y_{n+1}=e^{hL}y_n+h\sum_{j=0}^{k-1}\gamma_j(hL)\nabla^jG_n,\qquad
+\gamma_j(z)=(-1)^j\int_0^1e^{(1-\theta)z}\binom{-\theta}{j}d\theta$$
+
+(Eq. (2.69); page-local $\gamma_j$, with $\gamma_0=\phi_1$ and the recurrence
+$z\gamma_k(z)+1=\sum_{j=0}^{k-1}\frac1{k-j}\gamma_j(z)$ of Nørsett). For $L=0$ this is the
+explicit Adams method (see [linear multistep methods](/methods/linear-multistep-method.md)).
+In the implementation form (2.70) a step is a corrected exponential Euler step; since
+$\lVert\nabla^jG_n\rVert=\mathcal O(h^j)$, the Krylov approximations become cheaper with $j$.
+For $k=2$: $y_{n+1}=y_n+h\phi_1(hL)(Ly_n+G_n)+h\phi_2(hL)(G_n-G_{n-1})$ (Eq. (2.71)).
+Theorem 2.27: under Assumptions 2.9–2.10, a $k$-th-order smooth forcing and starting errors
+$\le c_0h^k$, the $k$-step method converges with order $k$ (proved for $k=2$, "the proof for
+$k>2$ is analogous"). Related schemes they list: Cox–Matthews (2002) in the same class;
+Calvo–Palencia (2006), with variation of constants over $kh$ and all parasitic roots on the unit
+circle; Beylkin–Keiser–Vozovoi (1998).
+
+**Linearized exponential multistep methods** (§2.6). With the per-step Jacobian $J_n$ and
+$N_n(y)=f(y)-J_ny$ (autonomous case), Tokman's (2006) two-step method is
+$y_{n+1}=y_n+h\phi_1(hJ_n)f(y_n)-\tfrac23h\phi_2(hJ_n)\big(N_n(y_n)-N_n(y_{n-1})\big)$, and
+Hochbruck & Ostermann propose the variant
+
+$$y_{n+1}=y_n+h\phi_1(hJ_n)f(y_n)-2h\phi_3(hJ_n)\big(N_n(y_n)-N_n(y_{n-1})\big)\qquad\text{(Eq. (2.72))},$$
+
+which coincides with Tokman's for $J_n=0$ and "has better convergence properties": it is
+third-order convergent (Thm. 2.29; no counterexample for Tokman's method is given).
+Since $N_n(y_n)-N_n(y_{n-1})=-r_n(y_{n-1})$ with the remainder $r_n$ of the
+stiffness-resilient section below, (2.72) is the order-3 method SREXP_MS3 of Dallerit &
+Tokman (2025) *(compiler check, not in the sources)*.
+
+**Exponential general linear methods** (§2.7, after Ostermann, Thalhammer & Wright 2006)
+combine $s$ stages with $k-1$ past values $N(t_{n-\ell},y_{n-\ell})$, weighted by further
+matrix functions (Eq. (2.75)); $k=1$ gives exponential Runge–Kutta and $s=1$ exponential Adams
+methods. A method has *stage order* $q$ if its stage defects are $\mathcal O(h^{q+1})$ and
+*quadrature order* $p$ if its step defect is $\mathcal O(h^{p+1})$; both are expressed by
+matrix-function conditions (2.77). Theorem 2.31: conditions (2.77) up to $p-1$ plus the
+order-$p$ quadrature condition at $z=0$ only (Eq. (2.78), a weakened condition) give the
+error bound
+$Ch^{p-\alpha+\varsigma}\sup\lVert(-L)^\varsigma\tilde N^{(p-1)}\rVert+Ch^p\sup\lVert\tilde N^{(p)}\rVert$
+plus starting errors, with $\tilde N(t)=N(t,y(t))$, $\alpha\in[0,1)$ the fractional-power
+index of the space on which $N$ is Lipschitz and $\varsigma$ a regularity index (page-local
+$\tilde N$, $\alpha$, $\varsigma$). [Lawson methods](/methods/lawson-methods.md)
+with past values are of this class.
 
 ## EPIRK methods
 
@@ -501,6 +675,75 @@ $y_{n+1}=e^{hB_2}e^{hB_1}y_n$ (Eq. 6.35). CFQM methods are unconditionally stabl
 full order under low regularity; schemes up to order 6 and 8 exist (§6.3, as recalled
 from Blanes et al. 2017, 2018, 2021 and Alvermann & Fehske 2011).
 
+**Error bounds for large $h\lVert L\rVert$** (Hochbruck & Ostermann 2010, §3.1, after
+Hochbruck & Lubich 1999, 2003). They write the same Magnus expansion (Eq. (3.6)), the
+exponential midpoint rule (Eq. (3.8)) and the fourth-order two-point Gauss method (Eq. (3.10)),
+which agrees with the formula above. The Magnus series "is not at all useful for studying the
+convergence of Magnus integrators in the case of large $h\lVert A(t)\rVert$" (their $A(t)$ is
+$L(t)$ here), since it need
+not converge there (as recalled from Moan & Niesen 2008), yet the integrators "work
+extremely well" at such steps. For skew-Hermitian $L(t)$ with bounded derivatives the
+exponential midpoint rule has error $\le Ch$, with $C$ depending only on the derivative
+bounds and $T$, and a higher power of $h$ under the extra regularity conditions (3.11)–(3.12)
+(Thm. 3.4). For
+$L(t)=-i(D^2+V(t))$ with $D$ symmetric positive definite and the commutator bound
+$\lVert[L(\tau),L(\tau')]v\rVert\le Kh\lVert Dv\rVert$ for $\lvert\tau-\tau'\rvert\le h$
+(page-local $D$, $V$, $K$; Assumption 3.6), the exponential midpoint rule satisfies
+$\lVert y_n-y(t_n)\rVert\le Ch^2t_n\max_t\lVert Dy(t)\rVert$ with $C$ independent of $n$,
+$h$ and $D$ (Thm. 3.9), and $p$-th-order interpolatory Magnus integrators satisfy
+$\le Ch^pt_n\max_t\lVert D^{p-1}y(t)\rVert$ for $h\lVert D\rVert\le c$ (Thm. 3.10). For the
+linear Schrödinger equation on a torus, $D^2=-\Delta+I$, $\lVert Dv\rVert$ is the $H^1$
+norm and the commutator bound holds uniformly for spectral discretizations (Ex. 3.7); see
+[nonlinear Schrödinger equation](/benchmarks/nonlinear-schrodinger-equation.md). For
+parabolic $y'=L(t)y+b(t)$ the Magnus integrator
+$y_{n+1}=e^{hL(t_{n+1/2})}y_n+h\phi_1(hL(t_{n+1/2}))b(t_{n+1/2})$ is second order
+(Eq. (2.84), as recalled from González, Ostermann & Thalhammer 2006; page-local $b$). For
+singularly perturbed problems $y'=\varepsilon^{-1}L(t)y$ they recall adiabatic integrators,
+which integrate in the eigenbasis of $L(t)$; the averaged adiabatic exponential midpoint rule
+has error $\mathcal O(\min\{\varepsilon,h\})$ only (§3.1, Eq. (3.34)).
+
+## Trigonometric (Gautschi-type) integrators for oscillatory second-order problems
+
+For $\ddot q=-W^2q+N(q)$ with $W$ symmetric positive semidefinite and $\lVert W\rVert\gg1$
+(page-local $q$, velocity $v=\dot q$, frequency matrix $W$; Hochbruck & Ostermann 2010,
+§3.2, Eq. (3.36)), "Taylor series expansion of the exact solution is not a viable option"
+(§1), and the exact propagator of the linear oscillator is used instead. With $\operatorname{sinc}\xi=\sin\xi/\xi$ the two-step class is
+
+$$q_{n+1}-2\cos(hW)\,q_n+q_{n-1}=h^2\,\sigma(hW)\,N\big(\varpi(hW)q_n\big)\qquad\text{(Eq. (3.41))},$$
+
+with an outer filter $\sigma$ and an inner filter $\varpi$ (page-local; the source's $\psi$,
+$\phi$), and a one-step form (3.42) that also updates $v$. Named members (Ex. 3.12, Eq. (3.50)):
+
+| method | inner filter $\varpi(\xi)$ | outer filter $\sigma(\xi)$ |
+|---|---|---|
+| Gautschi (1961) | $1$ | $\operatorname{sinc}^2(\xi/2)$ |
+| Deuflhard (1979) | $1$ | $\operatorname{sinc}\xi$ |
+| García-Archilla, Sanz-Serna & Skeel (1998) | $\operatorname{sinc}\xi$ | $\operatorname{sinc}^2\xi$ |
+| Grimm & Hochbruck (2006) | $\operatorname{sinc}\xi$ | $\operatorname{sinc}^3\xi$ |
+| Hochbruck & Lubich (1999), two-step | $\big(1+\tfrac13\operatorname{sinc}^2\tfrac\xi2\big)\operatorname{sinc}\xi$ | $\operatorname{sinc}^2(\xi/2)$ |
+
+**Theorem 3.15** (after Grimm & Hochbruck 2006). If the solution has finite energy,
+$\tfrac12\lVert v\rVert^2+\tfrac12\lVert Wq\rVert^2\le\mathcal E^2$ (page-local $\mathcal E$), and the filters
+satisfy the boundedness and smallness conditions (3.45)–(3.48), the one-step method has
+position error $\le Ch^2$; under (3.49) also velocity error $\le Ch$; the constants are
+independent of $\lVert W\rVert$. The proof bounds sums of oscillatory defects by summation by
+parts "as long as no resonances occur", and the filters remove the resonances. Gautschi's and
+Deuflhard's methods "do not use an inner filter $\phi$, and thus suffer from resonances" (their $\phi$ is $\varpi$ here)
+(Ex. 3.14). Symmetric one-step methods of the class are symplectic iff
+$\sigma(\xi)=\operatorname{sinc}(\xi)\varpi(\xi)$; the long-time near energy conservation proved by
+Hairer & Lubich (2000) for linear problems needs $\sigma=\operatorname{sinc}^2\varpi$, "which
+cannot be satisfied by a symplectic method" (Remark 3.18; see
+[symplecticity](/properties/symplecticity.md)).
+
+**Impulse and multiple time stepping.** The impulse method (Grubmüller et al. 1991; Tuckerman,
+Berne & Martyna 1992) is a Strang [splitting](/methods/operator-splitting.md) into fast and
+slow forces: a half kick with the slow force, the fast oscillation over $h$, a half kick. For
+linear fast forces it "is then precisely the scheme of Deuflhard (1979)", and it shows
+resonances when eigenvalues of $hW$ are integer multiples of $\pi$ (Biesiadecki & Skeel 1993,
+as recalled). The mollified impulse method of García-Archilla et al. (1998) replaces the slow
+force by an averaged one and, for linear fast forces, is the one-step method with the
+García-Archilla filters, so Theorem 3.15 covers it (§3.2, Eq. (3.52)).
+
 ## Exact linear flows inside splittings
 
 [Operator splitting](/methods/operator-splitting.md) uses exact exponentials of a linear
@@ -611,13 +854,19 @@ significantly larger than even fully implicit methods)" (§1).
   stiffly accurate ExpRK methods. That holds within the format above. Exponential methods
   of order 4 and 5 of other types exist: the Rosenbrock and EPIRK schemes on this page.
 - Dallerit & Tokman's claim that their multistep methods coincide with Hochbruck–Ostermann's
-  exponential Adams methods is asserted, not shown (§6.2).
+  exponential Adams methods is asserted, not shown (§6.2). Hochbruck & Ostermann (2010) define
+  exponential Adams methods (2.69) with a fixed linear part and the linearized two-step method
+  (2.72) with the per-step Jacobian; SREXP_MS3, which uses the per-step Jacobian, coincides with
+  the latter (compiler check in the multistep section above).
+- Hochbruck & Ostermann (2010) give no numerical experiments; their order statements for
+  ETD4RK, Krogstad's and the Strehmel–Weiner scheme are worst-case statements derived from the
+  stiff order conditions (Ex. 2.19).
 - Permyakova & Goldobin (2025) state only classical error terms for ETD2RK–ETD4RK and do not
   discuss stiff order; against the stiff conditions, ETD4RK satisfies the order-2 hypotheses of
   Luan's theorem but not those of order 3 *(compiler check on the
   [result page](/results/exponential-runge-kutta-stiff-order-conditions.md))*. Their error
-  curves carry no slopes, so they neither confirm nor refute order 4. This is a qualification,
-  not a contradiction: they make no stiff-order claim.
+  curves carry no slopes, so they neither confirm nor refute order 4; they make no stiff-order
+  claim.
 - Permyakova & Goldobin's gains are measured against explicit schemes at their stability
   limits, not against implicit, IMEX or Krylov-based exponential integrators; storing dense
   $N\times N$ matrices costs $O(N^2)$ memory, and the advantage over Krylov and contour-integral
@@ -648,3 +897,4 @@ significantly larger than even fully implicit methods)" (§1).
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §1, §3 (order notions), §5.3 (single projection), §6.1–6.3 Eqs. 40–41, Tables 1–3 (SREXP_RK, MS, MV), §7 Figs. 1–4.
 - [Buvoli & Minion (2024)](/sources/buvoli-2024.md) — §3.1–3.2 Eqs. 7–15, App. A (ERK1–ERK4 tableaux, φ convention, repartitioning), §4 (NLS), §5.1–5.7 (partitioned Dahlquist analysis, Fig. 5, Fig. 10), §6.2–6.3 (KP, Vlasov–Poisson), §7; arXiv v2.
 - [Permyakova & Goldobin (2025)](/sources/permyakova-2025.md) — §1–2 Eqs. 1–12 (ETD2RK–ETD4RK, matrix form), §3.1–3.3 (Figs. 3–8, Table 1), §4, App. A; arXiv v2.
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §1 Eqs. (1.1)–(1.6) (idea, two problem classes, stiff order, rational approximations); §2.1–2.2 Assumption 2.2, Exs. 2.3, 2.5–2.6, Eqs. (2.9)–(2.18), Thm. 2.7, Cor. 2.8 (φ-functions, exponential quadrature); §2.3 Eqs. (2.20)–(2.25), Thm. 2.14, Exs. 2.18–2.19, Eqs. (2.39)–(2.43), p. 229 (ExpRK format, simplifying assumptions, named tableaux); §2.4 Eqs. (2.44)–(2.53), Thm. 2.22, Exs. 2.23–2.25 (exponential Rosenbrock, exprb32, exprb43, exp4); §2.5–2.7 Eqs. (2.69)–(2.78), Thms. 2.27, 2.29, 2.31 (exponential Adams, linearized multistep, general linear methods); §2.8 Eq. (2.84), §3.1 Eqs. (3.6)–(3.10), (3.34), Thms. 3.4, 3.9, 3.10, Ex. 3.7 (Magnus, adiabatic); §3.2 Eqs. (3.36)–(3.52), Exs. 3.12, 3.14, Thm. 3.15, Remark 3.18 (trigonometric, impulse methods); §6 (history); version of record.

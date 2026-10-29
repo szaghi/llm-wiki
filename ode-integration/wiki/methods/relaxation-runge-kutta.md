@@ -5,7 +5,7 @@ description: "Relaxation rescales each Runge–Kutta update by a scalar root γn
 status: established
 aliases: [RRK, relaxation RK, relaxation method, incremental direction technique, IDT, multiple-relaxation Runge–Kutta, MRRK, FSAL-R, R-FSAL, global relaxation, local relaxation]
 tags: [runge-kutta, structure-preserving, explicit, imex, multirate, step-size-control, relaxation, entropy-stability]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Relaxation Runge–Kutta methods
@@ -16,7 +16,16 @@ parameter is chosen at every step so that a convex functional $\eta(y)$ (an
 entropy, an energy or an invariant) changes from $y_n$ to the new solution
 exactly as the semi-discrete system says it should. Relaxation was introduced
 by Ketcheson (2019) and generalized by Ranocha, Lóczi, Ketcheson and coauthors
-(2020), as recalled by every source below. With the baseline stage values
+(2020), as recalled by every source below. The founding paper,
+[Ketcheson (2019)](/sources/ketcheson-2019.md) (§1), credits the approach to Dekker & Verwer
+(1984, pp. 265–266), "who noted that the classical four-stage RK method could be modified
+slightly to conserve energy while maintaining its accuracy", its extension to a restricted
+class of fourth-order methods to Del Buono & Mastroserio (2002), and the proof that the
+technique without step-size adjustment has order at least $p-1$ to Calvo et al. (2006). It
+describes these methods as "while not entirely new, seem to have been overlooked"; what it
+adds is the interpretation of the result at $t_n+\gamma_nh$, the name (by analogy with the
+relaxation parameter of iterative algebraic solvers, §2), the accuracy and stability analysis,
+and the experiments. With the baseline stage values
 $Y_i$ and update $y_{n+1}$,
 
 $$y^{\gamma}_{n+1}=y_n+\gamma_n\,(y_{n+1}-y_n)=y_n+\gamma_n h\sum_{i=1}^sb_if(t_n+c_ih,Y_i)$$
@@ -74,7 +83,23 @@ $y'=Sy$ as $\gamma_n=-2\langle y_n,d_n\rangle/\lVert d_n\rVert^2$, and
 [Gaburro et al. (2023)](/sources/gaburro-2023.md) (Example 4.5, Eq. (42)) the
 ADER analogue; the three agree, because
 $\langle Y_i,SY_i\rangle=0$ *(compiler check, not in the sources)*. Ketcheson's
-original setting is exactly this inner-product-norm case.
+original setting is exactly this inner-product-norm case: with $f_i=f(t_n+c_ih,Y_i)$
+(page-local shorthand) he writes
+
+$$\gamma_n=\frac{2\sum_{i,j}b_ia_{ij}\langle f_i,f_j\rangle}{\sum_{i,j}b_ib_j\langle f_i,f_j\rangle},\qquad\gamma_n=1\ \text{if}\ \Bigl\lVert\sum_jb_jf_j\Bigr\rVert=0$$
+
+(Ketcheson 2019, §2, Eqs. (11)–(12)), which equals the formula above because
+$Y_i-y_n=h\sum_ja_{ij}f_j$ and $y_{n+1}-y_n=h\sum_jb_jf_j$ *(compiler check, not in the
+sources)*. The relaxed energy then changes by exactly
+$2\gamma_nh\sum_jb_j\langle Y_j,f_j\rangle$: the term the baseline method gets right is kept
+and the spurious quadratic form $-h^2\sum_{i,j}m_{ij}\langle f_i,f_j\rangle$,
+$M=BA+A^\top B-bb^\top$ (page-local $m_{ij}$), is cancelled (Eqs. (7)–(10)). Computing
+$\gamma_n$ costs $s+1$ inner products, a count Ketcheson credits to Ranocha (Remark 4), and the
+relaxed method still conserves linear invariants (Remark 2). General convex functionals are
+left to a preprint of Ranocha et al. that the paper cites, as is a proof of Lemma 4 without
+B-series (Remark 7). For conservative systems Ketcheson
+calls the method a line search for an energy-conserving step (§2), and he notes that the
+cheaper formula of Calvo et al. is "correct only for conservative systems" (Remark 3).
 
 ## Where the relaxed solution lives: RRK and IDT
 
@@ -95,7 +120,18 @@ $\gamma_n=1+O(h^{p-1})$; RRK then has order $p$, while IDT has order $p-1$
 (Bleecke & Ranocha (2026), Eq. (3); Biswas & Ketcheson (2023), §2;
 Gaburro et al. (2023), §4.2; Bencomo & Chan (2023), §2.2; Kang &
 Constantinescu (2022), Remark 2, all recalling Ketcheson (2019) and Ranocha,
-Lóczi & Ketcheson (2020)). The numbers show it. On inviscid Burgers with an
+Lóczi & Ketcheson (2020)). In the founding paper the statements are: if the baseline
+method has order $p$ and $\gamma_n=1+O(h^{p-1})$, the IDT interpretation has order $p-1$
+and the RRK interpretation order $p$ (Ketcheson 2019, §2.1, Thm. 3); the quadratic formula
+gives $\gamma_n=1+O(h^{p-1})$ for **every** Runge–Kutta method of order $p$, proved with [B-series](/definitions/b-series.md) (Lemma 4, pp. 6–9); hence RRK has
+order $p$ and IDT order $p-1$ (Cor. 5), the IDT part having been proved by other means by
+Calvo et al. (Remark 6). Positivity is Lemma 1: if $\sum_{i,j}b_ia_{ij}>0$, which holds for
+every method of order $\ge2$, then $\gamma_n>0$ for small enough $h$ (no proof printed);
+"small enough" means $h$ "no more than about $1/L$", $L$ the Lipschitz constant of $f$
+(Remark 1). On a nonlinear oscillator $\max\lvert\gamma_n-1\rvert$ converges at least at
+$O(h^{p-1})$, one order faster for SSPRK(2,2) and RK4, which Ketcheson attributes to the
+symmetry of the problem (Fig. 1). He concludes that "in practice one should always use the
+latter interpretation" (RRK, §5). The numbers show it. On inviscid Burgers with an
 entropy-conservative DG flux and $h=7.813\times10^{-5}$, second-order IMEX gives
 errors $6.27\times10^{-8}$ (plain), $5.81\times10^{-8}$ (relaxation) and
 $8.49\times10^{-6}$ (IDT); IDT converges at order 0.94–1.00 and the third-order
@@ -112,6 +148,25 @@ $\gamma_n\approx1.004$–$1.005$ at second order, $1.0005$ at third and
 $\approx1.0000$ at fourth order on a smooth advected bump, and up to about 1.2
 and 1.35 with a contact discontinuity and the "123" problem (Gaburro et al.
 (2023), Figs. 2, 13, 17).
+
+## Linear stability and SSP of the relaxed step
+
+Freezing $\gamma$ over a step gives the method with weights $\gamma b$ and
+[stability function](/definitions/stability-function.md) $R_\gamma(z)=1+\gamma\bigl(R(z)-1\bigr)$
+(Ketcheson 2019, §3.1, Eq. (21)). Its region of absolute stability grows monotonically as
+$\gamma$ decreases and tends to $\mathbb C$ as $\gamma\to0$ (Thm. 7). On the imaginary axis,
+$1-\lvert R_\gamma(\mathrm iy)\rvert^2=\sum_{j=1}^{p/2}\frac2{(2j)!}\gamma(1-\gamma)y^{2j}+O(y^{p+2})$
+for a method of order at least $p\ge2$, so for $\gamma\in[0,1)$ every such method gains a
+segment of the imaginary axis, the two-stage second-order method included (§3.1). The SSP
+coefficient is unchanged for $0\le\gamma\le\gamma_*=-1/(R(-\mathcal C)-1)\ge1$ (§3.2, Thm. 9,
+Table 1); the values are on
+[strong-stability-preserving Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md).
+
+On Fourier-spectral [linear advection](/benchmarks/linear-advection-equation.md) RRK(4,4)
+stays stable beyond the linear limit of RK4, but at $1.016$ times that limit its solutions are
+"highly inaccurate and oscillatory", and from about $1.25$ times the limit $\gamma_n\to0$ after
+a few steps and the computation never completes (§4.1, Fig. 4, Remark 8). With general data,
+relaxation keeps the total energy by moving energy between Fourier modes (§4.1, Fig. 3).
 
 ## Solving for the relaxation parameter
 
@@ -285,6 +340,14 @@ extra-evaluation cost that FSAL-R and R-FSAL remove.
   cite relaxation as the route to fully discrete entropy stability for the
   error-controlled methods they optimize; Bencomo & Chan (2023, §2.2) note that
   RRK resembles adaptive time stepping.
+* **Projection.** Ketcheson (2019, §2.2) shows that RRK is a projection along
+  $y_{n+1}-y_n$ with step length $1-\gamma_n$, and that after autonomizing the system the time
+  is projected too, giving $t_n+\gamma_nh$; "the existing formalism for such methods does not
+  include the possibility of interpreting the new solution as an approximation at a time
+  different from $t_n+\Delta t$".
+* **Embedded estimators and dense output** of the baseline method can be used unchanged,
+  with the dense-output times rescaled, and the technique applies to implicit methods too
+  (Ketcheson 2019, §5).
 * **Other bases.** Kang & Constantinescu (2022, §1) and Gaburro et al. (2023)
   cite extensions to [deferred correction](/methods/deferred-correction.md);
   Ranocha, Lóczi & Ketcheson (2020) cover multistep methods, as recalled by
@@ -293,7 +356,9 @@ extra-evaluation cost that FSAL-R and R-FSAL remove.
 ## Qualifications
 
 * **Positive weights.** The dissipation argument needs $b_i\ge0$ and
-  $\gamma_n>0$; Kang & Constantinescu (2022) use both in §2.1 but omit them from
+  $\gamma_n>0$; Ketcheson (2019, §2, Thm. 2) states monotonicity for nonnegative weights "as
+  long as $\Delta t$ is chosen so that $\gamma_n\ge0$", and conservation for any baseline
+  method of order $\ge2$; Kang & Constantinescu (2022) use both in §2.1 but omit them from
   the hypotheses of Prop. 2.1, and do not discuss existence or positivity of
   $\gamma_n$ for their IMEX and multirate methods. For conservation alone the
   weights may be negative: Biswas & Ketcheson (2023) relax RKF45, whose
@@ -341,6 +406,7 @@ extra-evaluation cost that FSAL-R and R-FSAL remove.
 
 # Citations
 
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §1 (attribution to Dekker & Verwer, Del Buono & Mastroserio, Calvo et al.), §1.1 (Eqs. (7)–(8)), §2 (Eqs. (9)–(12), Lemma 1, Thm. 2, Remarks 1–4), §2.1 (Thm. 3, Lemma 4, Cor. 5, Remark 6, Fig. 1), §2.2, §3.1 (Eq. (21), Thm. 7), §3.2 (Thm. 9, Table 1), §4.1 (Figs. 3–4, Remark 8), §5; arXiv v1.
 - [Kang & Constantinescu (2022)](/sources/kang-2022.md) — §2.1 (RRK, $\theta(\gamma)$, dissipation argument), Remark 2 (IDT), §2.2 (Eqs. (12)–(14), Prop. 2.1, Cor. 2.1.1), §2.3 (Props. 2.2–2.3), §3 (Tables 2–4, Fig. 16), §4.
 - [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) — §1 (Eqs. (3)–(7), naive FSAL cost, footnote 1), §2.1 (Lemma 1, Theorem 1), §2.2 (Lemma 2, Eq. (17), Theorem 2), §3 (Fig. 1), §4.
 - [Bencomo & Chan (2023)](/sources/bencomo-2023.md) — §2.2 (Eqs. (11)–(12), IDT vs RRK, orders), Eq. (19), §2.2.3 (Eq. (24)), §3, appendix.

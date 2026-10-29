@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Strong-stability-preserving (SSP) Runge–Kutta methods"
-description: "A Runge–Kutta method is SSP with coefficient $\\mathcal C$ when it preserves every convex-functional bound that forward Euler preserves for $h\\le h_{\\mathrm{FE}}$, under $h\\le\\mathcal C h_{\\mathrm{FE}}$; the page gives the characterization, order and coefficient barriers, the optimal explicit methods, embedded pairs and the multiderivative and IMEX extensions."
+description: "A Runge–Kutta method is SSP with coefficient $\\mathcal C$ when it preserves every convex-functional bound that forward Euler preserves for $h\\le h_{\\mathrm{FE}}$, under $h\\le\\mathcal C h_{\\mathrm{FE}}$; the page gives the origin as TVD time discretizations, the characterization, downwind operators, order and coefficient barriers, the optimal explicit methods, SSP multistep methods, embedded pairs and the multiderivative and IMEX extensions."
 status: established
-aliases: [SSP Runge–Kutta, SSPRK, SSPERK, TVD Runge–Kutta, monotonicity-preserving Runge–Kutta, contractivity-preserving Runge–Kutta]
+aliases: [SSP Runge–Kutta, SSPRK, SSPERK, TVD Runge–Kutta, Runge–Kutta type TVD time discretization, monotonicity-preserving Runge–Kutta, contractivity-preserving Runge–Kutta]
 tags: [ssp, runge-kutta, stability, explicit, structure-preserving]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Strong-stability-preserving (SSP) Runge–Kutta methods
@@ -24,7 +24,23 @@ $\lVert y_{n+1}\rVert\le\lVert y_n\rVert$ whenever $h\le\mathcal Ch_{\mathrm{FE}
 [Gottlieb et al. 2022](/sources/gottlieb-2022.md), §1, Eq. (2)). The property is
 nonlinear and independent of any linearization: it holds for every $f$ satisfying the
 hypothesis. The effective SSP coefficient $\mathcal C_{\mathrm{eff}}=\mathcal C/s$
-normalizes by the stage count (registry convention; none of the sources below uses it).
+normalizes by the stage count (registry convention). Gottlieb, Shu & Tadmor use an
+"effective CFL coefficient" with a different normalization, $\mathcal C\cdot\frac4{4+i}$
+for a four-stage method with $i$ evaluations of the downwind operator, which compares the
+method with an ideal one without them
+([Gottlieb et al. 2001](/sources/gottlieb-2001.md), §4.1).
+
+**Origin.** [Shu & Osher (1988)](/sources/shu-1988.md) (§II) present the methods as
+"Runge–Kutta type TVD time discretizations" for the
+[total variation](/definitions/total-variation-diminishing.md):
+if the forward Euler step is TVD under a CFL restriction $\nu\le\nu_0$, a method written as
+a convex combination of forward Euler steps is TVD under $\nu\le\nu_0\min\alpha_{ij}/\lvert\beta_{ij}\rvert$
+(Prop. 2.1, Eq. (2.13)); Gottlieb et al. (2001, §2.2, Lemmas 2.1–2.2) recall this result
+from them. Their Remark 2.1 already replaces the total variation by any
+convex nonnegative functional on a Banach space of grid functions. The name *strong
+stability preserving* is due to Gottlieb et al. (2001, abstract, §1), who renamed the
+"TVD time discretizations" of Shu–Osher, Shu and Gottlieb–Shu because the argument uses
+only convexity; they call the factor $\mathcal C$ the **CFL coefficient** (§2.1, Eq. (2.6)).
 
 SSP is a different notion from the [strong stability](/properties/strong-stability.md)
 of a method on a linear seminegative problem: see *Relation to strong stability* below.
@@ -39,6 +55,21 @@ $\mathcal C\ge\min_{ij}\alpha_{ij}/\beta_{ij}$ (Gottlieb et al. 2022, §1; Feket
 al. 2022, §1.1). Fekete et al. call the convex decomposition "a sufficient and
 necessary condition"; see *Qualifications*.
 
+The form is printed by Shu & Osher (1988, §II, Eqs. (2.10)–(2.12)). Starting from an
+explicit method in stage-value form, $Y_i=y_n+h\sum_{j<i}a_{ij}f(Y_j)$ for $i=2,\dots,s+1$
+with $Y_{s+1}=y_{n+1}$ and $a_{s+1,j}=b_j$, any choice of $\alpha_{ij}\ge0$ with
+$\sum_j\alpha_{ij}=1$ gives the equivalent form with
+$\beta_{ij}=a_{ij}-\sum_{l=j+1}^{i-1}a_{lj}\alpha_{il}$ (their 0-based indices shifted by one), so the
+representation is not unique (p. 9). Shu & Osher require only $\alpha_{ij}\ge0$:
+a negative $\beta_{ij}$ is allowed if $f$ is replaced in that term by the downwind
+operator $\tilde L$ (see *Downwind operators* below), and the bound becomes
+$\min\alpha_{ij}/\lvert\beta_{ij}\rvert$ (Prop. 2.1). Gottlieb et al. (2001, §2.2, Lemmas
+2.1–2.2, Eqs. (2.9)–(2.13)) restate both cases, writing "In [Shu–Osher], a general
+$m$-stage Runge–Kutta method … is written in the form"; neither paper calls it the
+Shu–Osher form, and both give it as a sufficient condition. Shu & Osher add that "most
+classical Runge–Kutta methods lead to small CFL numbers in (2.13) as well as negative
+$\beta_{ik}$'s", so they design methods directly in this form (p. 10).
+
 **Kraaijevanger's characterization.** With the $(s+1)\times(s+1)$ matrix
 $\tilde A=\begin{pmatrix}A&0\\b^\top&0\end{pmatrix}$ (page-local),
 
@@ -49,6 +80,10 @@ inequalities componentwise, as recalled by Fekete et al. (2022, §1.1, Thm. 1, E
 $A\ge0$ and $b\ge0$ (Fekete et al. 2022, Thm. 2); for an irreducible method Biswas et
 al. recall the sharper requirement $A\ge0$, $b>0$ (Kraaijevanger, Thm. 4.2;
 [Biswas et al. 2025](/sources/biswas-2025.md), proof of Cor. 2.8).
+[Ketcheson (2019)](/sources/ketcheson-2019.md) (§3.2, Eq. (22)) defines $\mathcal C(A,b)$ as
+the radius of absolute monotonicity of the method, the largest $r\ge0$ with
+$A(I+rA)^{-1}\ge0$, $(I+rA)^{-1}\mathbf 1\ge0$, $b^\top(I+rA)^{-1}\ge0$ and $R(-r)\ge0$,
+citing Ferracina–Spijker.
 
 **Stage and weight halves.** In the resolvent form used by Kuzmin et al. (2022, §3.1.1,
 Eqs. (36)–(37)), with $X=(I+rA)^{-1}$, an explicit method is SSP with coefficient $r$ when
@@ -72,6 +107,24 @@ largest $r$ such that $R$ and all its derivatives are nonnegative on $(-r,0]$ (F
 et al. 2022, §1.1, Def. 4). It can exceed the nonlinear $\mathcal C$, and it can be
 positive when $\mathcal C=0$ (Biswas et al. 2025, after Cor. 2.8).
 
+Gottlieb et al. (2001, §3.1, Prop. 3.2, Eqs. (3.1)–(3.2)) give the linear case of every
+order: $s-1$ forward Euler stages followed by a convex combination,
+$y_{n+1}=\sum_{k=0}^{s-2}\alpha_{s,k}(I+hL)^ky_n+\alpha_{s,s-1}(I+hL)^sy_n$ with
+$\alpha_{1,0}=1$, $\alpha_{s,k}=\frac1k\alpha_{s-1,k-1}$ ($k=1,\dots,s-2$),
+$\alpha_{s,s-1}=\frac1{s!}$ and $\alpha_{s,0}=1-\sum_{k\ge1}\alpha_{s,k}$ (page-local
+indexing of their $\alpha_{m,k}$; all nonnegative), is of order $s$ on linear problems and
+SSP with coefficient 1. Since the $s$-stage, order-$s$ linear Runge–Kutta polynomial is unique,
+they conclude that "this unique $m$-stage, $m$th-order linear Runge–Kutta method is SSP under
+CFL coefficient $c=1$": the degree-$s$ Taylor polynomial of $e^{z}$ has a convex form with
+coefficient 1 for every $s$. Examples (Eqs. (3.4)–(3.5)):
+
+$$\sum_{k=0}^3\frac{z^k}{k!}=\frac13+\frac12(1+z)+\frac16(1+z)^3,\qquad
+\sum_{k=0}^4\frac{z^k}{k!}=\frac38+\frac13(1+z)+\frac14(1+z)^2+\frac1{24}(1+z)^4.$$
+
+Their Table 3.1 lists the coefficients up to $s=8$. For nonlinear $f$ the same scheme is
+SSP with coefficient 1 but "no longer $m$th-order accurate" (§3.1). They do not use the term
+"absolute monotonicity".
+
 ## Barriers
 
 - **Explicit order barrier.** No explicit Runge–Kutta method of order $p\ge5$ has
@@ -85,6 +138,19 @@ positive when $\mathcal C=0$ (Biswas et al. 2025, after Cor. 2.8).
   [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) (§1) recall the
   orders 4 and 6 and add that existing high-order implicit SSP methods "are not
   A-stable", which imposes severe step restrictions on stiff diffusion.
+- **Stages equal to order: $\mathcal C\le1$.** Among $s$-stage, order-$s$ methods in
+  Shu–Osher form with all $\alpha_{ij},\beta_{ij}\ge0$ the largest coefficient is
+  $\mathcal C=1$; the proof already works in the linear case (Gottlieb et al. 2001, §3.1,
+  Prop. 3.1). The bound holds only when the stage count equals the order: Gottlieb et al.
+  recall an $s$-stage first-order method of Shu (1988, SIAM J. Sci. Statist. Comput.) with
+  $\mathcal C=s$, for steady-state computations.
+- **Four stages, fourth order.** Every four-stage fourth-order method in Shu–Osher form
+  with nonzero coefficient (2.13) has at least one $\beta_{ij}<0$, so it needs the downwind
+  operator (Gottlieb et al. 2001, §4.1, Prop. 4.2, recalled from Gottlieb–Shu). Shu & Osher
+  (1988, §II, pp. 12–13) had stated only that "Extensive searching seems to indicate that we
+  cannot avoid negative constants $\beta_{ik}$ this time", for four stages, with seven
+  order equations in sixteen unknowns. Gottlieb et al. (2001) do not state the order-5
+  barrier recalled above.
 - **Implicit methods have bounded $\mathcal C$.** Implicit Runge–Kutta, multistep and
   general linear methods have finite SSP coefficients, "usually bounded by twice the
   number of stages for a Runge–Kutta method"; implicit methods that preserve the
@@ -93,6 +159,16 @@ positive when $\mathcal C=0$ (Biswas et al. 2025, after Cor. 2.8).
   A, restating Gottlieb–Shu–Tadmor). The same barrier for positivity is the
   Bolley–Crouzeix result recalled on
   [positivity preservation](/properties/positivity-preservation.md).
+  Gottlieb et al. (2001, §6, Props. 6.2–6.3) state the barrier for implicit methods
+  without explicit terms, under the **backward** Euler hypothesis (unconditional strong
+  stability of $y_{n+1}=y_n+hf(y_{n+1})$, Eq. (6.8)): an implicit Runge–Kutta method of
+  the form $Y_i=\sum_{k<i}\alpha_{ik}Y_k+h\beta_if(Y_i)$, $\alpha_{ik}\ge0$ (their (6.7):
+  one implicit evaluation per stage, no explicit $f$ terms, with $\tilde L$ for
+  $\beta_i<0$), or an implicit multistep method with only the implicit term (6.16), cannot
+  have all $\alpha\ge0$ at order $\ge2$. They add that with explicit terms SSP methods are
+  obtained "under restrictions on $\Delta t$ similar to explicit methods" (§6.2–6.3). A
+  second-order example of form (6.3) has $\alpha_{2,1}=\frac1{2\beta_1(1-\beta_1)}\in[4,\infty)\cup(-\infty,0)$,
+  so no member is SSP (Eq. (6.4)).
 - **Many stages do not bring SSP for free.** Stability polynomials optimized for
   hyperbolic spectra and realized as products of forward Euler steps and two-stage
   submethods have $\mathcal C=\min\alpha_{ij}/\beta_{ij}=0$, because the final row has
@@ -137,7 +213,45 @@ $\mathcal C$ (Fekete et al. 2022, §2). The families used across the sources:
 | SSPERK$(10,4)$ (Ketcheson) | 6 | rows 2–5: $\frac16$ in all previous columns; rows 6–10: $\frac1{15}$ in columns 1–5, $\frac16$ in columns $6,\dots,i-1$; $b=\frac1{10}\mathbf 1$; low-storage | Fekete et al. 2022, §2.3 |
 
 The effective coefficients are $\mathcal C_{\mathrm{eff}}=(s-1)/s$, $1-1/n$ and $0.6$
-respectively *(compiler check, not in the sources)*. The three-stage third-order
+respectively *(compiler check, not in the sources)*.
+
+**The founding methods.** Shu & Osher (1988, §II) derive the two-stage second-order family
+(Eq. (2.14), free $\beta_{21}$ and $\alpha_{32}$ in registry indexing) and pick
+
+$$Y_2=y_n+hf(y_n),\qquad y_{n+1}=\tfrac12y_n+\tfrac12Y_2+\tfrac12hf(Y_2),$$
+
+with CFL coefficient 1, as "optimal (considering CFL restriction (2.13) and whether
+$\tilde L$ appears)" ("It can be verified"; no proof printed), and identify it with Heun's
+or the modified Euler method (Eqs. (2.15)–(2.16)). From the five-parameter third-order
+family (2.17), "extensive searching" gives the preferred method
+
+$$Y_2=y_n+hf(y_n),\quad Y_3=\tfrac34y_n+\tfrac14Y_2+\tfrac14hf(Y_2),\quad
+y_{n+1}=\tfrac13y_n+\tfrac23Y_3+\tfrac23hf(Y_3),$$
+
+with CFL coefficient 1 and no $\tilde L$ (Eqs. (2.18)–(2.19)); this is the SSPRK(3,3) of the
+table above, for which Ketcheson (2019, §4) cites Shu & Osher. Shu &
+Osher could not identify it with any classical third-order method, and the classical
+third-order methods they took from Lambert lead to negative $\beta$ and small CFL numbers
+(p. 12). Gottlieb et al. (2001, §4.1, Prop. 4.1, Eqs. (4.1)–(4.2)) print the same two
+methods as optimal among $s$-stage, order-$s$ methods with $\beta_{ij}\ge0$, citing
+Gottlieb–Shu for the proof. At fourth order Shu & Osher rewrite classical RK4 with two
+$\tilde L$ evaluations and CFL coefficient $\frac23$ (Eq. (2.20)), raise it to $\frac{137}{200}$
+with another choice of the third stage (Eq. (2.21)), and give a second fourth-order method
+with coefficient $0.87$ (Eq. (2.22)); Gottlieb et al. (2001, Eq. (4.3)) give a four-stage
+fourth-order method with coefficient $0.936$ and two $\tilde L$ evaluations (effective
+coefficient $0.624$ in their normalization) and "do not claim" it optimal. Shu & Osher
+(1988, Eq. (2.23)) also print a six-stage scheme with CFL coefficient $\frac7{30}$ that they
+present as a fifth-order method from Lambert's book (p. 143); as printed in the version read,
+its Butcher form gives $b^\top Ac=\frac8{45}$ instead of $\frac16$ *(compiler check, not in
+the sources)*, see the [Source page](/sources/shu-1988.md).
+
+**Other explicit classes.** Gottlieb et al. (2001, §4.2) print a third-order SSP method in
+the two-register Williamson form with CFL coefficient 0.32 and report that a low-storage
+method with negative $\beta$ "cannot be made SSP", because $\tilde L$ destroys the low-storage
+property; see [low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md). In the
+two-step two-stage hybrid family (§4.3, Eqs. (4.5)–(4.7)) the best third-order member found
+has CFL coefficient $\approx0.473$, and no fourth-order member has all $\alpha\ge0$ (Prop.
+4.3). The three-stage third-order
 Shu–Osher method SSPRK(3,3) is the common baseline in the numerical comparisons of
 Ranocha et al. (2022, §5) and Biswas et al. (2025, Table 3.2); among the classical
 methods compared by Biswas et al., it, RK4 and Dormand–Prince all have
@@ -157,6 +271,49 @@ Bogacki–Shampine 3(2) and the five-stage pair of Ranocha et al.
 two-stage SSP method of Shu and Osher is the base of the second-order multirate scheme
 MRK2 of Constantinescu and Sandu, which [Kang & Constantinescu (2022)](/sources/kang-2022.md)
 use and extend to several levels (§2.3, Table 1).
+
+## SSP linear multistep methods
+
+The same convexity argument applies to explicit multistep methods written as
+$y_{n+1}=\sum_{r=1}^k\bigl(\bar\alpha_ry_{n+1-r}+h\bar\beta_rf(y_{n+1-r})\bigr)$ with
+$\bar\alpha_r\ge0$, $\sum_r\bar\alpha_r=1$ (page-local backward-indexed coefficients; the
+[registry form](/methods/linear-multistep-method.md) uses forward indices): it is SSP with
+coefficient $\min_r\bar\alpha_r/\lvert\bar\beta_r\rvert$, with $\tilde L$ for negative
+$\bar\beta_r$ (Gottlieb et al. 2001, §2.3, Lemma 2.3, Eq. (2.15), recalled from Shu (1988,
+SIAM J. Sci. Statist. Comput.)). Gottlieb et al. prove (§5):
+
+- no $k$-step method of order $k$ ($k\ge2$) with all $\bar\beta_r\ge0$ is SSP, and no
+  $k$-step SSP method has order $k+1$ (Prop. 5.1);
+- the optimal coefficients are $\frac12$ for two-step second-order methods, $\frac12$ for
+  three-step second-order and $\frac13$ for four-step third-order methods with all
+  $\bar\beta_r\ge0$ (Props. 5.2–5.4); the three-step and four-step optima are
+  $y_{n+1}=\frac34y_n+\frac14y_{n-2}+\frac32hf(y_n)$ and
+  $y_{n+1}=\frac{16}{27}y_n+\frac{11}{27}y_{n-3}+\frac{16}9hf(y_n)+\frac49hf(y_{n-3})$
+  (Table 5.1, schemes 2 and 6, both attributed to Shu 1988, SIAM);
+- more steps raise the coefficient: Table 5.1 lists 15 methods of orders 2–5, e.g.
+  $\frac23$ for four-step second order and $0.567$ for six-step third order;
+- five-step fourth-order methods with all coefficients nonnegative exist, with coefficient
+  at most $\frac3{88}\approx0.034$ and $0.021$ found by search, which the authors say
+  "disproves the belief that SSP schemes of order four or higher must have negative
+  $\beta$" while being "probably too small … to be of much practical use".
+
+They compare efficiency per right-hand-side evaluation: the three-step second-order method
+with coefficient $\frac12$ and one evaluation per step has "the same efficiency" as the
+two-stage method with coefficient 1, at more storage (Prop. 5.3), and likewise the four-step
+third-order method against SSPRK(3,3). Shu & Osher (1988, §II, p. 7) give the reasons they
+moved from multi-level TVD discretizations to Runge–Kutta methods: a multistep method must be
+started by another method of the same order and must store all levels.
+
+## Relaxation and the SSP coefficient
+
+Scaling the weights of a method by the relaxation parameter of
+[relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md) keeps the SSP property
+over a range: for $0\le\gamma\le\gamma_*=-1/(R(-\mathcal C)-1)\ge1$ the method $(A,\gamma b)$
+has $\mathcal C(A,\gamma b)\ge\mathcal C(A,b)$ (Ketcheson 2019, §3.2, Lemma 8, Thm. 9). Table 1
+of the same paper gives $\gamma_*=2$ for SSPRK(2,2), $s/(s-1)$ for SSPRK$(s,2)$, $\frac32$ for
+SSPRK(3,3), 1 for SSPRK(4,3), SSPRK(5,3) and SSPRK(9,3), 1.312 for SSPRK(5,4) and
+$\frac{25}{24}$ for SSPRK(10,4); for all of them direct computation gives
+$\mathcal C(A,\gamma b)=\mathcal C(A,b)$ on $[0,\gamma_*]$ and a smaller coefficient beyond.
 
 ## Embedded pairs and adaptive steps
 
@@ -201,10 +358,23 @@ tolerances than the others (Ranocha et al. 2025, §3, §4.2, §6, §8, Tables 1,
 
 ## Beyond Runge–Kutta: downwind, multiderivative, IMEX
 
-- **Downwind operators.** With a downwind approximation $\tilde f$ satisfying
-  $\lVert y-h\tilde f(y)\rVert\le\lVert y\rVert$ for $h\le h_{\mathrm{FE}}$, Ketcheson
+- **Downwind operators.** The downwind operator $\tilde L$ is a second approximation of
+  the same spatial operator for which the backward-in-time Euler step $y-h\tilde L(y)$ is
+  strongly stable under the same bound $h\le h_{\mathrm{FE}}$. It is introduced by Shu &
+  Osher (1988, §II, Eqs. (2.8)–(2.9), Prop. 2.1), who credit the trick to Shu's 1986 report
+  on multi-level TVD time discretizations; their example for $u_t=u_x$ pairs the forward
+  difference $(u_{j+1}-u_j)/\Delta x$ for $f$ with the backward difference
+  $(u_j-u_{j-1})/\Delta x$ for $\tilde L$, both TVD for $h/\Delta x\le1$. Gottlieb et al.
+  (2001, §2.2, Lemma 2.2) restate it: for conservation laws $\tilde L$ comes from
+  $u_t=f(u)_x$, "the only difference is the change of upwind direction", $\tilde L$ costs as
+  much as $f$, and when both are needed at the same stage cost and storage for that stage
+  double, so "we would like to avoid negative $\beta_{i,k}$ as much as possible". Shu &
+  Osher's design goal is the fewest negative $\beta$ (p. 10). With $\tilde L$
+  satisfying $\lVert y-h\tilde L(y)\rVert\le\lVert y\rVert$ for $h\le h_{\mathrm{FE}}$, Ketcheson
   built unconditionally SSP implicit methods of order 2, as recalled by Gottlieb et al.
-  (2022, §1, Eq. (3)).
+  (2022, §1, Eq. (3)). Gottlieb et al. (2001, Prop. 6.2) state that in their implicit form
+  (6.7), with $\tilde L$ for negative $\beta_i$, no method of order $\ge2$ has all
+  $\alpha\ge0$; no ingested source says whether Ketcheson's methods are of that form.
 - **Two-derivative methods.** Explicit SSP two-derivative methods use a second
   derivative condition $\lVert y+h^2\dot f(y)\rVert\le\lVert y\rVert$ or a Taylor
   series condition $\lVert y+hf(y)+\frac12h^2\dot f(y)\rVert\le\lVert y\rVert$, as
@@ -262,7 +432,10 @@ tolerances than the others (Ranocha et al. 2025, §3, §4.2, §6, §8, Tables 1,
 
 The tableau of SSPRK(3,3) is $c=(0,1,\tfrac12)$, $a_{21}=1$,
 $a_{31}=a_{32}=\tfrac14$, $b=(\tfrac16,\tfrac16,\tfrac23)$
-([Unfer (2021)](/sources/unfer-2021.md), Eq. (106)). Three sources use it
+([Unfer (2021)](/sources/unfer-2021.md), Eq. (106)), the Butcher form that Shu & Osher
+(1988, Eq. (2.19)) print beside their Shu–Osher form (2.18). They point out that stage $i$
+needs only $f$ of the previous stage, "so there is no need to store the previous
+$L(u^{(k)})$, lowering the storage requirement significantly" (p. 12). Three sources use it
 inside a larger time-stepping construction; in none of them is the SSP property of the
 whole scheme proved.
 
@@ -314,7 +487,7 @@ $\alpha\ge\frac12\max\beta_{ij}/\alpha_{ij}$; for linear SSP methods up to order
 this gives $\alpha\ge\frac12$. For four-stage fourth-order methods this uses a linear
 SSP realization of the same polynomial, valid for linear constant-coefficient problems
 only, since no four-stage fourth-order explicit method has a positive SSP coefficient
-*(compiler remark, the classical barrier recalled above)*. See [TASE operators](/methods/tase-operators.md).
+without downwinding (Gottlieb et al. 2001, Prop. 4.2, recalled above). See [TASE operators](/methods/tase-operators.md).
 
 ## SSP methods as bases of positivity-preserving schemes
 
@@ -339,6 +512,9 @@ only, since no four-stage fourth-order explicit method has a positive SSP coeffi
   (§1); the second- and third-order multistep Patankar schemes they reproduce come from
   explicit SSP multistep methods (§2): $y_n=\tfrac34y_{n-1}+\tfrac14y_{n-3}+\tfrac32hf(y_{n-1})$
   (Izzo et al. print the coefficient $\tfrac32$ on $f(y_{n-2})$, a slip; see the Patankar page) and $y_n=\tfrac{16}{27}y_{n-1}+\tfrac{11}{27}y_{n-4}+\tfrac{16}9hf(y_{n-1})+\tfrac49hf(y_{n-4})$.
+  Gottlieb et al. (2001, Table 5.1) print them as schemes 2 and 6, with
+  $\bar\beta=(\frac32,0,0)$ for the first, attribute both to Shu (1988, SIAM) and prove them
+  optimal (Props. 5.3–5.4; see *SSP linear multistep methods* above).
   [Zhu et al. (2024)](/sources/zhu-2024.md) print exactly these two Gottlieb–Shu–Tadmor
   methods as convex combinations of forward Euler steps (Eqs. (2.5)–(2.6)) and obtain
   positivity of their Patankar versions with explicit convection under
@@ -395,7 +571,16 @@ linear problem $y'=Ly$ with $\langle Lv,v\rangle\le0$, and makes no forward Eule
 assumption. The two meet when $L$ is *coercive*: then forward Euler is contractive for
 small $h$, and Gottlieb–Shu–Tadmor showed through the SSP formulation that every linear
 Runge–Kutta method is strongly stable, as recalled by
-[Sun & Shu (2021)](/sources/sun-2021.md) (§1); Sun, Wei & Wu note that the
+[Sun & Shu (2021)](/sources/sun-2021.md) (§1). Gottlieb et al. (2001, §3.2) define the
+coercivity constant
+$\eta_{\mathrm c}(t)=\inf_{\lVert v\rVert=1}-\mathrm{Re}\langle L(t)v,v\rangle/\lVert L(t)v\rVert^2>0$
+(page-local; their Assumption 3.1), show that forward Euler is contractive iff $h\le2\eta_{\mathrm c}$,
+and state that their aim is strong stability of "the general $m$-stage, $m$th-order accurate
+Runge–Kutta scheme" under that bound, with "our uniform $C_s=2$" against the constant
+$\frac1{31}$ of Levy–Tadmor for RK4. The printed proof treats classical RK4 for time-dependent
+$L(t)$ with $\lVert L(t)-L(t')\rVert\le K\lvert t-t'\rvert/\eta_{\mathrm c}(t)$: the frozen-coefficient
+polynomial has norm at most 1 by its convex form (Prop. 3.2), and the bound is
+$\lVert y_n\rVert\le e^{3Kt_n}\lVert y_0\rVert$ under $h_n\le2\eta_{\mathrm c}(t_n)$ (Prop. 3.3). Sun, Wei & Wu note that the
 truncated-Taylor polynomials of explicit linear Runge–Kutta methods have SSP form
 ([Sun et al. 2022](/sources/sun-2022.md), §1). For merely seminegative $L$ (a skew
 operator from a wave-type semi-discretization, for instance) forward Euler itself
@@ -409,7 +594,16 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
   decomposition "a sufficient and necessary condition for the SSP property".
   Necessity holds for the optimal coefficient through the canonical Shu–Osher form
   (the Kraaijevanger characterization above); an arbitrary decomposition can
-  underestimate $\mathcal C$.
+  underestimate $\mathcal C$. Shu & Osher (1988, p. 9) note that the decomposition is
+  not unique, and Gottlieb et al. (2001, Lemma 2.1) give it as a sufficient condition only.
+- **"Optimal" in the founding papers.** Shu & Osher (1988, pp. 11–12) call the second-order
+  method "optimal" ("It can be verified") and the third-order one "preferred" after
+  "extensive searching"; the optimality statements are in Gottlieb et al. (2001, Prop. 4.1),
+  for $s$-stage, order-$s$ methods with $\beta_{ij}\ge0$, recalled from Gottlieb–Shu.
+- **Several space dimensions.** Shu & Osher (1988, §III, p. 22; §IV, Example 3) run the
+  methods on dimension-by-dimension semi-discretizations with the one-dimensional CFL numbers
+  "shrunk by a factor $(d)^{-1}$" in $d$ dimensions; one-dimensional CFL numbers "led to
+  instability–overflow" in their two-dimensional advection test.
 - **The $2s$ bound.** Gottlieb et al. (2022, §1) attribute the "twice the number of
   stages" bound for implicit SSP Runge–Kutta methods to Ketcheson's downwind paper;
   the cited paper is not ingested, so the bound is recorded here as recalled, not as
@@ -419,12 +613,13 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
   exist"; their own Appendix A makes clear that the barrier is for order greater than
   one.
 - **"Implicit SSP methods are at most first order."** Ern & Guermond (2022, §1.2, §2.4)
-  write this, citing Gottlieb–Shu–Tadmor (Prop. 6.2 of their review, not ingested). As
-  worded it matches only the unconditional-SSP barrier recalled by Gottlieb et al. (2022,
-  §1, App. A); Kuzmin et al. (2022, §1) and Ciallella et al. (2022, Remark 3.1) recall that
-  implicit SSP methods with a finite coefficient exist up to order 6, and Quezada de Luna
-  & Ketcheson (2022, §1) put the implicit barrier at order 6, so the statement overstates
-  the barrier *(compiler reading of the cited result, which is not ingested)*.
+  write this, citing Gottlieb–Shu–Tadmor (Prop. 6.2). Gottlieb et al. (2001, §6.2, Prop.
+  6.2) state that implicit Runge–Kutta methods of their form (6.7), with only implicit terms
+  and $\alpha_{ik}\ge0$, cannot have order $\ge2$, so none is unconditionally SSP beyond first
+  order, and that SSP methods exist under step restrictions once explicit terms are admitted.
+  Kuzmin et al. (2022, §1) and Ciallella et al. (2022, Remark 3.1) recall that implicit SSP
+  methods with a finite coefficient exist up to order 6, and Quezada de Luna & Ketcheson
+  (2022, §1) put the implicit barrier at order 6.
 - **Embedded SSP coefficient.** Fekete et al. impose SSP conditions on the embedded
   weights, but with local extrapolation the advanced solution is the main method's,
   so the embedded coefficient does not affect the strong stability of $y_{n+1}$; the
@@ -441,10 +636,12 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
   partial disagreement, not a contradiction.
 - The SSP coefficients and error measures of the new pairs of Fekete et al. are not
   printed in the version read (arXiv v1); they are deferred to a repository.
-- **"Only $L^2$ stable."** Boscheri & Pareschi's (2021, §3.6) statement, attributed to
-  Gottlieb, Shu & Tadmor, is sweeping as printed; the SSP theory above gives $L^\infty$ and
-  TVD bounds for implicit methods under a step restriction, so it should read "not
-  unconditionally". Their explicit-Euler-stage pair SP(1,1,1) is called "stiffly accurate
+- **"Only $L^2$ stable."** Boscheri & Pareschi (2021, §3.6) credit to Gottlieb, Shu &
+  Tadmor the statement that high-order implicit schemes "are not $L^\infty$ stable but only
+  $L^2$ stable". Gottlieb et al. (2001, §6) state Props. 6.2–6.3 for unconditional strong
+  stability in any norm or convex functional, for the forms (6.7) and (6.16), and add that SSP
+  methods with explicit terms exist under step restrictions (§6.2–6.3); the words "only $L^2$
+  stable" do not appear there. Their explicit-Euler-stage pair SP(1,1,1) is called "stiffly accurate
   and stability preserving" without an SSP coefficient.
 - **Deferred correction and SSP.** Ciallella et al.'s (2022, §6.6) statement that
   arbitrary-order DeC is not a convex combination of Euler steps sits beside the
@@ -463,6 +660,9 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
 
 # Citations
 
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §II (Eqs. (2.8)–(2.23), Prop. 2.1, Remark 2.1, pp. 7, 9–14), §III p. 22, §IV Example 3; read as ICASE Report 87-33.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §1, §2.1–2.3 (Lemmas 2.1–2.3), §3.1 (Props. 3.1–3.2, Eqs. (3.1)–(3.5), Table 3.1), §3.2 (Prop. 3.3), §4.1–4.3 (Props. 4.1–4.3, Eqs. (4.1)–(4.7)), §5 (Props. 5.1–5.4, Table 5.1), §6 (Props. 6.2–6.3, Eqs. (6.3)–(6.16)).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §3.2 (Eq. (22), Lemma 8, Thm. 9, Table 1); arXiv v1.
 - [Fekete et al. (2022)](/sources/fekete-2022.md) — §1.1 (Eq. 6, Thms. 1–2, Def. 4, order barrier), §2 (Eqs. 9–11), §2.1–2.3 (SSPERK$(s,2)$, $(n^2,3)$, $(10,4)$ and embeddings), §3.2.2, §4.
 - [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — §1 (Eqs. 2–5, SSP coefficient of implicit methods), §3 and Thm. 2 (IMEX), App. A (unconditional-SSP barrier).
 - [Biswas et al. (2025)](/sources/biswas-2025.md) — §2, Thm. 2.7, Cor. 2.8; §3.1.2–3.1.4 (linear SSP coefficient 1); Table 3.2.

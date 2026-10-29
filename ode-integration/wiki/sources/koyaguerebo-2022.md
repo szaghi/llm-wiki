@@ -233,6 +233,7 @@ Chunk 2 (2026-10-19). This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
 * [B-convergence](/definitions/b-convergence.md)
+* [Dahlquist's order barrier for A-stable multistep methods](/results/dahlquist-second-barrier.md)
 * [Deferred correction (DeC)](/methods/deferred-correction.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Robertson problem](/benchmarks/robertson-problem.md)

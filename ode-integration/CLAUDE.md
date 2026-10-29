@@ -50,7 +50,9 @@ independent of every other bundle and agnostic of every other repository
   supplement and the real Vermeire 2021 and Izgin 2022 under full-title
   filenames. Li et al. 2022 was dropped by the human, who removes its
   file (an issue front matter). These seven sources are ingested last
-  (chunk 6).
+  (chunk 6). On 2026-10-29 the human added ten founding
+  papers (130 files; the Li et al. 2022 front-matter file is still present
+  and not ingested); they are chunk 7.
 - **Version rule:** the Source page records the version read (arXiv vN,
   HAL, accepted manuscript, version of record); its metadata is the
   published identity from Crossref. Claims and equations are those of the
@@ -94,7 +96,13 @@ independent of every other bundle and agnostic of every other repository
 
 ## Status
 
-**Chunk 6 staged 2026-10-20 — archive complete:** 18 sources (invariant-domain
+**Chunk 7 staged 2026-10-29:** ten founding papers added to the archive by
+the human (Curtiss & Hirschfelder 1952, Dahlquist 1963, Butcher 1964,
+Dormand & Prince 1980, Shu & Osher 1988, Ascher et al. 1997, Gottlieb et
+al. 2001, Kennedy & Carpenter 2003, Hochbruck & Ostermann 2010, Ketcheson
+2019); 128 of 128 ingested, 144 concept pages, 3999 bibliography entries.
+
+**Chunk 6 committed 2026-10-20 (a59d599) — archive complete at the time:** 18 sources (invariant-domain
 preserving time stepping, Patankar multistep and Lyapunov stability, cell
 entropy inequalities, FIMEX, Irksome extensions, mRKC, N-split splitting,
 learned integrators); 118 of 118 ingested, 139 concept pages, 3771

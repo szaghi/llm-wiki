@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Kepler problem"
-description: "The planar two-body problem with three invariants (energy, angular momentum, Laplace–Runge–Lenz vector), its perturbed variant with a precessing orbit and a three-dimensional variant, used to test invariant-preserving relaxation methods, the modified equation of Störmer–Verlet and symmetry-constrained learned dynamics."
+description: "The planar two-body problem with three invariants (energy, angular momentum, Laplace–Runge–Lenz vector), its perturbed variant with a precessing orbit and a three-dimensional variant, used to test step-size control at high eccentricity, invariant-preserving relaxation methods, the modified equation of Störmer–Verlet and symmetry-constrained learned dynamics."
 status: established
-aliases: [two-body problem, Kepler two-body problem, perturbed Kepler problem]
-tags: [geometric-integration, structure-preserving, verification]
-timestamp: 2026-10-20T06:18:00Z
+aliases: [two-body problem, Kepler two-body problem, perturbed Kepler problem, DETEST D5]
+tags: [geometric-integration, structure-preserving, verification, step-size-control]
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Kepler problem
@@ -40,6 +40,14 @@ $\mathrm{rtol}=\mathrm{atol}=10^{-16}$.
 
 ## Uses in the sources
 
+* **Step-size control at high eccentricity.** [Dormand & Prince (1980)](/sources/dormand-1980.md)
+  (§4(b), Fig. 3) run problem D5 of the DETEST set of Hull et al., the planar two-body problem
+  in first-order form with the initial value above, $e=0.9$, on $t\in[0,20]$. They call it "a
+  severe test for the step-size control procedure since the step length must vary by about
+  two orders of magnitude" over the orbit, and their pair RK5(4)7M is "again" the most efficient in their comparison of function
+  evaluations against maximum global error. See
+  [Dormand–Prince 5(4)](/methods/dormand-prince-5-4.md) and
+  [step-size control](/methods/step-size-control.md).
 * **Multiple relaxation.** Biswas & Ketcheson (2023) conserve all three
   invariants with multiple-relaxation versions of SSPRK(3,3) ($h=0.05$), RKF45
   ($h=0.05$) and DOPRI5 ($h=0.1$), each with two extra embedded methods, for
@@ -47,7 +55,7 @@ $\mathrm{rtol}=\mathrm{atol}=10^{-16}$.
   against about four decimal places for the baselines, and the error grows
   linearly instead of quadratically (§5.3.1, Figs. 6–7). On the perturbed
   problem the relaxed methods conserve $H$ and $L$ to round-off and reproduce
-  the precession; the third-order baseline gets the orbit visibly wrong, and
+  the precession; the third-order baseline's orbit departs visibly from the reference, and
   the higher-order baselines look right but their position error grows
   quadratically to 100% (§5.3.2, Figs. 8–10). See
   [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md).
@@ -87,3 +95,4 @@ and trajectories from initial data perturbed by $10^{-3}$ separate by less than 
 - [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §5.3.1 (Eqs. (27)–(29), Figs. 6–7), §5.3.2 (Eqs. (30)–(31), Figs. 8–10).
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §3.1.2 (Eqs. (43)–(47)).
 - [Müller (2023)](/sources/muller-2023.md) — §2.3.1 (Eq. (13)), §3.1.1 (Figs. 3–5).
+- [Dormand & Prince (1980)](/sources/dormand-1980.md) — §4(b), Fig. 3 (DETEST D5, $e=0.9$).

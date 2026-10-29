@@ -5,7 +5,7 @@ description: "The relaxation oscillator y1' = y2, y2' = mu (1 - y1^2) y2 - y1, f
 status: established
 aliases: [Van der Pol equation, van der Pol problem, VDPOL]
 tags: [stiff, verification, order-reduction, step-size-control]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Van der Pol oscillator
@@ -31,6 +31,7 @@ test that lies outside the linear theory behind most remedies for
 | [Fekete et al. (2022)](/sources/fekete-2022.md), §3.1.1, Eq. (24) | 10 | $(2,-0.6654321)$ | $[0,2]$ | adaptive step-size controllers with explicit SSP pairs |
 | [Saupe et al. (2025)](/sources/saupe-2025.md), §3.1, Eqs. (19)–(20) | 1000 | $(1.1,0)$ | $[0,20]$ (one fast transition) | adaptive and parallel SDC against fixed steps and ESDIRK5(3) |
 | [Buvoli & Southworth (2023)](/sources/buvoli-2023.md), §6.2, Eq. (6.1) | $\varepsilon\in[10^{-8},1]$ (singularly perturbed form, below) | $y_1(0)=2$, $y_2(0)$ on the slow manifold | $[0,0.5]$ | order and stability of additive polynomial (FIMEX) methods against IMEX Runge–Kutta |
+| [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md), §7.2, Eq. (61) | singularly perturbed form, $\varepsilon$ varied | $(2,-0.6666654321121172)$ | $[0,0.5]$ (order reduction), $[0,1.5]$ (step-size control) | order reduction and step-size controllers of IMEX additive Runge–Kutta pairs |
 
 Buvoli & Southworth (2023) take the singularly perturbed form
 $y_2'=\big((1-y_1^2)y_2-y_1\big)/\varepsilon$, citing Hairer and Wanner, with
@@ -108,6 +109,15 @@ not converge at large steps; one iteration fixes it. See
 [IMEX Runge–Kutta](/methods/imex-runge-kutta.md) and
 [order reduction](/definitions/order-reduction.md).
 
+**IMEX order reduction and controllers.** Kennedy & Carpenter (2003, §7.2, Eq. (61)) use the
+singularly perturbed form with the first equation explicit and the second implicit, and
+locate a boundary layer near $t\approx0.8$. On $[0,0.5]$ every IMEX additive pair of classical
+order above 2, their [ARK3(2)4L[2]SA, ARK4(3)6L[2]SA and ARK5(4)8L[2]SA](/methods/kennedy-carpenter-ark-methods.md)
+included, loses order at intermediate stiffness $\varepsilon\approx h$, while the IMEX-BDF schemes SBDF2–4 do not (§8.3a, Figs. 8–12). On
+$[0,1.5]$ the predictive (PC) controller is ineffective, the I controller marginal, and the PI
+and PID controllers guide the integration through the boundary layers, PID best (§8.4); see
+[step-size control](/methods/step-size-control.md).
+
 ## Qualifications
 
 - The two fixed-step studies disagree in emphasis, not in fact: both find that
@@ -137,3 +147,4 @@ not converge at large steps; one iteration fixes it. See
 - [Fekete et al. (2022)](/sources/fekete-2022.md) — §3.1.1 (Eq. (24), Fig. 9).
 - [Saupe et al. (2025)](/sources/saupe-2025.md) — arXiv v2: §3.1 (Eqs. (19)–(20), Fig. 2), §4.1 (Figs. 6, 9), §4.2 (Fig. 10).
 - [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — §6.2 (Eq. (6.1), Fig. 6), §7; Supplement Figs. SM2–SM4.
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §7.2 (Eq. (61)), §8.3a (Figs. 8–12, Table 15), §8.4.

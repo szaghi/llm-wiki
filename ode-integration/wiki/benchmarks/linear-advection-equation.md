@@ -5,7 +5,7 @@ description: "The constant- or variable-coefficient advection equation with its 
 status: established
 aliases: [linear advection, advection equation, scalar advection equation, transport equation, linear transport equation, travelling bump]
 tags: [verification, stability, positivity, order-reduction, ssp]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Linear advection equation
@@ -66,6 +66,21 @@ first.
   middle half is integrated implicitly by element-wise
   [IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
 
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) (§4.1, Eq. (24)): $u_t=u_x$ on a periodic
+  interval of length $2\pi$, Fourier collocation with $m=128$ points (a skew-Hermitian
+  semi-discretization), white-noise data with random phases or $u_0=\mathrm{sech}^2(7.5(x+1))$;
+  steps $h=\mu h_{\max}$ with $h_{\max}=\frac2m$ times the imaginary stability interval of the
+  method (page-local $\mu$, $m$), $\mu$ from 0.2 to 1.02 to $t=1$, and 0.99, 1.015, 1.016 to
+  $t=400\pi$.
+
+**One-dimensional, step data.** [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) (§6.1,
+Eqs. (6.5)–(6.6), Fig. 6.1): $u_t=u_x$ with $u_0=1$ for $x\le0$ and 0 otherwise, first-order
+upwinding $(u_{j+1}-u_j)/\Delta x$, $h/\Delta x=1.4$, 100 steps, to compare backward Euler with a
+second-order implicit Runge–Kutta method that is not SSP. The same upwind pair (forward
+difference for the operator, backward difference for its downwind counterpart $\tilde L$, both
+TVD for $h/\Delta x\le1$) is the example by which [Shu & Osher (1988)](/sources/shu-1988.md)
+(§II, p. 8) introduce downwinding.
+
 **One-dimensional, variable coefficient or with boundaries.** Babbar et al. (2022, §8.2,
 from Öffner and Ranocha) take $f=a(x)u$ with $a=x$, $u_0=\sin(12(x-0.1))$ on $[0.1,2\pi]$, and
 $a=x^2$, $u_0=\cos(\pi x/2)$ on $[0.1,1]$ to $t=50$, both with exact solutions and inflow data.
@@ -94,13 +109,26 @@ volumes with exact boundary cell averages, forcing) impose time-dependent inflow
   $128^2$ cells, and LeVeque's periodic swirling flow
   $\mathbf a=\bigl(\sin^2(\pi x)\sin(2\pi y),-\sin^2(\pi y)\sin(2\pi x)\bigr)\cos(\pi t/T)$ with
   the same data, $T=1.5$.
+- Shu & Osher (1988, §IV, Example 3, Eq. (4.3)): $u_t+u_x+u_y=0$ on $[-1,1]^2$, periodic, with
+  $u_0=1$ on a unit square rotated by $\pi/4$ and 0 elsewhere, $\Delta x=\tfrac1{10}$, to $t=16$
+  (8 periods), third- and fourth-order flux ENO with SSPRK(3,3) and RK4 in Shu–Osher form at
+  half the 1D CFL numbers.
 - [Ranocha et al. (2022)](/sources/ranocha-2022.md) (§3), DG of degree 4 on uniform and
   curvilinear grids; [Gaburro et al. (2023)](/sources/gaburro-2023.md), a travelling bump on
   unstructured triangles to $t_f=3$ and $15$; [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md)
   (§7.1), manufactured solutions on five element types.
 
 **Advection–diffusion variants.** Two sources add a diffusion term
-$\epsilon\,\partial_x^2u$ ($\epsilon$ page-local) and keep an exact solution:
+$\epsilon\,\partial_x^2u$ ($\epsilon$ page-local) and keep an exact solution; a third uses a
+variable coefficient:
+
+- [Ascher et al. (1997)](/sources/ascher-1997.md) (§4.1, Eq. (4.1)): $u_t+\sin(2\pi x)u_x=\epsilon u_{xx}$,
+  periodic on $[0,1]$, $u_0=\sin2\pi x$, centred second-order differences, $t=2$, relative
+  max-norm error, advection explicit and diffusion implicit in their
+  [IMEX Runge–Kutta](/methods/imex-runge-kutta.md) pairs. Large viscosity:
+  $h=1.8\Delta x_0$, $\Delta x_0=\tfrac1{63}$, $0.01\le\epsilon\le0.1$, then $\Delta x$ down to
+  $\Delta x_0/8$ at fixed $h$, and $h$ doubled or tripled (page-local $\Delta x_0$); small
+  viscosity: $\Delta x=\tfrac1{81}$, $h=1.8\Delta x$, $0.001\le\epsilon\le0.01$.
 
 - Quezada de Luna & Ketcheson (2022, §8.1, Eq. (35)) take $\epsilon=10^{-3}$ with
   $u_0=\sin^4x$, whose exact solution
@@ -198,6 +226,31 @@ amplification matrix of the fully discrete scheme, not from an ODE stability reg
   and [Vermeire (2023)](/sources/vermeire-2023.md) (Table 1) tabulates the maximal stable
   Courant numbers of embedded paired explicit pairs, which grow with the number of active
   stages.
+
+**Total variation and downwinding.** With step data and first-order upwinding at
+$h/\Delta x=1.4$, backward Euler stays monotone, as Harten's lemma guarantees for every step,
+while a second-order implicit method of the form $Y_2=y_n+\beta_1hf(Y_2)$,
+$y_{n+1}=\tfrac54y_n-\tfrac14Y_2+\tfrac32hf(y_{n+1})$ ($\beta_1=2$; their Eqs. (6.3)–(6.4))
+oscillates (Gottlieb et al. 2001, §6.1, Lemma 6.1, Fig. 6.1); see
+[TVD time stepping](/definitions/total-variation-diminishing.md). On the rotated square, the
+fourth-order scheme resolves the discontinuities better than the third-order one, with
+over- and undershoots that "if any, are negligible", while one-dimensional CFL numbers "led to
+instability–overflow" (Shu & Osher 1988, §IV, p. 27, Figs. 13–20).
+
+**Stability beyond the linear limit with relaxation.** On the Fourier-spectral problem the
+relaxed RK4 stays stable for $\mu>1$ where RK4 is not, but at $\mu=1.016$ its solution is
+"highly inaccurate and oscillatory", and for $\mu\gtrsim1.25$ the relaxation parameter drops to
+zero after a few steps and the run never completes; with general data relaxation keeps the
+total energy by redistributing it among Fourier modes (Ketcheson 2019, §4.1, Figs. 3–4,
+Remark 8). See [relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md).
+
+**IMEX pairs on advection–diffusion.** For large viscosity the L-stable (3,4,3) pair and the
+pairs satisfying their condition (2.3) allow the largest stable steps; with $\Delta x$ refined at fixed $h$
+only the pairs satisfying (2.3) stay stable at $\Delta x_0/8$; at three times the step (3,4,3) "is more
+accurate and stable in this example than the popular CNAB scheme with one-third the step
+size"; for small viscosity the third-order pairs and (2,3,2) give nearly equal errors, always
+below those of the two-step IMEX schemes of their earlier paper at half the step (Ascher et al.
+1997, §4.1, Figs. 3–5).
 
 **Long-time behaviour.** Babbar et al. (2022, §8.1.1, Figs. 3–5) find slightly smaller
 errors and slower error growth for Runge–Kutta flux reconstruction than for the Lax–Wendroff
@@ -305,6 +358,10 @@ both the slope and the count "drastically" (Zeifang & Schütz 2022, §4.1.1, Fig
 
 # Citations
 
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §II p. 8 (upwind/downwind example), §IV Example 3 (Eq. (4.3), Figs. 13–20, p. 27); read as ICASE Report 87-33.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §6.1 (Eqs. (6.3)–(6.6), Lemma 6.1, Fig. 6.1).
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §4.1 (Eq. (4.1), Figs. 3–5).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §4.1 (Eq. (24), Figs. 3–4, Remark 8); arXiv v1.
 - [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) — §5.2 (Eqs. 58–59, Table 3, Fig. 2), App. B (Eq. B.9); arXiv v2.
 - [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — §9.2.1 (Table 7, Figs. 11–12), Remark 9.1, Supplement §3.2; arXiv v4.
 - [Babbar et al. (2022)](/sources/babbar-2022.md) — §5 (Remark 1), §6 (Table 1), §8.1–8.2 (Figs. 2–17), Remark 4, §11 (Eq. 20, Figs. 31–34); arXiv v1.

@@ -5,7 +5,7 @@ description: "Splitting methods advance $y'=f^{[1]}(y)+f^{[2]}(y)$ by composing 
 status: established
 aliases: [splitting method, N-split splitting, OS22mu, Strang-OS22mu, Lie splitting, Godunov splitting, Strang–Marchuk splitting, Störmer–Verlet, leapfrog, split-step Fourier, time-splitting spectral method, ADI, LOD, fractional step method, projector-splitting integrator]
 tags: [splitting, geometric-integration, order-reduction, multirate, asymptotic-preserving]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Operator splitting: Lie–Trotter, Strang and dimensional splitting
@@ -183,7 +183,12 @@ second-order [IMEX schemes](/methods/imex-runge-kutta.md) have the symmetric for
 (implicit half step)∘(explicit method)∘(explicit half step). A splitting variant of
 IMEX Crank–Nicolson leap-frog halves the implicit work, and the IMEX trapezoidal
 Runge–Kutta method is a Strang splitting of a doubled system (Blanes et al. 2024, §6.2,
-Eqs. 6.14–6.21).
+Eqs. 6.14–6.21). From the other side, [Ascher et al. (1997)](/sources/ascher-1997.md) (§1)
+say their IMEX Runge–Kutta schemes, partitioned Runge–Kutta schemes for $u=v+w$, "can also be
+seen as a particular class of splitting methods", and
+[Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§1) credit additive Runge–Kutta
+methods with "the direct control of partitioning (splitting or coupling) errors" through their
+coupling order conditions.
 
 ## Order reduction from boundary conditions
 
@@ -269,6 +274,17 @@ Cervi & Spiteri). They describe Lie–Trotter and Strang–Marchuk as infinitesi
 whose forcing vanishes; for Strang, with its symmetric half-steps, this is a loose
 identification. Their production runs use
 [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md) instead.
+
+In molecular dynamics the same structure is the **impulse method** (Grubmüller et al. 1991;
+Tuckerman, Berne & Martyna 1992): Strang splitting of $\ddot q=f_{\mathrm{fast}}(q)+f_{\mathrm{slow}}(q)$
+into half kicks with the slow force around an "oscillate" step with the fast force; for linear
+fast forces it is "precisely" Deuflhard's trigonometric method, and it suffers from resonances,
+which "can be circumvented by suitable averaging" (the mollified impulse method)
+([Hochbruck & Ostermann 2010](/sources/hochbruck-2010.md), §3.2; page-local $q$,
+$f_{\mathrm{fast}}$, $f_{\mathrm{slow}}$; see
+[exponential integrators](/methods/exponential-integrators.md)). The same survey calls
+splitting methods "in many respects competitive with exponential integrators" and
+"sometimes also used in combination with them" (§1).
 
 ## Splitting in stiff-source and viscous PDE solvers
 
@@ -380,16 +396,16 @@ further analysis (§5).
   negative real coefficients, [complex coefficients](/methods/complex-coefficient-splitting.md)
   or commutator flows reach higher orders (Blanes et al. 2024, §6.4); the claim is therefore a
   qualified statement about forward-in-time real splittings, consistent with Reynolds et al.'s
-  remark above, not a contradiction of the barrier pages.
+  remark above.
 - **Spiteri & Wei's OS22$\mu$ coefficients.** Tables 3 and 6 and the Case 4 text print the second
   fraction of the first part (part $N-1$ in Table 6) as $\frac1{2\mu-2}$. With the first fraction
   $\frac{2\mu-1}{2\mu-2}$, consistency requires $1-\frac{2\mu-1}{2\mu-2}=\frac1{2-2\mu}$, and the
   second-order condition with the other part's first fraction $1-\mu$ gives the same value; only
   $\frac1{2-2\mu}$ makes $\mu=0$ Strang, as their Remark 3.4 states *(compiler check, not in the
-  source)*. The table above uses the corrected value.
+  source)*. The table above uses $\frac1{2-2\mu}$.
 - **The error-minimizing $\mu$.** Spiteri & Wei's Remark 3.6 says $\mu$ can be chosen to minimize
   the leading error term and prints $\mu=\frac{1-\sqrt2}{\sqrt2}\approx-0.293$; their experiments
-  use the grid-searched $\mu=0.3$. With the corrected fractions, the third-order local error of
+  use the grid-searched $\mu=0.3$. With the fraction $\frac1{2-2\mu}$, the third-order local error of
   OS22$\mu$ on $y'=(L_1+L_2)y$ is $c_1(\mu)[L_1,[L_1,L_2]]+c_2(\mu)[L_2,[L_2,L_1]]$ with
   $c_1=-\frac{4\mu-1}{24(\mu-1)}$, $c_2=-\frac{3\mu-1}{12}$; $c_1^2+c_2^2$ is minimized at
   $\mu=1-\frac1{\sqrt2}\approx0.293$, while the printed negative value gives a larger value than
@@ -420,4 +436,7 @@ further analysis (§5).
 - [Liu & Zhang (2023)](/sources/liu-2023.md) — §1.4, §2.1 (Eq. (4)), §2.3 (Thm. 1).
 - [Wolf et al. (2022)](/sources/wolf-2022.md) — §4.3 (splitting rejected for the stiff source).
 - [Carrel et al. (2023)](/sources/carrel-2023.md) — arXiv v2: §2.2, §4.
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §1 (IMEX Runge–Kutta as splitting methods).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — §1 (control of partitioning errors); read as NASA/TM-2001-211038.
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §1 (splitting and exponential integrators), §3.2 (impulse method as Strang splitting); version of record.
 - [Spiteri & Wei (2026)](/sources/spiteri-2026.md) — Eqs. (2)–(4), Def. 2.1, §3.3 (Lemmas 3.2–3.3, Eq. (22), Tables 3–7, Remarks 3.3–3.6), §4 (Remark 4.1, Figs. 2–7).

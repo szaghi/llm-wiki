@@ -5,7 +5,7 @@ description: "Fourier analysis of a fully discrete space–time scheme for a lin
 status: established
 aliases: [von Neumann analysis, Fourier stability analysis, Fourier analysis, amplification factor, amplification matrix, von Neumann criterion, critical CFL number, Fourier CFL number]
 tags: [stability, explicit, lax-wendroff, verification]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Von Neumann (Fourier) stability analysis of fully discrete schemes
@@ -76,6 +76,17 @@ scheme ([Chouchoulis et al. 2022](/sources/chouchoulis-2022.md), §5, Prop. 1;
   DG for linear advection, degrees 1–8, as the target set of the explicit stability polynomial
   of their accelerated IMEX schemes; see
   [optimal stability polynomials](/methods/optimal-stability-polynomial.md).
+- **A scalar test equation for IMEX pairs.** [Ascher et al. (1997)](/sources/ascher-1997.md)
+  (§3) reduce the von Neumann analysis of centred second-order differences for
+  advection–diffusion, after Ascher–Ruuth–Wetton, to the scalar equation
+  $y'=\mathrm i\omega y+\lambda_{\mathrm d}y$ with real $\omega>0$ (advection, treated
+  explicitly) and $\lambda_{\mathrm d}\le0$ (diffusion, treated implicitly) (page-local; the
+  paper writes $\beta$, $\alpha$). Each IMEX Runge–Kutta pair then has a scalar factor
+  $R(h\lambda_{\mathrm d},h\omega)$ from its stage recursion (Eqs. (3.1)–(3.2)), and for fixed
+  ratio $\lambda_{\mathrm d}/\omega$ the largest stable $h\omega$ is plotted over
+  $\lambda_{\mathrm d}/\omega\in[-10^2,-10^{-2}]$ (Figs. 1–2). In a footnote they record
+  Hundsdorfer's remark that a test equation with complex coefficients would be useful, and keep
+  the real one. The results are on [IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md).
 
 The numbers are sharp where tested: linear advection with LWFR blows up for steps slightly
 above the computed limit (Babbar et al. 2022, §6), and the EIN threshold 0.54 separates
@@ -166,3 +177,4 @@ discretizations to future work, because CFL bounds depend on the spatial discret
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.1 (von Neumann analysis left open).
 - [Maurya et al. (2021)](/sources/maurya-2021.md) — §2.1–2.2 (Eqs. (5)–(11)), §3 (Eqs. (12)–(13), Tables 1–2), §4.1 (Eqs. (21)–(26), Table 4), §9 (Fig. 17), §12.1 (Fig. 23).
 - [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §4.1–4.2 (Eqs. (52)–(60)), §3.2 (Eq. (37)).
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §3 (Eqs. (3.1)–(3.2), Figs. 1–2, footnote 4).

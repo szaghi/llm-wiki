@@ -5,7 +5,7 @@ description: "The cubic nonlinear Schrödinger equation on periodic domains, Fou
 status: established
 aliases: [NLS, NLS equation, cubic nonlinear Schrödinger equation, focusing nonlinear Schrödinger equation]
 tags: [verification, exponential, parallel, stiff, step-size-control]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Nonlinear Schrödinger equation
@@ -122,6 +122,16 @@ spectrum but not the cubic term:
   [processing and effective order](/methods/processing-and-effective-order.md),
   [complex-coefficient splitting](/methods/complex-coefficient-splitting.md) and
   [exponential integrators](/methods/exponential-integrators.md);
+- for the linear equation $i\partial_tu=-\Delta u+V(t,x)u$ on a torus, the exponential
+  midpoint (Magnus) rule has error $\le Ch^2t_n\max_t\lVert u(t)\rVert_{H^1}$ with $C$
+  independent of the step and of the spatial resolution, for spectral discretizations as for
+  the continuous problem ([Hochbruck & Ostermann 2010](/sources/hochbruck-2010.md), §3.1,
+  Ex. 3.7, Thm. 3.9, after Hochbruck & Lubich 2003; theory only, see
+  [exponential integrators](/methods/exponential-integrators.md)); for the cubic equation the
+  same survey lists, without results, comparisons of Lawson and exponential Runge–Kutta methods
+  (Berland, Owren & Skaflestad 2006), exponential integrators with periodic boundary conditions
+  (Berland, Islas & Schober 2007) and symmetric exponential integrators (Celledoni, Cohen &
+  Owren 2008) (§5.4);
 - for the semiclassical equation, time splitting with exact sub-flows is
   [asymptotic-preserving](/definitions/asymptotic-preserving-scheme.md) in time for
   observables, but large steps do not in general give correct observables for the
@@ -149,3 +159,4 @@ spectrum but not the cubic term:
 - [Biswas et al. (2023)](/sources/biswas-2023.md) — §6.3, Fig. 4 (linear Schrödinger).
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §6.3 (Strang error bound, linear Schrödinger).
 - [Jin (2022)](/sources/jin-2022.md) — §3.4 (nonlinear Schrödinger observables, as recalled).
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §3.1 (Ex. 3.7, Thm. 3.9; Magnus error bound for linear Schrödinger), §5.4 (applications to the cubic equation, as recalled); version of record.

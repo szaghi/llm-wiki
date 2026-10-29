@@ -5,7 +5,7 @@ description: "A B-series is a formal expansion over rooted trees of elementary d
 status: established
 aliases: [Butcher series, B-series method, Butcher group, composition law, substitution law, NB-series, P-series]
 tags: [runge-kutta, order-conditions, geometric-integration]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # B-series, composition and substitution laws
@@ -22,6 +22,16 @@ after Butcher and Hairer–Wanner). A series with $a(\varnothing)=1$ represents 
 one-step map $y_{n+1}=B(a,y_n)$; one with $a(\varnothing)=0$ represents a
 vector field $y'=h^{-1}B(a,y)$ (§2.1, Eq. (10)). Other normalizations of the
 $h^{\lvert\tau\rvert}/\sigma(\tau)$ factor exist; this page follows the source.
+
+An early one is that of [Butcher (1964)](/sources/butcher-1964.md) (§1, Eqs. (1)–(2)), recalled
+from his 1963 paper: the exact solution is $y_0+\sum\alpha F\,h^r/r!$ and the Runge–Kutta
+approximation $y_0+\sum\beta\Phi F\,h^r/(r-1)!$, summed over elementary differentials $F$ of
+order $r$, with numerical coefficients $\alpha$, $\beta$ independent of $f$ (page-local; not the
+Shu–Osher or multistep coefficients). Agreement term by term gives the order condition
+$\Phi=1/\gamma$ with $\gamma=r\beta/\alpha$ (Eq. (3)), the tree density of the registry. He
+writes elementary differentials in bracket form, $\{F_1F_2\cdots F_m\}$ for a new root over
+the subtrees, $\{f^k\}$ for the bushy tree and $\{_kf\}_k$ for the tall one, and computes
+$\gamma$ by the product rule $\gamma=r\gamma_1\cdots\gamma_m$ (p. 54), the recursion below.
 
 ## Trees and elementary differentials
 
@@ -51,6 +61,20 @@ constant time per tree by the Beyer–Hedetniemi algorithm (Def. 1.1, §4.1).
 
 Equating the two to $\lvert\tau\rvert\le p$ gives the
 [order conditions](/results/runge-kutta-order-conditions.md).
+
+**B-series as a proof tool for a nonlinear functional.** [Ketcheson (2019)](/sources/ketcheson-2019.md)
+(§2.1, Lemma 4, pp. 6–9; read as arXiv:1905.09847v1) proves that the relaxation parameter of
+a [relaxation Runge–Kutta method](/methods/relaxation-runge-kutta.md) satisfies
+$\gamma_n=1+O(h^{p-1})$ for any method of order $p$ by expanding the inner products
+$\langle f(Y_i),f(Y_j)\rangle$ of stage derivatives in inner products of pairs of elementary
+differentials. The coefficient of the pair $(\tau_1,\tau_2)$ is a product of internal weights of
+the grafted trees $[\tau_1]$, $[\tau_2]$, and the order conditions make the relevant sums
+vanish for $\lvert\tau_1\rvert+\lvert\tau_2\rvert\le p-2$. The proof uses the tree identities
+$\lvert[\tau]\rvert=\lvert\tau\rvert+1$ and
+$\gamma([\tau_1,\tau_2])=\gamma(\tau_1)\gamma(\tau_2)\bigl(\lvert\tau_1\rvert+\lvert\tau_2\rvert+1\bigr)$, in the
+Hairer–Nørsett–Wanner notation he cites; he notes that a generalization without B-series is
+given by Ranocha et al. (Remark 7). The paper uses $\gamma$ both for the relaxation parameter
+and for the tree density and says so.
 
 **Internal weights as vectors.** [Zhang (2024)](/sources/zhang-2024.md) (§2,
 §3.2, Eqs. (5)–(6)) writes the order conditions as
@@ -255,3 +279,5 @@ enumeration algorithm with "extremely similar performance" (Remark 5).
 - [Zhang (2024)](/sources/zhang-2024.md) — §2 (Proposition 1), §3.1–3.3 (Eqs. (5)–(6), Def. 5, Table 1, Algorithm 1, Remarks 4–5, Figs. 1–2).
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — §3.2 (Eqs. (3.9)–(3.17), fat-node tree, Jacobian-times-B-series rule), Thms. 3.3, 3.7, Remark 3.8.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §2 (Lemma 1, Defs. 1–3, Thms. 2–3), §3 (Thms. 4–5, $T_S$/$T_M$ partition, φ-series), §5.1 (Thm. 7).
+- [Butcher (1964)](/sources/butcher-1964.md) — §1 (Eqs. (1)–(3), recalled from Butcher 1963), p. 54 (bracket notation, product rule for $\gamma$).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §2.1 (Lemma 4 and its proof, Theorem 6, Remark 7); read as arXiv:1905.09847v1.

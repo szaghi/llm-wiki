@@ -5,7 +5,7 @@ description: "Stage order q is the largest integer for which the quadrature cond
 status: established
 aliases: [classical stage order, stage-order residual, C(η) condition, stiff order]
 tags: [runge-kutta, order-reduction, stiff, order-conditions]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Stage order
@@ -21,6 +21,16 @@ the largest integer with $B(q_1)$ ($b^\top c^{k-1}=1/k$, $k\le q_1$) and $q_2$
 the largest with $C(q_2)$ ($\tau^{(k)}=0$, $k\le q_2$)
 ([Biswas et al. (2023)](/sources/biswas-2023.md), §2, Def. 2.1;
 [Biswas et al. (2024)](/sources/biswas-2024.md), Eq. (3), §2.1).
+
+The conditions themselves are older than the name. [Butcher (1964)](/sources/butcher-1964.md)
+(§2, p. 52) introduces $C(\xi)$ in the componentwise form
+$\sum_ja_{ij}c_j^{k-1}=c_i^k/k$ for $i=1,\dots,s$ and $k\le\xi$, next to $B(\xi)$ and
+$D(\xi)$, as one of the statements of his order theory (see
+[order conditions](/results/runge-kutta-order-conditions.md)); his Theorem 8 proves that
+an $s$-stage method of order $2s$, hence a Gauss method, satisfies $C(s)$ (§3, p. 57), and
+Theorem 10 that $C(s)$ with the Gauss $b$ and $c$ determines $A$ uniquely. Butcher uses
+$C$ as an algebraic tool for reaching high order with few conditions; he gives it no
+interpretation as stage accuracy and no name.
 
 The residual $\tau^{(k)}$ measures how well the internal stages integrate
 $t^{k-1}$: the $i$-th entry of $Ac^{k-1}$ is the stage-$i$ quadrature of
@@ -108,7 +118,7 @@ does not. See [uniform accuracy of IMEX schemes](/results/uniform-accuracy-relax
 | DIRK, irreducible | $\le2$ | Biswas et al. (2023), Thm. 2.2 (proof in its ref. [20]) |
 | DIRK with nonsingular $A$ | $\le1$ | Biswas et al. (2023), Thm. 2.2 |
 | ESDIRK (one explicit stage) | $\le2$ | Southworth et al. (2022), §2.1; Biswas et al. (2024), Example 7.3 |
-| Gauss–Legendre, Radau IIA ($s$ stages) | $s$ | Southworth et al. (2022), §2.1; Farrell et al. (2021), §3.2; Kirby & MacLachlan (2025), §4.1 (Radau IIA) |
+| Gauss–Legendre, Radau IIA ($s$ stages) | $s$ | Southworth et al. (2022), §2.1; Farrell et al. (2021), §3.2; Kirby & MacLachlan (2025), §4.1 (Radau IIA); Butcher (1964), Thm. 8 ($C(s)$ for Gauss) |
 | collocation methods on $s$ nodes (Gauss, Radau IIA, Lobatto IIIA) | $s$ | [Akrivis et al. (2025)](/sources/akrivis-2025.md), §2.4.1, §4.4 (recalled) |
 
 Biswas et al. (2024, Example 7.3) recover the DIRK and EDIRK bounds from
@@ -174,3 +184,4 @@ Thm. 3.1). See [weak stage order](/definitions/weak-stage-order.md) and
 - [Hu & Shu (2025)](/sources/hu-2025.md) — Remark 4.4, Lemma 4.5, Thm. 4.3, §5 (Eqs. (5.1)–(5.2), Lemma 5.3, Thm. 5.1), §6 (Fig. 1); arXiv v1.
 - [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2 (p. 17:5), §2.1, §4.1 (Figs. 3–4), §4.2 (p. 17:19).
 - [Akrivis et al. (2025)](/sources/akrivis-2025.md) — arXiv v2: §2.4.1, §4.4 (collocation stage order).
+- [Butcher (1964)](/sources/butcher-1964.md) — §2 (statement $C(\xi)$), §3 (Theorems 8, 10).

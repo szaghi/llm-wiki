@@ -5,7 +5,7 @@ description: "A method is symplectic when its one-step map is a symplectic trans
 status: established
 aliases: [symplectic integrator, symplectic method, quadratic invariants, linear invariants, geometric integration]
 tags: [geometric-integration, structure-preserving, splitting, runge-kutta]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Symplecticity and quadratic-invariant preservation
@@ -42,6 +42,13 @@ exponentially long times ([Blanes et al. (2024)](/sources/blanes-2024.md),
   2 have negative diagonal entries, and that neither linear multistep methods
   nor explicit RK methods can be symplectic in general for non-separable
   problems.
+* **IMEX midpoint on a separable Hamiltonian.** For $q'=\partial_pH(p)$,
+  $p'=-\partial_qH(q)$ with explicit part $f^{\mathrm E}=(\partial_pH,0)^\top$ and implicit
+  part $f^{\mathrm I}=(0,-\partial_qH)^\top$, the implicit–explicit midpoint scheme (1,2,2) of
+  [Ascher et al. (1997)](/sources/ascher-1997.md) (explicit midpoint for $f^{\mathrm E}$,
+  implicit midpoint for $f^{\mathrm I}$) becomes explicit and is "identical to the
+  leap-frog/Verlet scheme", which they derive; they add that it "can also be shown to be
+  symplectic" (§2.3, Example 2). See [IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md).
 * **Multirate implicit midpoint.** The coupled ($m$ odd) and decoupled ($m$
   even) multirate implicit midpoint methods keep the algebraic stability,
   symmetry and symplecticity of implicit midpoint
@@ -90,7 +97,12 @@ additive RK method, has no odd powers of $h$
   ([Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md), §1, as recalled from
   Hairer–Lubich–Wanner). For Runge–Kutta methods symplecticity is equivalent to
   the preservation of quadratic invariants
-  ([de León et al. (2025)](/sources/deleon-2025.md), §1.1). Explicit
+  ([de León et al. (2025)](/sources/deleon-2025.md), §1.1). In inner-product-norm form,
+  with $M=BA+A^\top B-bb^\top$ and $B=\mathrm{diag}(b)$, $M=0$ (symplectic) makes a method
+  unconditionally conservative for every problem with $\langle y,f(t,y)\rangle=0$, and
+  "explicit methods cannot be algebraically stable or symplectic"
+  ([Ketcheson (2019)](/sources/ketcheson-2019.md), §1.1, Eqs. (7)–(8), recalled with
+  references to Burrage–Butcher, Dekker–Verwer and Hairer–Lubich–Wanner). Explicit
   methods can be made to conserve one or several chosen invariants by
   [relaxation](/methods/relaxation-runge-kutta.md); see
   [entropy stability](/properties/entropy-stability.md).
@@ -234,5 +246,7 @@ so that energy and charge errors match those of serial stepping (App. A.2–A.3)
 - [de León et al. (2025)](/sources/deleon-2025.md) — §1, §1.1 (pseudo-symplectic methods), Remark 1, Table 4, §4.1.3 (Fig. 2).
 - [Bencomo & Chan (2023)](/sources/bencomo-2023.md) — §2.2.2 (discrete-adjoint time symmetry versus geometric adjoints).
 - [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §1 (quadratic and polynomial invariants of RK methods).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §1.1 (Eqs. (7)–(8), $M=0$ and explicit methods); arXiv v1.
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §2.3 (Example 2, IMEX midpoint as leap-frog/Verlet).
 - [Muralikrishnan & Speck (2025)](/sources/muralikrishnan-2025.md) — arXiv v2: Remark 5.4, App. A, A.2–A.3 (Figs. 8–9).
 - [Müller (2023)](/sources/muller-2023.md) — §1.1.1, §2.1–2.3 (Noether invariants of learned Lagrangians), §3.1.1–3.1.2.

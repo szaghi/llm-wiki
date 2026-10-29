@@ -5,7 +5,7 @@ description: "How time-dependent Dirichlet data are imposed on the internal stag
 status: established
 aliases: [stage boundary conditions, boundary treatment of stage values, boundary treatment for IMEX Runge–Kutta, stage Dirichlet data, DAE-type boundary conditions, ODE-type boundary conditions]
 tags: [order-reduction, imex, runge-kutta, verification]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Boundary conditions for Runge–Kutta stages
@@ -165,7 +165,7 @@ refined together (González-Tabernero et al. 2024, §5, Tables 1–4):
 | 1D convection–diffusion, $u=e^{-t}\sin(x+0.1t)$ | 3rd-order IMEX (Calvo–de Frutos–Novo type) | 2.52 / 2.25 / 2.00 | 2.97 / 2.99 / 2.98 |
 | 1D viscous [Burgers](/benchmarks/burgers-equation.md) with source, $u=e^{-t}\sin x$ | 3rd order | 2.65 / 2.26 / 1.98 | 3.01 / 3.00 / 3.00 |
 | 2D convection–diffusion | 3rd order | 2.53 / 2.26 / 1.96 | 3.00 / 2.99 / 3.00 |
-| 1D convection–diffusion | ARK4(3)6L[2]SA (Kennedy–Carpenter) | 2.50 / 2.26 / 2.02 | 3.98 / 3.98 / 3.95 |
+| 1D convection–diffusion | [ARK4(3)6L[2]SA](/methods/kennedy-carpenter-ark-methods.md) (Kennedy–Carpenter) | 2.50 / 2.26 / 2.02 | 3.98 / 3.98 / 3.95 |
 
 The third-order scheme is a four-row IMEX pair whose implicit part is an SDIRK with a
 zero first column, last row equal to $b$, and $c_1=0.4358665\ldots$, the middle root of
@@ -177,6 +177,10 @@ negligible; the untreated fourth-order curve lies close to the treated third-ord
 
 ## Relation to other remedies
 
+Among the earlier sources, [Ascher et al. (1997)](/sources/ascher-1997.md) (§1)
+list among the drawbacks of Runge–Kutta schemes for time-dependent PDEs "a loss of accuracy
+order when time-dependent inflow boundary conditions are prescribed", citing Carpenter,
+Gottlieb, Abarbanel and Don (1995), and a remedy by Abarbanel, Gottlieb and Carpenter (1996).
 The [order-reduction](/definitions/order-reduction.md) page lists the alternatives:
 high [stage order](/definitions/stage-order.md), high
 [weak stage order](/definitions/weak-stage-order.md), and modified boundary data in the
@@ -226,3 +230,4 @@ at the boundaries.
 - [Steinebach (2023)](/sources/steinebach-2023.md) — Fig. 3 (modified boundary data, as listed on the order-reduction page).
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §4.2 (boundary sources under TASE preconditioning).
 - [Babbar et al. (2022)](/sources/babbar-2022.md) — §8.1.1 (Fig. 6b), Remark 4 (time-averaged inflow flux; Runge–Kutta stage data).
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §1 (order loss with time-dependent inflow data, refs. [1], [4]).

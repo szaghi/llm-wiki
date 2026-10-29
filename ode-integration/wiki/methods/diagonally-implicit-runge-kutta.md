@@ -5,7 +5,7 @@ description: "Runge–Kutta methods with lower-triangular Butcher matrix, so eac
 status: established
 aliases: [DIRK, SDIRK, ESDIRK, EDIRK, GEDIRK, singly diagonally implicit Runge–Kutta]
 tags: [runge-kutta, implicit, stiff, stage-order, linear-algebra]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)
@@ -24,6 +24,18 @@ of one coupled system of dimension $sd$
 are the default implicit Runge–Kutta family in practice, and their weakness is the
 low [stage order](/definitions/stage-order.md) the triangular structure allows.
 
+**Butcher's semi-explicit processes.** Studying implicit Runge–Kutta processes beside
+the explicit ones of the earlier tradition, [Butcher (1964)](/sources/butcher-1964.md) (§1,
+p. 50) names three classes: *implicit* (full $A$), *semi-explicit*, defined by $a_{ij}=0$ for $i<j$, and
+*explicit*, with $a_{ij}=0$ also for $i=j$; he does not use the term "diagonally implicit".
+A semi-explicit process has $\nu(\nu+3)/2$ free parameters against $\nu(\nu+1)/2$ for an
+explicit and $\nu(\nu+1)$ for an implicit one ($\nu$ his stage number), and on this count
+"in some cases semi-explicit processes do not give even" a gain of one power of $h$ over
+explicit ones (§1, pp. 51–52, Table 1). His example has $c=(0,\frac12,1)$, rows $(0,0,0)$,
+$(\frac14,\frac14,0)$, $(0,1,0)$ and $b=(\frac16,\frac23,\frac16)$, order 4, which "appears to
+have been previously overlooked even though it is of comparable accuracy and more convenient
+for practical use" than the implicit order-4 process on the same abscissae (§1, p. 51).
+
 ## Subclasses
 
 Let $\gamma$ denote a common diagonal entry, page-local (as in the Rosenbrock
@@ -35,6 +47,11 @@ family). The sources use:
 - **EDIRK**: $a_{11}=0$, an explicit first stage (Biswas et al. 2024, §2.1;
   Biswas et al. 2023, §8). **ESDIRK**: an EDIRK whose other diagonal entries are
   equal ([Southworth et al. 2022](/sources/southworth-2022.md), §2.1).
+  [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§3) choose ESDIRKs for the
+  implicit part of their additive pairs because they "offer the advantages of allowing
+  L-stability, stiff accuracy, and a stage-order of two", and note that SDIRKs have zero
+  internal amplification at infinity at every stage while ESDIRKs generally do not (§3.1.2,
+  Eq. (30); see [internal stability](/definitions/internal-stability.md)).
 - **GEDIRK** (generalized EDIRK, introduced by Biswas et al. 2024, Def. 2.1): a
   DIRK in which the first stage with $c_\ell=0$ has $a_{\ell\ell}=0$. Explicit
   methods are GEDIRKs.
@@ -49,7 +66,16 @@ family). The sources use:
   al. 2020). Southworth et al. (2022, §2.1) state the same as $q=1$ for DIRK and
   $q=2$ for ESDIRK with one explicit stage. Biswas et al. (2024, Ex. 7.3) recover
   both bounds from their Lemma 3.13 with $\dim\mathcal K_q=0$ (stage order $q$ makes
-  every residual $\tau^{(k)}$, $k\le q$, vanish).
+  every residual $\tau^{(k)}$, $k\le q$, vanish). Kennedy & Carpenter (2003, §3.1.1) show the
+  ESDIRK case directly: with $a_{21}=a_{22}=\gamma$ the second stage leaves
+  $\sum_ja_{2j}c_j^2-c_2^3/3=\frac43\gamma^3\neq0$, so stage order 3 is impossible. They also
+  state, citing Spijker, that an ESDIRK with stage order 2 cannot be algebraically stable
+  (§3).
+- **Fourth-order ESDIRKs with stage order 2.** A five-stage, stiffly accurate, L-stable
+  ESDIRK of order 4 and stage order 2 needs $24\gamma^4-96\gamma^3+72\gamma^2-16\gamma+1=0$;
+  the only L-stable root gives $c_2=2\gamma\approx1.1456$ and a minimum principal error norm
+  of 0.03855, "approximately 15 times greater than SDIRK4". For six stages, I-stability
+  requires $0.24799\le\gamma\le0.67604$ (Kennedy & Carpenter 2003, §5, Eqs. (50)–(51)).
 - **Classical order.** $p\le s+1$ (Biswas et al. 2023, §4, recalling Hairer–Wanner
   Thm. IV.4.18), the $q_{\mathrm w}=0$ case of the DIRK
   [weak-stage-order barrier](/results/weak-stage-order-barriers.md); the bound
@@ -84,9 +110,9 @@ Table 24, A-stable, not stiffly accurate) as reference cases that lose order.
 
 | method | tableau | properties | source |
 |---|---|---|---|
-| SDIRK2 (Alexander) | $c=(\gamma,1)$, $A=\begin{pmatrix}\gamma&0\\1-\gamma&\gamma\end{pmatrix}$, $b=(1-\gamma,\gamma)$, $\hat b=(\tfrac35,\tfrac25)$, $\gamma=1-1/\sqrt2$ | order 2, L-stable, stiffly accurate | [Roberts et al. 2021](/sources/roberts-2021.md), Eq. (5.4) |
-| two-stage order-3 SDIRK (Nørsett) | $c=(\gamma,1-\gamma)$, $A=\begin{pmatrix}\gamma&0\\1-2\gamma&\gamma\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$, $\gamma=(3+\sqrt3)/6$ | order 3, algebraically stable | Roberts et al. 2021, Eq. (5.8) |
-| SDIRK3 (Alexander) | $c=(\gamma,\tfrac{1+\gamma}2,1)$, rows $(\gamma)$, $(\tfrac{1-\gamma}2,\gamma)$, $(-\tfrac{3\gamma^2}2+4\gamma-\tfrac14,\ \tfrac{3\gamma^2}2-5\gamma+\tfrac54,\ \gamma)$; $\gamma\approx0.436$, middle root of $6\gamma^3-18\gamma^2+9\gamma-1=0$ | order 3, stiffly accurate; A-stable, hence L-stable; stage order and weak stage order 1 | Roberts et al. 2021, App. A; [Puppo et al. 2024](/sources/puppo-2024.md), §4 ($\gamma=0.4358665215$); Kirby & MacLachlan 2025, §2.3, App. A (Eq. (A.5), $\gamma$ the root of $x^3-3x^2+\tfrac32x-\tfrac16$ in $(\tfrac16,\tfrac12)$) |
+| SDIRK2 (Alexander) | $c=(\gamma,1)$, $A=\begin{pmatrix}\gamma&0\\1-\gamma&\gamma\end{pmatrix}$, $b=(1-\gamma,\gamma)$, $\hat b=(\tfrac35,\tfrac25)$, $\gamma=1-1/\sqrt2$ | order 2, L-stable, stiffly accurate | [Roberts et al. 2021](/sources/roberts-2021.md), Eq. (5.4); [Ascher et al. 1997](/sources/ascher-1997.md), §2.5 (same $A$, $b$, $\gamma=\frac{2-\sqrt2}2$, taken from Hairer–Wanner II, p. 106) |
+| two-stage order-3 SDIRK (Nørsett) | $c=(\gamma,1-\gamma)$, $A=\begin{pmatrix}\gamma&0\\1-2\gamma&\gamma\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$, $\gamma=(3+\sqrt3)/6$ | order 3, algebraically stable | Roberts et al. 2021, Eq. (5.8); Ascher et al. 1997, §2.4 (taken from Hairer–Nørsett–Wanner I, p. 207: "the two-stage, third-order DIRK scheme with the best damping properties", $R(-\infty)=1-\sqrt3\approx-0.7321$) |
+| SDIRK3 (Alexander) | $c=(\gamma,\tfrac{1+\gamma}2,1)$, rows $(\gamma)$, $(\tfrac{1-\gamma}2,\gamma)$, $(-\tfrac{3\gamma^2}2+4\gamma-\tfrac14,\ \tfrac{3\gamma^2}2-5\gamma+\tfrac54,\ \gamma)$; $\gamma\approx0.436$, middle root of $6\gamma^3-18\gamma^2+9\gamma-1=0$ | order 3, stiffly accurate; A-stable, hence L-stable; stage order and weak stage order 1 | Roberts et al. 2021, App. A; [Puppo et al. 2024](/sources/puppo-2024.md), §4 ($\gamma=0.4358665215$); Kirby & MacLachlan 2025, §2.3, App. A (Eq. (A.5), $\gamma$ the root of $x^3-3x^2+\tfrac32x-\tfrac16$ in $(\tfrac16,\tfrac12)$); Ascher et al. 1997, §2.7 (same table, from Hairer–Wanner II, p. 106; $\gamma=0.4358665215$, the middle root) |
 | five-stage SDIRK4 (new) | $\gamma=\tfrac14$, $c=(\tfrac14,1,\tfrac25,\tfrac7{11},1)$, $b$ = last row $(\tfrac{400}{459},-\tfrac{35}{216},-\tfrac{250}{351},\tfrac{1331}{1768},\tfrac14)$ | order 4, L-stable, stiffly accurate, embedded pair | Roberts et al. 2021, App. B |
 | Qin–Zhang | $c=(\tfrac14,\tfrac34)$, $A=\begin{pmatrix}\tfrac14&0\\\tfrac12&\tfrac14\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$ | order 2, A-stable, symplectic | Farrell et al. 2021, Eq. (37); [Sun et al. 2022](/sources/sun-2022.md), Ex. 4.3 |
 | Kraaijevanger–Spijker | $c=(\tfrac12,\tfrac32)$, $A=\begin{pmatrix}\tfrac12&0\\-\tfrac12&2\end{pmatrix}$, $b=(-\tfrac12,\tfrac32)$ | $R(z)=\frac{1-\frac32z+\frac12z^2}{1-\frac52z+z^2}$; order 1, since $b^\top c=2\neq\tfrac12$ *(compiler check)* | Sun et al. 2022, Ex. 4.4 |
@@ -94,7 +120,10 @@ Table 24, A-stable, not stiffly accurate) as reference cases that lose order.
 | two-stage SDIRK of H-LDIRK2 | $c=(\gamma,1-\gamma)$, $A=\begin{pmatrix}\gamma&0\\1-2\gamma&\gamma\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$, $\gamma=1-1/\sqrt2$ | order 2, L-stable; the Nørsett structure with a different $\gamma$ | [Southworth et al. 2024](/sources/southworth-2024.md), §5.1 |
 | DIRK of SA SSP(3,3,2) | $c=(\tfrac14,\tfrac14,1)$, rows $(\tfrac14)$, $(0,\tfrac14)$, $(\tfrac13,\tfrac13,\tfrac13)$ | order 2, stiffly accurate; diagonal $(\tfrac14,\tfrac14,\tfrac13)$, so not singly diagonal | [Boscheri & Pareschi 2021](/sources/boscheri-2021.md), Eq. (79); Southworth et al. 2024, §5.1 |
 | four-stage SDIRK of the type-I third-order IMEX pairs | $c=(\gamma,\gamma,\tfrac{1+\gamma}2,1)$, rows $(\gamma)$, $(0,\gamma)$, $(0,\tfrac{1-\gamma}2,\gamma)$, $(0,b_2,b_3,\gamma)$, $\gamma\approx0.4358665215$ (the SDIRK3 value) | order 3, stiffly accurate, invertible $A$ | Boscheri & Pareschi 2021, Eq. (80); [Orlando et al. 2025b](/sources/orlando-2025-b.md), Table 20; Southworth et al. 2024, §5.1 |
-| ESDIRK of Kennedy–Carpenter's third-order additive pair | $c=(0,2\gamma,\tfrac35,1)$, $\gamma=\tfrac{1767732205903}{4055673282236}\approx0.4358665215$ | order 3, stiffly accurate, $R(\infty)=0$ | [Orlando & Bonaventura 2025](/sources/orlando-2025.md), Table 1; Orlando et al. 2025b, Table 21 |
+| ESDIRK of Kennedy–Carpenter's third-order additive pair (ARK3(2)4L[2]SA) | $c=(0,2\gamma,\tfrac35,1)$, $\gamma=\tfrac{1767732205903}{4055673282236}\approx0.4358665215$, rows $(\gamma,\gamma)$, $(\tfrac{2746238789719}{10658868560708},-\tfrac{640167445237}{6845629431997},\gamma)$, last row $b$ | order 3, stiffly accurate, $R(\infty)=0$; L-stable, stage order 2 (Kennedy & Carpenter) | [Orlando & Bonaventura 2025](/sources/orlando-2025.md), Table 1; Orlando et al. 2025b, Table 21; [Kennedy & Carpenter 2003](/sources/kennedy-2003.md), §4, App. D |
+| ESDIRK of ARK4(3)6L[2]SA | six stages, $\gamma=\tfrac14$, $c=(0,\tfrac12,\tfrac{83}{250},\tfrac{31}{50},\tfrac{17}{20},1)$, $b_2=0$ | order 4, L-stable, stiffly accurate, stage order 2 | Kennedy & Carpenter 2003, §5, App. D |
+| ESDIRK of ARK5(4)8L[2]SA | eight stages, $\gamma=\tfrac{41}{200}$, $c_2=\tfrac{41}{100}$, $a_{i2}=0$ for $i\ge4$, $b_2=b_3=0$; $C(3)$ holds from stage 3 on | order 5, L-stable, stiffly accurate, stage order 2; ARKODE's default fifth-order DIRK ([Reynolds et al. 2023](/sources/reynolds-2023.md), §2.2) | Kennedy & Carpenter 2003, §6, App. D |
+| four-stage SDIRK of ARS(4,4,3) | $\gamma=\tfrac12$, $c=(\tfrac12,\tfrac23,\tfrac12,1)$, rows $(\tfrac12)$, $(\tfrac16,\tfrac12)$, $(-\tfrac12,\tfrac12,\tfrac12)$, $(\tfrac32,-\tfrac32,\tfrac12,\tfrac12)$, $b$ = last row | order 3, L-stable, stiffly accurate | Ascher et al. 1997, §2.8 |
 | SDIRK21 (Kennedy–Carpenter) | $\gamma=1-\tfrac1{\sqrt2}$, $c=(\gamma,1)$, $A=\begin{pmatrix}\gamma&0\\\tfrac1{\sqrt2}&\gamma\end{pmatrix}$, $b=(\tfrac1{\sqrt2},\gamma)$, $\hat b=(\tfrac23,\tfrac13)$ | order 2(1), L-stable, stiffly accurate; all coefficients nonnegative | [Nurkhametova et al. 2026](/sources/nurkhametova-2026.md), §4.2.1 |
 | SDIRK32 (Kennedy–Carpenter) | $\gamma=\tfrac9{40}$, $c=(\tfrac9{40},\tfrac7{13},\tfrac{11}{15},1)$, $b$ = last row $(\tfrac{4032}{9943},\tfrac{6929}{15485},-\tfrac{723}{9272},\tfrac9{40})$, $a_{31}<0$ | order 3(2), L-stable, stiffly accurate | Nurkhametova et al. 2026, §4.2.2 |
 | SDIRK43 (Kennedy–Carpenter) | $\gamma=\tfrac14$, $c=(\tfrac14,\tfrac9{10},\tfrac23,\tfrac35,1)$, $b$ = last row $(\tfrac{944}{1365},-\tfrac{400}{819},\tfrac{99}{35},-\tfrac{575}{252},\tfrac14)$ | order 4(3), L-stable, stiffly accurate | Nurkhametova et al. 2026, §4.2.3 |
@@ -167,6 +196,16 @@ structure decides the asymptotic behaviour on stiff relaxation:
   [stiff accuracy](/properties/stiff-accuracy.md). Southworth et al. (2024, §5.1) choose only
   pairs whose DIRK has no explicit stage, for asymptotic-preservation reasons whose stated
   form is disputed on [asymptotic-preserving scheme](/definitions/asymptotic-preserving-scheme.md).
+- **Padding.** Ascher et al. (1997, §2) pad an $s$-stage DIRK with a zero first row and
+  column so that it shares the abscissae of an $(s+1)$-stage explicit method; with the
+  Jacobian frozen at $t_n$ the stage matrix $I-ha_{ii}J$ is the same for every stage iff the
+  diagonal is constant, and all their recommended pairs use SDIRKs. They do not expect such
+  pairs to compete with SBDF on very stiff, dominant implicit terms because "the effective
+  order of DIRK schemes drops to 1 for very stiff ODEs" (§1, citing Hairer–Wanner).
+- **ESDIRK with shared weights.** In the Kennedy–Carpenter pairs the ESDIRK and the explicit
+  method share $b$ and $c$, the ESDIRK has $a_{21}=a_{22}=\gamma$ and $c_2=2\gamma$, and its
+  last row equals $b$ (Kennedy & Carpenter 2003, §3); see
+  [Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md).
 - **Positive diagonal.** The uniform-accuracy proof of Hu & Shu (2025, Lemma 4.6) bounds
   $(I+\frac h\varepsilon A^{\mathrm I})^{-1}$ through the diagonal $1+\frac h\varepsilon a_{ii}$,
   which needs $a_{ii}>0$ on the implicit stages (a hypothesis left implicit there).
@@ -297,6 +336,10 @@ index); see [implicit stage solvers](/methods/implicit-stage-solvers.md).
   check)*. Quezada de Luna & Ketcheson (2022) observe rates of about 4 with their fifth-order
   SDIRK because time and space (WENO5) are refined together at $h=0.5\Delta x$; the temporal
   order is not isolated (Tables 1–2, arXiv v1 read).
+- **Attributions of named tableaux.** The first three rows of the table carry the names
+  Alexander and Nørsett as given by the sources cited there; Ascher et al. (1997, §2.4–2.5,
+  §2.7) print the same tableaux citing only Hairer–Nørsett–Wanner (p. 207) and Hairer–Wanner
+  (p. 106).
 - "Maximum order $s$ or $s+1$ with reasonable stability" (Southworth et al. 2022)
   is a qualified practical statement, not a theorem; the theorem is $p\le s+1$.
 
@@ -327,3 +370,7 @@ index); see [implicit stage solvers](/methods/implicit-stage-solvers.md).
 - [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §1, §3.1 (Eq. (21)).
 - [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — arXiv v2: §6.3.2 (Fig. 9).
 - [Ern & Guermond (2023)](/sources/ern-2023.md) — HAL draft: §4.4.2 (Hairer–Wanner SDIRK as implicit part of the Calvo–de Frutos–Novo pair).
+- [Butcher (1964)](/sources/butcher-1964.md) — §1 (pp. 50–52, classes, Table 1, semi-explicit example).
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §1, §2 (padding, SDIRK stage operator), §2.4–2.5, §2.7–2.8.
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §3, §3.1.1, §3.1.2 (Eq. (30)), §4–6 (Eqs. (50)–(51)), App. D.
+- [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §2.2.

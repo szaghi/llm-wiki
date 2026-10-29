@@ -3,9 +3,9 @@ type: Method
 title: "Lawson (integrating-factor) methods"
 description: "Lawson methods apply an explicit Runge–Kutta method to the equation transformed by the integrating factor of the stiff linear part, so they need only matrix exponentials; the page gives the first- and second-order schemes, Caliari et al.'s stabilized variants and stability bounds for a partial linear operator, and the integrating-factor form of stiff kinetic relaxation."
 status: established
-aliases: [Lawson scheme, integrating factor method, integrating-factor Runge–Kutta, IFRK, Lawson–Euler, stabilized Lawson, generalized Runge–Kutta of Lawson]
+aliases: [Lawson scheme, integrating factor method, integrating-factor Runge–Kutta, IFRK, Lawson–Euler, stabilized Lawson, generalized Runge–Kutta of Lawson, generalized Lawson method, generalized integrating factor method]
 tags: [exponential, explicit, stiff, stability, splitting]
-timestamp: 2026-10-19T19:14:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Lawson (integrating-factor) methods
@@ -14,11 +14,16 @@ A **Lawson method** advances the semilinear problem $y'=Ly+N(t,y)$ ($N$ the non-
 remainder, page-local as on [exponential integrators](/methods/exponential-integrators.md))
 in three moves. It changes variables with the integrating factor of $L$, applies an explicit
 Runge–Kutta method to the transformed equation, and transforms back. With
-$w(t)=e^{-(t-t_n)L}y(t)$ the problem becomes
-$w'=e^{-(t-t_n)L}N\big(t,e^{(t-t_n)L}w\big)$, which has no stiff linear term *(compiler
-statement of the standard construction; the sources give only the resulting schemes)*. The
-resulting schemes involve the matrix exponential only, with no φ-functions
-([Caliari et al. 2024](/sources/caliari-2024.md), §2, after Lawson 1967). That is their
+$y(t_n+\tau)=e^{\tau L}w(\tau)$ the problem becomes
+$w'(\tau)=e^{-\tau L}N\big(t_n+\tau,y(t_n+\tau)\big)$, which has no stiff linear term
+([Hochbruck & Ostermann 2010](/sources/hochbruck-2010.md), §2.7, Eqs. (2.79)–(2.82) with
+$k=0$, in their sign convention $L=-A$). The factor $e^{-\tau L}$ "is not defined for
+semigroups", but it is only formal and disappears from the final scheme, provided the nodes
+satisfy $c_i\in[0,1]$ (§2.7). The resulting schemes involve the matrix exponential only,
+with no φ-functions ([Caliari et al. 2024](/sources/caliari-2024.md), §2, after Lawson 1967).
+Hochbruck & Ostermann (§6) credit Lawson (1967) and Ehle & Lawson (1975), who used rational
+approximations for higher-order Runge–Kutta bases, with the first exponential Runge–Kutta
+methods. That is their
 practical advantage: an exponential can be computed in ways that do not extend to
 $\phi_k$, for instance as a product of small one-dimensional exponentials when $L$ is a
 Kronecker sum (§1, §5.2; see [evaluating φ-functions](/methods/phi-function-evaluation.md)).
@@ -49,6 +54,33 @@ The stabilized schemes are not Lawson methods in the strict sense, since they ap
 exponential to $f$ rather than transform the variable. They are **not exact for linear
 problems** ($N=0$), and they are not [A-stable](/properties/a-stability.md). Their
 stability regions do contain the whole negative real axis (Remark 2.2, Fig. 1).
+
+## Generalized Lawson methods and their stiff order
+
+Hochbruck & Ostermann (2010, §2.7, after Krogstad 2005, who called them "(generalized)
+integrated factor methods") subtract from $N$, before transforming, the polynomial that
+interpolates it at the $k$ past points $t_{n-k+1},\dots,t_n$, and treat that polynomial
+exactly with the exponential Adams weights of
+[exponential integrators](/methods/exponential-integrators.md). For $k=0$ this is the Lawson
+method above. With a Runge–Kutta base the result is an exponential general linear method:
+stages $Y_i=e^{c_ihL}y_n+h\sum_ja_{ij}(hL)N_j+h\,w_{i1}(hL)N(t_{n-1},y_{n-1})$ and update
+$y_{n+1}=e^{hL}y_n+h\sum_ib_i(hL)N_i+h\,v_1(hL)N(t_{n-1},y_{n-1})$, with
+$N_j=N(t_n+c_jh,Y_j)$ and $\phi_{k,j}=\phi_k(c_jhL)$ (page-local $w_{i1}$, $v_1$, $N_j$). Their
+examples, all on Runge's (midpoint) method $c=(0,\tfrac12)$ unless stated (Exs. 2.32–2.34):
+
+| $k$ | coefficients | order they state |
+|---|---|---|
+| 0 (Lawson 1967) | $a_{21}=\tfrac12e^{hL/2}$; $b=(0,\ e^{hL/2})$ | "first-order accurate by Theorem 2.17" |
+| 1 | $a_{21}=\tfrac12\phi_{1,2}$; $b=(\phi_1-e^{hL/2},\ e^{hL/2})$ | 2, by Thm. 2.17 |
+| 2 | $a_{21}=\tfrac12(\phi_{1,2}+\phi_{2,2})$, $w_{21}=-\tfrac12\phi_{2,2}$; $b=(\phi_1+\phi_2-\tfrac32e^{hL/2},\ e^{hL/2})$, $v_1=-\phi_2+\tfrac12e^{hL/2}$ | 2, by Thm. 2.31 |
+| 2, classical RK4 base (Krogstad 2005), $c=(0,\tfrac12,\tfrac12,1)$ | $a_{21}=\tfrac12\phi_{1,2}+\tfrac14\phi_{2,2}$, $w_{21}=-\tfrac14\phi_{2,2}$; $a_{31}=\tfrac12\phi_{1,2}+\tfrac14\phi_{2,2}-\tfrac34I$, $a_{32}=\tfrac12I$, $w_{31}=-\tfrac14\phi_{2,2}+\tfrac14I$; $a_{41}=\phi_1+\phi_2-\tfrac32e^{hL/2}$, $a_{43}=e^{hL/2}$, $w_{41}=-\phi_2+\tfrac12e^{hL/2}$; $b=(\phi_1+\phi_2-e^{hL/2}-\tfrac13I,\ \tfrac13e^{hL/2},\ \tfrac13e^{hL/2},\ \tfrac16I)$, $v_1=-\phi_2+\tfrac13e^{hL/2}+\tfrac16I$ | 3, by Thm. 2.31 |
+
+The $k=0$ row is Lawson2a of the table above: $Y=e^{hL/2}\big(y_n+\tfrac h2N(t_n,y_n)\big)$,
+$y_{n+1}=e^{hL}y_n+h\,e^{hL/2}N(t_n+\tfrac h2,Y)$ *(compiler check, not in the sources: their tableau with $L=-A$)*.
+The orders in the last column are stiff orders in the sense of
+[stiff order conditions](/results/exponential-runge-kutta-stiff-order-conditions.md), for
+semilinear parabolic problems; Krogstad's RK4-based scheme satisfies the stage and quadrature
+conditions for $m=1,2$ and the weakened quadrature condition for $p=3$ (p. 243).
 
 ## Linear stability with a partial linear operator
 
@@ -142,6 +174,12 @@ are on [exponential integrators](/methods/exponential-integrators.md); see also
   proof covers non-commuting parts.
 - The claim that exponential and Lawson schemes have better stability than "similarly
   constructed" IMEX schemes rests on two IMEX schemes, both with bound $1/2$.
+- **Order of Lawson2a.** Caliari et al. (2024, Appendix) list Lawson2a as a second-order
+  scheme; Hochbruck & Ostermann (2010, Ex. 2.32) call the same scheme "first-order accurate by
+  Theorem 2.17", and every order in their survey is a stiff order for the problem class at hand,
+  here semilinear parabolic problems (§1, p. 212). The Lawson tableau has $\sum_jb_j=e^{hL/2}$, not $\phi_1(hL)$, so it does not
+  satisfy the simplifying assumptions (2.23) under which their §2.3, including Theorem 2.17
+  (stated for $2\le p\le4$), is formulated *(compiler check, not in the sources)*.
 - l2a and l2b have identical amplification factors, so their equal bound is no coincidence
   *(compiler check)*. The sl2 bound 0.183 is rounded up from about 0.1820 *(compiler
   check)*. Their Fig. 4 labels the second-order ExpRK2 with $\phi_1$ "ERK1P1" (printed slip).
@@ -150,3 +188,4 @@ are on [exponential integrators](/methods/exponential-integrators.md); see also
 
 - [Caliari et al. (2024)](/sources/caliari-2024.md) — §1–2 (Lawson schemes, Lie-splitting interpretation, Thms. 2.1–2.7, Remarks 2.1–2.2, Table 1, Fig. 1), §3 (choice of $\vartheta$), §4.1–4.2 (Figs. 2–4), §5.1–5.2 (Tables 2–3, Figs. 6–9), §6, Appendix; arXiv v2.
 - [Jin (2022)](/sources/jin-2022.md) — §5.2, Eq. 5.7 (exponential reformulation of kinetic relaxation, Dimarco & Pareschi 2011, as recalled).
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §2.7 Eqs. (2.75)–(2.82), Exs. 2.32–2.34 (Lawson and generalized Lawson methods, tableaux, stiff orders), §6 (history); version of record.

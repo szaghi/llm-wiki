@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-20T03:57:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Notation registry
@@ -66,7 +66,9 @@ never a node count or a multirate ratio.
 | $n_c$ | number of distinct abscissae $c_i$ | |
 | $\mathcal C$ | SSP coefficient | $\mathcal C_{\mathrm{eff}}=\mathcal C/s$ effective SSP coefficient |
 | $h_{\mathrm{FE}}$ | forward-Euler step bound of the strong-stability hypothesis | sources' $\Delta t_{\mathrm{FE}}$ |
+| $\eta_{\mathrm c}$ | coercivity constant of a linear operator, $\eta_{\mathrm c}=\inf_{\lVert v\rVert=1}-\operatorname{Re}\langle Lv,v\rangle/\lVert Lv\rVert^2$; forward Euler is contractive iff $h\le2\eta_{\mathrm c}$ | Gottlieb et al. (2001) write it without subscript; distinct from the entropy $\eta$ |
 | $\alpha_{ij}$, $\beta_{ij}$ | Shu–Osher form coefficients | |
+| $\tilde L$ | downwind operator: the operator that replaces $L$ in a Shu–Osher stage with $\beta_{ij}<0$, chosen so that $y-h\tilde L(y)$ is strongly stable | Shu–Osher (1988), Gottlieb et al. (2001) |
 
 ## 3. Linear stability
 
@@ -108,6 +110,7 @@ never a node count or a multirate ratio.
 | Symbol | Meaning | Note |
 |---|---|---|
 | $f=f^{\mathrm E}+f^{\mathrm I}$ | explicit (non-stiff) and implicit (stiff) parts | IMEX |
+| $z_{\mathrm E}=h\lambda_{\mathrm E}$, $z_{\mathrm I}=h\lambda_{\mathrm I}$ | scaled eigenvalues of the explicit and implicit parts in the linear test equation $y'=\lambda_{\mathrm E}y+\lambda_{\mathrm I}y$ of an additive method | |
 | $(A^{\mathrm E},b^{\mathrm E},c^{\mathrm E})$, $(A^{\mathrm I},b^{\mathrm I},c^{\mathrm I})$ | explicit and implicit tableaux of an IMEX/additive RK method | |
 | $f=\sum_q f^{\{q\}}$, $A^{\{q,r\}}$, $b^{\{q\}}$ | partitions and coupling matrices of a GARK method | |
 | $f^{\{\mathrm s\}}$, $f^{\{\mathrm f\}}$ | slow and fast parts of a multirate problem | |
@@ -138,6 +141,7 @@ never a node count or a multirate ratio.
 | $\gamma_n$ | relaxation parameter of step $n$ | relaxed solution $y^{\gamma}_{n+1}=y_n+\gamma_n(y_{n+1}-y_n)$ at time $t_n+\gamma_nh$ (incremental-direction technique: at $t_n+h$); distinct from the Rosenbrock $\gamma$ |
 | $y_i'=\sum_{j}\bigl(p_{ij}(y)-d_{ij}(y)\bigr)$ | production–destruction system: $p_{ij}\ge0$ is the rate from constituent $j$ to $i$, $d_{ij}\ge0$ the rate from $i$ to $j$ | conservative when $p_{ij}=d_{ji}$ (then $\mathbf 1^\top y$ is invariant); $d_{ii}=p_{ii}=0$ |
 | $\varpi_i$ | Patankar weight denominator: a modified Patankar scheme multiplies a production term $p_{ij}$ by $y^{n+1}_j/\varpi_j$ and a destruction term $d_{ij}$ by $y^{n+1}_i/\varpi_i$ | sources write $\sigma_i$ or $\pi_i$ (both registry symbols) |
+| $\mathrm{TV}(y)=\sum_j\lvert y_{j+1}-y_j\rvert$ | total variation of a grid function $y=(y_j)$; a scheme is total variation diminishing (TVD) when $\mathrm{TV}(y_{n+1})\le\mathrm{TV}(y_n)$ | $j$ is the spatial index here |
 
 
 ## 9. Linear multistep methods
@@ -146,6 +150,7 @@ never a node count or a multirate ratio.
 |---|---|---|
 | $k$ | number of steps of a linear multistep method | the BDF$k$ method has order $k$; distinct from the iteration count $K$ |
 | $\alpha_j$, $\beta_j$ | coefficients, $\sum_{j=0}^k\alpha_jy_{n+j}=h\sum_{j=0}^k\beta_jf(t_{n+j},y_{n+j})$ | single-index family, distinct from the Shu–Osher $\alpha_{ij}$, $\beta_{ij}$ |
+| $\bar\alpha_r$, $\bar\beta_r$ | backward-indexed multistep coefficients, $y_n=\sum_{r=1}^k\bigl(\bar\alpha_ry_{n-r}+h\bar\beta_rf(y_{n-r})\bigr)$, i.e. $\bar\alpha_r=-\alpha_{k-r}/\alpha_k$ | SSP multistep pages (Gottlieb et al. 2001) |
 | $\varrho(\zeta)$, $\sigma(\zeta)$ | first and second generating polynomials, $\varrho(\zeta)=\sum_j\alpha_j\zeta^j$, $\sigma(\zeta)=\sum_j\beta_j\zeta^j$ | $\sigma(\zeta)$ takes a complex argument, distinct from the tree symmetry $\sigma(\tau)$ |
 | $r_n=h_n/h_{n-1}$ | step-size ratio of a variable-step method | |
 | $G$ | symmetric positive definite matrix of a G-norm, $\lVert Y\rVert_G^2=\sum_{i,j}g_{ij}\langle y_i,y_j\rangle$ | G-stability |

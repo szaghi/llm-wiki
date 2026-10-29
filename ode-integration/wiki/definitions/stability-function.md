@@ -3,9 +3,9 @@ type: Definition
 title: "Stability function, stability polynomial and stability region"
 description: "The stability function R(z) is the factor by which a one-step method multiplies the solution of y' = λy per step; it is rational for implicit methods and a polynomial P(z) for explicit ones, its order and degree structure constrain the method, and its region of absolute stability decides the linearly stable step sizes for method-of-lines systems."
 status: established
-aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region, real stability interval, real stability boundary]
+aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region, real stability interval, real stability boundary, additive stability function, E-polynomial]
 tags: [stability, runge-kutta, explicit, implicit]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Stability function, stability polynomial and stability region
@@ -33,6 +33,16 @@ $s-p$ free coefficients in $P$ (Hedayati Nasab et al. (2021), Eq. (3)); these
 are the tall-tree [order conditions](/results/runge-kutta-order-conditions.md)
 $T(p)$. The **region of absolute stability** is
 $\mathcal S=\{z\in\mathbb C:\lvert R(z)\rvert\le1\}$.
+
+The test equation with a complex coefficient of negative real part is the one on which
+[Dahlquist (1963)](/sources/dahlquist-1963.md) (§1, Eq. (1.8)) defines A-stability for linear
+multistep methods; he remarks that "the concept of A-stability has an obvious meaning also
+outside the class of linear multistep methods" and shows that the classical fourth-order
+Runge–Kutta method is not A-stable, since on $y'=\lambda y$ it multiplies the solution per step
+by $1+z+z^2/2!+z^3/3!+z^4/4!$, which is unbounded as $z\to-\infty$ (pp. 32–33). Feeding back
+Richardson-extrapolated trapezoidal values gives a per-$2h$ factor that tends to $\tfrac53>1$
+as $z\to-\infty$, so active extrapolation destroys A-stability (p. 33); see
+[A-stability](/properties/a-stability.md).
 
 ## Method of lines: the step-size condition
 
@@ -91,6 +101,31 @@ number of accepted steps has a *smaller* $\ell$ (2.41) than the standard one (3.
 interval by the **monotonicity interval**, the longest $(-\varrho,0]$ on which $P>0$
 and $P'\ge0$ (page-local $\varrho$), as for the exponential, and measure accuracy by
 the error constant $(1-P'''(0))/6$ of a second-order polynomial.
+
+**Stability polynomials of an embedded pair.** [Dormand & Prince (1980)](/sources/dormand-1980.md)
+(§3, Eqs. (3.2)–(3.3)) print the polynomials of both formulas of their seven-stage family:
+$\sum_{j=0}^5z^j/j!+d\,z^6$ for the fifth-order formula, with $d=c_4(2-5c_3)/240$, and
+$\sum_{j=0}^4z^j/j!+e\,z^5+f\,z^6+g\,z^7$ for the fourth-order one ($d,e,f,g$ page-local); for
+RK5(4)7M, $d=\tfrac1{600}$, $e=\tfrac{1097}{120000}$, $f=\tfrac{161}{120000}$,
+$g=\tfrac1{24000}$ (p. 23). Following Lawson, $d=\tfrac1{1280}$ enlarges the region of the
+fifth-order formula, and they ask that "the region of absolute stability should be enlarged for
+both formulae", taking the union of the two regions as the region of the "composite pair" (p. 22,
+Fig. 1(c)); the reason they give is step-size control (see
+[embedded pairs](/methods/embedded-runge-kutta-pair.md)). They define the region with the strict
+inequality $\lvert R\rvert<1$ and write $z=x+\mathrm iy$ without stating $z=h\lambda$. The
+high-stability member RK5(4)7S is on [Dormand–Prince 5(4)](/methods/dormand-prince-5-4.md).
+
+**The Taylor polynomials in convex form.** [Gottlieb et al. (2001)](/sources/gottlieb-2001.md)
+(§3.1, Prop. 3.2, Eqs. (3.4)–(3.5)) show that the degree-$m$ Taylor polynomial of $e^z$, the
+unique stability polynomial of an $m$-stage method of order $m$ on linear problems, is a convex
+combination of powers of $1+z$, for example
+
+$$\sum_{j=0}^4\frac{z^j}{j!}=\frac38+\frac13(1+z)+\frac14(1+z)^2+\frac1{24}(1+z)^4,$$
+
+so it is strongly stable whenever forward Euler is, with coefficient 1; see
+[SSP methods](/methods/strong-stability-preserving-runge-kutta.md). They print the constants
+$\tfrac13$, $\tfrac38$ as scalars, meaning multiples of the identity when $z$ is replaced by
+$hL$, as their proof of Prop. 3.3 writes.
 
 ## Stability polynomials of stabilized methods
 
@@ -386,6 +421,44 @@ $m$-stage Gauss method *(compiler remark, not in the source)*. See
   not in the source)*. These amplification factors belong to the space–time scheme, not to
   a stability function of an ODE method; see
   [von Neumann analysis](/definitions/von-neumann-stability-analysis.md).
+* **Additive (IMEX) Runge–Kutta methods.** [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md)
+  (§2.1.5, Eqs. (14)–(17); read as NASA/TM-2001-211038) apply an $N$-part additive method to
+  $y'=\sum_\nu\lambda^{[\nu]}y$ and obtain
+  $R=\det\big(I-\sum_\nu z^{[\nu]}A^{[\nu]}+\sum_\nu z^{[\nu]}\mathbf 1b^{[\nu]\top}\big)/\det\big(I-\sum_\nu z^{[\nu]}A^{[\nu]}\big)$,
+  the formula above with $N=2$. For their explicit–ESDIRK pairs with shared $b$ (Eqs.
+  (26)–(31)) the denominator is $(1-\gamma z^{\mathrm I})^{s-1}$ ($\gamma$ the diagonal entry)
+  and the numerator a polynomial in $z^{\mathrm E}$ and $z^{\mathrm I}$ with coefficients
+  $p_{ij}$ (page-local) of $(z^{\mathrm I})^i(z^{\mathrm E})^j$. L-stability of the implicit part
+  needs $p_{s,0}=p_{s-1,0}=0$, but for the pair to tend to zero as $z^{\mathrm I}\to-\infty$ at
+  every fixed $z^{\mathrm E}$ the coupling coefficient $p_{s-1,1}$ must vanish too; "several of
+  the methods given by Ascher et al. and Griepentrog do not account for this and consequently
+  have $R(z^{[E]},-\infty)$ depending linearly on $z^{[E]}$" (§3.1.2), e.g.
+  $-0.732(1+z^{\mathrm E})$ for the (2,3,3) pair of Ascher et al. (App. B). They test
+  I-stability (stability on the imaginary axis) through the E-polynomial
+  $Q(\mathrm iy)Q(-\mathrm iy)-P(\mathrm iy)P(-\mathrm iy)\ge0$ of $R=P/Q$ (Eq. (29); $P$, $Q$
+  page-local here), give the stability function of the dense output used as an extrapolant
+  (Eq. (23); see [dense output](/methods/dense-output.md)), and the internal stability function
+  of each implicit stage (Eq. (30); see [internal stability](/definitions/internal-stability.md)).
+  [Ascher et al. (1997)](/sources/ascher-1997.md) (§2.4) print, for the two-stage third-order
+  DIRK alone of their (2,3,3) pair, $R(\infty)=1-\sqrt3\approx-0.7321$, and call the pair's
+  stability function attenuated "at $\infty$"; their IMEX test equation is
+  $y'=\mathrm i\beta y+\alpha y$ with real $\alpha\le0$ (diffusion, implicit) and $\beta>0$
+  (advection, explicit), and they plot the largest stable $h\beta$ against $\alpha/\beta$
+  (§3, Eqs. (3.1)–(3.2), Figs. 1–2; $\alpha$, $\beta$ page-local). They choose free explicit
+  coefficients so that the explicit polynomial matches $e^z$ to third or fourth order, giving the
+  regions of the three-stage third-order or four-stage fourth-order explicit methods (§2.5,
+  §2.7); see [IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
+* **Relaxation.** [Ketcheson (2019)](/sources/ketcheson-2019.md) (§3.1, Eq. (21); read as
+  arXiv:1905.09847v1) treats the relaxation parameter $\gamma_n$ of a
+  [relaxation Runge–Kutta method](/methods/relaxation-runge-kutta.md) as fixed within a step,
+  so the step has the tableau $(A,\gamma_nb,c)$ and $R_{\gamma}(z)=1+\gamma_n(R(z)-1)$. Theorem 7:
+  for $0\le\gamma_1\le\gamma_2$ the region of $(A,\gamma_2b)$ is contained in that of
+  $(A,\gamma_1b)$, and it tends to $\mathbb C$ as $\gamma_n\to0$. With the E-polynomial
+  $1-\lvert R(\mathrm iy)\rvert^2$, a method of order $p\ge2$ gets
+  $\sum_{j=1}^{p/2}\frac{2}{(2j)!}\gamma_n(1-\gamma_n)y^{2j}+O(y^{p+2})$, positive near 0 for
+  $0\le\gamma_n<1$, so the relaxed method is stable on a segment of the imaginary axis even for
+  the two-stage second-order method, whose unrelaxed region contains none (p. 11). He shows
+  regions for $\gamma_n\in[0.7,1.3]$, "an exaggerated range" (Fig. 2).
 * **Multirate, IMEX and splitting methods** need several scaled eigenvalues or
   a matrix test problem; see
   [linear stability of multirate methods](/definitions/multirate-linear-stability.md).
@@ -419,12 +492,13 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
 * Caliari et al. (2024) call their stability regions "A-stability regions" (Fig. 1)
   and use "unconditionally stable" for stability on the negative real axis only, which
   is weaker than [A-stability](/properties/a-stability.md).
-* [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) (§2) define the stability
+* [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) (§2), like Dormand & Prince
+  (1980, Eqs. (3.2)–(3.3)), define the stability
   domain with the strict inequality $\lvert r(z)\rvert<1$ and L-stability by the limit
   along the negative real axis; most sources use $\le1$. The difference matters only on
   the boundary.
 * Popov (2024, Eq. (15)) prints $R(z)=1+w^\top(I-zB)^{-1}\mathbf 1$ without the factor
-  $z$; the determinant form he gives beside it is the correct one.
+  $z$; the determinant form he gives beside it has it.
 * Jin et al. (2025, Remark 3.4) note that the textbook form of a degree-$(2,2)$ rational
   $R$ loses accuracy to round-off through the squared operator in the numerator and
   rewrite it as a constant plus a proper fraction; no numbers are shown.
@@ -485,3 +559,9 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
 - [Ern & Guermond (2023)](/sources/ern-2023.md) — §4.1 (Eqs. (72)–(75)), §4.3 (Eq. (81)); HAL v1.
 - [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §3.1 (Eqs. (32)–(34)), App. 1, Table 1, Fig. 1.
 - [Maurya et al. (2021)](/sources/maurya-2021.md) — §2.1 (Eq. (8)), Table 1.
+- [Dahlquist (1963)](/sources/dahlquist-1963.md) — §1 (Eq. (1.8)), pp. 32–33 (RK4 not A-stable; extrapolated trapezoidal rule).
+- [Dormand & Prince (1980)](/sources/dormand-1980.md) — §3 (Eqs. (3.2)–(3.3), Fig. 1), pp. 22–24.
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §3.1 (Prop. 3.2, Eqs. (3.4)–(3.5)), §3.2 (proof of Prop. 3.3).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — §2.1.5 (Eqs. (14)–(19)), §2.1.7 (Eq. (23)), §3.1.2 (Eqs. (26)–(31)), App. B; read as NASA/TM-2001-211038.
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §2.4–2.7, §3 (Eqs. (3.1)–(3.2), Figs. 1–2).
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §3.1 (Eq. (21), Theorem 7, E-polynomial, Fig. 2); read as arXiv:1905.09847v1.

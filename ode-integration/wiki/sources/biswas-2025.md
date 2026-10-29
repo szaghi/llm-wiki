@@ -234,6 +234,7 @@ and [37]. The three Biswas items take the suffixes `biswas-2023`,
 Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [Boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md)
+* [Dormand–Prince 5(4) pair](/methods/dormand-prince-5-4.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Explicit Runge–Kutta methods with high weak stage order](/methods/explicit-runge-kutta-high-weak-stage-order.md)
 * [Generalized additive Runge–Kutta (GARK) methods and internal consistency](/methods/generalized-additive-runge-kutta.md)

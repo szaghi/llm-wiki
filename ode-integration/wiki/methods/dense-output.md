@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Dense output"
-description: "Continuous extensions of a one-step method that give the solution between grid points: Hermite interpolants for nonstiff problems, Lagrange interpolation of stored steps for stiff ones, Rosenbrock weight polynomials (Rodas5, Rodas5P), full-order φ-method dense output, collocation and DG-in-time polynomials, and the time-continuous cell states of asynchronous time stepping."
+description: "Continuous extensions of a one-step method that give the solution between grid points: Hermite interpolants for nonstiff problems, Lagrange interpolation of stored steps for stiff ones, weight polynomials for additive Runge–Kutta (Kennedy–Carpenter) and Rosenbrock (Rodas5, Rodas5P) methods, full-order φ-method dense output, collocation and DG-in-time polynomials, and the time-continuous cell states of asynchronous time stepping."
 status: established
 aliases: [continuous extension, interpolant, continuous Runge–Kutta, dense-output formula, collocation polynomial, local DG solution, subgrid resolution]
 tags: [runge-kutta, stiff, software, step-size-control, exponential]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Dense output
@@ -51,6 +51,32 @@ problems (§3.3.2); see [order reduction](/definitions/order-reduction.md). Stei
 makes the parallel point for DAEs: before Rodas5P, Julia's
 [DifferentialEquations.jl](/software/differentialequations-jl.md) used Hermite interpolation for
 Rodas5, which is "only applicable to ODE problems" (§1, p. 4).
+
+## Weight polynomials for additive Runge–Kutta methods
+
+[Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§2.1.7, Eqs. (21)–(23); read as
+NASA/TM-2001-211038) give dense output for $N$-additive Runge–Kutta methods by weight
+polynomials of degree $p^*$ (page-local: the dense-output order) without constant term,
+
+$$y(t_n+\vartheta h)\approx y_n+h\sum_{\nu=1}^N\sum_{i=1}^sb^{*[\nu]}_i(\vartheta)\,f^{[\nu]}(Y_i),\qquad
+b^{*[\nu]}_i(\vartheta)=\sum_{j=1}^{p^*}b^{*[\nu]}_{ij}\vartheta^j,\qquad b^{*[\nu]}_i(1)=b^{[\nu]}_i,$$
+
+with the same coefficients for every part. The order conditions are those of the step with
+$1/\gamma$ replaced by $\vartheta^m/\gamma$ for a tree with $m$ vertices. They print, for their
+[ARK methods](/methods/kennedy-carpenter-ark-methods.md), second-order output for ARK3(2)4L[2]SA,
+second- and third-order output for ARK4(3)6L[2]SA and third-order output for ARK5(4)8L[2]SA,
+whose fourth-order dense output is not possible (§4–6, App. D).
+
+The polynomials are also used outside the step ($\vartheta>1$), as **extrapolants**. Then
+stability matters: the dense output has its own stability function $R^*(\cdot,\vartheta)$ (Eq.
+(23)), and Tables 5–7 list its value in the stiff limit and the leading error norm for
+$\vartheta=1,\dots,5$. For ARK4(3)6L[2]SA the second-order output has stiff-limit values
+$0,-1,-2,-3,-4$, the third-order one values growing to $499-284z^{\mathrm E}$ at $\vartheta=5$;
+the authors therefore choose second-order output for extrapolation and third-order output for
+interpolation (§5). On their reacting-flow problem the third-order output of ARK4(3)6L[2]SA
+attains its design order both at $\vartheta=\tfrac12$ and at $\vartheta=\tfrac32$, the
+extrapolated values being "one and one half orders less accurate" in magnitude (§8.5,
+Table 16).
 
 ## Weight polynomials for Rosenbrock methods
 
@@ -166,7 +192,17 @@ the stage fluxes.
 - **Implicit-stage predictors.** ARKODE's predictors for implicit stages are dense-output
   extrapolants from the previous step; the "maximum order" predictor uses degree
   $\le\min\{p-1,\ \text{user cap},\ 5\}$ (§3.4.2; see
-  [implicit stage solvers](/methods/implicit-stage-solvers.md)).
+  [implicit stage solvers](/methods/implicit-stage-solvers.md)). Kennedy & Carpenter (2003,
+  §3.2.2, Eqs. (37)–(38)) describe the same device for their ARK methods: the starting value
+  of stage $i$ is the previous step's dense output at $\vartheta_i=1+r_nc_i$, $r_n$ the
+  step ratio, and they note that for a large ratio the trivial guess "may be more prudent".
+  Used as Newton starting values, the extrapolated output gave a uniform speedup over stiffness
+  ratios from $10^0$ to $10^{-6}$ on their reacting-flow problem (§8.5, Table 16).
+- **Relaxation.** Ketcheson (2019, §5; read as arXiv:1905.09847v1) states that the dense
+  output of the base method can be used unchanged by a
+  [relaxation Runge–Kutta method](/methods/relaxation-runge-kutta.md), except that the output
+  times must be rescaled, since the relaxed solution sits at $t_n+\gamma_nh$. The paper
+  states this and does not test it.
 
 ## Qualifications
 
@@ -203,3 +239,5 @@ the stage fluxes.
 - [Unfer (2021)](/sources/unfer-2021.md) — §3.2 Eqs. 54–56, §3.5 Eqs. 103–111 (time-continuous extrapolated and conservative states, reduction to SSPRK3).
 - [Saupe et al. (2025)](/sources/saupe-2025.md) — arXiv v2: §2.1 (dense output of the collocation solution), §2.2 (Eqs. (16)–(18), restarts), §4.1.
 - [Popov (2024)](/sources/popov-2024.md) — arXiv v1: Introduction, §1.3 (Eq. (16), Fig. 3), §2.1 (Tables 1–6).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — §2.1.7 (Eqs. (21)–(23), Tables 5–7), §3.2.2 (Eqs. (37)–(38)), §4–6, §8.5 (Table 16), App. D; read as NASA/TM-2001-211038.
+- [Ketcheson (2019)](/sources/ketcheson-2019.md) — §5 (dense output under relaxation); read as arXiv:1905.09847v1.

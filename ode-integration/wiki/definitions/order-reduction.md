@@ -5,7 +5,7 @@ description: "Order reduction is the drop of the observed convergence rate of a 
 status: established
 aliases: [stiff order reduction, stiff order]
 tags: [order-reduction, stiff, runge-kutta, stage-order, dae]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Order reduction
@@ -24,7 +24,14 @@ the method–problem pair, not of the method alone: the same scheme converges at
 order $p$ once $h$ is small enough to resolve the stiffness (Biswas et al. 2023,
 §6.1, Fig. 2). The order a method keeps uniformly in the stiffness, for problems
 with a one-sided Lipschitz bound, is its [B-convergence](/definitions/b-convergence.md)
-order.
+order. [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) (§1, p. 212) define the
+**stiff order** in the same spirit: a method has stiff order $p$ for a class of problems if
+its global error on finite intervals is bounded by $Ch^p$ with $C$ depending on the interval
+length and the problem class "but neither on the stiffness nor on the step size $h$", and
+"the classical order is always an upper bound to the stiff order". For parabolic-type
+problems they adopt "the usual definition of stiffness", by which a differential equation is
+stiff "whenever the implicit Euler method works (tremendously) better than the explicit Euler
+method" (§1; see [stiffness](/definitions/stiffness.md)).
 
 **Not the same as precision-induced loss of order.**
 [Croci & Rosilho de Souza (2022)](/sources/croci-2022.md), §3, call the stagnation or
@@ -105,6 +112,39 @@ Hundsdorfer–Verwer. [Southworth et al. (2024)](/sources/southworth-2024.md) (�
 the order reduction of Strang splitting on stiff problems as one reason to replace the
 Lie–Trotter split of radiation hydrodynamics by IMEX Runge–Kutta methods.
 
+**Intermediate stiffness in singularly perturbed ODEs (IMEX additive Runge–Kutta).**
+[Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) (§8.3a, Figs. 8–12, Table 15) integrate
+Kaps' problem, the [Van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md) and the
+Pareschi–Russo problem with stiffness parameter $\varepsilon$, treating the
+$\varepsilon^{-1}$ terms implicitly. All the IMEX additive Runge–Kutta pairs of classical order
+above 2 show order reduction, worst at intermediate stiffness $\varepsilon\approx h$, while
+the IMEX multistep SBDF formulations show none; classical order returns for $\varepsilon\gg h$.
+The ESDIRK alone and the IMEX pair lose more order on the algebraic than on the differential
+variables. Stage order 2 in the implicit part "does not translate into higher order-of-accuracy
+for the differential variables for any of the IMEX schemes", although it raises the order of the
+ESDIRK alone and the algebraic-variable accuracy at orders 4 and 5; their
+ARK5(4)8L[2]SA behaves like a fourth-order scheme under stiffness, unexplained. They fit the
+global error to $c_1h^{\alpha}+c_2\varepsilon h^{\beta}$ for $\varepsilon\le\mathrm{Const.}\,h$
+(page-local $c_1$, $c_2$, $\alpha$, $\beta$), the form Hairer et al. derived for SDIRK methods
+(differential variables $\alpha=p$, $\beta=q+1$; as recalled), and report for instance
+$h^3+\varepsilon h^2$ for the differential and $h^2+\varepsilon h$ for the algebraic variables of
+ARK3(2)4L[2]SA as an IMEX pair, and $h^4+\varepsilon h^2$ and $h^3+\varepsilon h$ for
+ARK4(3)6L[2]SA; "no attempt is made to theoretically predict the form of the global error of
+IMEX ARK$_2$ methods". On their reacting-flow problem the algebraic variable shows a similar
+reduction with little effect on the global $L_2$ error (§8.3b, Fig. 13). See
+[Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md) and
+[IMEX linear multistep methods](/methods/imex-linear-multistep-methods.md).
+[Ascher et al. (1997)](/sources/ascher-1997.md) (§1) state, citing Hairer & Wanner, that "the
+effective order of DIRK schemes drops to 1 for very stiff ODEs", so they do not expect their
+IMEX Runge–Kutta schemes to compete with SBDF when the stiff term dominates, and they recall the
+loss of accuracy order of Runge–Kutta methods "when time-dependent inflow boundary conditions
+are prescribed" (citing Carpenter, Gottlieb, Abarbanel & Don 1995).
+[Curtiss & Hirschfelder (1952)](/sources/curtiss-1952.md) (§3, Eqs. (16), (19)) print, for
+their BDF-type "forward interpolation" on the scalar stiff equation $dy/dx=(y-G(x))/a(x)$, an
+asymptotic error proportional to $a(x)$ times the first power of the step for the linear
+formula and the second power for the quadratic one, without an order statement (see
+[BDF](/methods/backward-differentiation-formula.md)).
+
 **Intermediate stiffness in multiscale problems.** For asymptotic-preserving IMEX
 schemes on $u'=T(u)+\varepsilon^{-1}Q(u)$, [Gottlieb et al. (2022)](/sources/gottlieb-2022.md),
 Remark 4 and §3.5, observe design order for $\varepsilon=\mathcal O(1)$ and for
@@ -148,7 +188,16 @@ avoid it under analytic-semigroup assumptions, and methods of φ-order $p$ remov
 term $J^kF(\tau)$ with $\lvert\tau\rvert\le p$ from the local error (Thm. 7). That is an
 exact statement tree by tree; no error bound uniform in an unbounded $J$ is proved. See
 [stiff order conditions of exponential Runge–Kutta methods](/results/exponential-runge-kutta-stiff-order-conditions.md).
-In their tests, two semilinear parabolic problems of Hochbruck–Ostermann (designed to
+Hochbruck & Ostermann (2010, §2.3–2.4, §2.7) work out the worst cases from their stiff
+conditions, without numerical tests: explicit exponential Runge–Kutta methods have internal
+stages "of order one only"; the Cox–Matthews ETD4RK, of classical order 4, can fall to order
+two "in the worst case", Krogstad's and the Strehmel–Weiner four-stage schemes to order three
+(Ex. 2.19); Lawson's method on the midpoint rule is "first-order accurate by Theorem 2.17"
+(Ex. 2.32; see [Lawson methods](/methods/lawson-methods.md)); and exponential Rosenbrock-type
+methods that use only $\phi_1$, such as exp4 of classical order four, "cannot have order larger
+than two" (Ex. 2.25). They add that Friedli's (1978) non-stiff order conditions "are not
+sufficient to analyse parabolic problems" (§2.3).
+In the tests of Dallerit & Tokman, two semilinear parabolic problems of Hochbruck–Ostermann (designed to
 expose order reduction) and a 2D advection–diffusion–reaction problem with Neumann data,
 the φ-order methods of orders 3–6 show no order reduction. The stiffly accurate (in the
 exponential sense) Rosenbrock method EXPRB_5s4 shows "a slight order reduction" on the
@@ -237,6 +286,9 @@ DC4 show order 0 down to $h=7.5\times10^{-6}$ (Tables 6.1, 6.5, 6.6).
 | observed $\approx2.1$, $2.4$, $3.5$ for Radau IIA $s=2,3,4$ | incompressible fluid–structure DAE | Taddei et al. 2026, Table 1 |
 | global order 1 or 2 for third- and higher-order Patankar schemes (order 1 for MPRK(2,2,α), $\alpha>1$) | production–destruction systems with a vanishing initial constituent, $\varepsilon/h\to0$ | Torlo et al. 2022, Thm. 5.4, Table 2 |
 | proven $\min(p,q+1)$ (2 for SDIRK); observed near nominal 3, 4 | Patankar predictor–corrector on SDIRK | Nurkhametova et al. 2026, Prop. 3.23, Tables 4–5 |
+| worst case 2 for ETD4RK, 3 for Krogstad and Strehmel–Weiner, 1 for Lawson on the midpoint rule; at most 2 for $\phi_1$-only Rosenbrock-type methods (exp4) | semilinear parabolic, stiff-order analysis, no tests | Hochbruck & Ostermann 2010, Exs. 2.19, 2.25, 2.32 |
+| effective order 1 for DIRK methods | very stiff ODEs (as recalled from Hairer–Wanner) | Ascher et al. 1997, §1 |
+| observed $h^3+\varepsilon h^2$ / $h^2+\varepsilon h$ (differential / algebraic) for ARK3(2)4L[2]SA, $h^4+\varepsilon h^2$ / $h^3+\varepsilon h$ for ARK4(3)6L[2]SA; worst at $\varepsilon\approx h$; none for SBDF | singularly perturbed ODEs (Kaps, Van der Pol, Pareschi–Russo) | Kennedy & Carpenter 2003, §8.3a, Table 15 |
 | no order reduction observed for φ-order 3–6 exponential methods; slight reduction for EXPRB_5s4 | semilinear parabolic and advection–diffusion–reaction | Dallerit & Tokman 2025, §7, Figs. 1–4 |
 | first order for all higher-order schemes with the implicit–explicit partition; second order with the nonlinear partition | gray radiation transport, coarse mesh | Buvoli & Southworth 2025, §7.2, Fig. 7.3b |
 | about one order gained per iterator sweep at small stiffness parameter; reduced rates for parameters in $[10^{-4},10^{-2}]$ with the semi-implicit splitting | Van der Pol, FIMEX-Radau with $K$ sweeps | Buvoli & Southworth 2023, §6.2, Fig. 6 |
@@ -285,7 +337,8 @@ in $L^2$ only, and three-stage Radau IIA keeps full accuracy in both $L^2$ and $
    Hansen–Ostermann); see [negative-coefficient barrier](/results/negative-coefficient-barrier.md).
 
 8. **Stiff or φ-order conditions for exponential integrators.** Conditions holding for
-   arbitrary matrices give stiffness-independent error constants; φ-order conditions remove the
+   arbitrary matrices give stiffness-independent error constants (Hochbruck & Ostermann 2010,
+   Thms. 2.17, 2.22); φ-order conditions remove the
    $J^kF(\tau)$ terms (Dallerit & Tokman 2025, Thm. 7; see the result page above).
 9. **A nonlinear partition of the stiff coupling.** Treating the stiff variables implicitly
    inside the nonlinear terms, rather than splitting the terms additively, keeps second
@@ -389,4 +442,8 @@ problem-dependent), would decide it.
 - [Popov (2024)](/sources/popov-2024.md) — §2.2, Table 7; arXiv v1.
 - [Čaklović et al. (2025)](/sources/caklovic-2025.md) — §4.3, Figs. 14–15; arXiv v2.
 - [Saupe et al. (2025)](/sources/saupe-2025.md) — §2.1–2.2; arXiv v2.
+- [Hochbruck & Ostermann (2010)](/sources/hochbruck-2010.md) — §1, p. 212 (stiffness, stiff order); §2.3 p. 226, Thm. 2.17, Ex. 2.19; §2.4 Thm. 2.22, Ex. 2.25; §2.7 Ex. 2.32 (worst-case stiff orders); version of record.
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — §8.3a (Figs. 8–12, Table 15), §8.3b (Fig. 13); read as NASA/TM-2001-211038.
+- [Ascher et al. (1997)](/sources/ascher-1997.md) — §1 (DIRK effective order for very stiff ODEs; inflow boundary data).
+- [Curtiss & Hirschfelder (1952)](/sources/curtiss-1952.md) — §3, Eqs. (16), (19) (asymptotic errors of forward interpolation).
 - [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — arXiv v2: §1, §6.2 (Fig. 6), §6.3.1 (Fig. 8), §6.3.2 (Fig. 9), §7; supplement Figs. SM2–SM4.

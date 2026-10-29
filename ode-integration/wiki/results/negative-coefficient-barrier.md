@@ -5,7 +5,7 @@ description: "Every splitting or composition method with real coefficients and o
 status: established
 aliases: [order barrier for splitting, Sheng–Suzuki theorem, Goldman–Kaper barrier, backward-step barrier]
 tags: [splitting, order-conditions, stability, geometric-integration]
-timestamp: 2026-10-19T07:44:00Z
+timestamp: 2026-10-29T18:13:00Z
 ---
 
 # Negative-coefficient barrier for splitting methods
@@ -65,6 +65,15 @@ barrier also binds [RKN splittings](/methods/composition-methods.md) (§2.6).
 - A related barrier holds outside splitting: Runge–Kutta and multistep methods that
   preserve positivity unconditionally are at most first order (§9.2.1, as recalled from
   Bolley & Crouzeix 1978); see [positivity preservation](/properties/positivity-preservation.md).
+- A negative-coefficient result of a different kind holds for
+  [SSP Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md): every
+  four-stage fourth-order method in Shu–Osher form with nonzero CFL coefficient has some
+  $\beta_{ij}<0$, and those terms are evaluated with a downwind operator $\tilde L$ whose
+  backward-in-time Euler step is strongly stable
+  ([Gottlieb et al. 2001](/sources/gottlieb-2001.md), §2.2, §4.1, Lemma 2.2, Prop. 4.2;
+  [Shu & Osher 1988](/sources/shu-1988.md), §II, Eqs. (2.8)–(2.9), (2.20)–(2.22), who
+  report that "Extensive searching seems to indicate" negative $\beta$ cannot be avoided at
+  fourth order). Neither source relates it to splitting methods.
 
 ## Escapes
 
@@ -98,4 +107,6 @@ barrier also binds [RKN splittings](/methods/composition-methods.md) (§2.6).
 # Citations
 
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §2.6 (theorem and proof, Eq. 2.56), §3.2 (modified potentials), §6.2–6.4 (parabolic problems, Eq. 6.44, Fig. 6.1), §7 (complex coefficients), §9.1–9.2 (multi-product expansions, positivity), §9 (path-integral Monte Carlo).
+- [Gottlieb et al. (2001)](/sources/gottlieb-2001.md) — §2.2 (Lemma 2.2), §4.1 (Prop. 4.2).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §II (Eqs. (2.8)–(2.9), (2.20)–(2.22)); read as ICASE Report 87-33.
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §1 (higher-order splitting needs complex arithmetic or backward integration).

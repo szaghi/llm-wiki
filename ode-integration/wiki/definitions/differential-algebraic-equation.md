@@ -5,7 +5,7 @@ description: "A differential-algebraic equation couples differential equations w
 status: established
 aliases: [DAE, index-1 DAE, index-2 DAE, semi-explicit DAE, implicit ODE, singular mass matrix]
 tags: [dae, stiff, implicit, order-reduction, software]
-timestamp: 2026-10-20T06:18:00Z
+timestamp: 2026-10-29T18:00:00Z
 ---
 
 # Differential-algebraic equations and their Runge–Kutta treatment
@@ -154,6 +154,32 @@ shows [order reduction](/definitions/order-reduction.md) and three-stage Radau I
 (§4.1, Fig. 2). Navier–Stokes with Scott–Vogelius elements and two-stage Radau IIA reproduces
 the reference drag and lift of the cylinder benchmark (§4.4.1).
 
+## Singularly perturbed problems and their index-1 limit
+
+[Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) test additive (IMEX) Runge–Kutta
+methods on singularly perturbed problems whose limit $\varepsilon\to0$ is an index-1 DAE. Kaps'
+problem (§7.1, Eq. (60), from Dekker–Verwer),
+
+$$\varepsilon y_1'=-(1+2\varepsilon)y_1+y_2^2,\qquad y_2'=y_1-y_2-y_2^2,\qquad y_1(0)=y_2(0)=1,$$
+
+has the exact solution $y_2=e^{-t}$, $y_1=y_2^2$ for every $\varepsilon$, and the terms carrying
+$\varepsilon^{-1}$ are treated implicitly; the [Van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md)
+and a problem of Pareschi and Russo are used the same way (§7.2–7.3). They distinguish the
+differential variable ($y_2$) from the algebraic one ($y_1$), which becomes the constraint
+variable in the limit. Recalling Hairer et al., the global error of an SDIRK of order $p$
+and stage order $q$ for $\varepsilon\le\mathrm{const}\cdot h$ behaves like
+$c_1h^p+c_2\varepsilon h^{q+1}$ in the differential variable, and in the algebraic variable
+like $h^{q+1}$ for methods that are not [stiffly accurate](/properties/stiff-accuracy.md) and
+$h^p+\varepsilon h^q$ for stiffly accurate ones (§8.3). Their measured error forms for the
+ESDIRKs alone and for the IMEX pairs show the algebraic variable losing more order than the
+differential one, and order loss worst at $\varepsilon\approx h$ (§8.3a, Table 15); see
+[order reduction](/definitions/order-reduction.md) and
+[Kennedy–Carpenter ARK methods](/methods/kennedy-carpenter-ark-methods.md). On their
+reacting-flow problem the algebraic species shows similar order reduction but the global error
+is barely affected, the variable being weakly coupled (§8.3b, Fig. 13). They also note that an
+implicit tableau with a zero first column does not propagate the initial value of an
+algebraic variable through the stages, which helps on Kreiss's problem (§3.1.2).
+
 ## Rosenbrock methods for DAEs
 
 [Rosenbrock–Wanner methods](/methods/rosenbrock-wanner-method.md) handle $My'=f(t,y)$ with
@@ -223,3 +249,4 @@ linear solve per step replaces the nonlinear solve of BDF.
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §2.3 (Eq. (11)), §3.1 (Eqs. (14)–(17)), §5.1.1 (Table 1).
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — Remark 5.10, Eqs. (5.8)–(5.9).
 - [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2 (Eqs. (2.11)–(2.14), p. 17:5), §2.1 (Eqs. (2.15)–(2.17)), §4.2 (Figs. 7, 9–10, p. 17:19).
+- [Kennedy & Carpenter (2003)](/sources/kennedy-2003.md) — NASA/TM-2001-211038: §3.1.2, §7.1–7.3 (Eq. (60)), §8.3 (Table 15, Fig. 13).
