@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Dynamic procedure and the Germano identity"
-description: "The dynamic procedure computes subgrid-model coefficients from the resolved field through the Germano identity between grid- and test-filter stresses, solved by least squares with averaging or clipping; the sources report its forms, regularizations, failures near walls and on coarse grids, and its tensorial extension."
+description: "The dynamic procedure computes subgrid-model coefficients from the resolved field through the Germano identity between grid- and test-filter stresses, solved by contraction with the resolved strain and plane averaging in the original, by least squares with averaging or clipping later; the sources report its forms, regularizations, failures near walls and on coarse grids, and its tensorial extension."
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-29T10:04:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -14,7 +14,9 @@ The **dynamic procedure** replaces a fixed model coefficient by one computed
 from the resolved field. The resolved field is filtered a second time with a
 **test filter** $\hat\cdot$ of width $\hat\Delta>\Delta$, and the model is
 required to be consistent at the two filter levels. The sources attribute
-the procedure to Germano et al. (1991), its least-squares form to Lilly
+the procedure to [Germano et al. (1991)](/sources/germano-1991.md), whose
+original form (contraction with the resolved strain, plane averaging) is
+given below, its least-squares form to Lilly
 (1992) and the compressible form to Moin et al. (1991). Applied to the
 [Smagorinsky model](/methods/smagorinsky-model.md) it gives the **dynamic
 Smagorinsky model (DSM)**, the SGS model of the wall-modelled LES of Goc et
@@ -62,6 +64,123 @@ outside the test filter is strictly valid only with such averaging, and
 that clipping or averaging is needed against negative eddy viscosity. The
 only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 (§III).
+
+## The original formulation (Germano et al. 1991)
+
+[Germano et al. (1991)](/sources/germano-1991.md) introduce the model as
+"a dynamic subgrid-scale eddy viscosity model" for incompressible LES. In
+the registry's symbols (their tilde test filter is the hat here, their
+combined grid-and-test filter the $\hat{\bar\cdot}$ here) the paper sets
+up the following steps.
+
+**Two filters.** The grid filter $\bar\cdot$ and the test filter
+$\hat\cdot$ are convolutions over the domain, the test filter
+corresponding to "a coarser mesh" (§II, Eqs. 3–4). The grid-level stress
+$\tau_{ij}=\overline{u_iu_j}-\bar u_i\bar u_j$ (Eq. 7) and the test-level
+stress $\mathcal T_{ij}$ (Eq. 9) have the registry sign. The resolved
+turbulent stress of Eq. (10) is the registry's $L_{ij}$, with no sign
+change. It represents "the contribution to the Reynolds stresses by the
+scales whose length is intermediate between the grid filter width and the
+test filter width". The identity $L_{ij}=\mathcal T_{ij}-\hat\tau_{ij}$
+(Eq. 11) is attributed to a 1990 report by Germano (as cited).
+Test-filtering Eq. (7) and subtracting it from Eq. (9) gives it at once
+*(compiler check, not in the sources)*.
+
+**Models at the two levels.** "Assuming that the same functional form can
+be used to parametrize both", the anisotropic parts are modelled as
+
+$$\tau_{ij}-\tfrac13\delta_{ij}\tau_{kk}\simeq m^{\mathrm G}_{ij}=-2C_s^2\Delta^2\lvert\bar S\rvert\bar S_{ij},\qquad
+\mathcal T_{ij}-\tfrac13\delta_{ij}\mathcal T_{kk}\simeq M^{\mathrm G}_{ij}=-2C_s^2\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}$$
+
+(Eqs. 12–14; Eq. 13 is printed without the coefficient, see
+Qualifications). Here $m^{\mathrm G}_{ij}$ and $M^{\mathrm G}_{ij}$ are
+page-local names for the paper's $m_{ij}$ and $M_{ij}$, and the paper's
+coefficient $C$, which multiplies $\Delta^2$, is $C_s^2$ (§III takes its
+square root to compare with a Smagorinsky constant). $\lvert\bar S\rvert$
+carries the factor two, as in the registry. **Germano's $M_{ij}$ is the
+model of the test-level stress**, not the difference tensor that this
+page and the later sources call $M_{ij}$. The two are related by
+$M^{\mathrm G}_{ij}-\widehat{m^{\mathrm G}_{ij}}=2C_s^2\Delta^2M_{ij}$
+when $C_s$ is taken out of the test filter *(compiler check, not in the
+sources)*. Substituted in Eq. (11), this gives the deviatoric relation of
+the section above.
+
+**Contraction with the strain and plane averaging.** Germano et al.
+contract the identity with $\bar S_{ij}$ (Eq. 15), not with $M_{ij}$:
+
+$$L_{ij}\bar S_{ij}=-2C_s^2\Big(\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}\bar S_{ij}-\Delta^2\,\widehat{\lvert\bar S\rvert\bar S_{ij}}\,\bar S_{ij}\Big).$$
+
+The second term of the bracket is not legible on the scan and is written
+here in the form Eqs. (11)–(12) give (see Qualifications). The bracket can
+vanish, and a priori tests in channel flow showed this "to
+be indeed the case". The coefficient is therefore made a function of the
+wall distance and time only, by averaging both sides over planes parallel
+to the wall (Eq. 16):
+
+$$C_s^2(y,t)=-\frac12\,\frac{\langle L_{kl}\bar S_{kl}\rangle}{\hat\Delta^2\langle\lvert\hat{\bar S}\rvert\hat{\bar S}_{mn}\bar S_{mn}\rangle-\Delta^2\langle\widehat{\lvert\bar S\rvert\bar S_{mn}}\,\bar S_{mn}\rangle}
+=\frac{\langle L_{kl}\bar S_{kl}\rangle}{2\Delta^2\langle M_{kl}\bar S_{kl}\rangle},$$
+
+where $\langle\cdot\rangle$ is the plane average and the second form, in
+this page's $M_{ij}$, is a *compiler check, not in the sources*. The model
+is $m^{\mathrm G}_{ij}$ with this coefficient (Eq. 17):
+
+$$m^{\mathrm G}_{ij}=\frac{\langle L_{kl}\bar S_{kl}\rangle}{(\hat\Delta/\Delta)^2\langle\lvert\hat{\bar S}\rvert\hat{\bar S}_{mn}\bar S_{mn}\rangle-\langle\widehat{\lvert\bar S\rvert\bar S_{pq}}\,\bar S_{pq}\rangle}\,\lvert\bar S\rvert\bar S_{ij}.$$
+
+The least-squares contraction with $M_{ij}$ of the section above is not
+printed in this paper (the sources attribute it to Lilly 1992). The
+coefficient is not clipped: negative values are kept and presented as a
+feature (see below).
+
+**Stated properties** (§II):
+
+- The model "implicitly assumes similarity between the SGS stresses at the
+  grid and test levels".
+- The modelled stress vanishes wherever $L_{ij}$ vanishes, as long as the
+  denominator stays finite: in laminar flow and at solid walls.
+- Near a wall the modelled shear stress is proportional to the cube of the
+  wall distance whatever the two filter widths, the correct asymptotic
+  behaviour. "To the authors' knowledge, this is the only model that
+  satisfies this property without the use of ad hoc damping functions."
+  The proportionality is asserted, not derived; the a priori trend
+  $C_s^2\Delta^2\sim y^{+3}$ is shown (Fig. 2).
+- The modelled dissipation $m^{\mathrm G}_{ij}\bar S_{ij}$ is proportional
+  to $\langle L_{ij}\bar S_{ij}\rangle$, which can take either sign, so
+  [backscatter](/definitions/energy-backscatter.md) is allowed. With plane
+  averaging it is not localized; a local average in Eq. (15) would
+  localize it.
+- The only adjustable parameter is the width ratio $\hat\Delta/\Delta>1$.
+  Too small, and $L_{ij}$ is contaminated by numerical error; too large,
+  and energy-carrying structures determine the subgrid contribution.
+- In general flows the plane average "should also be replaced with
+  appropriate local space and time averages" (§II, §IV).
+
+**Filters and widths of the tests** (§II end, §III, Eqs. 18–19). Sharp
+cutoff filters serve as grid and test filters in the streamwise and
+spanwise directions. No test filter is applied in the wall-normal
+direction. In finite-difference codes the test-filtered field "can be
+computed by spatial averaging … over a few grid cells". Let $\Delta_{(i)}$
+denote the grid-filter width in direction $i$, taken as twice the grid
+spacing, and $r_\Delta$ the test-to-grid width ratio, equal in $x$ and
+$z$ (both page-local). The two definitions compared are
+
+$$\Delta^3=\Delta_{(1)}\Delta_{(2)}\Delta_{(3)},\quad \hat\Delta^3=r_\Delta^2\,\Delta_{(1)}\Delta_{(2)}\Delta_{(3)}\qquad\text{or}\qquad \Delta^2=\textstyle\sum_i\Delta_{(i)}^2,\quad \hat\Delta^2=r_\Delta^2\big(\Delta_{(1)}^2+\Delta_{(3)}^2\big)+\Delta_{(2)}^2,$$
+
+the wall-normal width being the same at both levels. A priori, $r_\Delta=2$
+agrees best with the filtered DNS (Fig. 1). At the channel centre the
+coefficient is $C_s^2\simeq0.023$ with the first definition ($C_s\approx0.15$,
+"about 50% larger than the value of $C_S$ used by Deardorff") and
+$7\times10^{-4}$ with the second ($C_s\approx0.026$) (§III, Fig. 2). The
+a posteriori LES results were insensitive to the choice of definition,
+and only those with the first are presented. The tests, a priori and a
+posteriori, are those of the
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md) page.
+
+**Insensitivity to the width ratio.** Doubling $r_\Delta$ from 2 to 4
+changes the mean and rms velocities by less than 3% and the wall stress by
+less than 6%. The maximum resolved shear stress is about 4% larger with
+$r_\Delta=2$ and the subgrid part smaller by the same amount (§III). The
+authors find this "contrary to one's expectations from the a priori tests"
+(see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 
 ## Implementations in the sources
 
@@ -827,6 +946,26 @@ squares from a 6×4 system; see the
 
 ## Qualifications
 
+- Germano et al. (1991) print Eq. (13) as
+  $M^{\mathrm G}_{ij}=-2\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}$
+  (registry hats for their tildes), with no coefficient, while Eq. (12) carries $C$ and Eq. (15) puts the same $C$
+  in front of both terms. Eq. (15) follows from Eqs. (11)–(13) only with
+  the same coefficient in Eq. (13) *(compiler check, not in the sources)*;
+  the form above writes it.
+- On the scan of Germano et al. (1991) the second term of the bracket of
+  Eqs. (15)–(17) cannot be read with certainty: a wide tilde over the
+  product $\lvert\bar S\rvert\bar S_{pq}$ is not legible. The form above,
+  $\widehat{\lvert\bar S\rvert\bar S_{pq}}$, is the one Eqs. (11)–(12)
+  give *(compiler check, not in the sources)*.
+- Germano et al. (1991, §III) say that $r_\Delta=4$ instead of 2 "amounts
+  to changing the coefficient of the first term in the denominator of
+  Eq. (17) by almost a factor of 4". With the first width definition
+  (Eq. 18), the only one presented a posteriori,
+  $(\hat\Delta/\Delta)^2=r_\Delta^{4/3}$, and the change is
+  $2^{4/3}\approx2.52$. With Eq. (19) it tends to 4 where the wall-normal
+  width is much smaller than the other two *(compiler check, not in the
+  sources)*. The paper does not say which definition the $r_\Delta=4$ run
+  used.
 - On the spanwise-periodic Gaussian bump DSM separates on the coarse and
   fine grids of Agrawal et al. (2022, compressible charLES, Voronoi grids)
   and on none of the grids of Zhou & Bae (2024, incompressible finite
@@ -980,3 +1119,4 @@ squares from a 6×4 system; see the
 - [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 3, Eq. (39); §IV A 3 (DSM in shock–turbulence LES, Garnier et al. cited). Review, citation only.
 - [Wang et al. (2026)](/sources/wang-2026.md) — §II B, Eqs. (16)–(17); §III B, Figs. 1, 5–6; §IV B, Tables I–II.
 - [Hu & Yang (2026)](/sources/hu-2026.md) — Sec. II C, Eqs. (4)–(5) (review; backscatter, clipping and averaging).
+- [Germano et al. (1991)](/sources/germano-1991.md) — §I; §II, Eqs. (3)–(17); §III, Eqs. (18)–(19), Figs. 1–2; §IV (the founding paper).

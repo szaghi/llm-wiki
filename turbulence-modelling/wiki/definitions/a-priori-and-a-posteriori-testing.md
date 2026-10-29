@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, a-priori-a-posteriori, sgs-model, les, rans]
-timestamp: 2026-10-29T07:36:00Z
+timestamp: 2026-10-29T16:01:00Z
 ---
 
 # A priori and a posteriori testing
@@ -721,6 +721,22 @@ Valencia et al. run no LES (see the evidence below that the two verdicts
 can disagree).
 
 ## Evidence that the two verdicts disagree
+
+**An early instance: sensitivity a priori, insensitivity a posteriori.**
+[Germano et al. (1991)](/sources/germano-1991.md) run both tests on their
+[dynamic model](/methods/dynamic-procedure.md) in
+[channel flow](/benchmarks/turbulent-channel-flow.md). A priori, on the
+DNS of Kim, Moin & Moser (cited) at $Re=3300$ (centreline velocity and
+half-width) with sharp-cutoff filters, the test-to-grid width ratio 2
+gives the best agreement of the plane-averaged subgrid shear stress and
+dissipation with the filtered-DNS values among the ratios tried (§III,
+Fig. 1). In transitional flow the model's dissipation follows the exact
+one (Fig. 3). A posteriori, doubling the ratio from 2 to 4 changes the
+mean and rms velocities by less than 3% and the wall stress by less than
+6% (§III). The authors conclude that this insensitivity "is contrary to
+one's expectations from the a priori tests (Figs. 1 and 3) and casts some
+doubt on the utility of a priori tests in providing quantitative data for
+LES".
 
 **A priori success is not sufficient.**
 
@@ -1950,3 +1966,4 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Hu & Yang (2026)](/sources/hu-2026.md) — review: §I, Fig. 2 (thesis, attributed); §IV A (definitions, failure modes, structural reasons, remedy); §VI, §VI D, Tables V–VI (consistency notions, protocols E1–E3, emerging paradigms); §VII E (benchmarks).
 - [Wang et al. (2026)](/sources/wang-2026.md) — §II (DNS reference, derivatives); §III B (global dissipation insufficient); §IV A–B, Eqs. 30–34, Figs. 7–10, Tables I–II (filter-then-differentiate, JSD and $W_1$, rankings); App. B, Table III; App. C; §V (scope); abstract.
 - [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §II C, Eq. 15 (FDNS as "a priori LES"); §II D, Eq. 16; §III B (theoretical eddy viscosity run as an LES closure).
+- [Germano et al. (1991)](/sources/germano-1991.md) — §III, Figs. 1, 3 (a priori in turbulent and transitional channel flow; a posteriori insensitivity to the width ratio and the conclusion on a priori tests).

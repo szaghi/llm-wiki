@@ -44,6 +44,8 @@ jobs:
         cache-dependency-path: docs/package-lock.json
 
     - name: Build documentation
+      env:
+        DOCS_HEAP_MB: '12288'
       run: |
         cd docs
         npm ci

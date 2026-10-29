@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Wilcox k-ω model"
-description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended variants (1998, 2006, Kok's TNT, low-Reynolds damping), with constants, the near-wall singularity of ω and its regularized and k-τ remedies, the log-ω form, and the obstacles of solving it with high-order element discretizations."
+description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended variants (1988, 1998, 2006, Kok's TNT, low-Reynolds damping), with constants, its freestream sensitivity, the near-wall singularity of ω and its regularized and k-τ remedies, the log-ω form, and the obstacles of solving it with high-order element discretizations."
 status: established
-aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
+aliases: [k-omega model, Wilcox k-ω, Wilcox 1988, original k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-29T10:04:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # Wilcox k-ω model
@@ -69,6 +69,7 @@ and the gradient-squared term *(compiler check, not in the sources)*.
 | Wilcox (2006) | 3/5 | 1/2 | 9/100 | 0.0708 | 13/25 | 1/8 (with $\max(\cdot,0)$) | Ghidoni et al. (2026), §2 |
 | Wilcox (2006) | 0.6 | 0.5 | 0.09 | 0.0708 | 0.52 | 1/8 (with $\max(\cdot,0)$) | Tomboulides et al. (2025), §2 |
 | inner (Wilcox) set of BSL | 0.5 | 0.5 | 0.09 | 0.075 | 0.553 | blended cross diffusion, $2(1-F_1)\sigma_{\omega2}$ | Wu et al. (2023), §2.1.1, Table 1 |
+| Wilcox (1988), set 1 of BSL | 0.5 | 0.5 | 0.09 | 0.0750 | $\beta/\beta^*-\sigma_\omega\kappa^2/\sqrt{\beta^*}$, $\kappa=0.41$ | 0 (original); $2(1-F_1)\sigma_{\omega2}$ in BSL | Menter (1994), Eqs. 1–2, A4 |
 
 Ghidoni et al. also print $\alpha^*=1$, so $\mu_t=\rho\bar k/\omega$ (§2).
 Tomboulides et al. (2025) print the same Wilcox (2006) set in the divisor
@@ -84,6 +85,17 @@ The two sources agree on every constant once the convention is translated
 BSL and SST, the blended members of the family, are on the
 [SST page](/methods/k-omega-sst-model.md); in Elzaabalawy et al.'s notation
 their cross diffusion is $\sigma_d=2\sigma_{\omega2}(1-F_1)$ (§3.2).
+Menter (1994) prints the original model of Wilcox (1988) as
+$D(\rho k)/Dt=\tau_{ij}\partial_ju_i-\beta^*\rho\omega k+\partial_j[(\mu+\sigma_{k1}\mu_t)\partial_jk]$
+and $D(\rho\omega)/Dt=(\gamma_1/\nu_t)\tau_{ij}\partial_ju_i-\beta_1\rho\omega^2+\partial_j[(\mu+\sigma_{\omega1}\mu_t)\partial_j\omega]$,
+with $\tau_{ij}$ the stress in the $-\rho\langle u_i'u_j'\rangle$ convention, so that
+$\tau_{ij}\partial_ju_i/\rho=P_k$ and, divided by the density, the
+equations are those above with $\alpha=\gamma_1$ and no cross diffusion
+*(compiler check, not in the sources)*; the constants, which become set
+1 of BSL, are the row "Wilcox (1988)" of the table, and the formula gives
+$\gamma_1=0.5532$ *(compiler check, not in the sources)*
+([Menter (1994)](/sources/menter-1994-b.md), Eqs. 1–2, A4, A7; the
+blended model is on the [SST page](/methods/k-omega-sst-model.md)).
 Wu et al. (2023) state that set 1 of the BSL blend is the Wilcox
 $k$-$\omega$ model and set 2 the $k$-$\varepsilon$ model, and tabulate the
 inner set as in the last row; the TNT expression of the table
@@ -132,6 +144,48 @@ $\alpha^*_\omega=1+L_+^2(\alpha_\omega-1)$ of
 [continuous eddy simulation](/methods/continuous-eddy-simulation.md)
 (§4.3, Eqs. 47–51).
 
+### Freestream sensitivity
+
+Menter (1994) states the defect that the BSL and SST blends are built to
+remove: the solution of the original $k$-$\omega$ model depends strongly on
+the arbitrary freestream value of $\omega$; the eddy viscosity in boundary
+and free shear layers can change by more than 100% when it is reduced
+(Menter's earlier study, as cited), the $k$-$\varepsilon$ model does not
+suffer from it, and no mathematical theory tells freestream-dependent
+from freestream-independent two-equation models
+([Menter (1994)](/sources/menter-1994-b.md), p. 1599). On a
+zero-pressure-gradient flat plate, reducing the freestream $\omega$ by four
+orders of magnitude, with $k$ reduced to keep the freestream eddy
+viscosity, changes the eddy viscosity of the original model by almost
+100% (Fig. 1). On the [NACA 4412](/benchmarks/naca-4412-airfoil.md) at
+$13.87^\circ$ the original model lies even further from the measured
+velocity profiles than the Jones–Launder $k$-$\varepsilon$ model, which
+Menter attributes to the freestream dependency; with a freestream $\omega$
+about fifty times larger (no decay between inflow and leading edge) it
+changes significantly and becomes very close to BSL (Fig. 9). Menter calls
+the dependency "clearly unacceptable" and the example one that "clearly
+shows the dangers of using the original $k$-$\omega$ model for industrial
+applications" (p. 1603). Later sources make the same point: Tomboulides et
+al. (2025) credit Menter with first recognizing the free-stream dependence
+of $\omega$, which the cross diffusion of Wilcox (2006) removes (above),
+and Elzaabalawy et al. (2023) find Wilcox (1998) "very sensitive" to the
+inlet turbulence (Evidence).
+
+Menter (1994, pp. 1598–1599) also states the model's strengths: no damping
+functions, a simple Dirichlet wall condition, numerical stability superior
+to the other two-equation models and equal accuracy for mean-flow
+profiles; a lack of near-wall asymptotic consistency that does not spoil
+the mean profile or the skin friction, because so close to the wall the
+eddy viscosity is much smaller than the molecular one; and superiority
+over $k$-$\varepsilon$ in the log region of equilibrium
+adverse-pressure-gradient and compressible flows (citing Wilcox and others).
+In Menter's computations it tolerates a first grid point as far out as $y^+=3$
+(results in Menter's Ref. 9, as cited), gives a consistently too high
+maximum eddy viscosity in Driver's adverse-pressure-gradient flow, and
+reattaches at 6.4 step heights on the Driver–Seegmiller step, against about
+6.4 measured (pp. 1601–1602, Figs. 6–8; see
+[backward-facing step](/benchmarks/backward-facing-step.md)).
+
 ### Near-wall behaviour of $\omega$ and $k$
 
 As $y\to0$, $\omega\to6\nu/(\beta y^2)$, valid for $y^+<3$, and $1/\omega$
@@ -144,6 +198,12 @@ page-local $C_k$, $p_k$). With $\beta=0.075$ this exponent is 3.23, the
 value in the SST wall functions that Mozaffari et al. (2024) print on the
 [SST page](/methods/k-omega-sst-model.md), and 3.28 with the Wilcox (1998)
 $\beta=0.072$ *(compiler check, not in the sources)*.
+
+Menter (1994, Eq. A12) imposes $\omega=10\cdot6\nu/\big(\beta_1(\Delta d_1)^2\big)$
+at the wall, with $\Delta d_1$ the distance of the next point (ten times the
+sublayer value $6\nu/(\beta_1y^2)$ at that point *(compiler check, not in
+the sources)*), and states that it simulates the smooth-wall
+condition of Wilcox as long as $\Delta d_1^+<3$.
 
 For a wall-resolved DG solution Ghidoni et al. (2026, §2, Eq. 4) set the
 wall value from an effective distance that shrinks with the polynomial
@@ -512,4 +572,5 @@ than the $k$-$\omega$ RANS of Heft et al. (§8.2).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.1 (Bayesian recalibration of $k$-$\omega$ models, as cited).
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 ($\omega\sim d^{-2}$ and the regularized model); App. A.5.1, Eqs. (A23)–(A31).
 - [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §1–§3, Eqs. (1)–(7) (log-$\omega$ model, logarithmic primitive variables); §4.2, Eqs. (15)–(18), (25) (turbulence source and Jacobian on the finest level); §6–§8, Tables 3–11, Figs. 5, 12–13 (savings, step, DrivAer).
+- [Menter (1994)](/sources/menter-1994-b.md) — pp. 1598–1599 (strengths, freestream sensitivity), Eqs. 1–2, A4, A7, A12 (original model, set 1, wall value), pp. 1601–1603, Figs. 1, 6–9 (flat-plate freestream test, Driver's flow, step, NACA 4412).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §3.2.2 (RANS-CSE of a bluff-body premixed flame with a tuned $k$-$\omega$ model, as cited).

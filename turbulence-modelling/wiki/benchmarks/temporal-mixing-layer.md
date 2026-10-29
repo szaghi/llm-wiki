@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Temporally developing mixing layer"
-description: "A periodic shear layer between two counter-flowing streams that transitions and then grows linearly in momentum thickness: the inhomogeneous a posteriori test of gradient-type and ensemble-Kalman-calibrated subgrid models and of neural-operator surrogates of LES, against filtered DNS on grids of 64×64×32 to 128×128×64."
+description: "A periodic shear layer between two counter-flowing streams that transitions and then grows linearly in momentum thickness: the inhomogeneous a posteriori test of gradient-type and ensemble-Kalman-calibrated subgrid models and of neural-operator surrogates of LES, against filtered DNS on grids of 64×64×32 to 128×128×64, and a calibration case of the Spalart–Allmaras model."
 status: established
 aliases: [temporal mixing layer, temporally evolving mixing layer, TML, free-shear mixing layer, temporally evolving free-shear layer]
 tags: [benchmark, les, sgs-model, data-driven, neural-network, dns, combustion]
-timestamp: 2026-10-29T10:03:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Temporally developing mixing layer
@@ -32,7 +32,7 @@ there to "the absence of control by the large-scale forcing" (§IV).
 The quantities compared are $\theta(t)$, the resolved kinetic energy per
 component, energy spectra at fixed times, PDFs of velocity increments, mean
 velocity and Reynolds shear stress profiles, and $Q$-criterion iso-surfaces,
-always against filtered DNS (fDNS).
+always against filtered DNS (fDNS). In RANS the self-similar layer is a calibration case of the Spalart–Allmaras model (below).
 
 ## Configurations in the sources
 
@@ -313,6 +313,33 @@ contradiction on the
 page). None of the incompressible LES configurations above
 enters their comparison.
 
+**A calibration target of a one-equation RANS model.** The
+time-developing two-dimensional mixing layer, computed to its
+self-similar state, is the first calibration case of the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+([Spalart & Allmaras (1992)](/sources/spalart-1992.md), pp. 4–5, Fig. 2).
+The free-shear version of the model,
+
+$$\frac{D\nu_t}{Dt}=c_{b1}\lvert\Omega\rvert\nu_t+\frac1\sigma\Big[\nabla\cdot(\nu_t\nabla\nu_t)+c_{b2}(\nabla\nu_t)^2\Big],$$
+
+is solved on a stretched grid with centred second-order differences,
+fourth-order Runge–Kutta time stepping and zero free-stream eddy
+viscosity. The mixing layer and the two-dimensional wake fix two
+conditions, a peak shear stress of $0.01(\Delta U)^2$ in the mixing layer
+and $0.06(\Delta U)^2$ in the wake (cited). This leaves a one-parameter
+family in $\sigma$, from which the authors choose $\sigma=2/3$,
+$c_{b1}=0.1355$, $c_{b2}=0.622$, so that $(1+c_{b2})/\sigma\approx2.4$
+(p. 5, Fig. 1). The computed mixing-layer velocity profile is close to
+identical "rollers" of uniform vorticity, not a tanh profile, which would
+need a very low $\sigma$ (p. 5, Fig. 2). The ramp analysis of the same
+section states that a ratio $(1+c_{b2})/\sigma$ of 1 gives an exactly
+triangular mixing-layer profile with a step in $\lvert\partial_y\langle u\rangle\rvert$,
+and that above 2 the eddy-viscosity front leads the shear front (p. 4).
+Here the registry's vorticity magnitude $\lvert\Omega\rvert$ stands for
+the paper's $S$, the vorticity magnitude normalized to
+$\lvert\partial_y\langle u\rangle\rvert$ in simple shear (p. 3), and
+$\Delta U$ is the velocity difference as above.
+
 ## Qualifications
 
 - The dynamic models of [Li et al. (2024)](/sources/li-2024.md) average
@@ -365,3 +392,4 @@ enters their comparison.
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — Table 1, Eq. 6, Fig. 8; §2.3, Table 2, Eq. 16; §2.3.4, §3.1.
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §3.1.1, Figs. 19–21 (cited reacting DNS, review).
 - [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §III E, Eqs. 18–21, Tables II–III, Figs. 5–6 (two-dimensional double-vortex pairing).
+- [Spalart & Allmaras (1992)](/sources/spalart-1992.md) — pp. 3–5, Eqs. (1)–(3), Figs. 1–2 (free-shear version of the model calibrated on the time-developing mixing layer and the wake).

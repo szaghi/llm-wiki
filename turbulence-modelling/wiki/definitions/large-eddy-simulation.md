@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-29T10:03:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -41,7 +41,15 @@ $\tfrac13\tau_{kk}\delta_{ij}$ is absorbed into a modified pressure, so only
 the deviatoric part $\tau^d_{ij}$ is modelled. [Prakash et al. (2022)](/sources/prakash-2022.md)
 (§II, Eqs. 1–2) and [Abe (2021)](/sources/abe-2021.md) (§II, Eqs. 1–2)
 write the same equations; Abe includes $\tfrac13\tau_{kk}$ in the filtered
-pressure, while Prakash et al. keep the full (not deviatoric) tensor. The same structure, with the
+pressure, while Prakash et al. keep the full (not deviatoric) tensor.
+[Germano et al. (1991)](/sources/germano-1991.md) (§II, Eqs. 3–7) write
+the same dimensionless equations, with $1/Re$ for $\nu$. Their grid
+filter is a convolution over the whole domain with a kernel
+$G(\boldsymbol x,\boldsymbol x')$ (Eq. 3), and their
+$\tau_{ij}$ is the full tensor in the registry sign, of which only the
+anisotropic part is modelled. A second, wider test filter ("a coarser
+mesh") defines the stress at the test level; this is the setting of the
+[dynamic procedure](/methods/dynamic-procedure.md). The same structure, with the
 SGS term written as an operator $M_i=-\partial_j\tau_{ij}$ added to the
 right-hand side, is used by [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md)
 (§2.1, Eqs. 6–9), who stress that the LES problem can be posed independently
@@ -1384,6 +1392,20 @@ these milestones, all cited there:
   now be used as a design tool for high-lift aircraft, citing Goc et al.
   (2021) (§5; see [wall-modelled LES](/methods/wall-modelled-les.md)).
 
+**The subgrid idea before the name.** The eddy viscosity that the
+sources attribute to [Smagorinsky (1963)](/sources/smagorinsky-1963.md)
+appears there in an atmospheric general-circulation model, without the
+term LES. There
+the grid scale, "a characteristic length of a few hundred kilometers", is
+assumed to lie in an inertial subrange, where eddy transport down the
+mean gradient is valid (§1). The closure is a lateral diffusion that
+simulates "the physically real net cascade of energy" from the resolved
+scales to "the smaller scales which have been truncated by the discrete
+differencing". With "no net accumulation of energy in the sub-grid
+scales", the energy removed at the grid scale equals the molecular
+dissipation it stands for (§14). The formula is on the
+[Smagorinsky model](/methods/smagorinsky-model.md) page.
+
 Two reviews place LES among other approaches.
 [Chen et al. (2024b)](/sources/chen-2024-c.md) (§4.1) criticize
 conventional subgrid closures, which they call top-down and, after
@@ -1984,3 +2006,5 @@ grid ratio (§4). See
 - [Kumar et al. (2025)](/sources/kumar-2025.md) — App. A.3–A.4 (filtered stress and the Nek5000 high-pass-filter relaxation term).
 - [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md) — §II B, §II D (explicit-filtering closure, resolved-scale statistics).
 - [Sun et al. (2026)](/sources/sun-2026.md) — §1; §5.3, Remark 4 (time-step limits in Kolmogorov units).
+- [Smagorinsky (1963)](/sources/smagorinsky-1963.md) — §1; §14 (subgrid cascade argument; no LES terminology).
+- [Germano et al. (1991)](/sources/germano-1991.md) — §II, Eqs. (3)–(9) (grid and test filters, filtered equations, SGS stress).

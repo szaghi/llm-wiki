@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Eigensolution (dispersion–dissipation) analysis"
-description: "Eigensolution analysis inserts Bloch waves into a linear discretization of advection to obtain numerical dispersion and dissipation; the page gives its temporal and spatial, semi- and fully-discrete forms for DG, flux reconstruction, spectral difference and spline VMS, mode counting, the time-step effects it predicts, and where under-resolved turbulence stops following it."
+description: "Eigensolution analysis inserts Bloch waves into a linear discretization of advection to obtain numerical dispersion and dissipation; the page gives its temporal and spatial, semi- and fully-discrete forms for DG, flux reconstruction, spectral difference, compact differences with boundaries and spline VMS, mode counting, the time-step effects it predicts, and where under-resolved turbulence stops following it."
 status: established
 aliases: [eigenanalysis, von Neumann analysis, dispersion–dissipation analysis, dispersion–diffusion analysis, spatial eigenanalysis, temporal eigenanalysis, fully-discrete eigenanalysis, semi-discrete eigenanalysis, wave propagation analysis, approximate dispersion relation, ADR]
 tags: [numerical-dissipation, dg, flux-reconstruction, implicit-les, dns]
-timestamp: 2026-10-29T05:08:00Z
+timestamp: 2026-10-29T16:18:00Z
 ---
 
 # Eigensolution (dispersion–dissipation) analysis
@@ -260,6 +260,65 @@ Reynolds number, so implicit diffusion "does not significantly enlarge the
 time step". The amplification factors of each variant are printed in
 closed form (Tables B.1–B.2).
 
+## Finite differences: modified wavenumber and the complete-scheme spectrum
+
+For a finite-difference scheme on a periodic mesh the Bloch ansatz
+reduces to a single Fourier mode, and the semi-discrete temporal analysis
+is the **modified wavenumber**: the scheme replaces $\mathrm ik$ by
+$\mathrm ik'$, so that $\omega_{\mathrm f,h}=ak'$ for advection at speed
+$a$ ($k'$ page-local, as on
+[compact finite-difference schemes](/methods/compact-finite-difference-scheme.md)).
+[Lele (1992)](/sources/lele-1992.md), §3.1, builds the comparison of
+compact schemes on it: a central scheme has a real $k'$, hence no
+dissipation and a phase speed $k'/k$, and the fraction of the
+representable wavenumbers in which $|k'-k|/k$ stays below a tolerance
+(the resolving efficiency) ranks schemes independently of the number of
+points; the figures and the spectral-like schemes it produces are on the
+compact-scheme page. Lele places this measure as "analogous to, but more
+general than" the intervals-per-wavelength comparisons of Swartz &
+Wendroff and of Kreiss & Oliger, which sense only the longest waves
+(§1).
+
+**Boundaries need the whole operator.** A one-sided boundary closure has
+a complex $k'$, its real part the dispersive and its imaginary part the
+dissipative error, but Lele (1992, §4.1) calls this Fourier analysis of a
+boundary scheme heuristic, and the sign of the imaginary part of many
+compact closures, opposite to that of explicit one-sided formulas, no
+ground for concluding instability. The stability test is instead the
+eigenvalue problem of the complete semi-discrete scheme (§4.5,
+Eqs. 4.5.1–4.5.4): for $\partial_tu+a\,\partial_xu=0$ on $[0,1]$ with
+$u(0,t)=0$ and the scheme written as
+$\mathbf A\,\mathrm d\boldsymbol u/\mathrm dt=-(a/h)\mathbf B\boldsymbol u$
+($\mathbf A$, $\mathbf B$ the banded left- and right-side matrices,
+interior and boundary rows included; page-local), normal modes
+$e^{\sigma t}\boldsymbol v$ ($\sigma$ a complex growth rate, page-local)
+satisfy
+$$-\frac{\sigma h}{a}\,\mathbf A\boldsymbol v=\mathbf B\boldsymbol v,$$
+and stability requires every eigenvalue in the left half-plane.
+Lele's results, for $N$ up to 200 points ($N$ the number of points here,
+not a polynomial degree; Figs. 9–10):
+
+- with the tridiagonal fourth-order interior family and conservative or
+  non-conservative compact closures, or explicit ones, all eigenvalues
+  are stable, and the least-damped one approaches the imaginary axis like
+  $N^{-3}$, the rate that Lele (§4.5) cites Warming & Beam as
+  predicting for a second-order interior;
+- the exception is the Padé interior with a second-order compact closure
+  built to have no dissipative error at $kh=\pi$: one eigenvalue moves
+  towards the origin more slowly than $N^{-1}$, "consistent with the
+  $\log N/N$ approach" predicted by Warming & Beam, while other interior
+  members with the same closure do not; no eigenvalue is unstable;
+- with the interior fixed, a more accurate boundary closure shifts the
+  spectrum towards more negative real parts, which Lele gives as "a
+  caution against associating the eigenvalue spectrum with the overall
+  performance (accuracy)" of a scheme.
+
+The maximum of $k'h$ (and of the second-derivative counterpart) over
+$[0,\pi]$ fixes the explicit Runge–Kutta time step on a periodic domain
+(§4.6); the printed maxima grow in the order of the schemes' resolving
+efficiencies, and Lele notes that spectral schemes have the most severe
+restriction; the numbers are on the compact-scheme page.
+
 ## A nonlinear relative: the approximate dispersion relation
 
 Eigensolution analysis needs a linear scheme. For the nonlinear weighted
@@ -332,6 +391,7 @@ dispersion cell by cell from a measured energy ratio instead (see
 
 # Citations
 
+- [Lele (1992)](/sources/lele-1992.md) — §1, §3.1, Eqs. (3.1.3)–(3.1.7) (modified wavenumber, phase speed, resolving efficiency); §4.1 (complex modified wavenumber of boundary closures, heuristic); §4.5, Eqs. (4.5.1)–(4.5.4), Figs. 9–10 (eigenvalues of the complete semi-discrete scheme, $N^{-3}$ approach, the slow eigenvalue, boundary accuracy against spectrum); §4.6 (time-step limits).
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — abstract; §1; §2.1–2.2, Eqs. (4)–(25) (FR Bloch analysis, semi- and fully-discrete temporal and spatial eigenproblems, mode counting, error measures); §3, Figs. 1–9, App. Figs. 29–32 (periodicity, effective Nyquist frequency, time-step effects, FR-DG against FR-SD, dissipative bubbles); §4.1, Figs. 10–21; §4.2.1, Figs. 23–24; §4.3, Eq. (28), Figs. 25, 28; §5.
 - [Kou et al. (2023)](/sources/kou-2023.md) — §3, App. A, App. C.1, Table 1, Table C.2, Figs. 1–4, C.17–C.18 (temporal eigensolution analysis of jump-penalized DG, spurious mode with central flux, CG limit); §4.2, §5 (penalties in the Taylor–Green vortex).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §5.2, Figs. 2–3 (von Neumann analysis of filtered artificial viscosity against Riemann-solver dissipation).

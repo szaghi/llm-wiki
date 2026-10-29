@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-29T07:40:00Z
+timestamp: 2026-10-29T16:01:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -72,6 +72,29 @@ layer, and uses the second kind: an SST-IDDES whose RANS inner layer is
 solved on an auxiliary wall grid embedded in the LES mesh and returns the
 wall stress and heat flux as Neumann conditions (see
 [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+[Spalart et al. (2006)](/sources/spalart-2006.md) (§1, §4.1) draw the
+line from the hybrid side. Detached-eddy simulation on an LES grid (all
+spacings much smaller than $\delta$, "Type III") is "a type of WMLES":
+after Nikitin et al. (2000, cited) it gives a wall model at unlimited
+wall-parallel spacing in wall units (values such as 8000 are quoted),
+whereas wall-resolved LES needs limits of the order of $\Delta z^+\le20$.
+It shows the [log-layer mismatch](/definitions/log-layer-mismatch.md),
+with a skin friction about 15% low. They argue that methods using RANS
+only as a wall model in LES "should not be called 'DES'", since the
+essential ability of DES is to treat an entire boundary layer in RANS mode
+(§4.1). With the delayed form (DDES) on such grids two solutions can
+exist, one continuing in RANS mode from a RANS-like initial field and one
+in WMLES mode from a field with resolved content; no alternating or
+intermediate state has been observed. DES97 of a channel on such a grid,
+started without resolved content, would reach "a pathological state with
+zero resolved stresses, and weak modeled stresses", which DDES avoids
+(§4.1; see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+Their cost measure for boundary layers, $N_{\mathrm{cubes}}=\int\delta^{-2}\,dS$
+over the body surface (page-local; the number of cubes of side $\delta$
+that fill the boundary layer, from the 1997 DES paper), is about $10^7$
+for a whole wing, and "somewhat over $10^4$" for a thick region near
+separation whose thickness starts at 1% of the chord (§4.1; see
+[LES grid-point requirements](/results/les-grid-point-requirements.md)).
 [Hu et al. (2024)](/sources/hu-2024.md) (§1) use the same two-way division,
 "hybrid RANS/LES or wall-stress LES" after the reviews they cite, and
 consider only the wall-stress kind.
@@ -1923,3 +1946,4 @@ implicit-LES coupling.
 - [Gao et al. (2025)](/sources/gao-2025.md) — §I.B; §II.B (slip-velocity coupling); §III.A–III.B, Tables II–VI, Figs. 5–19 (channel and flat plate, wall-pressure spectra), Eq. (25); §IV.
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I; §II C3–D, Eqs. (33)–(37), Fig. 2 (input location, no slip, hybrid wall flux); §III A–B, Table I, Figs. 3–15.
 - [Okano & Haga (2026)](/sources/okano-2026.md) — §1; §2.1; §3, Figs. 2–4; §4, Eqs. (7)–(11); §5.1–5.4, Tables 3–4, Figs. 10–14; Apps. A–C, Tables A.5–A.6, B.8, C.10 (near-wall artificial viscosity for cold-wall WMLES in flux reconstruction).
+- [Spalart et al. (2006)](/sources/spalart-2006.md) — §1, Fig. 1 (Type III grids, DES as WMLES); §4.1 (Nikitin et al. as cited, log-layer mismatch, naming, multiple solutions, $N_{\mathrm{cubes}}$).

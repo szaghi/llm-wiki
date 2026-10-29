@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-29T07:41:00Z
+timestamp: 2026-10-29T16:18:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -189,6 +189,22 @@ model ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
   advection tests reproduce the predicted trends, including the switch
   from decay to spatial growth with explicit Euler near a normalized step
   of 0.01 (§4.1, Figs. 10–21).
+- **Central compact differences and their boundary closures.**
+  [Lele (1992)](/sources/lele-1992.md) shows that every central scheme of
+  the [compact finite-difference](/methods/compact-finite-difference-scheme.md)
+  families has a real modified wavenumber and hence no dissipative error
+  in the interior (§3, §3.1, Eq. 3.1.4); the one-sided boundary closures
+  have a complex modified wavenumber (imaginary part dissipative;
+  third-order closures err mainly in dissipation, even-order ones in
+  dispersion; §4.1), and for the viscous terms Lele uses the
+  second-derivative operator, which damps the grid-to-grid wave that two
+  applications of the first-derivative scheme leave undamped (§5). Lele
+  applies the bare schemes only where the
+  shortest scales are "determined *physically and not numerically*", and
+  names spectral de-aliasing or spectral-like
+  [compact filtering](/methods/explicit-modal-filtering.md) as the remedy
+  for the aliasing errors that their higher resolution may bring in
+  nonlinear problems (§3.1, §5).
 - **Filters induced by central derivatives and interpolation.**
   [Caban et al. (2026)](/sources/caban-2026.md) (§3.2.1, Eqs. 24–29) write
   a discrete derivative as the exact one convolved with a
@@ -1906,6 +1922,27 @@ no measure of it.
 
 ## Too little dissipation
 
+**The original argument.** [Smagorinsky (1963)](/sources/smagorinsky-1963.md),
+§14, introduces the nonlinear lateral viscosity of the
+[Smagorinsky model](/methods/smagorinsky-model.md) in a general-circulation
+model to simulate "*the physically real* net cascade of energy from the
+larger than grid-size scale to the smaller scales which have been
+truncated by the discrete differencing": with no net accumulation of
+energy in the subgrid scales, the energy removed at the grid scale must
+equal the dissipation that molecular viscosity would perform. Without
+this term, or with too small a coefficient, "a systematic accumulation of
+available potential and kinetic energy by the non-linear cascade would
+occur in the highest allowable spectral component", which Smagorinsky
+(§14, pp. 149–150) cites Phillips as terming a "non-linear
+computational instability". An energy-conserving differencing scheme
+(Smagorinsky cites Arakawa's) does not remove the need: the energy "may still be trapped in the
+highest wave numbers admissible by the finite grid" (§14, p. 150).
+Smagorinsky's own scheme is not energy-conserving; the energy gained
+from truncation error, measured as the residual of the 17–39-day energy
+budget, is largest in the eddy components (14.0% and 4.9% per day for the
+two eddy kinetic energies) and 0.18% per day for the total energy (§8g,
+Table 8.5).
+
 Schemes with exact kinetic-energy conservation, or with little
 dissipation, and no model do not stay accurate:
 
@@ -2270,6 +2307,8 @@ evidence is one-dimensional and laminar.
 
 # Citations
 
+- [Smagorinsky (1963)](/sources/smagorinsky-1963.md) — §8g, Table 8.5 (energy gain from truncation error); §14, pp. 149–150 (subgrid lateral diffusion as the grid-scale energy sink, non-linear computational instability, energy-conserving differencing insufficient).
+- [Lele (1992)](/sources/lele-1992.md) — §3, §3.1, Eq. (3.1.4) (no interior dissipative error of central compact schemes; aliasing); §4.1 (complex modified wavenumber of boundary closures); §5 (no built-in dissipation, second-derivative viscous terms, physically determined cutoff scales).
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §1; §3, Fig. 4; §3.1, Figs. 5–6; §4; §5, Figs. 8–9; §5.1, Fig. 10.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §V A–C, Figs. 4, 8, 11–12.
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §3.1, Fig. 5; §3.2, Fig. 11; §4.

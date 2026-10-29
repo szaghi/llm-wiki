@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-29T10:03:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Log-layer mismatch
@@ -18,7 +18,8 @@ in wall units: the computed $u^+$ runs parallel to $\kappa^{-1}\ln y^++B$ but
 shifted. Because the wall stress is inferred from (or balances) that velocity,
 a mismatch is an error in $\tau_w$: [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md)
 (§I) cite Spalart for the statement that LLM produces a 15 % error in the wall-shear
-stress.
+stress; [Spalart et al. (2006)](/sources/spalart-2006.md) (§4.1) print
+that figure for the skin friction (below).
 
 ## Measurement
 
@@ -33,6 +34,20 @@ gives a mismatch that grows with the matching height. For the supervised model
 ZYZY22, whose WMLES log law has slope $1/0.32$, Vadrot et al. (2023b, Eq. 9)
 write $\mathrm{LLM}\sim(1/\kappa_{\mathrm{ZYZY22}}-1/\kappa)\ln y^+$, which
 grows with $Re_\tau$.
+
+**As described with DDES.** [Spalart et al. (2006)](/sources/spalart-2006.md)
+(§4.1) discuss detached-eddy simulation run on grids whose spacings are
+all much smaller than $\delta$, where it serves as a wall model for LES
+(Nikitin et al. 2000, cited) at "unlimited" wall-parallel spacing in wall
+units (values such as 8000 are quoted). The modelled log layer near the
+wall and the resolved log layer farther out have about the same $\kappa$
+but different intercepts $B$, with a "super-buffer layer" between them.
+The skin-friction coefficient is under-estimated "by about 15%, which is
+not acceptable". With $f_d=1$ the delayed form reduces to DES97 (§2.1), and the trend in
+their [backward-facing-step](/benchmarks/backward-facing-step.md) friction
+for $x/H\ge15$ ($H$ the step height) confirms "that log-layer mismatch is
+insensitive to the DDES modification" (§4.1, Fig. 7; see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
 [Zangeneh (2021)](/sources/zangeneh-2021.md) (§I) gives the size of the
 wall-stress error in hybrid RANS/LES wall modelling, citing the
@@ -279,6 +294,7 @@ The sources state the following mechanisms.
 | Match the wall model away from the wall, $h_{\mathrm{wm}}\ge3\Delta$ (Kawai & Larsson 2012) | cited by Griffin et al. (2023, §4.1), who use $h_{\mathrm{wm}}=0.3\delta$ with 12 points per half-height; Agrawal et al. (2022, §VII.D) match at the second off-wall point of a staggered mesh |
 | Filter the wall-model input in space (the "2Δ spatial filter" of Bou-Zeid et al. 2005) or in time and/or wall-parallel space (Yang, Park & Moin 2017) | cited by Fowler et al. (2022, §1), who apply a "2Δ spatial filter, like that used in Bou-Zeid et al. (2005)" to $U_{\mathrm{LES}}$ (§5.1; their $\Delta$ is the matching height, the first grid point at half the wall-normal spacing); Vadrot et al. (2023b, §II.B.1, Table II) filter the input of their equilibrium model with a sharp filter of twice the grid spacing |
 | Random forcing near the wall | cited by Vadrot et al. (2023b, §I) |
+| Stochastic forcing of the near-wall region; dynamic control (both cited) | named by Spalart et al. (2006, §4.1), who state that the DDES shielding does not change the mismatch |
 | Third-point matching, $\Delta y/h_{\mathrm{wm}}\lesssim0.3$ (Kawai & Larsson 2012); adjusting the SGS eddy-viscosity coefficient from the turbulent-kinetic-energy budget (Wu & Meyers 2013); filtering the input (Bou-Zeid et al.) | cited by Bose & Park (2018, §2.1), who note that in concave junctions a matching point a few cells off the wall is hard to combine with a fixed $h_{\mathrm{wm}}/\delta$ (Park & Moin 2016c, as cited) |
 | Random-forest correction of the modelled wall stress and heat flux, fed back through corrected $\mu_t$ and $Pr_t$ | [Zangeneh (2021)](/sources/zangeneh-2021.md) (§II.F–G, §III.A, Fig. 6): removes the mismatch of an SST-IDDES WMLES of a Mach 1.69 flat plate at $Re_\theta=50\,000$ (below) |
 | Stochastic forcing at the RANS/LES interface (Piomelli et al.) | cited by Haering et al. (2022, §II): removes LLM but is problem-dependent; the SAS-F forcing of Menter et al. still showed LLM in channel flow |
@@ -487,3 +503,4 @@ geometry at lower Reynolds number.
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1.2, Eqs. (13), (17); §2.3, Table 1; §3.1.1–3.1.2, Figs. 2, 4, 6, 9, 12; §4 (IDDES mismatch in DG at $Re_\tau=5200$).
 - [Gao et al. (2025)](/sources/gao-2025.md) — §II.B (second-grid-point sampling with slip velocity); §III.A.1–III.A.2, Figs. 5, 8 (log law for $y^+=55$–220, no mismatch claimed).
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I; §II C3; §III A, Figs. 3, 5 (first-solution-point input in flux reconstruction).
+- [Spalart et al. (2006)](/sources/spalart-2006.md) — §4.1, Fig. 7 (DES as a wall model on LES grids, intercept mismatch, about 15% low skin friction, insensitive to DDES; remedies cited).

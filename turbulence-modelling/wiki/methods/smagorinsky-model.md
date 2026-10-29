@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-29T07:40:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Smagorinsky model
@@ -27,7 +27,10 @@ term $\nabla\cdot(2\nu_t\bar S)$). It is the [Boussinesq](/definitions/boussines
 closure applied to the subgrid scales; its model flux
 $\Pi=-\tau_{ij}\bar S_{ij}=\nu_t\lvert\bar S\rvert^2\ge0$ is purely
 dissipative, so it cannot represent [backscatter](/definitions/energy-backscatter.md).
-The sources attribute it to Smagorinsky (1963). The coefficient can be
+The sources attribute it to [Smagorinsky (1963)](/sources/smagorinsky-1963.md),
+where it is the nonlinear lateral diffusion of a two-level atmospheric
+general-circulation model, written with the horizontal deformation of
+the resolved wind (see *The original formulation* below). The coefficient can be
 computed from the resolved field by the [dynamic procedure](/methods/dynamic-procedure.md),
 [Vreman's model](/methods/vreman-model.md), the
 [Sigma model](/methods/sigma-model.md) and the
@@ -38,6 +41,9 @@ are variants of the same eddy-viscosity idea.
 
 | Value of $C_s$ | Context | Source |
 |---|---|---|
+| $k_H=0.28$ used; "$k_H\sim0.1$–$1.0$" stated ($k_H$ the original's constant, multiplying a horizontal deformation $\lvert D\rvert$, not $\lvert\bar S\rvert$; see below) | lateral diffusion of momentum and heat in a two-level hemispheric general-circulation model, $\Delta=555$ km | [Smagorinsky (1963)](/sources/smagorinsky-1963.md), §4, Eqs. (4.22)–(4.24); §14; parameter list p. 164 |
+| $\simeq0.23$ (Lilly, isotropic turbulence, cutoff in the inertial subrange, $\Delta$ the grid size), 0.1 (Deardorff, channel), 0.2 with fine grids (Mason & Callen), about 0.1 even on finer meshes (Piomelli et al. 1988), all as cited | the spread that motivates a computed coefficient | [Germano et al. (1991)](/sources/germano-1991.md), §I, Eqs. (1)–(2) |
+| $\sqrt{0.023}\approx0.15$ (filter width the cube root of the directional widths) or $\sqrt{7\times10^{-4}}\approx0.026$ (width the root sum of squares) | dynamic coefficient at the centre of a channel, a priori, sharp cutoff filters | Germano et al. (1991), §III, Eqs. (18)–(19), Fig. 2 |
 | about 0.17 | isotropic turbulence, inertial-range resolution (Lilly, cited) | Agrawal et al. (2022, §II.A) |
 | about 0.1 | shear flows (Deardorff, cited) | Agrawal et al. (2022, §II.A) |
 | 0.18 | Lilly's analytical value $\pi^{-1}(3C_K/2)^{-3/4}$ with Kolmogorov constant $C_K=1.4$ (page-local symbol), as cited | Vicente Cruz & Lamballais (2023, §6.5) |
@@ -196,6 +202,112 @@ Moin & Kim (1982, cited) added a Van Driest-like damping function, which
 cured the excessive near-wall dissipation of the earlier LES of Moin et
 al. (1978) (§3.4). The constant later became flow-dependent through the
 [dynamic procedure](/methods/dynamic-procedure.md) (§4.8).
+
+## The original formulation (Smagorinsky 1963)
+
+[Smagorinsky (1963)](/sources/smagorinsky-1963.md) is a meteorology
+paper: a 60-day integration of a two-level, hemispheric primitive-equation
+model of the atmosphere's general circulation. The subgrid closure is one
+ingredient of its dissipation, beside a quadratic surface drag and a
+vertical eddy stress. The abstract states that the lateral diffusion is
+meant "parametrically … [to] simulate the action of motions of sub-grid
+scale", "through an exchange coefficient which depends on the local
+horizontal rate of strain—a horizontal length scale entering as the
+governing parameter".
+
+**Form.** On each constant-pressure level of the model, mapped on a
+Mercator projection with map factor $m=\sec(\text{latitude})$, the lateral
+viscous force is (§4, Eqs. 4.22–4.24)
+
+$$\begin{aligned}
+F^{\mathrm H}_x&=(k_H\Delta)^2m^3\left[\frac{\partial}{\partial x}\left(\frac{\lvert D\rvert}{m^2}D_T\right)+\frac{\partial}{\partial y}\left(\frac{\lvert D\rvert}{m^2}D_S\right)\right],\\
+F^{\mathrm H}_y&=(k_H\Delta)^2m^3\left[\frac{\partial}{\partial x}\left(\frac{\lvert D\rvert}{m^2}D_S\right)-\frac{\partial}{\partial y}\left(\frac{\lvert D\rvert}{m^2}D_T\right)\right],
+\end{aligned}$$
+
+with the tension and shearing strains of the horizontal map wind $(u,v)$
+
+$$D_T=\frac{\partial u}{\partial x}-\frac{\partial v}{\partial y},\qquad D_S=\frac{\partial v}{\partial x}+\frac{\partial u}{\partial y},\qquad \lvert D\rvert=\sqrt{D_T^2+D_S^2}.$$
+
+Here $x$, $y$ are the eastward and northward map coordinates (not the
+registry's wall-normal $y$), and $m$, $F^{\mathrm H}_x$, $F^{\mathrm H}_y$, $D_T$, $D_S$,
+$\lvert D\rvert$ and $k_H$ are page-local. The exchange coefficient
+(eddy viscosity) is $(k_H\Delta)^2\lvert D\rvert$, which §14 writes out:
+"we may express the exchange coefficient in the form $(k_H\Delta)^2|D|$,
+where $k_H\sim0.1$–$1.0$, $\Delta$ is the grid size and $D$ is the
+deformation measured on grid scale". The run uses $k_H=0.28$ and
+$\Delta=555$ km, the map grid increment of 5° of longitude, with 18
+meridional points and a 20-minute time step (p. 164). Heat diffuses
+laterally with the same factor $(k_H\Delta)^2$ (Eq. 4.26; see
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)).
+The weakest wall condition that adds no angular-momentum flux through the
+smooth lateral walls is $D_S=0$ there (Eq. 4.25). The nonlinear diffusion
+terms are advanced with a forward (lagged) difference, because the
+centred leapfrog form of a decay term is unstable for every time step
+(§2, Eqs. 2.12–2.13; §4).
+
+**Relation to the registry form.** For a two-dimensional velocity field,
+$2S_{ij}S_{ij}=2(\partial_xu)^2+2(\partial_yv)^2+(\partial_yu+\partial_xv)^2=D_T^2+D_S^2+(\partial_xu+\partial_yv)^2$,
+so $\lvert D\rvert$ equals the strain magnitude $\lvert S\rvert$ of the
+horizontal components only where the horizontal divergence vanishes
+*(compiler check, not in the sources)*.
+[Kim & Leonard (2024)](/sources/kim-2024-b.md) print a three-dimensional
+form for the model of Smagorinsky (1963) and Smagorinsky et al. (1965)
+(see the paragraph above); Smagorinsky (1963) prints the two-dimensional
+horizontal form above, with $k_H$ multiplying $\lvert D\rvert$.
+
+**Rationale.** Smagorinsky (1963, §4) states that "the non-linear lateral
+diffusion may be formulated on the basis of the Heisenberg similarity
+theory", shown in a separate paper then in preparation, and applies the
+form to constant-pressure surfaces, ignoring density variations. §14
+gives the physical argument. The lateral diffusion simulates "the
+physically real net cascade of energy" from the resolved scales to the
+scales truncated by the differencing. "If we assert that there is no net
+accumulation of energy in the sub-grid scales, then the energy removed at
+grid scale must be taken as identical to the implied dissipation which
+must occur by molecular viscosity". The grid scale is assumed to lie in
+an inertial subrange (§1, §14). Without the term, or with too small a
+$k_H$, energy would accumulate "in the highest allowable spectral
+component", the "non-linear computational instability" named by Phillips
+(as cited). An energy-conserving (Arakawa) differencing does not remove
+the need, since the energy "may still be trapped in the highest wave
+numbers admissible by the finite grid" (§14, pp. 149–150). The same
+formulation had been "used successfully for numerical integrations on the
+convective scale" by Lilly (1962, cited), on a grid more than 1000 times
+finer, which "suggests an element of validity in the approach" (§14). The
+kinetic-energy dissipation by the lateral stresses is proportional to the
+domain mean of $\lvert D\rvert^3$ minus a boundary term (§4).
+
+**Self-assessment.** The author judges that "intuitively our small-scale
+diffusion appears to play too large a role" (Abstract). The model "requires a significant transfer by sub-grid scale
+motions" for which "no comparison with the corresponding transfer in the
+real atmosphere is available", and the transfer is "subject to some
+adjustment through the coefficient $k_H$" (§14).
+
+**The limits that motivated a computed coefficient.**
+[Germano et al. (1991)](/sources/germano-1991.md) (§I, Eqs. 1–2) state
+the model as $\nu_t=(C_s\Delta)^2\lvert\bar S\rvert$, derived by assuming
+equilibrium of small-scale production and dissipation, with $\Delta$
+proportional to the grid size. They give four reasons why one universal
+constant cannot model transitional and turbulent flows:
+
+- the optimal $C_s$ ranges from about 0.23 (Lilly) to 0.1 (Deardorff)
+  (table above);
+- near walls it needs damping functions (Moin & Kim; Piomelli et al.,
+  chosen for the proper asymptotics; van Driest), all as cited;
+- in transitional flows it needs an intermittency function that sets the
+  constant to zero in the linear and early nonlinear stages (Piomelli et
+  al.; Piomelli & Zang, cited);
+- it cannot represent backscatter.
+
+In an a priori test of transitional channel flow they state, citing
+Piomelli et al., that the Smagorinsky dissipation "is many orders of
+magnitude larger, and peaks much closer to the wall than the exact one"
+(§III, Fig. 3). In their a posteriori transitional channel the
+Smagorinsky LES of Piomelli & Zang, with van Driest damping and an
+intermittency function, predicts the peak wall stress less accurately
+than the [dynamic model](/methods/dynamic-procedure.md), whose peak lies
+within 3% of the DNS (§III, Fig. 4). In fully developed flow it also
+gives less accurate turbulence intensities (Fig. 8).
 
 ## Filter width in element methods
 
@@ -1101,6 +1213,16 @@ methods (Hou et al., cited).
   Lamballais (2023, from $\pi^{-1}(3C_K/2)^{-3/4}$ with $C_K=1.4$); the
   analytical value depends on the Kolmogorov constant assumed, which Kim
   & Leonard do not state *(compiler check, not in the sources)*.
+  Germano et al. (1991, §I) give Lilly's value as $C_s\simeq0.23$, for
+  isotropic turbulence with the cutoff in the inertial subrange and
+  $\Delta$ equal to the grid size; the three printed values (0.17, 0.18,
+  0.23) stand side by side.
+- Smagorinsky (1963) calls $D_T$ and $D_S$ the "tension and shearing
+  strains" in §4 and the "tension stress" and "shearing stress" in the
+  list of symbols (App. C).
+- Germano et al. (1991, §III) report the dynamic coefficient at the
+  channel centre for two filter-width definitions, 0.023 and
+  $7\times10^{-4}$ (square roots 0.15 and 0.026).
 - Heinz (2020, §2.3 and App. C) prints $C_+=(0.876,1.0,1.074)$ for
   $C_K=(1.3,1.43,1.5)$; the printed formula $C_+=(3C_K/2)^{3/2}/\pi$
   gives 0.867, 1.000 and 1.074 *(compiler check, not in the sources)*.
@@ -1205,3 +1327,5 @@ methods (Hou et al., cited).
 - [Wu et al. (2026)](/sources/wu-2026-b.md) — §2.2, Eq. (7), Table 1 ($C_s=0.1$ behind $C_x=0.61$).
 - [Alberti et al. (2026)](/sources/alberti-2026.md) — §3.3, Eq. (14), Fig. 16 (equivalent Smagorinsky constant of a transitional IDDES).
 - [Hu & Yang (2026)](/sources/hu-2026.md) — Sec. II C, Eq. (5) (review).
+- [Smagorinsky (1963)](/sources/smagorinsky-1963.md) — Abstract; §1; §2, Eqs. (2.12)–(2.13); §4, Eqs. (4.22)–(4.26); §14, pp. 149–150; parameter list p. 164 (the original lateral eddy viscosity; meteorology paper, cited for the closure only).
+- [Germano et al. (1991)](/sources/germano-1991.md) — §I, Eqs. (1)–(2); §III, Eqs. (18)–(19), Figs. 2–4, 8.

@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES, RSM-IDDES, RSM-DynIDDES, dynamic IDDES, modelled-stress depletion, grid-induced separation, AIDDES, adaptive IDDES, transitional IDDES, SA-BCM IDDES]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-29T10:04:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -64,6 +64,45 @@ surface mesh to 10 mm ($\Delta x^+\approx600$ on the roof) for this reason,
 and show GIS on a rounded separation line: a 3 mm surface mesh there is
 "too fine and leads to GIS", and 6 mm is advised (§4.4, §7.3, Figs. 8, 21).
 
+**The original diagnosis.** The paper that introduced DDES,
+[Spalart et al. (2006)](/sources/spalart-2006.md), writes the 1997 DES
+(DES97) with the Spalart–Allmaras host as
+$d_{\mathrm{DES}}=\min(d,C_{\mathrm{DES}}\Delta_{\max})$, with
+$C_{\mathrm{DES}}$ "of order 1" and no value printed. Whether to use
+$\Delta_{\max}$ or $\Delta_{\mathrm{vol}}$ is called "a separate issue,
+present in any LES" (§1). With equal wall-parallel spacings
+$\Delta_\parallel$ (page-local), it classes boundary-layer grids in three
+types (§1, Fig. 1):
+
+- *Type I*, natural DES: $\Delta_\parallel$ exceeds $\delta$ and
+  $d_{\mathrm{DES}}=d$ throughout the boundary layer.
+- *Type II*, "ambiguous": the limiter acts "roughly in the upper
+  two-thirds of the boundary layer", but the grid cannot support resolved
+  fluctuations.
+- *Type III*, an LES grid: all spacings are much smaller than $\delta$;
+  $\Delta\approx\delta/20$ is "a plausible starting value", and
+  $\Delta\approx\delta/10$ "gives acceptable results". DES formulas on
+  this grid amount to a [wall-modelled LES](/methods/wall-modelled-les.md).
+
+On a Type II grid the limiter lowers the eddy viscosity and the modelled
+stress "without any sizeable resolved stress to restore the balance",
+which the authors name **modeled-stress depletion (MSD)**. It arises on
+grid refinement from Type I or when a boundary layer thickens near
+separation; the same grid can be Type I at one angle of attack and Type
+II at another. Severe MSD gives the "grid-induced separation" of Menter
+and Kuntz (cited). The authors add that DES is not "a coarser-grid version
+of LES": it "differs from LES only in boundary layers", and the contrary
+idea "has led to several inappropriate comparisons between LES and DES"
+(§1). MSD faces any hybrid that puts the grid spacing into the turbulence
+model. Methods without it, scale-adaptive simulation and TRRANS (cited),
+reach LES behaviour in homogeneous turbulence, but "neither approach has
+been able to sustain LES content in a channel" (§1; see
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md)). The
+earlier remedies are judged not robust enough: manual zonal disabling of
+the limiter, cell-aspect-ratio biasing, and the modified length
+$\min\big(C_{\mathrm{DES}}\max(n^2C_{\mathrm{DES}}\Delta^2/d,\Delta),d\big)$,
+$n=3$, of Forsythe et al. (cited) (§1).
+
 **The industrial view.** Mani & Dorgan (2023) describe modelled-stress
 depletion as the RANS-to-LES transition happening "very near the wall" on a
 grid not refined enough for the small-scale features there, so that the
@@ -105,7 +144,56 @@ $Re_\theta=10\,000$ follows Coles's in all sublayers, without
 
 ## Delayed DES: the shielding function
 
-Delayed DES (DDES) detects the boundary layer with a sensor built from the
+**The original form.** [Spalart et al. (2006)](/sources/spalart-2006.md)
+(§2.1, Eqs. 2.1–2.3) define, for any eddy-viscosity model,
+
+$$r_d=\frac{\nu_t+\nu}{\sqrt{\partial_ju_i\,\partial_ju_i}\;\kappa^2d^2},\qquad f_d=1-\tanh\big[(8r_d)^3\big],\qquad d_{\mathrm{DDES}}=d-f_d\max\big(0,\,d-C_{\mathrm{DES}}\Delta\big),$$
+
+with $\Delta=\Delta_{\max}$; their $\sqrt{U_{i,j}U_{i,j}}$ is the norm of
+the full velocity gradient, written here with the summed indices in the
+same order, and $\kappa$ has no printed value. "Similar to $r$ in the S-A
+model", $r_d$ is 1 in a logarithmic layer and falls gradually to 0
+towards the boundary-layer edge. The added $\nu$ keeps $r_d$ away from 0
+very near the wall, and "in the S-A model, $\tilde\nu$ can be used instead
+of $\nu_t+\nu$". The "d" stands for "delayed". $f_d$ is 1 in the LES
+region ($r_d\ll1$) and 0 elsewhere, "similar to $1-F_2$, and rather steep
+near $r_d=0.1$". The constants 8 and 3 come from "intuitive shape
+requirements" and flat-plate tests. A constant larger than 8 "would delay
+LES in even larger regions, which would be safer in the sense of avoiding
+MSD, but is undesirable overall", and models very different from SA
+might need "a modest adjustment of $f_d$". $f_d=0$ gives RANS
+($d_{\mathrm{DDES}}=d$) and $f_d=1$ gives DES97; for other hosts, DDES
+multiplies by $f_d$ "the term that constitutes the difference between RANS
+and DES" (§2.1). Because the length now depends on the eddy-viscosity
+field, it is time-dependent and RANS mode is "self-perpetuating" in
+boundary layers. After massive separation LES takes over "more abruptly
+following separation than in DES97", which narrows the grey area: this
+speeds the growth of resolved content without creating it (§2.2). DDES,
+like $F_2$, does not address MSD in free shear layers, where DES grids are
+normally fairly isotropic (§2.2).
+
+*Tests* (two codes; §3). On a flat plate with $\Delta\approx0.1\delta$,
+DES97 lowers the peak eddy viscosity by about 75% and the skin friction by
+19% from RANS, while DDES "preserves the eddy viscosity almost fully"
+(§3.2, Fig. 2; see [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+On the circular cylinder at $Re_D=10^5$ with laminar separation the two
+give the same pressure distribution (§3.3, Fig. 3; see
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)). On an
+airfoil at $Re_c=2.1\times10^6$ and $13.3^\circ$ incidence, whose
+boundary layer reaches about 7% of the chord or 14 cell sizes, the
+grid-induced separation of DES97 at $x/c=0.77$ "has been corrected by the
+$f_d$ term" (§3.4, Figs. 4–5). On the
+[backward-facing step](/benchmarks/backward-facing-step.md) the
+opposite-wall friction no longer drops (§3.5). On a multi-element airfoil
+at $Re_c=1.8\times10^6$ the main-element boundary layer keeps its eddy
+viscosity while the coves and the flap wake keep their resolved content
+(§3.6, Figs. 9–11). In a temporal channel started from a RANS field near
+one wall and an LES field near the other on a Type III grid, "LES mode
+'invaded' RANS mode" (§3.5, no figure). The authors conclude that MSD
+would then occur "only in extreme grids" and that the $f_d$ form "appears
+simple and permanent enough to be recommended" (§5).
+
+**Later printed forms.** Delayed DES (DDES) detects the boundary layer with a sensor built from the
 velocity gradients and the viscosity and keeps it in RANS mode (Basile et al.
 2023, §1). François et al. (2022) print the shielding function in the form
 used by zonal DES mode 2, translated to registry notation:
@@ -118,7 +206,13 @@ Kármán constant, whose value they do not print
 the paper $r_d$ is 1 in the log layer and vanishes at the boundary-layer edge,
 so $f_d=0$ in the boundary layer (RANS) and $f_d=1$ outside (LES). The
 classic DDES of Spalart et al. evaluates $r_d$ with $\nu_t$ instead of
-$\tilde\nu$ (footnote 2). Yan et al. (2022) recall the same function as
+$\tilde\nu$ (footnote 2). The original (above) prints $\nu_t+\nu$ in the
+numerator, allows $\tilde\nu$ in place of the whole sum, and puts the
+summed indices of the gradient norm in the same order, where François et
+al. print $\partial_ju_i\,\partial_iu_j$. The two norms differ: in a pure
+shear $u(y)$ the contracted product $\partial_ju_i\,\partial_iu_j$ is zero
+while $\partial_ju_i\,\partial_ju_i=(\partial_yu)^2$ *(compiler check, not
+in the sources)*. The printed forms stand side by side. Yan et al. (2022) recall the same function as
 $f_d=1-\tanh\big((8r_d)^3\big)$, "initially proposed for detached eddy
 simulations", and use a modification $1-\tanh(r_d^{1/2})$ as an input
 feature of their learned SA correction, without defining $r_d$
@@ -138,6 +232,37 @@ taken in their edge-based solver as the longest edge of the dual control
 volume ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, Eqs. 16–17).
 For SA, $l_{\mathrm{RANS}}=d$ and with $f_d=1$ and $\Psi=1$ the form reduces to the
 $d_{\mathrm{DES}}$ above *(compiler check, not in the sources)*.
+
+**The low-Reynolds-number correction $\Psi$.** Spalart et al. (2006,
+§4.2) introduce $\Psi$ as $l_{\mathrm{DES}}=\min(l_{\mathrm{RANS}},\Psi C_{\mathrm{DES}}\Delta)$
+with $\Psi\ge1$, an increased effective $C_{\mathrm{DES}}$. It keeps the
+low-Reynolds-number damping terms of SA ($f_{v1}$, $f_{v2}$, $f_{t2}$)
+from acting in LES mode at low subgrid viscosity. The hypothesis is that
+at "equilibrium" (convection and diffusion negligible) the subgrid model
+reduces to a Smagorinsky-like $\nu_t=(C_{\mathrm{eq}}\Delta)^2S$, with
+$C_{\mathrm{eq}}$ constant and $S$ a strain magnitude ($C_{\mathrm{eq}}$,
+$S$ page-local, $S$ not defined in the paper). With the SA functions of the [Spalart–Allmaras](/methods/spalart-allmaras-model.md)
+page and $f_w^*=0.424$ the high-viscosity limit of the equilibrium $f_w$
+($f_w^*$ page-local),
+
+$$\Psi^2=\min\left[10^2,\ \frac{1-\dfrac{c_{b1}}{c_{w1}\kappa^2f_w^*}\big[f_{t2}+(1-f_{t2})f_{v2}\big]}{f_{v1}\max\big(10^{-10},\,1-f_{t2}\big)}\right],$$
+
+after the exact form with $f_w/f_w^*$ in the numerator. That ratio is 1
+within 2% for $\nu_t>\nu/10$, which allows the simplification. The cap
+($\Psi\le10$) and the limiter on $1-f_{t2}$ keep the behaviour reasonable
+in the "DNS limit" $\nu_t<\nu/100$. The correction is inactive ($\Psi=1$)
+for subgrid viscosity above about $10\nu$ (§4.2, Eqs. 4.3.1–4.3.4, Fig.
+12). In a $64^3$ LES of decaying isotropic turbulence its effect on the
+eddy viscosity is large (Fig. 12c). In SA-based DDES, $\chi$ is replaced
+by $\max(\chi,20f_d)$ before it enters $f_{v1}$ and $f_{t2}$. For
+Wilcox's [$k$-$\omega$ model](/methods/k-omega-model.md) the paper gives
+$\Psi=(\beta^*/C_\mu)(2a_{\mathrm{Wk}}/a^*_{\mathrm{Wk}})^{3/4}$ with
+$a_{\mathrm{Wk}}$, $a^*_{\mathrm{Wk}}$ (page-local; the paper's $\alpha$,
+$\alpha^*$) and $C_\mu$, $\beta^*$ "the constants and 'low-Reynolds-number'
+functions of the model", and $C_{\mathrm{DES}}=0.72$ for that model's
+subgrid version, calibrated on decaying isotropic turbulence, with
+$\Psi C_{\mathrm{DES}}\Delta$ replacing $l_{\mathrm{RANS}}$ only in the
+dissipation term of the $k$ equation (§4.2, footnote 1).
 
 Delassaux et al. (2023, §4.1.3, Eqs. 6–11) print the SST host in ANSYS
 Fluent. The destruction of the $k$-equation becomes
@@ -902,6 +1027,11 @@ decaying-turbulence spectra as $\Delta_{\max}$ with the same constant
 (§4.4).
 
 ### Calibration of $C_{\mathrm{DES}}$ and the numerical scheme
+
+Spalart et al. (2006, §1) print no value of $C_{\mathrm{DES}}$ for the SA
+host, only "of order 1"; the value 0.65 in the paragraph below and in the
+SA rows above comes from the later sources. For the Wilcox $k$-$\omega$
+subgrid version they give 0.72 (§4.2, footnote 1).
 
 In LES mode on Comte-Bellot–Corrsin decaying turbulence ($32^3$ to $128^3$),
 Carlsson et al. (2023, §4.2, Fig. 3) find that the "standard values" of the constant,
@@ -1669,6 +1799,12 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 
 ## Qualifications
 
+- Spalart et al. (2006) number the equations of their §4.2 as
+  (4.3.1)–(4.3.4); there is no §4.3. Fig. 12a labels its horizontal axis
+  "$\nu/\nu$", while Fig. 12b and the text use $\nu_t/\nu$. §1 says that
+  $\delta$ "can reach 10% of the airfoil chord" (citing a LESFOIL study),
+  while §3.4 reports about 7% for its own airfoil case.
+
 - Li et al. (2024b) validate on one grid level and one incidence, with
   neither time step nor averaging window printed; their conclusion that IDDES
   "basically satisfies the engineering simulation requirements" (§IV) rests
@@ -1915,3 +2051,4 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 - [Gao et al. (2025)](/sources/gao-2025.md) — §I (DDES needs $y^+\approx1$); §III.A.1, Fig. 5 (log-layer mismatch of DES, as stated).
 - [Wu et al. (2026)](/sources/wu-2026-b.md) — §1 (IDDES delayed transition); §2.3, Eqs. (17)–(21) (SST-IDDES as printed, AIDDES, length-ratio indicator); §2.4, Fig. 1 (flat plate); §4.1.2–§4.1.3, Table 3, Figs. 8, 11 (base flow); §4.2.2–§4.2.3, Figs. 13–14 (30P30N); §5.
 - [Alberti et al. (2026)](/sources/alberti-2026.md) — §1 (DES-like models and transition); §2.1, Eqs. (1)–(5) (SA-IDDES in modal DG); §2.1.1, Eqs. (6)–(9) (SA-BCM coupling, modified shielding, $\chi_2$ recalibration); §3.1, Table 3 (Eppler 387); §3.2, Tables 1, 5, Fig. 11 (sphere); §3.3, Table 7, Eq. (14), Fig. 16 (NACA 0012, equivalent Smagorinsky constant); §4.
+- [Spalart et al. (2006)](/sources/spalart-2006.md) — §1, Fig. 1 (DES97, grid types, modeled-stress depletion, earlier remedies); §2.1–2.2, Eqs. (2.1)–(2.3) (DDES); §3, Figs. 2–11 (tests); §4.2, Eqs. (4.3.1)–(4.3.4), Fig. 12, footnote 1 (low-Reynolds-number correction $\Psi$, $k$-$\omega$ host); §5 (the founding paper of DDES).

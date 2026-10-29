@@ -6,6 +6,99 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 17 — founding papers added on 2026-10-29: Smagorinsky 1963, Launder & Spalding 1974, Germano et al. 1991, Spalart & Allmaras 1992, Lele 1992, Menter 1994, Spalart et al. 2006 (2026-10-29)
+
+Sources (7): smagorinsky-1963, launder-1974, germano-1991, spalart-1992,
+lele-1992, menter-1994-b, spalart-2006. 314 of 314 ingested, 191 concept
+pages plus the registry, 14463 bibliography entries. Deep lint A1–A3 over
+the chunk-17 content done. The human added 10 files: 7 distinct works
+(307 → 314) and 3 byte copies of three of them (317 files).
+
+### Decisions for the human
+
+1. **Byte copies in the archive:** the three later downloads
+   `0000_manual_no_journal_Unknown_10_1063_1_857955.pdf`,
+   `…_10_2514_3_12149.pdf` and `…_10_2514_6_1992-439.pdf` are byte-identical
+   (same MD5) to the ingested germano-1991, menter-1994-b and spalart-1992
+   PDFs. Nothing new to ingest; the archive (read-only) now holds 317 files
+   for 314 works. Each copy is named on its Source page ("Version read"), so
+   the worklist shows 0 pending. Delete the copies if you want the archive
+   clean.
+2. **Bibliography calls left by the resolver:**
+   - `cebeci-1992` re-keyed `cebeci-1970`: Spalart & Allmaras print
+     J. Basic Eng. 92(3):523–535 without a year; Crossref (DOI
+     10.1115/1.3425054) dates it 1970. Confirm.
+   - lele-1992 ref. [14], printed "Tellus 3, 99 (1972)", folded into
+     `kreiss-1972` (Tellus 24:199–215), the only Kreiss–Oliger 1972 Tellus
+     paper. Confirm.
+   - lele-1992 ref. [28], printed "Stud. Appl. Math. 49, 395 (1971)",
+     kept as printed (`orszag-1971-d`); on Crossref 49:395 lies inside an
+     unrelated paper, and Orszag's 50:395–397 (1971) fits author, page and
+     year (the resolver's identification, noted, no DOI). Fold?
+   - lele-1992 ref. [33] `zang-1992-b` ("Appl. Num. Math., to appear", no
+     title) kept distinct from `zang-1991`.
+3. **Ingested key names:** Menter's SST paper is `menter-1994-b` (the
+   plain key belongs to Menter & Rumsey 1994); Spalart & Allmaras is the
+   AIAA conference paper `spalart-1992` (the 1994 journal version stays a
+   non-ingested `spalart-1994`).
+4. **Candidate pages** (not created, inline): mixing-length model,
+   square-duct flow, turbulent pipe flow (Launder & Spalding; pipe flow
+   now has two sources with barbera-2026), Baldwin–Barth model, freestream
+   sensitivity of $k$-$\omega$ (Menter), modified-wavenumber analysis
+   (Lele; covered on the compact and eigensolution pages).
+
+### Contradictions
+
+None opened; thirteen open in the bundle. Kept side by side (each source's
+printed value with locators): SA trip constants $c_{t3}$, $c_{t4}$ (1.1, 2
+in Spalart & Allmaras 1992; 1.2, 0.5 in Shan and Huang, who do not
+attribute them to the 1992 paper; 0 in An et al.); SST cross-diffusion
+floor ($10^{-20}$ in Menter 1994, $10^{-10}$ in Dzanic) and limiter
+(vorticity in Menter 1994, strain magnitude in later sources); the origin
+of the $k$-$\varepsilon$ constants (Launder et al. 1972 per Launder &
+Spalding; Launder & Sharma per Tang and Menter); Lilly's constant (0.23 in
+Germano et al. with $\Delta$ the grid size; 0.17, 0.18 in later sources;
+all only cite it); the DDES $r_d$ (Spalart et al. print
+$\sqrt{U_{i,j}U_{i,j}}$; François et al. a contracted gradient, zero in
+pure shear by a labelled check); Kim & Leonard (aeroacoustics) vs Lele
+(DNS) on the motivation of compact schemes.
+
+### Printed slips (recorded on the Source pages)
+
+- smagorinsky-1963: an energy-transfer ratio 0.57 (§8) vs "approximately
+  0.7" (§14); super-geostrophic departure ≤5 % (abstract) vs 7–8 % (§12);
+  $D_T$, $D_S$ "strains" (§4) vs "stresses" (App. C).
+- launder-1974: log-law constant named F in the nomenclature, E in the
+  text; Eq. 2.3-3 stray square root (dimensional argument) and prefactor
+  $C_\mu$ against $C_\mu^{3/4}$ from the paper's own relations; length
+  scale with and without $C_D$; Craya–Curtet equations numbered 3.1-x;
+  $\sigma_h$ molecular vs turbulent.
+- germano-1991: Eq. 13 printed without $C$; Eqs. 15–17 second term
+  illegible on the scan; "almost a factor of 4" vs $2^{4/3}=2.52$ with
+  Eq. 18; a cross-reference in the note to Ref. 15.
+- spalart-1992: $\omega=\sqrt{\Omega_{ij}\Omega_{ij}}$ gives $\sqrt2|U_y|$
+  in simple shear against the stated normalization.
+- lele-1992: (B.2.5) −14466 vs +14466 from (B.2.4); (C.2.11.b) 11/192 vs
+  12/192; spectral-like $k''h^2$ maximum 9.108 vs 8.779; member (d)
+  α = 3/14 (text) vs 5/14 (Fig. 2 caption); Fig. 5 curve (c) labelled
+  fourth-order; mixed truncation-error sign conventions.
+- menter-1994-b: "Wadcock" vs "Wadock".
+- spalart-2006: §4.2 equations numbered 4.3.x; step height $h$ vs $H$;
+  Fig. 12a axis "ν/ν"; boundary-layer thickness 10 % (§1) vs 7 % (§3.4).
+
+### Bibliography
+
+14270 → 14463 entries (+193; Smagorinsky's list alone added 62, mostly
+meteorology): 30 aliases, 11 verified silences, `FLAGS: 0`; the seven
+entries completed from page 1; `--dupes` unchanged (25 groups); pending
+0 of 314.
+
+### Bundle fit
+
+smagorinsky-1963 is a meteorology paper (general-circulation model): cited
+for its subgrid lateral viscosity, constants and the energy-pile-up
+argument only.
+
 ## Chunk 16 — 2026 papers, archive complete: cold-wall WMLES with flux reconstruction, transitional IDDES in DG, SATES-II and AIDDES, ML-closure review, adaptive spectral eddy viscosity, grid resolution in gas-kinetic ILES, AthenaK; fourth whole-bundle deep lint (2026-10-29)
 
 Sources (7): okano-2026, alberti-2026, wu-2026-b, hu-2026, rajek-2026,

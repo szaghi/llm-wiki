@@ -5,7 +5,7 @@ description: "Turbulent flow over a sudden expansion with fixed separation at th
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, A3C step, curved backward-facing step, CBFS]
 tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg, lattice-boltzmann, spectral-element]
-timestamp: 2026-10-29T07:39:00Z
+timestamp: 2026-10-29T16:01:00Z
 ---
 
 # Backward-facing step
@@ -237,6 +237,21 @@ to the wall model, which imposes a zero-pressure-gradient profile inside
 the recirculation (Fig. 11). No reattachment length is printed. See
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) and
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md).
+
+**Modelled-stress depletion and the delayed DES.** In the paper that
+introduced DDES, [Spalart et al. (2006)](/sources/spalart-2006.md) (§3.5,
+Figs. 6–8) run the step of the Vogel & Eaton experiment (cited) with a
+spanwise spacing $\Delta z=0.03H$ and a spanwise
+period of $2H$, and no inflow perturbations. They compare RANS, the 1997
+DES and DDES. DDES keeps RANS mode in both attached boundary layers and
+switches to LES after the corner. The skin friction on the step side
+stays accurate, and "the grid-induced drop by up to 60% on the opposite
+side is eliminated". The resolved content after separation "is
+essentially as fine with either approach". Downstream, for $x/H\ge15$, the
+friction shows the trend of the
+[log-layer mismatch](/definitions/log-layer-mismatch.md), which they find
+"insensitive to the DDES modification" (§4.1, Fig. 7; see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
 **Subgrid length scales of DDES and IDDES in high-order DG.**
 [Alberti et al. (2025)](/sources/alberti-2025-b.md), §3.2, run a step at
@@ -480,6 +495,9 @@ steps at a cost "up to 1/16" of conventional CFD, both as cited works.
 
 ## Qualifications
 
+- Spalart et al. (2006) write the step height $h$ in the caption of
+  Fig. 6 and $H$ on the axis of Fig. 7 and in the text of §4.1.
+
 - The configuration of [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md)
   ($Re_H$ from 300 to 1100) lies below those of the other configurations
   on this page ($Re_H$ 5000 to 36,000); the authors cite Armaly et al. for the existence of the
@@ -596,3 +614,4 @@ steps at a cost "up to 1/16" of conventional CFD, both as cited works.
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §3.2, Figs. 15–22.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.2 (cited PINN works, review).
 - [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §7.1, Fig. 5, Table 6.
+- [Spalart et al. (2006)](/sources/spalart-2006.md) — §3.5, Figs. 6–8 (RANS, DES97 and DDES of the Vogel–Eaton step; opposite-wall friction drop removed); §4.1, Fig. 7 (log-layer mismatch trend).

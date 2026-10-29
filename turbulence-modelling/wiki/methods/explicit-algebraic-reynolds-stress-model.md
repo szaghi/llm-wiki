@@ -3,9 +3,9 @@ type: Method
 title: "Explicit algebraic Reynolds-stress models"
 description: "RANS closures that give the Reynolds-stress anisotropy as an explicit sum of Pope's integrity-basis tensors with invariant-dependent coefficients: the classical equilibrium-derived forms and BSL-EARSM, the learned forms (gene-expression programming, sparse and sparse Bayesian regression with a production correction), and their heat-flux analogue."
 status: established
-aliases: [EARSM, EASM, explicit algebraic stress model, explicit algebraic Reynolds stress model, BSL-EARSM, non-linear eddy-viscosity model, generalized eddy-viscosity hypothesis, stochastic EARSM, SBL-SpaRTA EARSM]
+aliases: [EARSM, EASM, ASM, algebraic stress model, explicit algebraic stress model, explicit algebraic Reynolds stress model, BSL-EARSM, non-linear eddy-viscosity model, generalized eddy-viscosity hypothesis, stochastic EARSM, SBL-SpaRTA EARSM]
 tags: [rans, reynolds-stress-model, eddy-viscosity, data-driven, symbolic-regression, turbomachinery]
-timestamp: 2026-10-29T07:38:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # Explicit algebraic Reynolds-stress models
@@ -80,6 +80,28 @@ Johansson 2000), and "most formulations" keep only quadratic and cubic
 terms (Sandberg & Zhao 2022, §3.2). Extended bases (Kenjereš et al. 2005)
 and physics-based input features (Wang et al. 2019) are cited as
 generalizations (§3.2).
+
+**The algebraic stress model of 1974.** Launder & Spalding (1974) present the
+algebraic stress model, "of recent origin and not yet thoroughly tested",
+as an extension of the $k$-$\varepsilon$ model
+([Launder & Spalding (1974)](/sources/launder-1974.md), §2.4, Eqs.
+2.4-2–2.4-3). Because the modelled dissipation and pressure–strain of the
+stress transport equation contain no stress gradients, eliminating
+$DR_{ij}/Dt$ and the diffusion $\mathcal D_{ij}$ leaves algebraic relations
+$R_{ij}=f\big(R_{pq},k,\varepsilon,\partial_m\langle u_l\rangle\big)$ (Eq.
+2.4-3; see the [Reynolds-stress model](/methods/reynolds-stress-model.md)
+for the transport equation). Launder (as cited) neglected convection and
+diffusion; Rodi (as cited) took the convection of $R_{ij}$ proportional to
+$(Dk/Dt)R_{ij}/k$, and likewise for diffusion; the authors find the two
+give only small differences in practice. $k$ and
+$\varepsilon$ come from the $k$-$\varepsilon$ equations, optionally with the
+production computed from the algebraic stresses. As printed, the relation
+gives the stresses implicitly, with $R_{pq}$ on both sides of Eq. 2.4-3. The
+model predicts the secondary flow of fully developed square-duct flow and
+its effect on the axial-velocity contours, where the isotropic
+$k$-$\varepsilon$ viscosity gives no cross-plane motion (Tatchell's
+computation, as cited; §3.9, Fig. 3.9; see the
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)).
 
 **BSL-EARSM.** Menter et al. (2012) combine the Wallin–Johansson
 stress–strain relation with the transport equations of the SST model to
@@ -344,4 +366,5 @@ et al. 2022; §4.5, Eq. 17).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3, Eq. 2, Fig. 7.
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eqs. 17–19, Fig. 17 (a priori quadratic commutator term in a Mach 5 shock interaction); Eqs. 22–26, Fig. 20 (nonlinear heat-flux terms); §V (linear SST kept in RANS).
 - [Wang et al. (2024d)](/sources/wang-2024-k.md) — Table I (Ahmed-body drag of a cited RANS-EARSM).
+- [Launder & Spalding (1974)](/sources/launder-1974.md) — §2.4, Eqs. 2.4-2–2.4-3 (implicit algebraic stress model of Launder and Rodi, as cited), §3.9, Fig. 3.9 (square-duct secondary flow).
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1 and footnote 5 (ARSM = EARSM = EASM, classification with second-moment closures); §2.4.1.1, Fig. 43 (EDGE EARSM against NACA 4412 DNS, as cited).

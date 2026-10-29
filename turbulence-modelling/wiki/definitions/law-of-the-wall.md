@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-29T10:10:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # Law of the wall
@@ -109,6 +109,8 @@ and the choice is part of the model.
 | [Alberti et al. (2025b)](/sources/alberti-2025-c.md), captions of Figs. 1, 9, 11 | not printed | 5.5 | "compound law of the wall" $u^+=y^+$ and the log law | reference for entropy-stable DG implicit LES of channel flow at $Re_\tau=180$–590 |
 | [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §5.3 | 0.41 | 5 | sublayer $u^+=y^+$; the same letter $k$ is the thermal conductivity in their Eq. (8) and the von Kármán constant in Eqs. (10)–(12) | validation of isogeometric DG Spalart–Allmaras RANS of a flat plate at $M=0.2$, $Re=1.1\times10^7$ (below) |
 | [Gao et al. (2025)](/sources/gao-2025.md), Figs. 5, 8, 14 | 0.41 | 5.2 | $A^+=17$ and $\kappa=0.41$ in the wall-model mixing length (Eq. 10) | reference for slip-velocity WMLES of channel ($Re_\tau=576$–5100) and flat-plate flow |
+| [Launder & Spalding (1974)](/sources/launder-1974.md), §2.1, Eq. (2.1-12); §2.3-1; Fig. 3.3a | not printed | $\kappa^{-1}\ln E$, $E\approx9.0$ for a smooth wall, a function of roughness | van Driest $A^+=26.0$ (smooth wall) in the thermal wall function; Fig. 3.3a draws $u^+=5.5\log_{10}y^++5.45$ | log law written $u^+=\kappa^{-1}\ln(Ey^+)$; the standard [RANS wall functions](/methods/rans-wall-function.md) (below) |
+| [Spalart & Allmaras (1992)](/sources/spalart-1992.md), App. (p. 21) | 0.41 | not printed | $c_{v1}=7.1$ chosen for the log-law intercept | log-layer calibration of the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) (below) |
 | [Gao et al. (2025b)](/sources/gao-2025-b.md), §II C1, Eq. (17); App. A, Table III | not printed | 3.0333909 (see Qualifications) | Allmaras–Johnson–Spalart composite law, eight further constants; Shih et al.'s piecewise $f_1$ with its log branch $\kappa^{-1}\ln y^++C$ above $y^+=140$, $\kappa$ and $C$ not printed | explicitly inverted equilibrium wall model of a flux-reconstruction WMLES (below) |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
@@ -132,6 +134,11 @@ $Re_\tau^*=590$, so they keep $\kappa=0.41$, $A^+=17$. Gillyns et al. (2022,
 §3) likewise note that more recent values after Lee & Moser are
 $\kappa\simeq0.383$, $B\simeq4.25$, but keep 0.38 and 4.1; the effect of the
 choice on $u_\tau$ is not assessed.
+
+Launder & Spalding (1974) print no value of $\kappa$; the reference line of
+their Fig. 3.3a, $u^+=5.5\log_{10}y^++5.45$, corresponds to $\kappa=\ln10/5.5=0.419$
+and $B=5.45$, and with that $\kappa$ their smooth-wall $E\approx9.0$ gives
+$B=\kappa^{-1}\ln E\approx5.25$ *(compiler check, not in the sources)*.
 
 Vadrot et al. (2023a, §II.B.3) note that empirical values of $\kappa$ range
 over 0.36–0.44 (as they cite it), which matters for their learned wall model
@@ -650,6 +657,14 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   width, $6.93u_\tau$ at $\Delta_f^+=50$ and $13.5u_\tau$ at $\Delta_f^+=300$
   in filtered channel DNS at $Re_\tau=5200$ (§3.2); see
   [wall-modelled LES](/methods/wall-modelled-les.md).
+- **Low-Reynolds pipe flow in RANS.** [Launder & Spalding (1974)](/sources/launder-1974.md)
+  (§3.3, Figs. 3.3a,b) report that the measured pipe-flow profile at
+  $Re=6000$ (bulk velocity and diameter; data of Kudva & Sesonske as
+  cited) lies above the high-Reynolds log law and that the Jones–Launder
+  low-Reynolds $k$-$\varepsilon$ model integrated to the wall reproduces the
+  departure, whereas near-wall formulae independent of Reynolds number,
+  tuned for $Re>20\,000$, over-predict the friction factor at low $Re$ (see
+  [$k$-$\varepsilon$ models](/methods/k-epsilon-model.md)).
 - **Low Reynolds number.** [Kim et al. (2022)](/sources/kim-2022.md) (§III D,
   Fig. 12) state, citing the channel DNS of Moser, Kim & Mansour, that the
   DNS mean velocity at $Re_\tau=180$ deviates slightly from the log law in the
@@ -793,6 +808,46 @@ $C_\mu=\beta^*$ and Heinz's $\sigma_\omega$ the
 reciprocal of theirs; with Heinz's constants,
 $0.3\times1.8\times(0.8-0.49)=0.167$ and $\sqrt{0.167}=0.409$ *(compiler check,
 not in the sources)*.
+
+The same log-layer solution is how the founding papers fix their
+constants. Launder & Spalding (1974, §2.1, Eqs. 2.1-10–2.1-13) insert the
+log law and $\nu_t=C_\mu k^{1/2}L$ ($L$ a length scale proportional to $y$,
+page-local) into the equation of a generic length-scale variable
+$k^m/L^n$ with uniform $k$, which gives
+$n^2/\sigma_t+C_1C_\mu^{1/2}/\kappa^2-C_2C_\mu^{1/2}/\kappa^2=0$ ($\sigma_t$
+the variable's Prandtl number, $C_1$, $C_2$ its production and destruction
+constants, page-local); for $\varepsilon$ ($n=1$) it is Heinz's
+$k$-$\varepsilon$ condition *(compiler check, not in the sources)*, and they use it to reject the $kL$ and
+$k/L^2$ variables, which would need $\sigma_t=-0.8$ and 2.9 (details on the
+[$k$-$\varepsilon$ page](/methods/k-epsilon-model.md)). In their wall
+functions the log law is reproduced "identically" when the shear stress is
+uniform and generation balances dissipation, since then
+$\tau/\rho=C_\mu^{1/2}k$ (§2.3-1; see
+[RANS wall functions](/methods/rans-wall-function.md)).
+[Spalart & Allmaras (1992)](/sources/spalart-1992.md) (pp. 5–8) build the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) on the same
+solution: with $\lvert\Omega\rvert=u_\tau/(\kappa d)$ and $\nu_t=u_\tau\kappa d$
+($\lvert\Omega\rvert$ the vorticity magnitude the model uses, $d$ the wall
+distance), the balance of
+production, diffusion and destruction requires
+$c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$, a constant "not negotiable" (p.
+6); in units of the production the ideal near-wall budget has diffusion
+$\kappa^2(1+c_{b2})/(\sigma c_{b1})\approx3$ and destruction $\approx-4$, a
+balance not maintained far into the layer, so that $\nu_t$ departs from
+$\kappa yu_\tau$ while a log layer still forms (p. 7, Fig. 6). The damping
+function $f_{v1}$ and the modified vorticity are built so that the working
+variable equals $\kappa yu_\tau$ and the modified vorticity $u_\tau/(\kappa y)$
+"all the way to $d=0$", which the authors find to be a stable numerical
+solution from a wide range of initial conditions; they prefer
+$c_{v1}=7.1$ to Mellor & Herring's 6.9, which they believe yields a low
+log-law intercept, and found no case where the choice of $f_{v1}$ mattered
+(p. 8). An alternative $f_{v1}$ compatible with van Driest damping
+($A^+=26$) is given (p. 8). The flat-plate calibration then fixes $c_{w2}=0.3$
+from $C_f=0.00262$ at $Re_\theta=10^4$ (p. 6; see
+[turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)). With
+the printed constants $c_{b1}=0.1355$, $c_{b2}=0.622$, $\sigma=2/3$ and
+$\kappa=0.41$, $c_{w1}=0.806+2.433=3.239$ and the diffusion ratio is
+$0.1681\times2.433/0.1355=3.02$ *(compiler check, not in the sources)*.
 
 **A diagnostic of logarithmic behaviour.** The premultiplied gradient
 $y^+\,du^+/dy^+$ is constant, equal to $1/\kappa$, in a log layer: Huang et
@@ -1004,3 +1059,5 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §5.3, Figs. 13–14 (flat-plate RANS against the log law, $\kappa=0.41$, $B=5$).
 - [Gao et al. (2025)](/sources/gao-2025.md) — §II.B, Eq. (10); Figs. 5, 8, 14 (reference log law).
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C1, Eqs. (17)–(18) (Allmaras–Johnson–Spalart composite law); App. A, Table III.
+- [Launder & Spalding (1974)](/sources/launder-1974.md) — §2.1, Eqs. (2.1-10)–(2.1-13); §2.3-1; §3.3, Figs. 3.3a–b (log-law constants of the standard wall functions, log-layer constraint on the length-scale equation, low-Reynolds pipe flow).
+- [Spalart & Allmaras (1992)](/sources/spalart-1992.md) — pp. 5–8, Fig. 6; App. (p. 21) (log-layer calibration of $c_{w1}$, near-wall budget, $f_{v1}$ and $c_{v1}=7.1$).

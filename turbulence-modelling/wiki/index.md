@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** all 307 sources of the archive ingested in 16 chunks. Chunk 1 holds the reviews and the
+**Corpus:** all 314 sources of the archive ingested in 17 chunks. Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
 [Duraisamy (2021)](/sources/duraisamy-2021.md), the MHD turbulence review of
@@ -183,6 +183,12 @@ high-order finite differences, a review of machine-learning turbulence
 closures, adaptive spectral eddy viscosity for pseudo-spectral LES of
 isotropic turbulence, the role of grid resolution in implicit LES with a
 gas-kinetic scheme, and the AthenaK code.
+Chunk 17 (founding papers): Smagorinsky's 1963 general-circulation model
+with the nonlinear lateral viscosity, Launder & Spalding's 1974 k-ε model
+and wall functions, the dynamic procedure of Germano et al. (1991), the
+Spalart–Allmaras model (AIAA 92-0439), Lele's compact finite-difference
+schemes, Menter's BSL and SST models (1994), and delayed detached-eddy
+simulation (Spalart et al. 2006).
 
 ## Reading guide
 

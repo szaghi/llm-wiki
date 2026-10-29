@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "RAE 2822 airfoil"
-description: "The supercritical RAE 2822 airfoil in transonic flow, case 9 of Cook et al. at corrected Mach 0.734, incidence 2.79° and Reynolds number 6.5 million: a steady RANS test of high-order DG discretizations, shock treatment and mesh adaptation, where uniform refinement gained nothing and adaptation decided accuracy."
+description: "The supercritical RAE 2822 airfoil in transonic flow: Cases 6 and 10 and a blunt-trailing-edge variant used to validate the Spalart–Allmaras model, and case 9 at corrected Mach 0.734, incidence 2.79° and Reynolds number 6.5 million as a steady RANS test of high-order DG, shock treatment and mesh adaptation."
 status: established
-aliases: [RAE2822, RAE 2822, RAE-2822, RAE 2822 case 9, ADIGMA MTC5]
+aliases: [RAE2822, RAE 2822, RAE-2822, RAE 2822 case 9, RAE 2822 case 6, RAE 2822 case 10, blunt-trailing-edge RAE 2822, ADIGMA MTC5]
 tags: [benchmark, rans, compressible, dg, mesh-adaptation, boundary-layer]
-timestamp: 2026-10-29T10:03:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # RAE 2822 airfoil
@@ -19,11 +19,13 @@ interacts with the attached turbulent boundary layer, so that lift,
 drag and the shock position depend on the boundary-layer displacement and
 on the shock treatment of the discretization. The quantities compared are
 the lift and drag coefficients $C_L$, $C_D$ and the surface pressure
-coefficient $C_p$. Every ingested source that computes it runs
-high-order discontinuous Galerkin RANS, so in this bundle it tests the step from
-second-order to high-order RANS on a flow with a shock: convergence of
-forces under refinement, robustness of the turbulence-model equations at
-the shock, and [mesh adaptation](/methods/mesh-adaptation.md).
+coefficient $C_p$. In this bundle the airfoil serves twice: as a
+validation case of the founding paper of the Spalart–Allmaras model
+(Cases 6 and 10 and a blunt-trailing-edge variant, Spalart & Allmaras 1992),
+and, in every later source that computes it, as a test of high-order
+discontinuous Galerkin RANS on a flow with a shock: convergence of forces
+under refinement, robustness of the turbulence-model equations at the
+shock, and [mesh adaptation](/methods/mesh-adaptation.md).
 
 ## Case definition
 
@@ -44,6 +46,22 @@ specify the case as:
   forces (§3.2);
 - target quantities: lift and drag coefficients and the skin-friction
   distribution.
+
+**Cases 6 and 10 in the founding SA paper.** Spalart & Allmaras (1992)
+validate their [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+on Cases 6 and 10 of Cook et al. (as cited) with a prescribed lift
+coefficient $C_l=0.743$, $Re=6.5\times10^6$ on the chord and trips at 3%
+chord: Case 6 at $M=0.725$, Case 10 at $M=0.75$ (Reynolds number as
+printed, the same as Case 6), on C-grids of $384\times80$ and $768\times160$
+points (257 and 513 on the airfoil) from Wigton's elliptic method (as
+cited), with Baldwin–Lomax and Johnson–King (Swanson's code, as cited) as
+comparators ([Spalart & Allmaras (1992)](/sources/spalart-1992.md), pp.
+16–17). They also compute a blunt-trailing-edge variant, the airfoil
+truncated at 94% chord with a base 1.14% chord high: Case 1 at $M=0.676$,
+$Re=5.4\times10^6$, $C_l=0.451$, and Case 4 at $Re=1.9\times10^6$ with
+imposed $C_l=0.415$, on two-block grids of $768\times160$ plus a
+$128\times64$ wake block (65 points across the base) and $384\times80$ plus
+$64\times32$ (pp. 17–19).
 
 The two later sources run the same corrected conditions
 ($M_\infty=0.734$, $\alpha=2.79^\circ$, $Re=6.5\times10^6$):
@@ -74,6 +92,30 @@ they "believe" related to non-smoothness introduced by the turbulence
 models, and call for "smooth turbulence models" (§6). For non-smooth
 problems, shocks among them, the workshop found no evidence to rank high
 order against low order (§6).
+
+**A one-equation model at the shock.** In the SA computations of Spalart
+& Allmaras (1992, pp. 16–19, Figs. 12–20; computed and measured values as
+printed):
+
+| Case | computed $\alpha$, $C_d$, $C_m$ | measured $\alpha$, $C_d$, $C_m$ |
+|---|---|---|
+| 6, fine grid | $2.37^\circ$, 0.0121, $-0.091$ | $2.92^\circ$, 0.0127, $-0.095$ |
+| 10, $384\times80$ | $2.52^\circ$, 0.0238, $-0.104$ | $3.19^\circ$, 0.0242, $-0.106$ |
+| blunt trailing edge, 1 | $2.035^\circ$, 0.0097, $-0.061$ | $2.45^\circ$, 0.0098, $-0.060$ |
+
+In Case 6 the shock lies about 1.5% chord forward of the experiment and of
+the Baldwin–Lomax and Johnson–King results, within the scatter of the
+Viscous Transonic Airfoil Workshop (as cited), and no wall-shear reversal is
+predicted. In Case 10 the solution is steady on the $384\times80$ grid but
+settles into a limit cycle on $768\times160$ (and on $384\times80$ with the
+artificial dissipation halved); the skin friction does not recover after
+the shock (no reattachment) and the upper-surface pressure flattens for
+$x/c>0.9$. Behind the blunt trailing edge the reversed flow extends about
+1.35% chord, against about 1.2 base heights measured, and the computed
+streamline topology (three half-saddles, one saddle, two nodes) differs from
+an earlier "educated guess" (Henne & Gregg, as cited); in Case 4 the
+lift-curve slope is about 0.155 per degree and the implied loss of lift with
+Reynolds number, 0.022, is "only about 60%" of the measured one.
 
 **A two-equation model in DG.** [Jiang et al. (2025)](/sources/jiang-2025.md),
 §4.2, Figs. 6–7, obtain $C_L=0.779$ ($N=2$) and 0.782 ($N=3$),
@@ -172,8 +214,16 @@ sources)*.
   the workshop entries in the text; their comparison is the error against
   degrees of freedom and work units of Fig. 23. Their statement on smooth
   turbulence models is worded as a belief ("believe").
+- Spalart & Allmaras (1992) prescribe the lift and print the computed
+  incidence; their computed angles lie 0.42–0.67° below the measured ones
+  of the table *(compiler check, not in the sources)*. From their Case 4
+  numbers, $0.155\times(2.035-1.94)=0.0147$ and
+  $0.451-0.415-0.0147=0.021$, against the printed lift loss of 0.022
+  *(compiler check, not in the sources)*.
 - [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) print the case
-  at $M=0.725$, $\alpha=2.92^\circ$ (§7.2), against the corrected
+  at $M=0.725$, $\alpha=2.92^\circ$ (§7.2), the Mach number Spalart & Allmaras
+  (1992) give for Case 6 and the incidence they print as measured for it
+  *(compiler check, not in the sources)*, against the corrected
   $M=0.734$, $\alpha=2.79^\circ$ of the workshop definition and of the two
   other DG sources, and their own §7 introduction prints "Mach number
   M = 0.8" for the same airfoil. They print no force coefficients, so
@@ -186,3 +236,4 @@ sources)*.
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — §4.3, Table 4, Figs. 15–16.
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.1; §3.1.3, Fig. 13 (cited works, review).
 - [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §7 (introduction); §7.2, Table 7.
+- [Spalart & Allmaras (1992)](/sources/spalart-1992.md) — pp. 16–19, Figs. 12–20 (Cases 6 and 10, blunt trailing edge Cases 1 and 4, with the Spalart–Allmaras model).

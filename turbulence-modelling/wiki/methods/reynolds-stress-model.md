@@ -5,7 +5,7 @@ description: "Second-moment RANS closures that transport the six Reynolds stress
 status: established
 aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM, RSM-IDDES, RSM-DynIDDES]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-29T10:04:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -24,6 +24,33 @@ Liu et al. 2024; Mozaffari et al. 2022); a second model, the ATAAC DRSM,
 is the precursor RANS of an aircraft-wake study (Bouhafid et al. 2024).
 
 ## Motivation and lineage
+
+**The position in 1974.** Launder & Spalding (1974) report that at the 1972
+NASA Langley conference on free shear flows the $k$-$\varepsilon$ model was
+"surpassed only by admittedly more complex 'Reynolds-stress' models"
+(Launder, Morse, Rodi & Spalding, as cited) and write the exact stress
+transport, in registry notation,
+
+$$\frac{DR_{ij}}{Dt}=\mathcal P_{ij}+\mathcal D_{ij}-\varepsilon_{ij}+\phi_{ij},$$
+
+with the diffusive, dissipative and redistributive (pressure–strain) terms
+modelled, after Launder, Reece & Rodi (as cited), as (i) diffusion
+proportional to the gradient of the same stress, (ii) isotropic
+dissipation in the normal stresses and none in the shear stresses, i.e.
+$\varepsilon_{ij}=\tfrac23\varepsilon\delta_{ij}$ *(compiler check, not in the
+sources)*, and (iii) a
+pressure–strain in two groups, Reynolds stresses times $\varepsilon/k$ and
+stresses times mean velocity gradients
+([Launder & Spalding (1974)](/sources/launder-1974.md), §1.2, §2.4, Eq.
+2.4-2; the source's $D_{ij}$, $\epsilon_{ij}$ and $R_{ij}$ for diffusion,
+dissipation and pressure–strain, and $+\epsilon_{ij}$ for the dissipative
+term). Since neither modelled dissipation nor pressure–strain contains
+stress gradients, dropping or approximating convection and diffusion
+turns the six equations into the algebraic stress model (§2.4; see the
+[explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)),
+which they apply to the secondary flow of a square duct (§3.9). Their
+conclusion lists tested approximations of the pressure–strain and
+dissipation terms among the needs of non-isotropic closures (§4).
 
 Liu et al. (2024) give the motivation and the lineage
 ([Liu et al. (2024)](/sources/liu-2024.md), Introduction):
@@ -492,4 +519,5 @@ none. See the [turbulent Prandtl number](/definitions/turbulent-prandtl-number.m
 - [Mays et al. (2023)](/sources/mays-2023.md) — §2.1.1, App. Eqs. 16–21, §3.2.1.
 - [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §4 (stress-induced corner vortices, as cited); §5 (RANS of corner-affected interactions).
 - [Wei et al. (2023)](/sources/wei-2023.md) — §IV F, Conclusions (v2f or RSM recommended after the SST failure).
+- [Launder & Spalding (1974)](/sources/launder-1974.md) — §1.2 (the 1972 conference), §2.4, Eq. 2.4-2 (exact stress transport and its 1974 modelling), §3.9, §4.
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1, footnote 5 (eddy-viscosity against second-moment closures; ARSM with DRSM; no universal constants, citing Wilcox).

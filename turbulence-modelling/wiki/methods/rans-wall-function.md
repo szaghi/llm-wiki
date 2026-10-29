@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Wall functions for RANS"
-description: "The near-wall closure of RANS that imposes a law of the wall at the first grid points instead of resolving the viscous sublayer: wall-stress inversion, turbulence-variable boundary values, an explicit power-law wall function for high-order DG, its accuracy and cost up to a first-element height of 320 wall units, and its failure in strong adverse pressure gradient and recirculation."
+description: "The near-wall closure of RANS that imposes a law of the wall at the first grid points instead of resolving the viscous sublayer: the standard Launder–Spalding wall functions, wall-stress inversion, turbulence-variable boundary values, an explicit power-law wall function for high-order DG with its accuracy and cost, and failures in adverse pressure gradient and recirculation."
 status: established
-aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
+aliases: [wall function, WF, standard wall function, Launder–Spalding wall function, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-29T10:10:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # Wall functions for RANS
@@ -81,6 +81,63 @@ $\beta$, $\beta_1$).
   (as cited), that wall functions with $y^+<50$ give "almost identical
   results" to wall-resolved $y^+<1$ grids (§2.2.2); the paper tests no
   wall-resolved run.
+
+## The standard wall functions
+
+The wall functions that later sources call "standard" are those Launder &
+Spalding (1974) give as "the best practice of the Imperial College group"
+for the [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md), after Spalding,
+Wolfshtein and Patankar & Spalding (as cited)
+([Launder & Spalding (1974)](/sources/launder-1974.md), §2.3-1, Fig. 2.1).
+The method economizes computer time and storage and admits further
+empirical information (roughness, pressure gradient, wall mass transfer)
+through its constants; it requires the first node $P$, at wall distance
+$y_P$, to satisfy $(k^{1/2}L/\nu)_P\gg1$ with $L=k^{3/2}/\varepsilon$, i.e.
+$Re_t=k^2/(\nu\varepsilon)\gg1$ at $P$ (page-local $L$, $Re_t$ as on the
+$k$-$\varepsilon$ page). In registry notation, with $u_\tau^2=\tau_w/\rho$ and $U_P$
+the mean tangential velocity at $P$:
+
+$$\begin{aligned}
+\frac{U_P\,C_\mu^{1/4}k_P^{1/2}}{u_\tau^2}&=\frac1\kappa\ln\Big[\frac{Ey_P\,(C_\mu^{1/2}k_P)^{1/2}}{\nu}\Big],\\
+\frac{(T_P-T_w)\,c_p\rho\,C_\mu^{1/4}k_P^{1/2}}{q_w}&=\frac{Pr_t}{\kappa}\ln\Big[\frac{Ey_P\,(C_\mu^{1/2}k_P)^{1/2}}{\nu}\Big]+Pr_t\,\frac{\pi/4}{\sin(\pi/4)}\Big(\frac{A^+}{\kappa}\Big)^{1/2}\Big(\frac{Pr}{Pr_t}-1\Big)\Big(\frac{Pr_t}{Pr}\Big)^{1/4},
+\end{aligned}$$
+
+(Eqs. 2.3-1, 2.3-2; $q_w$ the wall heat flux, page-local; the source's
+$\sigma_h$, $\sigma_{h,l}$ are $Pr_t$, "of the order of 1", and $Pr$), with
+$E\approx9.0$ for a smooth wall ($E$ the log-law constant of
+$u^+=\kappa^{-1}\ln(Ey^+)$, a function of roughness) and the van Driest
+constant $A^+=26.0$ for a smooth wall. The dissipation in the wall cell is
+averaged over the control volume (Eq. 2.3-3) as
+
+$$\int_0^{y_P}\varepsilon\,dy=C_\mu\frac{k_P^{3/2}}{\kappa}\ln\Big[\frac{Ey_P(\surd C_\mu^{1/2}k_P)^{1/2}}{\nu}\Big]$$
+
+as printed (see Qualifications), and $k_P$ comes from the regular $k$
+balance of the cell with zero diffusion of energy to the wall. The
+rationale (§2.3-1): (a) the momentum law "reproduces identically" the
+logarithmic profile when the shear stress is uniform between wall and $P$
+and generation balances dissipation, because then $\tau/\rho=C_\mu^{1/2}k$
+is constant; (b) the second term of the thermal law, a sublayer
+resistance, comes from Jayatillaka's analysis of experimental data (as
+cited); (c) the logarithm in the dissipation integral follows from
+$\varepsilon\propto k^{3/2}/y$ in a constant-stress layer. Replacing
+$C_\mu^{1/4}k_P^{1/2}$ by $u_\tau$ turns the momentum law into the
+equilibrium log law $u^+=\kappa^{-1}\ln(Ey^+)$, so that $E=e^{\kappa B}$
+*(compiler check, not in the sources)*. The velocity scale
+$C_\mu^{1/4}k_P^{1/2}$ is built on $k_P$, as is the second velocity scale
+of Ghidoni et al. below.
+
+The authors report the limits of the method on their own flows. Behind
+the thick lip and step of a film-cooling wall jet the wall-function
+$\varepsilon$ had to be reduced by a factor of 20 on the downstream faces of
+step and lip, which they attribute to the impingement of large-scale fluid
+convected by the recirculation, after which agreement was "excellent"
+(§3.5, Fig. 3.5b); a tube with a twisted tape insert was computed with the
+"standard 'equilibrium' wall logarithmic law rather than that given by
+equation (2.3-1)", one of two reasons given for the poorer agreement
+(§3.8). In pipe flow at low Reynolds number the low-Reynolds model
+integrated to the wall needs about four times as many cross-stream points
+as wall functions (§3.3), and their conclusion calls for wall functions
+that embody the low-Reynolds model (§4).
 
 ## Wall stress from an inverted law
 
@@ -480,6 +537,20 @@ Five high-order sources resolve the wall instead, and say what it takes:
 
 ## Qualifications
 
+- **Printed forms of Launder & Spalding (1974).** Eq. (2.3-3) prints the
+  logarithm's argument as $Ey_P(\surd C_\mu^{1/2}k_P)^{1/2}/\nu$, with a
+  square root inside the bracket that Eqs. (2.3-1) and (2.3-2) do not
+  carry; as printed the argument has the dimension of
+  velocity$^{1/2}\times$length/viscosity and is not dimensionless
+  *(compiler check, not in the sources)*. From the paper's own relations,
+  the log law (Eq. 2.1-12), $\tau/\rho=C_\mu^{1/2}k$ and generation equal to
+  dissipation (§2.3-1(a)), $\varepsilon=(\tau/\rho)^{3/2}/(\kappa y)=C_\mu^{3/4}k^{3/2}/(\kappa y)$,
+  whose integral carries $C_\mu^{3/4}$ where Eq. (2.3-3) prints $C_\mu$
+  *(compiler check, not in the sources)*; the paper itself states only the
+  proportionality $\varepsilon\propto k^{3/2}/y$. The Nomenclature names the
+  log-law constant $F$ ($\simeq9$) while the text and equations use $E$, and
+  lists $\sigma_h$ as the "molecular Prandtl number" while p. 277 defines it
+  as the effective turbulent one.
 - **Printed statements of Ghidoni et al. (2026) against their Table 1.**
   §4.1 states that at $y_1^+=1$ "already for $\mathbb P^1$ … the error is
   below 0.5 %", while Table 1 gives 1.970 % (0.416 % at $N=2$); §4.1 and §5
@@ -535,3 +606,4 @@ Five high-order sources resolve the wall instead, and say what it takes:
 - [Guo & Wang (2025)](/sources/guo-2025.md) — Eqs. (17)–(20) (OpenFOAM wall functions); §2.2.2 (wall functions on the periodic hill, Gritskevich et al. as cited).
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.4, Eqs. (19)–(24) (log-law inversion in an immersed-boundary LES; passing).
 - [Mays et al. (2023)](/sources/mays-2023.md) — §2.1 (all-$y^+$ wall treatment of STAR-CCM+ at $y^+<1$; passing).
+- [Launder & Spalding (1974)](/sources/launder-1974.md) — §2.1 Eq. (2.1-12); §2.3-1, Eqs. (2.3-1)–(2.3-3), Fig. 2.1 (standard wall functions); §3.3, §3.5 Fig. 3.5b, §3.8, §4; Nomenclature.

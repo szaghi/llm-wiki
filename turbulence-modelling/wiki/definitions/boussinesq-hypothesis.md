@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-29T07:39:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -34,6 +34,46 @@ from the resolved velocity gradient.
 
 The sources print the same hypothesis with different signs, density weights
 and treatments of the trace; translated to the registry they agree.
+
+- **RANS, the standard two-equation form.** Launder & Spalding (1974) write
+  $-\rho\langle u_i'u_j'\rangle=\mu_t(\partial_j\langle u_i\rangle+\partial_i\langle u_j\rangle)-\tfrac23\rho k\delta_{ij}$,
+  the registry form multiplied by $-\rho$, with $\mu_t=C_\mu\rho k^2/\varepsilon$
+  from the [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md)
+  ([Launder & Spalding (1974)](/sources/launder-1974.md), §2.2, §2.4, Eqs.
+  2.2-3, 2.4-1). They call the scalar-viscosity hypothesis "perfectly
+  adequate" in two-dimensional flows without swirl, and state that in
+  swirling and three-dimensional flows each active stress component needs a
+  different viscosity (Roberts, as cited) (§2.4); their own tests are below.
+- **Subgrid stress of a general-circulation model.** Smagorinsky (1963)
+  represents the lateral (horizontal) stresses of motions below the grid
+  scale by an exchange coefficient $(k_H\Delta)^2\lvert D\rvert$ acting on
+  the horizontal tension and shearing strains,
+  $D_T=\partial_xu-\partial_yv$, $D_S=\partial_xv+\partial_yu$,
+  $\lvert D\rvert=\sqrt{D_T^2+D_S^2}$, with $k_H\approx0.28$ and the grid
+  interval $\Delta=555$ km ($k_H$, $D_T$, $D_S$, $\lvert D\rvert$ page-local; the
+  map factor of the Mercator projection set to one); the lateral force is
+  $\big(\partial_x(\nu_tD_T)+\partial_y(\nu_tD_S),\ \partial_x(\nu_tD_S)-\partial_y(\nu_tD_T)\big)$
+  with $\nu_t=(k_H\Delta)^2\lvert D\rvert$
+  ([Smagorinsky (1963)](/sources/smagorinsky-1963.md), §4, Eqs. 4.22–4.24,
+  p. 105; §14, p. 150). With the two-dimensional deviatoric strain of the
+  horizontal velocity, $S^{(2)}_{ij}=S_{ij}-\tfrac12S_{kk}\delta_{ij}$
+  ($i,j\in\{x,y\}$; page-local, the registry's $S^d_{ij}$ removes a third
+  of the trace), $2S^{(2)}_{xx}=-2S^{(2)}_{yy}=D_T$ and $2S_{xy}=D_S$, so the
+  force is $\partial_j(2\nu_tS^{(2)}_{ij})$, the divergence of the linear
+  closure written with that two-dimensional deviator, and
+  $\lvert D\rvert=\sqrt{2S^{(2)}_{ij}S^{(2)}_{ij}}$; since
+  $2S_{ij}S_{ij}=D_T^2+D_S^2+(\partial_xu+\partial_yv)^2$, $\lvert D\rvert$
+  equals the registry $\lvert S\rvert$ of the horizontal velocity only where
+  its divergence vanishes *(compiler check, not in the sources)*. The
+  vertical stresses of the same model are proportional to the vertical
+  shear through a separate eddy viscosity (Eq. 4.5), and heat diffuses
+  laterally with $(k_H\Delta)^2\lvert D\rvert_\Sigma/2$, the same $k_H$ (the
+  source's $\lvert\bar D\rvert$, whose overbar marks its two-level sum, not the LES filter;
+  Eq. 4.26;
+  see [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)).
+  The coefficient is the origin of the
+  [Smagorinsky model](/methods/smagorinsky-model.md); its justification by
+  an inertial-subrange balance is on that page.
 
 - **RANS, compressible.** Li & Liu (2022) write the Reynolds stress in the
   $-\rho\langle u_i'u_j'\rangle$ convention as
@@ -876,7 +916,17 @@ separated boundary layers (reattachment length and wall-shear recovery
 effects on the Reynolds-stress budget are absent from the linear model;
 duct secondary flows, "which vanish identically under a scalar eddy
 viscosity"; and strong system rotation or streamline curvature. The duct
-statement is the one Sandberg & Zhao (2022) make above. For LES the
+statement is the one Sandberg & Zhao (2022) make above. Launder & Spalding
+(1974, §3.9, Fig. 3.9) show it in a computation of fully developed square-duct
+flow: the [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) with the
+isotropic viscosity gives no motion in the cross-sectional plane, whereas
+an algebraic stress model predicts the secondary flow and its effect on the
+axial-velocity contours (Tatchell's computation, as cited; see the
+[explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)).
+In a tube with a twisted tape insert they attribute the poorer
+friction-factor agreement mainly to strong non-isotropy of the turbulent
+viscosity (§3.8, Fig. 3.8), and their conclusion calls for tested
+replacements of the isotropic viscosity formula (§4). For LES the
 review writes the Smagorinsky form of the hypothesis for the deviatoric
 SGS stress (§II C, Eq. 5) and notes that the dynamic variant relaxes the
 fixed coefficient "but retains the scalar form". Hu & Yang (§III D) also
@@ -1403,4 +1453,6 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [An et al. (2025)](/sources/an-2025.md) — §2.1, Eq. (4) (eddy viscosity in the viscous stress).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1, §3.1.2, Fig. 12 (eddy-viscosity assumption and discrepancy inversion, as cited).
 - [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.2, Eqs. (9)–(10) (Favre-averaged RANS closed by the Boussinesq approximation in engine CFD; isotropy assumption).
+- [Launder & Spalding (1974)](/sources/launder-1974.md) — §2.2 Eq. 2.2-3, §2.4 Eq. 2.4-1 (two-equation form, adequacy without swirl), §3.8 Fig. 3.8, §3.9 Fig. 3.9 (square duct: no secondary flow), §4.
+- [Smagorinsky (1963)](/sources/smagorinsky-1963.md) — §4, Eqs. 4.5, 4.22–4.26, p. 105; §14, p. 150 (lateral subgrid eddy viscosity $(k_H\Delta)^2\lvert D\rvert$ on tension and shearing strain).
 - [Hu & Yang (2026)](/sources/hu-2026.md) — review: §II A, Eq. 2 (RANS form); §II C, Eq. 5 (LES form, dynamic variant); §II D (misalignment failures); §III D (Boussinesq target of learned corrections; families read as remedies). Review, citation only.

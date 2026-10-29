@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "k-ω SST model"
-description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its printed variants, log-ω, transition, PANS, DES and compressibility-corrected forms, high-order discretization, data-driven corrections, and evidence on airfoils, cascades, cars and separated flows."
+description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with a transformed k-ε outer one through F1 and limiting the eddy viscosity through F2: the 1994 BSL and SST formulation and its evidence, later printed variants, transition, PANS, DES and compressibility-corrected forms, high-order discretization and data-driven corrections."
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES, BSL k-ω, baseline k-ω model]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-29T10:04:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # k-ω SST model
@@ -25,6 +25,141 @@ submissions compared with wall-modelled LES. On this page the strain and
 rotation magnitudes are those of the mean velocity. The unblended Wilcox
 model from which the inner branch derives, with its 1998, 2006 and TNT
 variants, is on the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md).
+
+## The 1994 formulation: BSL and SST
+
+Menter (1994) builds two models "on a strictly empirical basis" from the
+elements judged best among existing two-equation models
+([Menter (1994)](/sources/menter-1994-b.md), pp. 1598–1600, App. Eqs.
+A1–A17). The premises, as stated: small changes of 5–10% in the constants
+can improve or degrade predictions significantly, and no theoretical tool
+fixes constants to that accuracy, so models must be validated on
+challenging flows (p. 1598); the Wilcox $k$-$\omega$ model needs no damping
+functions, admits a simple Dirichlet wall condition, is numerically more
+stable and is superior in the log layer of adverse-pressure-gradient
+flows, but is strongly sensitive to the freestream value of $\omega$,
+which the [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) is not
+(p. 1599; see the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md));
+and it is the eddy-viscosity level of the wake region, not the log-region
+behaviour, that ultimately decides the response to strong adverse pressure
+gradients (p. 1599).
+
+**Baseline (BSL) model.** The standard $k$-$\varepsilon$ model is
+transformed into $k$-$\omega$ variables, which adds the cross-diffusion term
+and changes the constants (a small additional diffusion term is
+neglected); the Wilcox equations multiplied by $F_1$ and the transformed
+ones multiplied by $1-F_1$ are added (Eqs. 1–7). Divided by the density,
+the result has the form of the transport equations of the Equations
+section below, with Menter's $\gamma$ for the production coefficient
+written $\alpha$ there and the production written $(\gamma/\nu_t)P_k$
+*(compiler check, not in the sources)*; the constants are blended as
+$\phi=F_1\phi_1+(1-F_1)\phi_2$ (Eqs. A1–A3):
+
+| set | $\sigma_k$ | $\sigma_\omega$ | $\beta$ | $\beta^*$ | $\kappa$ | $\gamma$ |
+|---|---|---|---|---|---|---|
+| 1, BSL (Wilcox) | 0.5 | 0.5 | 0.0750 | 0.09 | 0.41 | $\beta_1/\beta^*-\sigma_{\omega1}\kappa^2/\sqrt{\beta^*}$ |
+| 1, SST | 0.85 | 0.5 | 0.0750 | 0.09 | 0.41 | same formula; $a_1=0.31$ |
+| 2 (transformed $k$-$\varepsilon$) | 1.0 | 0.856 | 0.0828 | 0.09 | 0.41 | $\beta_2/\beta^*-\sigma_{\omega2}\kappa^2/\sqrt{\beta^*}$ |
+
+(Eqs. A4, A5, A13). Menter prints no numerical $\gamma$; the formulas give
+$\gamma_1=0.5532$ and $\gamma_2=0.4404$ *(compiler check, not in the
+sources)*, against the 0.5532 and 0.4403 that Dzanic et al. tabulate below.
+The blending function is
+
+$$F_1=\tanh\big(\mathrm{arg}_1^4\big),\qquad \mathrm{arg}_1=\min\Big[\max\Big(\frac{\sqrt k}{0.09\,\omega d},\frac{500\nu}{d^2\omega}\Big),\frac{4\sigma_{\omega2}k}{CD_{k\omega}d^2}\Big],\qquad CD_{k\omega}=\max\Big(\frac{2\sigma_{\omega2}}{\omega}\partial_jk\,\partial_j\omega,\,10^{-20}\Big)$$
+
+(Eqs. A8–A10, printed with the density in both $\mathrm{arg}_1$ and
+$CD_{k\omega}$, where it cancels in the ratio except where the floor is
+active *(compiler check, not in the sources)*), with $d$ "the shortest distance between
+the present point and all no-slip boundaries", not necessarily normal to a
+surface (p. 1600). Menter explains the three arguments (App.): the first
+is the turbulent length scale divided by $d$, equal to 2.5 in the log
+layer and falling to zero towards the boundary-layer edge; the second
+keeps $F_1=1$ in the sublayer, where $\omega\sim d^{-2}$; the third is a
+safeguard that drives $\mathrm{arg}_1$ to zero near the boundary-layer edge
+if the freestream-dependent ("degenerate") solution is approached. The
+wall distance is computed once unless the grid deforms, and the blending
+and cross-diffusion leave computing time and stability unaffected (p.
+1600, Conclusions).
+
+**Shear-stress transport (SST).** Reynolds-stress models carry the
+transport of the principal shear stress, and the Johnson–King model owes
+its advantage over algebraic models to a transport equation for it built
+on Bradshaw's assumption $\tau=\rho a_1k$, $a_1$ a constant (Eqs. 8–9).
+Two-equation models instead give $\tau=\rho\sqrt{P_k/\varepsilon}\,a_1k$ (Eq.
+11, after Menter's Ref. 10, as cited), which overpredicts $\tau$ where
+production exceeds dissipation, as in Driver's adverse-pressure-gradient
+data. The SST eddy viscosity
+
+$$\nu_t=\frac{a_1k}{\max(a_1\omega,\,\Omega F_2)},\qquad F_2=\tanh\big(\mathrm{arg}_2^2\big),\qquad \mathrm{arg}_2=\max\Big(\frac{2\sqrt k}{0.09\,\omega d},\frac{500\nu}{d^2\omega}\Big)$$
+
+(Eqs. 12, A14–A16) enforces Bradshaw's relation where $\Omega>a_1\omega$ in
+adverse-pressure-gradient boundary layers and recovers $\nu_t=k/\omega$
+elsewhere; $F_2$ is one in boundary layers and zero in free shear layers,
+and "$\Omega$ is the absolute value of the vorticity", i.e. the registry's
+$\lvert\Omega\rvert=\sqrt{2\Omega_{ij}\Omega_{ij}}$ *(compiler check, not in the
+sources)*. SST is BSL with set 1 replaced by the SST row ($\sigma_{k1}$ from
+0.5 to 0.85, plus $a_1$). An "Important detail!" (App.): the $\omega$
+production must be written $(\gamma/\nu_t)P_k$ (Eq. A2); the form
+$\gamma(\omega/k)P_k$ (Eq. A17) coincides with it in the original and BSL
+models but not under the SST limiter, and since SST "has been calibrated
+with respect to Eq. (A2)", Eq. (A17) "should therefore not be used".
+
+**Boundary values.** Menter recommends freestream values
+$\omega_\infty=(1\to10)U_\infty/L$, $\nu_{t\infty}=10^{-(2\to5)}\nu_\infty$,
+$k_\infty=\nu_{t\infty}\omega_\infty$, with $L$ the approximate length of the
+computational domain (Eq. A11), and the wall value
+$\omega=10\cdot6\nu/\big(\beta_1(\Delta d_1)^2\big)$, $\Delta d_1$ the distance of
+the next point from the wall, which reproduces Wilcox's smooth-wall
+condition as long as $\Delta d_1^+<3$ (Eq. A12). This is the
+$60\nu/(\beta_1\Delta d_1^2)$ of Dzanic et al. and the
+$10\cdot6\nu/(\beta y^2)$ that Zhao et al. (2023b) attribute to Bassi et
+al., below *(compiler check, not in the sources)*. Two-layer $k$-$\varepsilon$ variant and the transformed
+$k$-$\varepsilon$ constants: see [$k$-$\varepsilon$ models](/methods/k-epsilon-model.md).
+
+**Evidence of 1994.** Incompressible computations with the INS3D code and
+a transonic solver (pp. 1600–1603):
+
+- *Freestream sensitivity.* On a zero-pressure-gradient flat plate, with
+  $\omega$ in the freestream reduced by four orders of magnitude (and $k$
+  reduced to keep the freestream $\nu_t$), the eddy viscosity of the
+  original $k$-$\omega$ model changes by almost 100%, while BSL and SST give
+  the same result for both values (Fig. 1). All models agree with the
+  $u^+$–$y^+$ and $C_f$ correlations of the flat plate, and the $k$-$\omega$
+  models tolerate a first grid point as far out as $y^+=3$ (results in
+  Menter's Ref. 9, as cited; see
+  [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
+- *Free shear layers.* BSL and SST reduce to the same model ($F_1=F_2=0$),
+  "virtually identical" to standard $k$-$\varepsilon$ (Ref. 9, as cited).
+- *Adverse pressure gradient.* On the Samuel–Joubert boundary layer all
+  three $k$-$\omega$ models reproduce the data and the Jones–Launder
+  $k$-$\varepsilon$ model gives too high a $C_f$ (Ref. 9, as cited). In
+  Driver's separated axisymmetric flow SST gives the best wall pressure,
+  the largest separation and the best velocity profiles, and reproduces
+  the measured reduction of $\nu_{t,\max}/(u_e\delta^*)$, while BSL and the
+  original model give a consistently too high maximum eddy viscosity and
+  the $k$-$\varepsilon$ model stays attached (Figs. 2–6).
+- *Backward-facing step* (Driver & Seegmiller; $120\times120$ grid, $90\times90$
+  and $240\times240$ virtually identical): reattachment at 6.5 (SST), 5.9
+  (BSL), 6.4 (original $k$-$\omega$) and 5.5 ($k$-$\varepsilon$) step heights
+  against about 6.4 measured; all models fail to capture the relaxation
+  downstream of reattachment (Figs. 7–8; see
+  [backward-facing step](/benchmarks/backward-facing-step.md)).
+- *NACA 4412 at $13.87^\circ$* ($Re=1.52\times10^6$, $241\times61$ grid): SST
+  predicts the displacement effect in very good agreement, BSL responds
+  somewhat, and the original $k$-$\omega$ lies even further from the data
+  than $k$-$\varepsilon$, which Menter attributes to its freestream
+  dependency; with a freestream $\omega$ about fifty times larger SST changes
+  very little while the original model moves close to BSL (Fig. 9; see
+  [NACA 4412](/benchmarks/naca-4412-airfoil.md)).
+- *Transonic bump* (Bachalo & Johnson, $M=0.925$, $150\times3\times80$ grid):
+  SST predicts a significantly better wall pressure than the other models
+  (Fig. 10).
+
+Menter concludes that SST "is the only available two-equation model that
+has demonstrated the ability to accurately predict pressure-induced
+separation and the resulting viscous-inviscid interaction" and "should be
+the model of choice for aerodynamic applications" (Conclusions).
 
 ## Equations
 
@@ -78,6 +213,9 @@ normalization is not printed; they print no other coefficient
 sources thus differ in the limiter's argument (rotation magnitude in
 Dzanic et al., strain magnitude in Zhao et al.) and in the floor of
 $CD_{k\omega}$ ($10^{-10}$ against $10^{-20}$); neither discusses the choice.
+Menter (1994) prints the vorticity in the limiter, the literal 0.09 in
+$F_1$ and $F_2$ and the floor $10^{-20}$ (Eqs. A9–A10, A14–A16): the
+limiter of Dzanic et al., the 0.09 and the floor of Zhao et al.
 Zhao et al. impose $\omega_w=10\cdot6\nu/(\beta y^2)$ at the wall "according
 to" Bassi et al., which is Dzanic et al.'s $60\nu/(\beta_1\Delta d_1^2)$
 *(compiler check, not in the sources)*, and add that the wall constant
@@ -109,8 +247,8 @@ strain magnitude, and $F_{23}=F_2F_3$ when the optional
 $F_3=1-\tanh\big[\big(\min(150\nu/(\omega d^2),10)\big)^4\big]$ is enabled.
 The production coefficients follow from the log-layer condition
 $\alpha=\beta/\beta^*-\sigma_\omega\kappa^2/\sqrt{\beta^*}$: with $\kappa=0.41$
-this gives 0.5532 and 0.4403, the values Dzanic et al. tabulate; Oulghelou
-et al.'s 0.44 is the rounding of 0.4403, while their $5/9\approx0.5556$
+this gives 0.5532 and 0.4404 (Dzanic et al. tabulate 0.5532 and 0.4403);
+Oulghelou et al.'s 0.44 is the rounding of 0.4404, while their $5/9\approx0.5556$
 differs from 0.5532 in the third digit, so it is not a rounding of the
 log-layer value *(compiler check, not in the sources)*. The same condition,
 written as $\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\sigma_\omega$
@@ -1095,6 +1233,24 @@ version read (arXiv v1):
   having the dimensions of $D\rho k/Dt$ by their Eq. 1 *(compiler check,
   not in the sources)*.
 
+- **Production form of the $\omega$ equation.** Wu et al. (2023) print the
+  production of their BSL host as $\omega(\gamma_\omega/k)\mathcal T_{ij}\partial_ju_i$
+  (Eq. 2), the form $\gamma(\omega/k)P_k$ that Menter (1994, Eq. A17)
+  states coincides with $(\gamma/\nu_t)P_k$ in BSL but "should therefore not
+  be used" under the SST limiter; Wu et al. name the host BSL, and Wu et
+  al. (2026) state that SATES is built on SST without printing the
+  production. Menter et al. (2022) compute it as $\alpha P_k/(\nu_t+0.001\nu)$,
+  the (A2) form with a regularized denominator (above).
+- **Separation, 1994 and later.** Menter (1994) concludes that SST is the
+  only two-equation model shown to predict pressure-induced separation
+  accurately, on Driver's flow, the backward-facing step, NACA 4412 and the
+  transonic bump; later sources on this page find SST overpredicting
+  separation on the periodic hill, curved steps, a converging–diverging
+  channel, the Ahmed body and a high-lift airfoil (Wu et al. 2025;
+  Oulghelou et al. 2025; Cherroud et al. 2022; Delassaux et al. 2023). No
+  source on this page runs the 1994 cases and these flows with one model
+  version.
+
 ## Contradictions
 
 - **Exponent of the Langtry–Menter $F_3$.** *Open.* Menter et al. (2022)
@@ -1110,6 +1266,7 @@ version read (arXiv v1):
 
 # Citations
 
+- [Menter (1994)](/sources/menter-1994-b.md) — pp. 1598–1600, Eqs. 1–13 (premises, BSL, SST, Bradshaw relation); App. Eqs. A1–A17 (complete models, constants, blending functions, boundary values, the production form); pp. 1600–1603, Figs. 1–10 (flat plate, Driver's flow, backward-facing step, NACA 4412, transonic bump); Conclusions.
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2.1 Eqs. 10–17, §3 Eq. 26, App. A.
 - [Menter et al. (2022)](/sources/menter-2022.md) — §1, §2.1 Eqs. 5–7.
 - [Haering et al. (2022)](/sources/haering-2022.md) — §IV B.

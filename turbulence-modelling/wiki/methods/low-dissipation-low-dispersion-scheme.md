@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs an energy-preserving central flux with much-r
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation, dispersion-relation-preserving scheme, optimized selective filter, FDo11p, RFo11p]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-29T10:04:00Z
+timestamp: 2026-10-29T16:18:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -179,7 +179,10 @@ others for real-gas (transcritical) flow, on second-order centred
 differences (§3.2, Table 2; §4):
 
 - **Implicit compact filtering** of the divergence form, the fourth-order
-  filter of Lele and of Visbal & Gaitonde with $\alpha_{\mathrm{cf}}=0.495$
+  filter of Lele and of Visbal & Gaitonde (its printed coefficients are
+  those of the tridiagonal member of
+  [Lele 1992](/sources/lele-1992.md), App. C.2, Eq. C.2.4, *compiler
+  check, not in the sources*) with $\alpha_{\mathrm{cf}}=0.495$
   (page-local filter parameter, not the modal-filter strength $\alpha_f$ of
   registry §11) applied to every conservative variable at every
   Runge–Kutta stage (Eq. 29): it "does not suppress" the spurious pressure
@@ -196,7 +199,12 @@ differences (§3.2, Table 2; §4):
 review of DNS and LES of [Kim & Leonard (2024)](/sources/kim-2024-b.md),
 §4.8, records that high-order compact finite-difference schemes (Lele
 1992) were developed to minimize numerical dispersion error, for
-computational aeroacoustics at NASA Ames. A DNS solver of that family is
+computational aeroacoustics at NASA Ames; Lele (1992, §1) itself
+names direct numerical simulation of flows with a range of scales,
+"turbulent fluid flows being a common example", as the motivation, and resolution over the whole
+wavenumber range rather than formal order as the design criterion (see
+[compact finite-difference schemes](/methods/compact-finite-difference-scheme.md)).
+A DNS solver of that family is
 the one of [Kang & Lee (2024)](/sources/kang-2024.md), §II.B,
 Eqs. (8)–(9), for a Mach 2.9 compression-ramp interaction: the
 sixth-order tridiagonal compact first derivative
@@ -213,7 +221,10 @@ artificial diffusivity (see
 With the printed filter coefficients the right-hand-side weights sum to
 $1+2\times0.47$ and their alternating sum is zero, so the transfer
 function is one at zero wavenumber and zero at the grid Nyquist
-wavenumber *(compiler check, not in the sources)*.
+wavenumber *(compiler check, not in the sources)*. Lele (1992,
+Eqs. 2.1, 2.1.7) prints the same coefficients with the second
+right-hand-side difference divided by $4h$; the printed $6h$ of Kang &
+Lee is discussed on the compact-scheme page.
 
 **Optimized high-order upwind reconstruction.**
 [Wang et al. (2024)](/sources/wang-2024.md) take the opposite route to LD2:
@@ -394,6 +405,25 @@ nonlinear reconstruction of WENO-JS dissipates turbulent fluctuations at the
 higher resolvable wavenumbers (§IV).
 
 ## Optimizing stencils, filters and time integrators by a spectral objective
+
+**The spectral-like compact schemes.** [Lele (1992)](/sources/lele-1992.md),
+§3.1, chooses coefficients by a wavenumber-space condition rather than
+by maximal order: on the
+three-parameter fourth-order pentadiagonal compact family it imposes
+exact modified wavenumbers at three points, $kh=2.2$, 2.3 and 2.4
+("no attempt was made to optimize" them), and obtains a formally
+fourth-order first derivative that resolves 90%, 83% and 79% of the
+representable wavenumbers within relative errors of 0.1, 0.01 and 0.001,
+against 81%, 68% and 56% for the tenth-order scheme of the same
+stencil (Table III); the second derivative, the mid-point interpolation
+and the low-pass filters are tuned the same way (Eqs. 3.1.12–3.1.13,
+C.1.7–C.1.8, C.2.9–C.2.10). Lele draws the general lesson from a
+boundary closure whose dissipative error is removed by one extra
+condition: the desired characteristics "are better achieved by directly
+optimizing the scheme (in Fourier space) rather than by seeking the
+scheme with the lowest possible truncation error" (§4.1). The
+coefficients are on
+[compact finite-difference schemes](/methods/compact-finite-difference-scheme.md).
 
 Three sources build the coefficients of their schemes by
 minimizing a wavenumber-space error under order constraints, the
@@ -610,6 +640,7 @@ footnote 1).
 - [Ma et al. (2022)](/sources/ma-2022.md) — §1 (CRWENO); §2.3, Table 1, Fig. 1 (Fourier and ADR resolving ratios of WCNS-E and WCNS-T); §2.3.1–2.3.2, Fig. 2, Table 2 (shock–entropy wave; cost and order).
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2.1–2.2.2, Eqs. (12)–(15) (fourth-order WCNS with near-linear and Z-type weights, blended central/upwind interpolation with $\sigma_b=0.02$); §3.3, Table 2, Fig. 11 (scheme dissipation and lift of the 30P30N airfoil); §4.
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §4.8 (compact finite differences developed to minimize dispersion error; historical, passing).
+- [Lele (1992)](/sources/lele-1992.md) — §1 (motivation); Eqs. (2.1), (2.1.7); §3.1, Eqs. (3.1.5)–(3.1.6), (3.1.12)–(3.1.13), Table III (spectral-like schemes); §4.1 (Fourier-space optimization of a boundary closure); App. C, Eqs. (C.1.7)–(C.1.8), (C.2.4), (C.2.9)–(C.2.10) (spectral-like interpolation, compact filters).
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eqs. (8)–(9) (sixth-order compact differences with eighth-order compact filter, adaptive second-order filter at shocks).
 - [Gao et al. (2025)](/sources/gao-2025.md) — §II.A (Tam–Webb DRP scheme, Adams–Bashforth, Bogey–Bailly selective filter in a WMLES solver); §III.A.2, Fig. 10 (wall-pressure spectra against a low-order WMLES).
 - [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II A (Hu–Hussaini–Manthey LDDRK time marching); §III B (DRP reference LES of the periodic hill; passing).

@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-29T07:36:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -252,6 +252,23 @@ flux to zero where the base model backscatters. A priori on box-filtered
 isotropic turbulence at $Re_\lambda=418$, anisotropic (book- and
 pencil-type) filters lower the mean model dissipation, which the authors
 partly attribute to more model backscatter (§III.A.2, Figs. 2–3).
+
+The founding paper of the [dynamic procedure](/methods/dynamic-procedure.md)
+keeps the negative coefficient.
+[Germano et al. (1991)](/sources/germano-1991.md) (§I) list the inability
+to represent backscatter among the limits of the
+[Smagorinsky model](/methods/smagorinsky-model.md). Their modelled
+dissipation, $\varepsilon_{\mathrm{SGS}}=m^{\mathrm G}_{ij}\bar S_{ij}$
+(page-local, the model stress contracted with the strain, i.e. $-\Pi$ of
+the model in the registry sign), is proportional to the plane average
+$\langle L_{ij}\bar S_{ij}\rangle$ of the resolved stress. That average
+can take either sign, so the model does not rule out backscatter (§II).
+With plane averaging the backscatter is not localized; averaging Eq. (15)
+locally would localize it. No clipping is applied. In their LES of
+transitional channel flow, "for $t\le185$ the eddy viscosity was negative
+for significant regions of the channel", which they present as evidence
+that the model predicts average backscatter (§III; time units not
+stated, no figure).
 
 Two further sources tie the removal of backscatter from the
 [dynamic procedure](/methods/dynamic-procedure.md) to stability.
@@ -868,3 +885,4 @@ statements are hedged ("may"; "may be unnecessary or undesirable").
 - [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.4 (backscatter modelling named among stabilizations of CNN closures, Guan et al. cited). Review, citation only.
 - [Hu & Yang (2026)](/sources/hu-2026.md) — review: §II C–E (two-way exchange without a spectral gap; Smagorinsky and dynamic model); §IV A (pointwise training averages out backscatter; failure modes; Guan et al. as cited). Review, citation only.
 - [Rajek & Pozorski (2026)](/sources/rajek-2026.md) — §II D, Eq. (16); §III B, Fig. 5 (negative a priori spectral eddy viscosity at low $k$; Lesieur as cited); §IV, Eq. (26) (non-negative adaptive viscosity).
+- [Germano et al. (1991)](/sources/germano-1991.md) — §I; §II, Eqs. (15)–(17); §III (negative plane-averaged eddy viscosity in transition, no clipping).

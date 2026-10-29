@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "k-ε models"
-description: "Two-equation RANS eddy-viscosity models transporting the turbulent kinetic energy and its dissipation rate: the standard high-Reynolds form, its constants and log-law calibration, the realizable variant with a two-layer wall treatment, low-Reynolds and elliptic-relaxation relatives, and evidence on bluff-body wakes, periodic hills, shock interactions and learned non-linear corrections."
+description: "Two-equation RANS eddy-viscosity models transporting the turbulent kinetic energy and its dissipation rate: the standard form of Launder and Spalding with its constants, log-law calibration and round-jet correction, the Jones–Launder low-Reynolds form, realizable and elliptic-relaxation relatives, and evidence on adverse pressure gradients, bluff-body wakes, periodic hills and learned corrections."
 status: established
-aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
+aliases: [k-epsilon, standard k-ε, Launder–Spalding k-ε, Launder–Sharma k-ε, Jones–Launder k-ε, JL k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # k-ε models
@@ -19,13 +19,105 @@ $$\nu_t=C_\mu\frac{k^2}{\varepsilon}.$$
 
 The family includes the standard high-Reynolds-number model, low-Reynolds
 forms with near-wall damping, the realizable model of Shih et al., and
-elliptic-relaxation descendants. In this bundle the standard model is the
+elliptic-relaxation descendants. The standard model with its constants
+and its wall functions is the one Launder & Spalding (1974) recommend as
+the best compromise between economy, range of applicability and physical
+realism: "the simplest kind of model that permits prediction of both
+near-wall and free-shear-flow phenomena without adjustments to constants or
+functions" ([Launder & Spalding (1974)](/sources/launder-1974.md), §1.2,
+§2.2, §4). In this bundle the standard model is the
 baseline of a learned non-linear correction (Tang et al. 2023), the
 realizable model is the industrial reference of an automotive study
 (Delassaux et al. 2023), and the $k$-$\varepsilon$ branch is the outer
 formulation of the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md).
 
 ## The standard model
+
+**The founding form.** Launder & Spalding (1974) print the high-Reynolds-number
+model as the recommendation of the Imperial College group, its
+$\varepsilon$ equation "first developed and used in the Imperial College
+group by Hanjalić" and its constants taken from Launder et al. (1972) (both
+as cited) ([Launder & Spalding (1974)](/sources/launder-1974.md), §2.2,
+Eqs. 2.2-1–2.2-3, Table 2.1). In registry notation, for constant density
+and with $D/Dt=\partial_t+\langle u_j\rangle\partial_j$,
+
+$$\begin{aligned}
+\frac{Dk}{Dt}&=\partial_j\Big[\frac{\nu_t}{\sigma_k}\partial_jk\Big]+\nu_t\big(\partial_j\langle u_i\rangle+\partial_i\langle u_j\rangle\big)\partial_j\langle u_i\rangle-\varepsilon,\\
+\frac{D\varepsilon}{Dt}&=\partial_j\Big[\frac{\nu_t}{\sigma_\varepsilon}\partial_j\varepsilon\Big]+C_{\varepsilon1}\frac{\varepsilon}{k}\nu_t\big(\partial_j\langle u_i\rangle+\partial_i\langle u_j\rangle\big)\partial_j\langle u_i\rangle-C_{\varepsilon2}\frac{\varepsilon^2}{k},\\
+\nu_t&=C_\mu\frac{k^2}{\varepsilon},
+\end{aligned}$$
+
+with the constants of the table below ($C_\mu=0.09$, $C_{\varepsilon1}=1.44$,
+$C_{\varepsilon2}=1.92$, $\sigma_k=1.0$, $\sigma_\varepsilon=1.3$; the source's
+$C_1$, $C_2$). The authors call these values appropriate to plane jets and
+mixing layers and expect them to be equally satisfactory near walls
+(§2.2). The production term equals $2\nu_t\langle S_{ij}\rangle\langle S_{ij}\rangle$, the
+$P_k$ of the Boussinesq closure in incompressible flow *(compiler check, not
+in the sources)*. The high-Reynolds form carries no molecular diffusion:
+the molecular viscosity enters only the low-Reynolds form of the same paper
+(§2.3-2, below). Launder & Spalding define the dissipation rate as
+$\varepsilon=\nu\langle\partial_ku_i'\,\partial_ku_i'\rangle$ (Eq. 2.1-4), whereas the registry
+writes $2\nu\langle s_{ij}s_{ij}\rangle$; for divergence-free fluctuations the two differ by
+$\nu\,\partial_i\partial_jR_{ij}$, which vanishes in homogeneous turbulence
+*(compiler check, not in the sources)*. Their §2.1 also defines a length
+scale $L=c_lk^{3/2}/\varepsilon$ with a constant $c_l$ (page-local, the
+source's $C_D$, not the drag coefficient; value not printed), while §2.3
+uses $L=k^{3/2}/\varepsilon$.
+
+**Why $\varepsilon$.** Launder & Spalding (§2.1) argue that the alternative
+second variables $kL$ and the time$^{-2}$ variable $k/L^2$ (interpreted as a
+mean-square vorticity fluctuation, after Spalding and Saffman as cited) are
+formally interconvertible with $\varepsilon=k^{3/2}/L$ (Eqs. 2.1-5, 2.1-6),
+but a gradient-diffusion model of the third-order correlations is not
+invariant under the change of variable. In a constant-stress near-wall
+layer with uniform $k$ and $L\propto y$, the equation of a generic variable
+$k^m/L^n$ reduces to (Eqs. 2.1-10–2.1-13)
+
+$$\frac{n^2}{\sigma_t}+\frac{C_1C_\mu^{1/2}}{\kappa^2}-\frac{C_2C_\mu^{1/2}}{\kappa^2}=0,$$
+
+with $\sigma_t$ the Prandtl number of the variable and $C_1$, $C_2$ its
+production and destruction constants, which depend on $m$ and $n$
+(page-local; $C_{\varepsilon1}$, $C_{\varepsilon2}$ for $n=1$). With "the proper
+values" of the constants it gives $\sigma_t=-0.8$ for $kL$ ($n=-1$), $2.9$
+for $k/L^2$ ($n=2$) and $1.3$ for $\varepsilon$ ($n=1$); only the last fits
+the spreading of free shear flows, so only the $k$-$\varepsilon$ model avoids
+making a "constant" depend on $y/L$ (§2.1; the values of $\kappa$ and of the
+$m,n$-dependent constants are not printed). For $n=1$ the relation is the
+log-law condition of Heinz (2020) below *(compiler check, not in the
+sources)*. In the round jet no single set
+of constants fits together with plane free shear flows and wall flows;
+Launder & Spalding recommend Rodi's modification (as cited)
+
+$$C_\mu=0.09-0.04f,\qquad C_{\varepsilon2}=1.92-0.0667f,\qquad f=\Big|\frac{Y}{2\Delta U}\Big(\frac{dU_{cl}}{dx}-\Big|\frac{dU_{cl}}{dx}\Big|\Big)\Big|^{0.2},$$
+
+with $U_{cl}$ the axis velocity, $Y$ the width of the mixing region and
+$\Delta U$ the velocity difference across it (page-local), which makes $f$
+vanish in wakes, and add that "little universality can truly be claimed
+for it" (§2.2, Eqs. 2.2-4–2.2-6; see
+[turbulent round jet](/benchmarks/turbulent-round-jet.md)). In weak-shear
+flows with production well below dissipation (far wakes) $C_\mu$ assumes
+higher values; near walls production is always large, so the table values
+are "nearly always applicable" for engineering flows (§2.2).
+
+**Breadth claimed in 1974.** Launder & Spalding (§3) show nine flows
+computed by their group (figures only): in a plane jet in a moving stream
+the $k$-$\varepsilon$ model follows the data where the mixing-length and the
+one-equation ($k$ only) models fail beyond the potential core, "the
+two-equation level is the simplest at which universality is secured for
+both jet and mixing layer" (§3.1, Fig. 3.1); on wall jets over cones of
+$11^\circ$ and $90^\circ$ half-angle it predicts the decay of the maximum
+velocity where a plane-calibrated mixing length underestimates it (§3.2);
+confined coaxial jets and a ventilated room are reproduced with wall
+functions (§3.6–§3.7); a tube with a twisted tape insert agrees "not so
+good", which the authors attribute mainly to strongly anisotropic turbulent
+viscosity (§3.8); and in a square duct the isotropic eddy viscosity gives
+no motion in the cross-sectional plane, whereas an algebraic stress model
+predicts the secondary flow (§3.9; see the
+[explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
+and the [Boussinesq page](/definitions/boussinesq-hypothesis.md)). On a
+film-cooling wall jet behind a thick lip the wall-function value of
+$\varepsilon$ had to be reduced by a factor of 20 on the downstream faces of
+the step and lip (§3.5; see [RANS wall functions](/methods/rans-wall-function.md)).
 
 Tang et al. (2023) print the incompressible high-Reynolds-number model that
 OpenFOAM solves as their baseline, attributing the constants to Launder &
@@ -57,7 +149,14 @@ fluctuating fields inside a hybrid simulation; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 ([Haering et al. (2022)](/sources/haering-2022.md), §II D, Eqs. 1–2).
 
-**Near-wall integration.** Elzaabalawy et al. (2023, §1) state that
+**Near-wall integration.** Launder & Spalding (1974, §2.3) present two
+near-wall treatments side by side: wall functions, which economize
+computer time and storage and require the first node to satisfy
+$(k^{1/2}L/\nu)_P\gg1$ (see [RANS wall functions](/methods/rans-wall-function.md)),
+and the low-Reynolds-number model of Jones & Launder (as cited) integrated
+to the wall, described below; the low-Reynolds model needs "nearly 100
+cross-stream grid points for computational accuracy within 1% (about four
+times as many as when the wall-function method is used)" (§3.3). Elzaabalawy et al. (2023, §1) state that
 wall-resolved versions of the model need ad hoc damping functions near the
 wall "that increase the stiffness of the model and can present problems",
 so that wall functions are usually employed with $k$-$\varepsilon$, whereas
@@ -92,7 +191,10 @@ which the standard constants (1.44, 1.92, 1.3) satisfy only with "a
 relatively high value" $\kappa=0.43$, against $\kappa=0.41$ for the
 $k$-$\omega$ constants Heinz uses (§2.3; see the
 [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)). The right side is
-$0.1872$, $\kappa=0.433$ *(compiler check, not in the sources)*. Heinz's
+$0.1872$, $\kappa=0.433$ *(compiler check, not in the sources)*. The
+same condition is the $n=1$ case of Launder & Spalding's near-wall
+constraint above (Eq. 2.1-11) *(compiler check, not in the sources)*, from
+which they obtain $\sigma_\varepsilon=1.3$ without printing $\kappa$ (§2.1). Heinz's
 analogous condition for the scale-adaptive model gives $\kappa=0.41$ with
 that model's standard settings (see [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)).
 
@@ -217,6 +319,37 @@ the recirculation length "in most of the cases" (§4.1.1).
 
 ## Low-Reynolds and elliptic-relaxation relatives
 
+- **Jones–Launder.** Launder & Spalding (1974) print the low-Reynolds form
+  of Jones & Launder (as cited), integrated to the wall
+  ([Launder & Spalding (1974)](/sources/launder-1974.md), §2.3-2, Eqs.
+  2.3-4–2.3-7). In registry notation, for constant density and with
+  $Re_t=k^2/(\nu\varepsilon)$ (page-local, the source's $R_t$),
+  $$\begin{aligned}
+  \frac{Dk}{Dt}&=\partial_j\Big[\Big(\nu+\frac{\nu_t}{\sigma_k}\Big)\partial_jk\Big]+\nu_t\,\partial_j\langle u_i\rangle\big(\partial_j\langle u_i\rangle+\partial_i\langle u_j\rangle\big)-2\nu\big(\partial_jk^{1/2}\big)^2-\varepsilon,\\
+  \frac{D\varepsilon}{Dt}&=\partial_j\Big[\Big(\nu+\frac{\nu_t}{\sigma_\varepsilon}\Big)\partial_j\varepsilon\Big]+C_{\varepsilon1}\frac{\varepsilon}{k}\nu_t\,\partial_j\langle u_i\rangle\big(\partial_j\langle u_i\rangle+\partial_i\langle u_j\rangle\big)-C_{\varepsilon2}\frac{\varepsilon^2}{k}-2.0\,\nu\nu_t\big(\partial_j\partial_l\langle u_i\rangle\big)^2,\\
+  C_\mu&=0.09\exp\Big[\frac{-2.5}{1+Re_t/50}\Big],\qquad C_{\varepsilon2}=1.92\big[1-0.3\exp(-Re_t^2)\big],
+  \end{aligned}$$
+  with $C_{\varepsilon1}$, $\sigma_k$, $\sigma_\varepsilon$ at their high-Reynolds
+  values and $\varepsilon=0$ at the wall. The term $-2\nu(\partial_jk^{1/2})^2$,
+  equal to the dissipation rate near the wall, is added "for computational
+  rather than physical reasons" so that $\varepsilon=0$ can be imposed; a
+  zero-gradient condition on $\varepsilon$ did not admit a compatible set of
+  Reynolds-number functions; the last term of the $\varepsilon$ equation is
+  included "to produce satisfactory variation of $k$ with distance from the
+  wall" (§2.3-2). Jones & Launder used $C_{\varepsilon1}=1.55$ and
+  $C_{\varepsilon2}=2.0$; Launder & Spalding state that in wall flows only
+  $C_{\varepsilon2}-C_{\varepsilon1}$ matters to first order and is "very nearly
+  the same", so the standard constants give only slightly different
+  predictions (footnote, p. 278). With it, the friction-factor predictions
+  of pipe flow are "excellent" down to the onset of intermittency and the
+  departure of the $Re=6000$ velocity profile from the high-Reynolds log
+  law is reproduced, where Reynolds-independent near-wall formulae tuned for
+  $Re>20\,000$ overpredict $C_f$ (§3.3, Figs. 3.3a,b); on the pressure surface
+  of a turbine blade at three free-stream turbulence levels it reproduces
+  the measured heat transfer without a prescribed transition point: the
+  model "has its own built-in 'transition criterion'" (§3.4, Fig. 3.4). Menter
+  (1994) uses the same Jones–Launder model as the $k$-$\varepsilon$ comparator
+  of the SST paper (see **Adverse pressure gradients** below).
 - The [active model split](/methods/active-model-split.md) of Haering et al.
   (2022) needs a $k$-equation whose $k$ is the turbulent kinetic energy and
   uses the Chien low-Reynolds $k$-$\varepsilon$ model as one of its two base
@@ -277,6 +410,31 @@ the recirculation length "in most of the cases" (§4.1.1).
   above $\langle\rho\rangle/\rho_w$ and $\langle\mu\rangle/\mu_w$ as an input of their
   learned correction (§5, §6; see
   [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
+- **Written in $\omega$.** Menter (1994) transforms the standard
+  high-Reynolds model into $k$-$\omega$ variables to build the outer layer
+  of the BSL and SST models: the $\omega$ equation acquires the
+  cross-diffusion term $2\sigma_{\omega2}\omega^{-1}\partial_jk\,\partial_j\omega$
+  and the constants $\sigma_{k2}=1.0$, $\sigma_{\omega2}=0.856$,
+  $\beta_{\omega2}=0.0828$, $\beta^*=0.09$, $\kappa=0.41$,
+  $\gamma_{\omega2}=\beta_{\omega2}/\beta^*-\sigma_{\omega2}\kappa^2/\sqrt{\beta^*}$; "a
+  small additional diffusion term is neglected in the transformation", with
+  virtually no effect on the solutions according to Menter's Ref. 9 (as
+  cited) ([Menter (1994)](/sources/menter-1994-b.md), Eqs. 3–4, App. Eq. A5;
+  see the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)). From the
+  printed constants, $\beta_{\omega2}/\beta^*=0.92=C_{\varepsilon2}-1$ and
+  $\gamma_{\omega2}=0.440=C_{\varepsilon1}-1$, while $1/\sigma_{\omega2}=1.17$ is
+  the $\sigma_\varepsilon$ that the log-law condition above (Launder &
+  Spalding Eq. 2.1-11 with $n=1$; Heinz 2020, §2.3) gives with the table's
+  $C_\mu$, $C_{\varepsilon1}$, $C_{\varepsilon2}$ and $\kappa=0.41$, not the
+  1.3 of Launder & Spalding's table *(compiler check, not in the sources)*. Menter also states that changing the first
+  blending argument to $\min\big(500\nu/(d^2\omega),\,4\sigma_{\omega2}k/(CD_{k\omega}d^2)\big)$
+  ($d$ the wall distance, $CD_{k\omega}$ the positive part of the
+  cross-diffusion term as on the SST page) gives a two-layer $k$-$\varepsilon$ model with the $k$-$\omega$ model in the
+  sublayer, analogous to Rodi's two-layer model (as cited) but blending
+  without user input; "The modification ensures that $F_1$ is zero for
+  $y^+>70$" (Eq. 13). In free shear layers BSL and SST reduce to the same
+  model, "virtually identical" to the standard $k$-$\varepsilon$ model (p. 1601,
+  results in Menter's Ref. 9).
 - Inside SST the outer branch is a $k$-$\varepsilon$ model written in
   $\omega$; its detached-eddy constant is $C_{\mathrm{DES}}=0.61$ against
   0.78 for the inner branch, blended through $F_1$ (Delassaux et al. 2023,
@@ -284,6 +442,34 @@ the recirculation length "in most of the cases" (§4.1.1).
   [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
 ## Evidence
+
+**Adverse pressure gradients.** Menter (1994) compares the Jones–Launder
+model with the Wilcox, BSL and SST $k$-$\omega$ models
+([Menter (1994)](/sources/menter-1994-b.md), pp. 1601–1603). On the
+Samuel–Joubert boundary layer it gives too high a skin friction while the
+three $k$-$\omega$ models reproduce the data (results in Menter's Ref. 9, as
+cited); in Driver's separated axisymmetric flow it stays firmly attached,
+predicts a significantly higher shear stress approaching separation, and
+its maximum eddy viscosity $\nu_{t,\max}/(u_e\delta^*)$ falls only barely below
+Clauser's 0.0168 (Figs. 2–6; $u_e$ the edge velocity, page-local); on the
+Driver–Seegmiller backward-facing step ($120\times120$ grid, with $90\times90$
+and $240\times240$ virtually identical) its reattachment length is 5.5 step
+heights against about 6.4 measured and 6.5, 5.9 and 6.4 for SST, BSL and
+Wilcox $k$-$\omega$, "better than previously reported" thanks to the fine grid,
+but its skin-friction variations are too large (Figs. 7–8; see
+[backward-facing step](/benchmarks/backward-facing-step.md)); on the NACA
+4412 airfoil at $13.87^\circ$ the original $k$-$\omega$ model lies even further
+from the experiment than this model, which Menter attributes to the
+freestream dependency of $k$-$\omega$ (Fig. 9; see
+[NACA 4412](/benchmarks/naca-4412-airfoil.md)). Menter states that the
+$k$-$\varepsilon$ model does not suffer from that freestream sensitivity, that
+$k$-$\omega$ is superior to it in the log region of equilibrium
+adverse-pressure-gradient and compressible flows (citing Wilcox and others),
+and that the specific form of the $k$-$\varepsilon$ damping functions has
+little to no effect on the velocity profiles and skin friction of
+high-Reynolds-number flows (citing two earlier studies) (pp. 1598–1599; see
+the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md) and
+[turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
 
 **Bluff-body wakes.** On the 25° Ahmed body Delassaux et al. (§5) cite
 their earlier calibration, in which the realizable model gives no separation on
@@ -479,7 +665,25 @@ see [conditional source-term estimation](/methods/conditional-source-term-estima
   length scales; the statements above are their description.
 - Tang et al. attribute the constants to Launder & Sharma while printing the
   model without the damping functions of a low-Reynolds form (§II A); the
-  page records the form as printed.
+  page records the form as printed. Launder & Spalding (1974, Table 2.1)
+  print the same five values and attribute them to Launder et al. (1972, as
+  cited); Menter (1994, Eqs. 3–4 and text) codes the standard model after
+  Launder & Sharma (Menter's Ref. 15, a work distinct from Launder & Spalding). Tang et al.
+  print molecular diffusion in both equations, Launder & Spalding's
+  high-Reynolds form none (Eqs. 2.2-1–2.2-2).
+- Launder & Spalding's concluding claim that the model needs no
+  adjustment of constants between near-wall and free shear flows (§4)
+  stands in the same paper beside the round-jet modification, the higher
+  $C_\mu$ of weak-shear flows (§2.2) and the factor-20 reduction of the
+  wall-function $\varepsilon$ behind a step (§3.5).
+- Launder & Spalding's §2.1 gives $\nu_t=C_\mu k^{1/2}L$ with
+  $L=c_lk^{3/2}/\varepsilon$ (Eqs. 2.1-2, 2.1-13) and calls
+  $\nu_t=C_\mu k^2/\varepsilon$ (Eq. 2.2-3) "its equivalent in terms of
+  $\varepsilon$"; (2.1-2) with (2.1-13) gives $\nu_t=C_\mu c_lk^2/\varepsilon$
+  *(compiler check, not in the sources)*, and §2.3 writes
+  $L=k^{3/2}/\varepsilon$; the value of $c_l$ is not printed.
+- Menter's Figure 10 (transonic bump) labels its $k$-$\varepsilon$ curve "k-ε
+  std.", the other figures "k-ε JL" (p. 1603).
 - Delassaux et al. call the drag agreement of both RANS models fortuitous:
   "There is no valid reason that RANS predicts a more accurate $C_d$ than
   DDES" (§6), and do not take the agreement as evidence for the model; see
@@ -531,3 +735,5 @@ see [conditional source-term estimation](/methods/conditional-source-term-estima
 - [Fang et al. (2026)](/sources/fang-2026.md) — §3.4, Table 3 (LSTM against $k$-$\varepsilon$, as cited); §4.2.2 ($k$-$\varepsilon$ inside a PINN, as cited).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.1 (Bayesian calibrations cited).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — Eq. (21) and text (RANS time scale $k/\varepsilon$); §3.1 (RANS-CSE studies).
+- [Launder & Spalding (1974)](/sources/launder-1974.md) — §1.2, §2.1 Eqs. 2.1-2–2.1-13 (choice of $\varepsilon$, near-wall constraint), §2.2 Eqs. 2.2-1–2.2-6, Table 2.1 (standard model, constants, round-jet modification), §2.3 Eqs. 2.3-4–2.3-7 (Jones–Launder low-Reynolds form), §3.1–§3.9 Figs. 3.1–3.9, §4.
+- [Menter (1994)](/sources/menter-1994-b.md) — pp. 1598–1599 (freestream sensitivity, damping functions), Eqs. 3–4, 13, App. Eq. A5 (transformed $k$-$\varepsilon$, two-layer option), pp. 1601–1603 Figs. 2–9 (Jones–Launder model in adverse pressure gradients, step, NACA 4412).

@@ -5,7 +5,7 @@ description: "Explicit filtering, in the modal space of a high-order element or 
 status: established
 aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering, explicit differential filter, Najafi-Yazdi filter, entropy-adaptive filter, improved adaptive filter]
 tags: [les, filtering, implicit-les, dg, numerical-dissipation, sgs-model]
-timestamp: 2026-10-29T07:40:00Z
+timestamp: 2026-10-29T16:18:00Z
 ---
 
 # Explicit modal filtering as an LES closure
@@ -222,7 +222,28 @@ $$\bar f_j+\sum_{k=1}^{M_s}a_k(\bar f_{j+k}+\bar f_{j-k})=\tfrac12\sum_{l=0}^{N_
 
 ($M_s$, $N_s$, $a_k$, $b_l$, $\hat G_E$ page-local; $M_s=0$ gives a
 finite-difference filter), of order $2N_s$, with $\hat G_E(0)=1$ and
-$\hat G_E(\pi)=0$, and the free parameter $a_1$ widening the pass band. Their
+$\hat G_E(\pi)=0$, and the free parameter $a_1$ widening the pass band.
+
+This compact filter family goes back to
+[Lele (1992)](/sources/lele-1992.md), App. C.2, Eqs. (C.2.1)–(C.2.11):
+in the form above with $M_s\le2$ and $N_s\le3$ (Lele's $\alpha$, $\beta$
+are $a_1$, $a_2$ and Lele's right-side coefficients $a$, $b$, $c$, $d$
+are $b_0,\dots,b_3$), Lele imposes $\hat G_E(\pi)=0$, which makes the
+slope vanish there too, optionally the vanishing of the second and
+fourth derivatives at $\pi$, and the Taylor conditions of fourth or
+sixth order; two pentadiagonal members place the cut-off by prescribing
+$\hat G_E=0.95$ and 0.5 at two wavenumbers (Eqs. C.2.9–C.2.10), and
+explicit fourth-order one-sided filters that remove the $kh=\pi$ wave
+serve the first three nodes (Eq. C.2.11). The tridiagonal members are
+"much better low pass filters" than explicit second-, fourth- and
+sixth-order filters, and confine the filtering to shorter waves as $a_1$
+approaches 0.5 (Fig. 19 caption, $a_1=0.4$, 0.45, 0.475). Lele proposes
+the filter against the aliasing errors
+that the high resolution of compact differences may bring in nonlinear
+problems on non-periodic domains, where spectral de-aliasing is not
+available (§3.1), the schemes themselves having no built-in dissipation
+(§5); see
+[compact finite-difference schemes](/methods/compact-finite-difference-scheme.md). Their
 regularization filter (N-DI-R) is the approximate-deconvolution form
 
 $$\hat G_{QG}=1-(1-\hat G_E)^{N_{\mathrm{AD}}+1}$$
@@ -701,6 +722,7 @@ controls is on [numerical dissipation](/properties/numerical-dissipation.md).
 
 # Citations
 
+- [Lele (1992)](/sources/lele-1992.md) — §3.1 (spectral-like filtering against aliasing); §5 (no built-in dissipation); App. C.2, Eqs. (C.2.1)–(C.2.11), Fig. 19 (compact low-pass filter families, cut-off placement, boundary filters).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §I; §II.B, Eqs. (17)–(44), Figs. 1–2; §III.A, Figs. 3, 5–6; §III.B, Figs. 8–10, 12–14; §III.C, Figs. 15–16; §III.D.1–4, Eq. (51), Figs. 17–18.
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19), Algorithm 1, Table 2; §4.1–4.4, Figs. 2–3, 15–21; §5.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §3.1, Eqs. (13)–(17), Table 1, Fig. 2; §5.1, Figs. 10–11; §5.3.1, Table 4, Fig. 19; §5.

@@ -3,9 +3,9 @@ type: Benchmark
 title: "Turbulent boundary layers: zero and adverse pressure gradient, compressible"
 description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers test wall models, RANS wall functions, high-order RANS discretizations, hybrid RANS/LES shielding, the log law and data-driven corrections; supersonic and hypersonic layers are DNS databases for compressibility transformations, wall cooling and pressure fluctuations, test subgrid and wall models, and feed shock interactions."
 status: established
-aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
+aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, sink-flow boundary layer, Driver's axisymmetric APG flow, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-29T10:03:00Z
+timestamp: 2026-10-29T16:12:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -245,6 +245,29 @@ discretized by first-order finite volumes under an interior-penalty DG mean
 flow. The velocity profile agrees with the reference of Georgiadis et al.
 in the log layer and the turbulent kinetic energy with that of Yoder &
 Georgiadis; grid size and polynomial degree are not printed.
+
+**Calibration target of the founding models.** The plate fixes constants
+of the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md):
+[Spalart & Allmaras (1992)](/sources/spalart-1992.md) (pp. 6–7, Figs.
+4–6) set $c_{w2}=0.3$ so that $C_f=0.00262$ at $Re_\theta=10^4$ (the CTTM
+value, as cited), with a boundary-layer code; the solution then has
+$H=1.31$, a Clauser shape factor $G\equiv\sqrt{2/C_f}\,(H-1)/H$ "settled at
+6.6", and a peak eddy viscosity of $0.021U_\infty\delta^*$ against the
+$0.0168U_\infty\delta^*$ of the Cebeci–Smith model, and the log layer forms
+although $\nu_t$ departs from $\kappa yu_\tau$ away from the wall (see the
+[law of the wall](/definitions/law-of-the-wall.md)). In a sink flow at
+acceleration parameter $\nu U_\infty^{-2}dU_\infty/dx=1.5\times10^{-6}$ the model
+gives $C_f=0.00535$, $H=1.35$, $Re_\theta=760$, inside the experimental
+ranges $[0.0050,0.0057]$, $[1.35,1.42]$, $[700,800]$ (p. 14).
+[Menter (1994)](/sources/menter-1994-b.md) uses the plate to expose the
+freestream sensitivity of the Wilcox [$k$-$\omega$ model](/methods/k-omega-model.md):
+with the freestream $\omega$ reduced by four orders of magnitude (and $k$
+reduced to keep the freestream eddy viscosity), the profile of
+$\nu_t/(u_\tau\delta^*)$ of the original model changes by almost 100%, while
+the BSL and SST models give the same profile (Fig. 1, pp. 1600–1601; see
+the [SST page](/methods/k-omega-sst-model.md)); all the models of Menter (1994) agree with
+the $u^+$–$y^+$ and $C_f$ correlations, and the $k$-$\omega$ models tolerate a
+first grid point at $y^+=3$ (results in Menter's Ref. 9, as cited).
 
 **High-order RANS of the $k$-$\omega$ family.**
 [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §5.3 and §6,
@@ -515,6 +538,28 @@ $y_1^+=160$ and 320 near the end of the APG region, $0.8<x/L<0.85$; the
 authors attribute this to a wall law that holds only for ZPG layers (the
 shrinking log layer is described above; see
 [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
+
+**The Samuel–Joubert layer and Driver's flow in the founding papers.** On
+the Samuel–Joubert layer ($Re_\theta\approx6500$) Spalart & Allmaras (1992,
+pp. 14–15, Figs. 7–11) find the skin friction slightly high and the
+thicknesses and shape factor low, "a mild but genuine tendency to
+underpredict the shape factor and thicknesses in adverse pressure
+gradients", weaker than with Cebeci–Smith, Baldwin–Lomax and
+$k$-$\varepsilon$ but not as good as Menter's Johnson–King and $k$-$\omega$
+results (as cited). Menter (1994, p. 1601; results in its Ref. 9, as cited)
+reports that all three of its $k$-$\omega$ models reproduce these data and
+the Jones–Launder [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md)
+gives too high a $c_f$, and judges the flow not a sufficiently strong
+challenge. The stronger test is Driver's separated axisymmetric
+adverse-pressure-gradient flow (Figs. 2–6): SST gives the best wall
+pressure, the largest separation and the best velocity profiles and follows
+the measured fall of $\nu_{t,\max}/(u_e\delta^*)$ ($u_e$ the edge velocity,
+page-local), BSL and the original $k$-$\omega$ give a consistently too high
+maximum eddy viscosity, and the $k$-$\varepsilon$ model stays attached with
+a maximum only barely below Clauser's 0.0168, the constant of the
+Cebeci–Smith model; Menter concludes that the wake-region eddy viscosity,
+not the log-layer behaviour, decides the response to strong adverse
+gradients (p. 1599).
 
 ## Equilibrium, non-equilibrium, rough and three-dimensional layers: a physics review
 
@@ -1344,6 +1389,12 @@ Bruce et al., as cited).
 
 ## Qualifications
 
+- Spalart & Allmaras (1992) print $C_f=0.00262$, $H=1.31$ and $G=6.6$ for
+  the calibrated plate; with these values
+  $\sqrt{2/0.00262}\times0.31/1.31=6.54$, and $H=1.315$ gives 6.62, so the
+  printed values agree within the rounding of $H$ *(compiler check, not in
+  the sources)*.
+
 - **Printed items of Devenport & Lowe (2022).** From their Eq. (5.9) with
   $\beta_{RC}=5$ and $y^+=3$ the printed approximation
   $4\beta_{RC}y^+/Re_\tau$ gives $0.06$ rad, about $3.4^\circ$, at
@@ -1524,6 +1575,9 @@ Bruce et al., as cited).
   case "incompressible flow over a flat plate" in their §1.
 
 # Citations
+
+- [Spalart & Allmaras (1992)](/sources/spalart-1992.md) — pp. 6–7, Figs. 4–6 (flat-plate calibration of $c_{w2}$); p. 14 (sink flow); pp. 14–15, Figs. 7–11 (Samuel–Joubert layer).
+- [Menter (1994)](/sources/menter-1994-b.md) — p. 1599 (wake-region eddy viscosity); pp. 1600–1601, Fig. 1 (freestream test on the plate); p. 1601 (flat-plate correlations, Samuel–Joubert); Figs. 2–6 (Driver's flow).
 
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Results pp. 6–8, Fig. 5; Methods p. 14 (preprint v1).
 - [Knopp (2022)](/sources/knopp-2022.md) — §3, Table 1; §5.1–5.2, Figs. 2, 4, 7–9.

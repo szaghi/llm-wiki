@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES, self-adaptive turbulence eddy simulation, SATES, very-large eddy simulation, VLES, scale-resolving hybrid model, SRH, hybrid temporal LES, HTLES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-29T07:37:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Hybrid RANS/LES
@@ -772,6 +772,31 @@ they find the onset of resolved turbulence in a separated shear layer
 "mainly governed by the amount of numerical dissipation introduced by the
 numerical scheme and the resolution of the grid" (§4.4).
 
+**Where the name modelled-stress depletion comes from.** The term was
+coined in the paper that introduced delayed DES: [Spalart et al. (2006)](/sources/spalart-2006.md)
+(§1) call the loss of modelled stress "without any sizeable resolved
+stress to restore the balance" on an ambiguous grid
+"modeled-stress depletion (MSD)". Severe MSD gives the "grid-induced
+separation" of Menter and Kuntz (cited), and the grey area between RANS
+and LES regions was "announced from the outset in 1997". The phenomenon
+faces any hybrid that introduces the grid spacing into the turbulence
+model, such as LNS (cited). The two methods named that do not use the grid
+spacing, scale-adaptive simulation and TRRANS (cited), reach LES behaviour
+in homogeneous turbulence, but "neither approach has been able to sustain
+LES content in a channel", and TRRANS fails to sustain unsteadiness over
+a backward-facing step (§1, as of 2006). The delayed form narrows the grey
+area after massive separation, which "accelerates the growth of LES
+content but does not itself create it", and does not address MSD in free
+shear layers (§2.2; formulas on the
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) page).
+The authors (§4.1) also cite the cost measure of the 1997 DES paper, the
+number of cubes of side $\delta$ that fill the boundary layer, and the
+need for "Large-Eddy Stimulation" (a name from Batten et al., cited) to
+create resolved content where a boundary layer enters LES mode: random
+numbers fail, Fourier-mode constructions do better, and the
+rescaling–recycling of Lund et al. succeeds (§4.1; see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+
 **Two issues and their names.** Husson et al. (2024, §2.2, Fig. 1, after
 Deck & Renard) define the vocabulary the DES-type literature uses:
 
@@ -1404,3 +1429,4 @@ large time steps that A-stable BDF2 allows; see
 - [Alberti et al. (2026)](/sources/alberti-2026.md) — §2.1.1 (transition in RANS mode, modified shielding); §3 (Eppler 387, sphere, NACA 0012); §3.3 (WMLES-like behaviour after stall).
 - [Hu & Yang (2026)](/sources/hu-2026.md) — §V C 4 (resolution-handoff bottleneck, DES grey area, learned DES switching, as cited).
 - [Barbera et al. (2026)](/sources/barbera-2026.md) — §1 (hybrid RANS/LES mesh adaptation, as cited); §2.3, Eq. (20) (LES size between mean-flow and DNS bounds).
+- [Spalart et al. (2006)](/sources/spalart-2006.md) — §1 (modeled-stress depletion named, grey area, LNS, SAS and TRRANS); §2.2; §4.1 (Large-Eddy Stimulation).

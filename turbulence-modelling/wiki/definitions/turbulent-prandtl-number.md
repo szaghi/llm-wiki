@@ -5,7 +5,7 @@ description: "The turbulent Prandtl and Schmidt numbers close the turbulent heat
 status: established
 aliases: [turbulent Prandtl number, Pr_t, turbulent Schmidt number, Sc_t, gradient-diffusion hypothesis, GDH, generalized gradient-diffusion hypothesis, GGDH, HoGGDH, eddy-diffusivity heat flux, turbulent heat-flux model]
 tags: [rans, eddy-viscosity, compressible, boundary-layer, data-driven, combustion]
-timestamp: 2026-10-29T10:03:00Z
+timestamp: 2026-10-29T16:19:00Z
 ---
 
 # Turbulent Prandtl number and turbulent heat-flux models
@@ -29,6 +29,22 @@ nonlinear and learned closures. Morkovin scaling, the Reynolds analogies and
 earlier compressible $Pr_t$ results are on
 [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md); this page
 collects the closure question.
+
+**The subgrid heat flux of the original Smagorinsky closure.** In the
+general-circulation model where the [Smagorinsky](/methods/smagorinsky-model.md)
+eddy viscosity originates, [Smagorinsky (1963)](/sources/smagorinsky-1963.md)
+diffuses heat laterally with the same factor $(k_H\Delta)^2$ as momentum
+($k_H=0.28$ the original constant, $\Delta$ the grid size, both
+page-local as on the Smagorinsky page). "If we assume the lateral heat
+diffusion to be forced then also", the heating term acting on the
+temperature-like thickness variable of the two-level model is a lateral
+gradient diffusion with coefficient $(k_H\Delta)^2\lvert D\rvert_\Sigma/2$
+(§4, Eq. 4.26), where $\lvert D\rvert$ is the horizontal deformation and
+$\lvert D\rvert_\Sigma$ (page-local, the paper's $\lvert\bar D\rvert$) carries
+the paper's overbar, which denotes the sum of the two model levels (App. C,
+Eq. C11), not a filter. No turbulent Prandtl number is named. The matching
+wall condition is a zero lateral heat flux, a vanishing normal gradient of
+the thickness at the smooth walls (Eq. 4.27).
 
 ## Definitions measured from data
 
@@ -243,3 +259,4 @@ and turbulence modeling during model development" (§2.4). See
 - [Ye et al. (2024)](/sources/ye-2024.md) — §II A, Eq. (6) (conductivity $c_p(\mu/Pr+\mu_t/Pr_t)$ in SST URANS, value not printed).
 - [Gao et al. (2025)](/sources/gao-2025.md) — §II.A, Eqs. (4)–(7) (LES conductivity, $Pr=0.72$); §II.B, Eqs. (8)–(10) (wall-model energy equation, $Pr_{t,\mathrm{wm}}=0.9$).
 - [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.2 ($Sc_t$ and $Pr_t$ in engine RANS); §4.3, Eq. (34) (gradient diffusion of the flame-surface density).
+- [Smagorinsky (1963)](/sources/smagorinsky-1963.md) — §4, Eqs. (4.26)–(4.27); App. C, Eq. (C11) (lateral subgrid heat diffusion with the momentum coefficient; meteorology paper).

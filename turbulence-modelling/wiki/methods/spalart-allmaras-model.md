@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spalart–Allmaras model and its corrections"
-description: "The one-equation eddy-viscosity RANS model transporting the working variable ν̃: its printed forms and constants, negative, rotation–curvature, helicity and quadratic-constitutive-relation variants, positivity and entropy stability at high order, data-driven corrections, its role as host of detached-eddy simulation, and evidence from turbomachinery and airfoils."
+description: "The one-equation eddy-viscosity RANS model transporting the working variable ν̃: its 1992 construction in nested versions with trip terms and a positivity-preserving implicit scheme, later printed forms and constants, negative, rotation–curvature, helicity and QCR variants, high-order positivity, data-driven corrections, its role as host of detached-eddy simulation, and evidence."
 status: established
-aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
+aliases: [SA model, Spalart-Allmaras, SA Version I, SA with trip terms, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-29T07:40:00Z
+timestamp: 2026-10-29T16:21:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -20,6 +20,134 @@ Duraisamy et al. (2019), and the starting point of a family of corrections
 for rotation, curvature, helicity and stress anisotropy. On this page the
 strain and rotation tensors and their magnitudes $\lvert S\rvert$,
 $\lvert\Omega\rvert$ are those of the mean velocity $\langle u_i\rangle$.
+
+## The original model (1992)
+
+Spalart & Allmaras (1992) build the transport equation "from scratch"
+rather than by simplifying a $k$-$\varepsilon$ model, as the closest
+relative, the Baldwin–Barth model, does, for aerodynamic Navier–Stokes codes
+on grids of any structure
+([Spalart & Allmaras (1992)](/sources/spalart-1992.md), pp. 1–2; the AIAA
+conference paper, whose appendix is titled "Summary of the Model, Version
+I"). The model is local, the equation at a point depending on the solution
+elsewhere only through the wall distance $d$ (Abstract); algebraic models
+(Cebeci–Smith, Baldwin–Lomax, Johnson–King) are non-local "boundary-layer
+models in spirit", and two-equation models need fine near-wall grids, have
+stiff sources and need non-trivial freestream values (pp. 1–2). The
+constitutive relation is the Boussinesq stress without the $\tfrac23k$
+term, $R_{ij}=-2\nu_t\langle S_{ij}\rangle$ in registry form, the model
+carrying no $k$ (p. 2; see the
+[Boussinesq page](/definitions/boussinesq-hypothesis.md)).
+
+**Four nested versions.** Each version adds terms passive in the lower
+ones, so that calibration proceeds layer by layer (pp. 3–9):
+
+1. *Free shear flows.* $D\nu_t/Dt=c_{b1}\lvert\Omega\rvert\nu_t+\sigma^{-1}\big[\nabla\cdot(\nu_t\nabla\nu_t)+c_{b2}(\nabla\nu_t)^2\big]$
+   (Eqs. 1–2), with a deliberately non-conservative $c_{b2}$ term. The
+   equation admits a ramp solution whose front moves at
+   $-A(1+c_{b2})/\sigma$ ($A$ the ramp slope, page-local), propagating into
+   the non-turbulent region only if $c_{b2}>-1$; the authors attribute the
+   freestream sensitivity of Baldwin–Barth to its effective $c_{b2}$ below
+   $-1$, which makes the front recede (Eq. 3, p. 4). Calibration on the peak
+   shear stresses of the mixing layer, $0.01(\Delta U)^2$, and of the wake,
+   $0.06(\Delta U)^2$ (two conditions, three constants), leaves a
+   one-parameter family; the chosen point is $\sigma=2/3$, $c_{b1}=0.1355$,
+   $c_{b2}=0.622$, $(1+c_{b2})/\sigma\approx2.4$ (p. 5, Fig. 1; see
+   [temporally developing mixing layer](/benchmarks/temporal-mixing-layer.md)).
+   The production alone gives exponential growth $\exp(c_{b1}\lvert\Omega\rvert t)$ in
+   homogeneous shear, where experiments give rates of 0.1–0.16 (p. 3). "The
+   model is not intended to be universal": no axisymmetric flow was
+   matched (p. 5).
+2. *Near-wall region, high Reynolds number.* A destruction
+   $-c_{w1}f_w(\nu_t/d)^2$ from wall blocking; log-layer equilibrium requires
+   $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$, "not negotiable" (p. 6), and
+   $f_w(r)$ with $r=\nu_t/(\lvert\Omega\rvert\kappa^2d^2)$, the form printed under Baseline
+   equations below (Eqs. 4–6). $c_{w2}=0.3$ is fixed by $C_f=0.00262$ at
+   $Re_\theta=10^4$ and $c_{w3}=2$ (p. 6); $r>1$ occurs only in adverse
+   pressure gradients, rarely beyond 1.1 (p. 6). Details of the log-layer
+   budget are on the [law of the wall](/definitions/law-of-the-wall.md).
+3. *Finite Reynolds number.* The working variable $\tilde\nu$, with
+   $\nu_t=\tilde\nu f_{v1}$, $f_{v1}=\chi^3/(\chi^3+c_{v1}^3)$, $c_{v1}=7.1$
+   (borrowed from Mellor & Herring, as cited, who used 6.9), the modified
+   vorticity $S_{\mathrm{SA}}=\lvert\Omega\rvert+\tilde\nu f_{v2}/(\kappa^2d^2)$,
+   $f_{v2}=1-\chi/(1+\chi f_{v1})$, and the molecular viscosity in the
+   diffusion (Eqs. 7–9), so that $\tilde\nu=\kappa yu_\tau$ and
+   $S_{\mathrm{SA}}=u_\tau/(\kappa y)$ hold "all the way to $d=0$" (p. 8).
+   $S_{\mathrm{SA}}$ can be smaller than $\lvert\Omega\rvert$, and negative for a range of
+   $\chi$, which "should not upset the numerical solvers" (p. 8).
+4. *Laminar region and tripping.* Linearized for small $\tilde\nu$ the
+   equation contains only production, so $\tilde\nu=0$ is unstable and a
+   Navier–Stokes code transitions upstream of the trip at a rate set by the
+   numerics, "not acceptable" (p. 8). The full model (Eq. 11) reads
+   $$\frac{D\tilde\nu}{Dt}=c_{b1}(1-f_{t2})S_{\mathrm{SA}}\tilde\nu+\frac1\sigma\Big[\nabla\cdot\big((\nu+\tilde\nu)\nabla\tilde\nu\big)+c_{b2}(\nabla\tilde\nu)^2\Big]-\Big[c_{w1}f_w-\frac{c_{b1}}{\kappa^2}f_{t2}\Big]\Big(\frac{\tilde\nu}{d}\Big)^2+f_{t1}\Delta U^2,$$
+   with $f_{t2}=c_{t3}\exp(-c_{t4}\chi^2)$, which makes $\tilde\nu=0$ stable
+   with a small basin of attraction (values up to about $\nu/5$), $c_{t3}$
+   having to exceed one, and the trip function
+   $$f_{t1}=c_{t1}g_t\exp\Big(-c_{t2}\frac{\lvert\Omega\rvert_{\mathrm t}^2}{\Delta U^2}\big[d^2+g_t^2d_t^2\big]\Big),\qquad g_t=\min\Big(0.1,\frac{\Delta U}{\lvert\Omega\rvert_{\mathrm t}\Delta x_{\mathrm t}}\Big)$$
+   (Eqs. 10, 12), where $\lvert\Omega\rvert_{\mathrm t}$ is the wall vorticity
+   at the trip (the source's $\omega_t$), $d_t$ the distance from the field
+   point to the trip, $\Delta U$ the norm of the velocity difference between
+   them and $\Delta x_{\mathrm t}$ the wall-parallel grid spacing at the trip
+   ($\lvert\Omega\rvert_{\mathrm t}$, $d_t$, $g_t$, $\Delta U$, $\Delta x_{\mathrm t}$
+   page-local); $c_{t1}=1$ worked over at least two decades (0.1 to 10) and
+   $c_{t2}=2$ (p. 9). "On no account should the turbulence model be trusted
+   to predict the transition location" (p. 8).
+
+**Constants of Version I** (App., p. 21): $c_{b1}=0.1355$, $\sigma=2/3$,
+$c_{b2}=0.622$, $\kappa=0.41$, $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$,
+$c_{w2}=0.3$, $c_{w3}=2$, $c_{v1}=7.1$, $c_{t1}=1$, $c_{t2}=2$, $c_{t3}=1.1$,
+$c_{t4}=2$, and a turbulent Prandtl number of 0.9 for heat transfer, "not to
+be confused with $\sigma$". The wall condition is $\tilde\nu=0$; the best
+freestream and initial value is zero, values below $\nu/10$ being
+acceptable, and the model is "essentially insensitive" to freestream values
+much smaller than those of the turbulent region (pp. 4, 10, App.). Large
+values of $r$ "can be truncated to 10 or so", since $f_w$ reaches a constant
+(App.). The values give $c_{w1}=3.239$ and place the cross-over
+$c_{t3}e^{-c_{t4}\chi^2}=1$ at $\chi=\sqrt{\ln c_{t3}/c_{t4}}=0.218$ *(compiler
+check, not in the sources)*.
+
+**The production measure.** The authors use the vorticity, "We normalize
+any candidate so that it reduces to $|U_y|$ in a simple shear flow", and
+leave the strain rate $\sqrt{2S_{ij}S_{ij}}$ and the norm of the whole
+velocity gradient untested (p. 3): the rationale is that turbulence is found
+only where vorticity is, and that vorticity behind shocks is too weak to
+produce much eddy viscosity. The normalized vorticity magnitude is the
+registry's $\lvert\Omega\rvert$; see Qualifications for the printed
+definition.
+
+**A positivity-preserving implicit scheme.** In a modified FLO103 the
+turbulence equation is advanced by backward Euler with implicit operators of
+M-matrix type, which guarantees $\tilde\nu^{n+1}\ge0$ whenever
+$\tilde\nu^n\ge0$ under sufficient conditions after Baldwin & Barth (pp.
+10–13, Eqs. 13–22). Advection is first-order upwind; the diffusion,
+rearranged as $\sigma^{-1}(1+c_{b2})\nabla\cdot[(\nu+\tilde\nu)\nabla\tilde\nu]-\sigma^{-1}c_{b2}(\nu+\tilde\nu)\nabla^2\tilde\nu$
+with central differences, satisfies the constraints for $-1\le c_{b2}\le1$
+without the coefficient limiting that Baldwin–Barth's model needs (Eqs.
+26–34); the production and destruction Jacobians are split with the
+positive-part function so that the two can cancel (Eqs. 36–41). No
+approximate factorization keeps unconditional positivity; the adopted one,
+divided by the diagonal of the implicit operator and with the splitting
+error lagged by one subiteration (Steinthorsson & Shih, as cited), never
+produced a negative update for $\Delta t$ from 0.001 to 1000, and is run at
+$\Delta t=10$ with subiterations until $\lVert\Delta\tilde\nu/(\nu+\tilde\nu)\rVert_2<0.01$
+(pp. 13–14, Eqs. 42–49). Convergence to steady state is "typically as good
+or better" than with Baldwin–Lomax, which the authors attribute to the
+absence of its "blinking" switch (p. 14; see the
+[Baldwin–Lomax model](/methods/baldwin-lomax-model.md)). The later
+positivity devices of high-order solvers are below.
+
+**First evidence.** Flat plate at $Re_\theta\approx10^4$: $C_f=0.00262$,
+$H=1.31$, peak $\nu_t=0.021U_\infty\delta^*$ against $0.0168U_\infty\delta^*$ for
+Cebeci–Smith (p. 6, Figs. 4–5); sink flow at acceleration parameter
+$1.5\times10^{-6}$: $C_f=0.00535$, $H=1.35$, $Re_\theta=760$, within the
+experimental ranges; Samuel–Joubert adverse-pressure-gradient layer: "a mild
+but genuine tendency to underpredict the shape factor and thicknesses",
+better than Cebeci–Smith, Baldwin–Lomax and $k$-$\varepsilon$ but not as good
+as Menter's Johnson–King and $k$-$\omega$ results (as cited) (pp. 14–15,
+Figs. 7–11; see [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md));
+the [RAE 2822](/benchmarks/rae-2822-airfoil.md) Cases 6 and 10 and a
+blunt-trailing-edge variant (pp. 16–19, on that page). The authors list the
+absence of compressibility terms among the limits (conclusions).
 
 ## Baseline equations
 
@@ -121,6 +249,17 @@ $\tilde\nu$ blends the SA terms with those of a one-equation subgrid model
 through a wall-distance function $F$, and switch the damping off in the LES
 region through $f_{v1}=\chi^3/(\chi^3+F^{20}c_{v1}^3)$ (Eqs. 6–9; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+**The laminar-suppression constants, side by side.** Spalart & Allmaras
+(1992, p. 9, App.) print $c_{t3}=1.1$, $c_{t4}=2$ for Version I, and add that
+$c_{t4}$ could be decreased several-fold if a code still transitions
+prematurely, while values of $c_{t3}$ much below one would affect the
+turbulent region and boundary-layer users can set $c_{t3}=0$. Shan et al.
+(2023) and Huang et al. (2022b) print $c_{t3}=1.2$, $c_{t4}=0.5$, An et al.
+(2025) $c_{t3}=0$, $c_{t4}=0.5$, and Li et al. (2024b) refer to the 1992
+paper for the values without printing them (below). With $c_{t3}=1.2$,
+$c_{t4}=0.5$ the cross-over of $f_{t2}$ lies at $\chi=0.604$, against 0.218
+with the 1992 values *(compiler check, not in the sources)*.
 
 Shan et al. (2023) print the incompressible model with $f_{t2}$ retained,
 $S_{\mathrm{SA}}$ built on the vorticity magnitude
@@ -854,6 +993,29 @@ tip vortices, which the authors link to the undisturbed bracket tip vortex
 Zhang et al. (2024) run SA-DDES with $C_{\mathrm{DES}}=0.65$ for the tip flow of
 a compressor tandem cascade (§2.3; see
 [compressor cascades](/benchmarks/compressor-cascade.md)).
+**Delayed DES in its SA form.** Spalart et al. (2006) define DDES on SA:
+the length of the destruction term becomes
+$\ell=d-f_d\max(0,d-C_{\mathrm{DES}}\Delta)$ (the $\ell$ of Husson et al.'s form
+above), with the shielding function
+$f_d=1-\tanh([8r_d]^3)$ and
+$r_d=(\nu_t+\nu)/\big(\sqrt{\partial_ju_i\,\partial_ju_i}\,\kappa^2d^2\big)$, "similar to $r$ in
+the S-A model", for which $\tilde\nu$ "can be used instead of $\nu_t+\nu$"
+([Spalart et al. (2006)](/sources/spalart-2006.md), §2.1, Eqs. 2.1–2.3; the
+source writes $\tilde d$ for $\ell$ and $U_{i,j}$ for the velocity gradient). In SA-based DDES the variable
+$\chi$ is replaced by $\max(\chi,20f_d)$ before entering $f_{v1}$ and
+$f_{t2}$, and the LES length is multiplied by a low-Reynolds-number
+correction $\Psi\ge1$ chosen so that, at equilibrium, the SA subgrid model
+reduces to a Smagorinsky-like $\nu_t=(C\Delta)^2\lvert\Omega\rvert$ ($C$ page-local),
+$$\Psi^2=\min\left[10^2,\ \frac{1-\dfrac{c_{b1}}{c_{w1}\kappa^2f_w^*}\big[f_{t2}+(1-f_{t2})f_{v2}\big]}{f_{v1}\max\big(10^{-10},1-f_{t2}\big)}\right],$$
+with $f_w^*=0.424$ the high-viscosity limit of the equilibrium $f_w$; the
+correction is inactive ($\Psi=1$) for subgrid viscosities above about
+$10\nu$ (§4.2, Eqs. 4.3.1–4.3.4, Fig. 12). They report it applied
+successfully to homogeneous turbulence, the cylinder and the NACA 0012 at
+$60^\circ$ (the last two as cited), and run the laminar-separation cylinder
+case LS2 with "Trip-Less" SA (§3.3, §4.2). Alberti et al. (2025, below) find
+the same correction detrimental in their high-order DG solver. The grid classes, the shielding and the tests are
+on the [DES page](/methods/detached-eddy-simulation.md).
+
 Mani & Dorgan (2023) state that the original DES is SA-based and that
 DES and then delayed DES carried unsteady simulation at Boeing
 ([Mani & Dorgan (2023)](/sources/mani-2023.md), §4.5.2).
@@ -1268,8 +1430,10 @@ computed at high order with SA, and as SA reference data in a fourth:
   $p=4$ DG solution of which the finite-volume grid has 4.8% of the degrees
   of freedom (§3.3).
 - **Backward-facing step of Vogel & Eaton**, $Re_h=28\,000$, on the TMR
-  layout: Bulgarini et al. (2025) take the SA solution of Spalart et al.
-  (2006) and the SST solutions of Travin et al. as references for their
+  layout: Bulgarini et al. (2025) take the SA solution of
+  [Spalart et al. (2006)](/sources/spalart-2006.md), whose RANS, DES97 and
+  DDES runs of this step are on the
+  [backward-facing step](/benchmarks/backward-facing-step.md) page, and the SST solutions of Travin et al. as references for their
   $N=3$ log-$\omega$ [$k$-$\omega$](/methods/k-omega-model.md) DG results,
   which agree with them and with the measured $C_f$ and velocity profiles
   ([Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §7.1, Fig. 5).
@@ -1386,8 +1550,23 @@ computed at high order with SA, and as SA reference data in a fourth:
   source calls its value a revision or an implementation variant. The
   cited 1997 paper is not ingested.
 
+- **Printed vorticity of Spalart & Allmaras (1992).** The paper defines
+  $\omega\equiv\sqrt{\Omega_{ij}\Omega_{ij}}$ with $\Omega_{ij}\equiv\partial U_i/\partial x_j-\partial U_j/\partial x_i$,
+  without the factor $\tfrac12$ of the registry's rotation tensor, and in the
+  next sentences normalizes every candidate to $|U_y|$ in simple shear (p.
+  3). In simple shear the printed definition gives $\sqrt2\,|U_y|$, while
+  $\sqrt{2S_{ij}S_{ij}}$ and the norm of the velocity gradient give $|U_y|$; the
+  registry's $\lvert\Omega\rvert=\sqrt{2\Omega_{ij}\Omega_{ij}}$ is the normalized
+  measure *(compiler check, not in the sources)*. The appendix says only
+  "the magnitude of the vorticity" (p. 21).
+- Spalart & Allmaras (1992) write the $f_{t2}$ cross-over as
+  $\chi=\sqrt{\log(c_{t3})/c_{t4}}$, the natural logarithm of
+  $c_{t3}e^{-c_{t4}\chi^2}=1$ *(compiler check, not in the sources)*.
+
 # Citations
 
+- [Spalart & Allmaras (1992)](/sources/spalart-1992.md) — pp. 1–9, Eqs. 1–12 (motivation, nested versions, calibration, trip terms); p. 3 (production measure); pp. 10–14, Eqs. 13–49 (positivity-preserving implicit scheme); pp. 6, 14–15, Figs. 4–11 (flat plate, sink flow, Samuel–Joubert); App. p. 21 (Version I constants, boundary values).
+- [Spalart et al. (2006)](/sources/spalart-2006.md) — §2.1, Eqs. 2.1–2.3 (DDES on SA); §3.3 (Trip-Less SA, cylinder LS2); §4.2, Eqs. 4.3.1–4.3.4, Fig. 12 (low-Reynolds correction $\Psi$, $\chi\to\max(\chi,20f_d)$).
 - [Li & Liu (2022)](/sources/li-2022.md) — §1, §2.3 Eqs. 1–27, 33–34, §3.1–3.2, §4.1–4.2, §5, Table 3.
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.1, Figs. 4–5.
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1 Fig. 1, §4.

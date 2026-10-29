@@ -5,7 +5,7 @@ description: "Pressure-driven flow between two parallel walls, periodic in the w
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel, MHD channel, Hartmann flow, curved-wall channel bump]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element, mhd, lattice-boltzmann, gpu]
-timestamp: 2026-10-29T07:37:00Z
+timestamp: 2026-10-29T16:01:00Z
 ---
 
 # Turbulent channel flow
@@ -90,6 +90,7 @@ closures.
 | [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md), §VI–VII, Table II | low-Mach corrections of WENO9 implicit LES in [CNS3D](/software/cns3d.md) | about 395, bulk Mach 0.2 | $6\pi\delta\times2\delta\times\pi\delta$ (text) | $64^3$ (first cell centre at $y^+=1.5$) and $128^3$ |
 | [Monteiro et al. (2026)](/sources/monteiro-2026.md), §4.3 | validation of the GPU DNS solver RHEA-X | 590 | $2\pi\delta\times2\delta\times\pi\delta$ | $384\times257\times384$; $\Delta x^+\approx9.8$, $\Delta z^+\approx5.0$ (as printed), $\Delta y^+\lesssim1$ at the wall and about 5.8 at the centre |
 | [Okano & Haga (2026)](/sources/okano-2026.md), §5, Apps. A–C | cold-wall WMLES in flux reconstruction (implicit LES) with a near-wall artificial viscosity; compressible, isothermal walls, constant mass flow | DNS 1692 ($Re_b=3.4\times10^4$, $M_b=0.8$); runs at wall-to-recovery temperature ratios 0.81 to 0.1 and $Re_b$ up to $1.4\times10^5$; 451 (wall ratio 0.18, bulk velocity three times the wall sound speed) | not printed in the text (sized by the Lozano-Durán–Jiménez criterion, as cited) | $40\times30\times20$ hexahedra at $N=3$ ($1.5\times10^6$ degrees of freedom), effective spacings (cell size over solution points per direction) $0.039\delta$ in $x$ and $z$, $0.008\delta$–$0.029\delta$ in $y$; fine grid $60\times46\times30$; $h_{\mathrm{wm}}=0.1\delta$ (0.2δ at 451) |
+| [Germano et al. (1991)](/sources/germano-1991.md), §III | a priori and a posteriori test of the first dynamic SGS model; transition to turbulence | not printed: $Re=U_c\delta/\nu=3300$ and 7900 (a priori DNS), 8000 (transitional), 6100 (LES after transition), $U_c$ the centreline velocity | $2\pi\delta\times2\delta\times\tfrac43\pi\delta$ (LES) | Fourier–Chebyshev, $8\times49\times8$ refined progressively to $48\times65\times64$ |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -717,6 +718,44 @@ by eight flow-throughs, and in space (a $16\pi$-long channel with a RANS
 inlet) without overshoot but slowly. At $Re_\tau=20{,}000$ the mean
 departs from the log law for $y^+=200$–$2000$, which the authors attribute
 to the RANS base model.
+
+**The founding tests of the dynamic procedure, through transition.**
+[Germano et al. (1991)](/sources/germano-1991.md) (§III) test their
+[dynamic model](/methods/dynamic-procedure.md) in channel flow, with
+Reynolds numbers built on the centreline velocity $U_c$ and the
+half-width $\delta$, sharp-cutoff grid and test filters in $x$ and $z$
+and no test filter in $y$.
+
+- *A priori.* They use the DNS of Kim, Moin & Moser (cited) at $Re=3300$
+  and 7900 (the latter on $256\times193\times192$ points, as noted in the
+  paper's reference list). The test-to-grid width ratio 2 agrees best,
+  and the coefficient times the squared width follows $y^{+3}$ near the
+  wall without damping functions (Figs. 1–2).
+- *Transitional channel.* The DNS of Zang, Gilbert & Kleiser (cited) at
+  $Re=8000$ is the reference. The LES starts from a parabolic profile
+  with a two-dimensional Tollmien–Schlichting mode of 2% amplitude and a
+  three-dimensional one of 0.02%, solved by a Fourier–Chebyshev
+  pseudospectral method on $8\times49\times8$ points at first, refined to
+  $48\times65\times64$. The peak wall stress lies within 3% of the DNS,
+  closer than the Smagorinsky LES of Piomelli & Zang (cited) with van
+  Driest damping and an intermittency function; a coarse DNS that resolves
+  the early stages (up to $t\simeq170$) "cannot predict the drag crisis …
+  and the breakdown process", as cited (Fig. 4). The rms velocities and
+  the Reynolds shear stress at $t=176$, 200 and 220 agree fairly with the
+  filtered DNS, with late-stage differences put down to a slightly
+  different onset of transition (Figs. 5–6).
+- *Fully developed flow* at $Re=6100$. The wall layer is under-resolved,
+  which shows as a low wall stress and a high log-law intercept (Fig. 7b).
+  The streamwise intensity peaks near $y^+=12$ and is more accurate than
+  with the Smagorinsky LES above (Fig. 8). Skewness and flatness compare
+  fairly with the unfiltered DNS (Fig. 9). The mean streak spacing,
+  $\lambda^+=140$ ($\lambda^+$ page-local), is "somewhat larger than the
+  established value of 100, which is also expected of large-eddy
+  simulations".
+
+The insensitivity of these results to the width ratio is on the
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+page.
 
 **A priori data for closures.** [Agrawal et al. (2022)](/sources/agrawal-2022.md),
 §V, Figs. 1–2, filter channel DNS at $Re_\tau=395$ and 2000 (filter width
@@ -2026,3 +2065,4 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
 - [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) — §IV–V, Eqs. 24, 34–36; §VI–VIII, Table II, Figs. 4–10.
 - [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §4.3, Figs. 3–4.
 - [Okano & Haga (2026)](/sources/okano-2026.md) — §5.1–5.4, Eqs. (17)–(20), Tables 1–4, Figs. 7–8, 10–14; Apps. A–C, Tables A.5–A.6, B.7–B.8, C.10.
+- [Germano et al. (1991)](/sources/germano-1991.md) — §III, Figs. 1–9 (a priori at $Re=3300$, 7900; transitional LES at $Re=8000$; turbulent LES at $Re=6100$).

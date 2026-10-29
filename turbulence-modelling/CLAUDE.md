@@ -53,8 +53,10 @@ bundle's notation.
   20 and make chunk 8. On 2026-10-27 it held 307 files: the 147 added
   (all distinct works, none a second version of a planned one, identified
   by the page-1 DOI and Crossref) make chunks 9–15 of 20 and chunk 16 of 7,
-  in archive order. On 2026-10-29 all 307 files are ingested; papers added
-  later are ingested in further chunks, found with `tools/worklist.sh`.
+  in archive order. On 2026-10-29 all 307 files were ingested; 7 founding
+  papers added the same day make chunk 17 (314 works; the archive also
+  holds 3 byte copies of three of them, named by DOI, 317 files). Papers added later
+  are ingested in further chunks, found with `tools/worklist.sh`.
 - The page-1 and checksum check of 2026-10-25 found 131 distinct works and
   no byte copies. The year in the filename is the online year (the slug
   uses the year of the published issue), and more than half of the files
@@ -112,6 +114,11 @@ bundle's notation.
 - Commits: `docs(turbulence-modelling): ingest chunk N: <slugs>`.
 
 ## Status
+
+**Chunk 17 staged 2026-10-29:** 7 founding papers added to the archive
+(Smagorinsky 1963 … Spalart et al. 2006); 314 of 314 ingested, 191
+concept pages plus the registry, 14463 bibliography entries, deep lint
+done, no contradiction opened (thirteen open).
 
 **Chunk 16 committed 2026-10-29 (318af05) — archive complete:** the last 7 papers;
 307 of 307 ingested, 191 concept pages plus the registry, 14270
