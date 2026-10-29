@@ -1,6 +1,8 @@
 import { katex } from '@mdit/plugin-katex'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 import generated from './generated/bundles.json'
+import { partOf } from './parts.mjs'
+import { excludeOtherGroups, splitBundles } from './parts-node.mjs'
 
 // one sidebar for the documentation, in reading order: the "previous" and "next" links at the bottom of a page
 // follow it, so the documentation reads from the first page to the last. Each bundle gets its own sidebar,
@@ -57,18 +59,22 @@ const bundles = [
 
 // Build scope (scripts/build.mjs). Bundling every page in one Vite build needs a heap that grows with the
 // whole corpus, so the production site is built in parts that share the base and are merged afterwards:
-// DOCS_SCOPE=main builds the documentation and the bundle list, DOCS_SCOPE=<slug> builds one bundle.
+// DOCS_SCOPE=main builds the documentation and the bundle list, DOCS_SCOPE=<slug> builds one bundle, and
+// DOCS_SCOPE=<slug>/<group> one page group of a bundle too large for one part (parts.mjs).
 // Unset, the whole site is one build (docs:dev, or a small corpus).
 const scope = process.env.DOCS_SCOPE
 const slugs: string[] = generated.nav.map((n: { link: string }) => n.link.split('/')[2])
-const scopeOf = (path: string) => path.match(/^\/?bundles\/([^/]+)\//)?.[1] ?? 'main'
+const bundlesDir = new URL('../bundles', import.meta.url).pathname
+const split: string[] = splitBundles(bundlesDir, slugs)
+const [scopeSlug, scopeGroup] = (scope ?? '').split('/')
 const srcExclude =
   scope === undefined
     ? []
     : scope === 'main'
       ? ['bundles/*/**']
       : ['index.md', 'guide/**', 'manual/**', 'reference/**', 'project/**', 'bundles/index.md',
-         ...slugs.filter((s) => s !== scope).map((s) => `bundles/${s}/**`)]
+         ...slugs.filter((s) => s !== scopeSlug).map((s) => `bundles/${s}/**`),
+         ...(scopeGroup ? excludeOtherGroups(bundlesDir, scopeSlug, scopeGroup) : [])]
 
 export default withMermaid({
   title: 'llm-wiki',
@@ -79,7 +85,7 @@ export default withMermaid({
   outDir: process.env.DOCS_OUT || '.vitepress/dist',
   // the citation records are published as files (public/bundles/<slug>/bibliography.bib), which the checker does
   // not see; in a scoped build, the pages of the other parts are not in the build either
-  ignoreDeadLinks: [/\.bib$/, ...(scope === undefined ? [] : [(url: string) => scopeOf(url) !== scope])],
+  ignoreDeadLinks: [/\.bib$/, ...(scope === undefined ? [] : [(url: string) => partOf(url, split) !== scope])],
   lastUpdated: true,
   markdown: {
     // KaTeX at build time: the wiki's math law is KaTeX syntax ($...$, $$...$$), so the site doubles as its check.
@@ -102,6 +108,7 @@ export default withMermaid({
   themeConfig: {
     // read by the theme: links that leave the part being shown load the target page in full
     buildScope: scope ?? 'all',
+    splitBundles: split,
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Start here', link: '/guide/', activeMatch: '^/guide/' },

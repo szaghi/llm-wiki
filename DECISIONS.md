@@ -554,6 +554,20 @@ minutes. Site search is per part: a bundle's search covers that bundle, and
 the documentation's search no longer finds wiki pages. The dev server still
 builds the whole site as one.
 
+**Amendment (2026-10-29, user request):** single bundle parts outgrew the
+default 8 GB heap: `turbulence-modelling` peaked at 10.5 GB and `weno-teno` at
+8.7 GB, and the Docs workflow needed a 12 GB heap. A bundle whose pages exceed
+6 MB of Markdown (`SPLIT_MB` in `docs/.vitepress/parts.mjs`) is now built as
+one part per page group: its Source pages, its bibliography page, and the
+rest (`DOCS_SCOPE=<slug>/<group>`). The split is derived from page sizes at
+build time, never listed by hand; the build script, the site config and the
+theme share one part function. In October 2026 three bundles are split
+(`turbulence-modelling`, `weno-teno`, `ode-integration`), the peak is 6.1 GB
+for 22 parts, and the local build takes about seven and a half minutes (1.5
+minutes more than before). In a split bundle, a link between groups loads the
+page in full and the site search covers only the group being shown: searching
+from a concept page no longer finds the bundle's Source pages.
+
 ## D29 — WENO/TENO bundle (2026-10-21)
 
 **Decision (user):** a new bundle `weno-teno` for high-order discretizations
