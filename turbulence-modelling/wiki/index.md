@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–14 ingested (280 of the 307 sources planned in 16
+**Corpus:** chunks 1–15 ingested (300 of the 307 sources planned in 16
 chunks; the archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -165,6 +165,18 @@ solver for implicit LES, the PyFR, CaLES, Xcompact3d-MHD and GESTS codes,
 panel fluid–structure interaction under shock/boundary-layer interaction,
 a survey of vortex-flow CFD, conditional source-term estimation, and two
 reviews of AI for turbulence and supersonic combustion.
+Chunk 15 (2025–2026 papers): dynamic load balancing of a p-adaptive DG
+LES solver, a machine-learned implicit-LES finite-volume scheme, a
+comparison of DG stabilizations, h-adaptive isogeometric DG and p-multigrid
+DG, adaptive dissipation/dispersion adjustment for implicit LES, DDES of
+NACA wing sections with spectral elements, an entropy-aware DG solver for
+wall-bounded implicit LES, slip and generalized wall functions for
+wall-modelled LES, low-dissipation and low-Mach shock-capturing schemes,
+vortex-resolved and moving-mesh DG with adaptive refinement, LES of
+compressible round jets, half-explicit Runge–Kutta integrators for the
+variational multiscale method, the GPU solver RHEA-X, mesh adaptation for
+DNS and LES, and reviews of shock–turbulence interaction and of combustion
+modelling for engine CFD.
 
 ## Reading guide
 
@@ -172,7 +184,8 @@ reviews of AI for turbulence and supersonic combustion.
 [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md) →
 [large-eddy simulation](/definitions/large-eddy-simulation.md) →
 [direct numerical simulation](/definitions/direct-numerical-simulation.md) →
-[grid-point requirements](/results/les-grid-point-requirements.md).
+[grid-point requirements](/results/les-grid-point-requirements.md);
+[vortex identification criteria](/definitions/vortex-identification-criterion.md).
 
 **2. RANS and transition.**
 [Spalart–Allmaras model](/methods/spalart-allmaras-model.md),
@@ -283,9 +296,11 @@ reviews of AI for turbulence and supersonic combustion.
 [immersed boundary methods](/methods/immersed-boundary-method.md),
 [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md),
 [flux reconstruction](/methods/flux-reconstruction.md),
+[isogeometric analysis](/methods/isogeometric-analysis.md),
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md),
 [thickened flame model](/methods/thickened-flame-model.md),
 [conditional source-term estimation](/methods/conditional-source-term-estimation.md),
+[conditional moment closure](/methods/conditional-moment-closure.md),
 [actuator line and actuator disk models](/methods/actuator-line-model.md),
 [jump-penalty stabilization](/methods/jump-penalty-stabilization.md),
 [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md),
@@ -300,7 +315,7 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [COOLFluiD](/software/coolfluid.md), [hpMusic](/software/hpmusic.md),
 [ANSYS Fluent](/software/ansys-fluent.md), [PHengLEI](/software/phenglei.md),
 [PyFR](/software/pyfr.md), [CaLES](/software/cales.md),
-[Xcompact3d](/software/xcompact3d.md);
+[Xcompact3d](/software/xcompact3d.md), [CNS3D](/software/cns3d.md);
 [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md),
@@ -319,6 +334,7 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md),
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md),
 [shock-generated turbulence](/results/shock-generated-turbulence.md),
+[linear interaction analysis](/methods/linear-interaction-analysis.md),
 [Ahmed body](/benchmarks/ahmed-body.md),
 [ACAT1 fan stage](/benchmarks/acat1-fan-stage.md),
 [Imperial front wing](/benchmarks/imperial-front-wing.md),
@@ -340,6 +356,7 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [Gaussian bump](/benchmarks/gaussian-bump.md),
 [SD7003 airfoil](/benchmarks/sd7003-airfoil.md),
 [square cylinder](/benchmarks/square-cylinder-flow.md),
+[turbulent round jet](/benchmarks/turbulent-round-jet.md),
 [temporal mixing layer](/benchmarks/temporal-mixing-layer.md);
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md).
 

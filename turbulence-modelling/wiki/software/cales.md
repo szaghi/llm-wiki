@@ -5,7 +5,7 @@ description: "CaLES is an open-source GPU finite-difference solver for large-edd
 status: established
 aliases: [CaNS, CaNS-2.3.0]
 tags: [software, gpu, les, wmles, sgs-model]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-28T17:51:00Z
 ---
 
 # CaLES
@@ -189,6 +189,18 @@ All tests are a posteriori (Xiao et al. 2025, §4):
 The authors conclude that the dynamic model shows "somewhat superior
 performance in grid convergence and turbulence prediction" (§5).
 
+## As cited by another GPU solver
+
+[Monteiro et al. (2026)](/sources/monteiro-2026.md), §1, describe the
+incompressible solvers of the CaNS family as having "progressively adopted
+GPU backends via CUDA Fortran and OpenACC, with extensions such as
+CaNS-Fizzy for two-phase flows and CaLES for wall-modeled LES"; their
+Table 1 of open-source GPU solvers lists CaNS (Fortran, MPI, OpenACC,
+OpenMP) and CaNS-Fizzy, not CaLES as a separate row, and their reference
+to CaLES prints volume and article number without a journal name. They
+contrast these incompressible codes with their compressible DNS solver
+RHEA-X.
+
 ## Qualifications
 
 - §5 calls the dynamic model "somewhat superior" in grid convergence;
@@ -210,3 +222,4 @@ performance in grid convergence and turbulence prediction" (§5).
 # Citations
 
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — program summary; §1, Table 1 (motivation, open-source solvers, CaNS benchmarks); §2.1–§2.2, Eqs. (1)–(10) (Smagorinsky with van Driest damping, dynamic procedure, log-law wall model and its implementation); §2, Eqs. (11)–(22) (time integration, staggered differences, Poisson solver); §2 (OpenACC, cuDecomp); §3.2, Figs. 2–4, Table 2 (performance, memory, scaling); §4.1–§4.4, Tables 3–5, Figs. 5–16 (validation); §5.
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §1, Table 1, ref. [37] (CaLES as a CaNS extension for wall-modelled LES, cited).

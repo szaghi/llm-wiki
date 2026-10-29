@@ -5,7 +5,7 @@ description: "RANS transition closures that transport the energy of pre-transiti
 status: established
 aliases: [LKE model, laminar kinetic energy model, k-kL-ω, k-kl-ω, three-equation transition model, LKE-SST]
 tags: [rans, transition, eddy-viscosity, turbomachinery, separated-flow, boundary-layer]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-28T17:43:00Z
 ---
 
 # Laminar kinetic energy transition models
@@ -438,7 +438,13 @@ Fig. 5, §6.1). Morsbach et al. (2024), whose SST and Reynolds-stress RANS
 with $\gamma$-$Re_\theta$ miss the separation-induced transition of a
 low-pressure turbine at midspan, suggest that tuned transition models or
 LKE models may be needed ([Morsbach et al. (2024)](/sources/morsbach-2024.md),
-§5).
+§5). Bulgarini et al. (2025) use the $k_L$-$k$-$\tilde\omega_\ell$ results of
+Lorini et al. as the RANS reference for the pressure distribution of the
+T106A cascade ($Re_{2,is}=0.5\times10^6$, $M_{2,is}=0.59$ and 0.955,
+$Tu_1=4\%$), which they compute with the plain log-$\omega$
+[Wilcox model](/methods/k-omega-model.md) and no transition model
+([Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §8.1; see
+[turbine cascades](/benchmarks/turbine-cascade.md)).
 
 ## Data-driven corrections
 
@@ -508,3 +514,4 @@ intermittency models they cite are on the
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.2, Eqs. 33–34.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.3.3.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4, §4.3.
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §8.1 (T106A reference of Lorini et al., as cited).

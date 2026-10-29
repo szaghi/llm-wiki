@@ -5,7 +5,7 @@ description: "Training a learned closure with the solver in the loop, so the los
 status: established
 aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning, CFD-driven machine learning, closed-loop training]
 tags: [data-driven, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-28T12:25:00Z
+timestamp: 2026-10-28T17:42:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -251,6 +251,23 @@ expensive. Derivative fitting alone left a vanilla convolutional closure
 unstable and inaccurate, "especially in the KdV case", while their
 energy-conserving closure was already reasonable with it (§4.2; see
 [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+[Bezgin et al. (2025)](/sources/bezgin-2025.md) (§4.2, Eqs. 41–42,
+Fig. 6) train a learned discretization rather than a closure: the networks
+that weight the candidate polynomials of a TENO6-A reconstruction in an
+[implicit LES](/definitions/implicit-les.md) of compressible decaying
+isotropic turbulence. The fully differentiable solver JAX-Fluids is
+unrolled for $N_T\in\{1,2,5\}$ coarse time steps (three Runge–Kutta
+stages each; $N_T$ page-local) from a filtered-DNS state, the loss is the
+cell-wise mean absolute error of density, velocity, pressure and
+temperature against filtered DNS, each normalized by its initial
+reference value, and the gradient comes from automatic differentiation
+(Adam, learning rate $10^{-4}$, batches of 24 samples, 50 epochs, single
+precision). The authors call end-to-end optimization "essential" for
+discretization learning because "there is no a priori knowledge" of the
+optimal discretization, only of the optimal solution trajectory, and
+state that it improves inference stability because the gradients carry
+the PDE dynamics and the model observes its own error accumulation; the
+framework needs no derivation of adjoint equations (§4.2).
 
 **Variational inference through an adjoint RANS solver.**
 [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) train a
@@ -439,6 +456,21 @@ and they call for a quantitative comparison of the two (§IV). See
     improved both mean velocity and temperature of vertical natural
     convection over the baseline and over separately trained models
     (§4.5, Figs. 12–13).
+- **Unroll length against long-time statistics.** In Bezgin et al.
+  (2025, §5.1–5.2, Tables 2–3), on $32^3$ cells at turbulent Mach numbers
+  0.4, 0.6 and 0.8, each unroll length gives the lowest cell-wise error
+  at its own horizon over 1 to 20 steps from unseen states, the $N_T=5$
+  model at 5, 10 and 20 steps; over the full decay ($t\in[0,10\tau]$,
+  $\tau$ the Taylor time scale) the $N_T=1$ model has the lowest spectral
+  error at all three Mach numbers (mean absolute log-spectrum error
+  0.8849, 0.7923, 0.6178, against 1.110, 1.153, 1.173 for TENO6-A) and the
+  $N_T=5$ model the highest (1.480, 1.562, 1.428). The authors conclude
+  that "the cell-wise error … does not necessarily correspond to good
+  spectral properties during the decay" (§5.2); the comparison is on
+  [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+  For comparison, the unroll lengths cited by Agdestein & Sanderse
+  (above) for Kuramoto–Sivashinsky are 30 steps (good) against 120
+  (poor), in a different system and metric.
 - **Sparse Bayesian closures selected in the solver.** Cherroud et al.
   (2022, §4.2, Fig. 5, App. C) find the selected single-term production
   corrections nearly as robust and cheap as SST and clearly better in
@@ -619,3 +651,4 @@ the convergence of these training methods and the choice of loss function
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4 (taxonomy of model-consistent frameworks, CFD-driven training, advantages and cost); §4.1, §4.2.1 Eq. 11, §4.4.2 Fig. 11, §4.5 Eq. 17 Figs. 12–13 (results of cited works).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1, Eqs. 10–12 ($k$-corrective-frozen targets, consistency argument); §4.2, Table 2, Fig. 5, App. C (a posteriori selection, results against SST and BSL-EARSM).
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — §1 (shift to LES-generated data and model-consistent or RL training; many LES runs needed); §3.2, Fig. 2 (GPU speed-up). No training performed.
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §4.2, Eqs. (41)–(42), Fig. 6 (end-to-end training through JAX-Fluids); §5.1–5.2, Tables 2–3 (unroll length, cell-wise against spectral error).

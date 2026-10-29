@@ -5,7 +5,7 @@ description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subce
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
 tags: [shock-capturing, dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -139,6 +139,32 @@ with order-lowering subcell approaches; see the
 [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) page).
 In the authors' comparison table of high-order codes (Ferrer et al. 2023,
 §2, Table 1), shock capturing is ticked for both HORSES3D and Flexi/Fluxo.
+
+**Entropy stability in troubled cells only, without subcells.**
+[Bilocq et al. (2025)](/sources/bilocq-2025.md), §3.6, keep the
+polynomial in the same way but change the discretization of the flagged
+element: cells marked by the Hennemann-calibrated modal-energy sensor (the
+sensor of the convex-blending variant above) switch from a collocated
+Gauss–Legendre DGSEM to an entropy-stable DG with a hybridized
+summation-by-parts operator, Chandrashekar flux differencing and the
+entropy projection of Chan et al., while the other cells stay unchanged
+(the selective scheme DG-ES). It stabilizes every coarse mesh of their
+compressible isotropic-turbulence tests on which the unstabilized DG
+diverges, and from that the authors conclude that it "appears sufficient to
+satisfy the second law of thermodynamics only in the troubled cells"
+(§4.1.3, Table 1); no entropy inequality is printed for the mixed
+interfaces. Its cost is 1.25–1.27 times the unstabilized DG (Tables 3,
+8) and 1.21–1.28 times the artificial-viscosity DG (Tables 10, 12), and it
+inherits the time-step constraint of the entropy projection, which with
+strong shocks decreases "quadratically with grid refinement" (§4.3.2,
+Table 9). Results are on
+[entropy conservation](/properties/entropy-conservation.md) and
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md).
+Their conclusion adds that entropy-stable
+methods with positivity-preserving limiters often rest on first- or
+second-order finite-volume discretizations (FLEXI among the cited works),
+and the resulting loss of accuracy "requires further evaluation" (§5;
+stated, not tested).
 
 ## Indicator-switched modal and entropy filters
 
@@ -552,3 +578,4 @@ on the right.
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III C, §IV C, §V (a posteriori subcell limiting and reconstructed DG in multi-material DG, cited).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (a posteriori MOOD-type subcell correction of DG, subcell resolution as a dissipative filter, limiting called too intrusive for LES); §4.4, §5.1 (hybrid DG/FV subcell interface method); §6.2 (review).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (PyFR entropy filtering against FLEXI subcell finite volumes on the supersonic Taylor–Green vortex).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §3.6 (sensor-selected entropy-stable DG cells, DG-ES); §4.1.3, Tables 1, 3, 8–10, 12 (stability, cost, time step); §5 (accuracy of low-order subcell limiting questioned).

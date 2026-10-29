@@ -5,7 +5,7 @@ description: "Explicit filtering, in the modal space of a high-order element or 
 status: established
 aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering, explicit differential filter, Najafi-Yazdi filter, entropy-adaptive filter, improved adaptive filter]
 tags: [les, filtering, implicit-les, dg, numerical-dissipation, sgs-model]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Explicit modal filtering as an LES closure
@@ -579,9 +579,57 @@ runs without a subgrid model as implicit LES (§5). The relaxation filter of
 [Nek5000](/software/nek5000.md), used as an implicit subgrid model by Mukha
 et al. (2025), is on the
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
-page.
+page. [Kumar et al. (2025)](/sources/kumar-2025.md), App. A.3–A.4,
+Eqs. (A5)–(A12), print that high-pass-filter (HPF) relaxation model of
+Nek5000 (Stolz et al., Schlatter et al., Fischer & Mullen, cited): a
+Legendre low-pass filter $\mathcal F_N u=\sum_{k=0}^N\sigma_k\tilde u_kP_k$
+($\tilde u_k$ the Legendre coefficients, $P_k$ the Legendre polynomials,
+page-local) with $\sigma_k=1$ for $k\le N-m$ and
+$\sigma_k=\big((m-i)/m\big)^2$ for $k=N-m+i$, $i=1,\dots,m$, applied as a
+tensor product in three dimensions; the high-pass part
+$\mathcal H_N*u=u-\mathcal F_Nu$ enters the momentum equation as the
+relaxation term $-\chi_f\,\mathcal H_N*u_i$, element by element, with
+$\chi_f=5$ ($\chi_f=10$ does not change the results significantly). For
+$N=8$, $m=3$ the printed weights give $\sigma_6=(2/3)^2$, $\sigma_7=(1/3)^2$,
+$\sigma_8=0$ *(compiler check, not in the sources)*. The paper does not state that the term is active in its
+own RANS and detached-eddy runs (see Qualifications).
+
+## Modal filters as sensors, not as closures
+
+In the ADDA algorithm of [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md),
+§4.1, Eqs. (29)–(36), Table 1, modal filters are not applied to the
+solution: the unlimited central-stencil polynomial of a CWENOZ
+finite-volume reconstruction, written in a zero-mean Taylor basis, is
+filtered weakly and strongly, and the energy ratio
+$$E_{\mathrm R}=\frac{\int_{V_i}\big((\rho\boldsymbol u)_{\mathrm R}-(\rho\boldsymbol u)_{\mathrm W}\big)^2dV}{\int_{V_i}\big((\rho\boldsymbol u)_{\mathrm R}-(\rho\boldsymbol u)_{\mathrm S}\big)^2dV}$$
+of the unfiltered (R), weakly (W) and strongly (S) filtered momentum
+decides whether the cell needs more ($E_{\mathrm R}>1.2$) or less ($E_{\mathrm R}<0.95$)
+dissipation ($E_{\mathrm R}$ page-local; after Domaradzki and co-workers and
+Fernandez-Fidalgo et al., cited). Of seven candidate kernels, six
+exponential ones $\hat G(\vartheta^{\mathrm t}_m)=\exp\{-\alpha_f[(\vartheta^{\mathrm t}_m-\vartheta^{\mathrm t}_c)/(\vartheta^{\mathrm t}_{\max}-\vartheta^{\mathrm t}_c)]^{s_f}\}$
+on the total Taylor degree $\vartheta^{\mathrm t}_m$ of a mode (strength
+$\alpha_f$, order $s_f$, cut-off $\vartheta^{\mathrm t}_c$ and maximum
+$\vartheta^{\mathrm t}_{\max}$, registry §11) and a sharp cut-off that
+drops the top-degree terms (order $r$ for the weak and also $r-1$ for the
+strong filter, $r$ the reconstruction degree), only the sharp filter and
+the exponential filter 7 ($\alpha_f=32/8$, $s_f=8/8$, strong/weak)
+give a useful signal on the inviscid Taylor–Green vortex with CWENOZ4 on
+$64^3$; filter 4 varies "very close to machine precision" and the others
+stay flat (Fig. 5). The sharp filter is retained. The dissipation it
+controls is on [numerical dissipation](/properties/numerical-dissipation.md).
 
 ## Qualifications
+
+- **Printed forms in Kumar et al. (2025), App. A.4.** Eq. (A10) is printed
+  without the relaxation term the text says is added to it, and the
+  symbols $\mathcal H_N$ and $\chi$ of the text are absent from it; the
+  text takes "$m=0$" while saying the filter "only affects the last
+  mode", whereas with the printed $\sigma_k$ the value $m=0$ leaves every
+  mode unfiltered *(compiler check, not in the sources)*.
+- **Printed forms in Tsoutsanis & Nogueira (2025).** Table 1 gives the
+  sharp filter as $\vartheta^{\mathrm t}_{\max}=r-2/r-1$ (strong/weak); with Eq. (31),
+  which zeroes only the degree $\vartheta^{\mathrm t}_{\max}$, the weak value $r-1$
+  would zero degree $r-1$, not the order-$r$ terms the text describes.
 
 - Ranjbar et al. (2026) use a different $c_{\mathrm{st}}$ per flow (0.65,
   0.25, 0.5); the Smagorinsky comparisons use one fixed $C_s$ per case,
@@ -645,3 +693,5 @@ page.
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eq. (9).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2; §6.2.
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2 (modal filtering, anti-aliasing, artificial viscosity and entropy filtering in PyFR); §5.1, Figs. 11–12 (entropy filter on the supersonic Taylor–Green vortex).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — App. A.3–A.4, Eqs. (A5)–(A12) (HPF relaxation model of Nek5000, Legendre filter weights, $\chi_f=5$).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §4.1, Eqs. (29)–(36), Table 1, Fig. 5 (modal filters on a Taylor basis as an energy-ratio sensor).

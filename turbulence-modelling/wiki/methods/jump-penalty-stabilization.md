@@ -5,7 +5,7 @@ description: "Jump-penalty stabilization adds to a high-order element method fac
 status: established
 aliases: [jump penalty, solution jump penalty, gradient jump penalty, gradient-jump penalisation, GJP, continuous interior penalty, edge stabilization, interior penalty stabilization]
 tags: [dg, implicit-les, numerical-dissipation, spectral-element, flux-reconstruction]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T17:48:00Z
 ---
 
 # Jump-penalty stabilization of high-order methods
@@ -108,6 +108,45 @@ compute the common face gradients of their FR/CPR scheme with BR2, whose
 interface penalty on the solution jump is described on the
 [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) page,
 and add dissipation by explicit subgrid models rather than penalties.
+
+## The BR2 penalty as an entropy source in implicit LES
+
+[Alberti et al. (2025b)](/sources/alberti-2025-c.md), App. C, analyse the
+BR2 viscous flux of their entropy-projected modal DG (see
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)): no
+entropy-stability proof of BR2 for the Navier–Stokes equations exists, but
+with the viscous matrix frozen at element-mean values the BR2 entropy
+contribution is bounded, through a generalized Young inequality, by a sum
+of non-negative terms, and the interior penalty $\eta_F$ (page-local, the
+BR2 penalty; $\eta_{F,w}$ at walls) multiplies an entropy source that grows
+with the interface jumps (Eqs. C1–C5). In severely under-resolved implicit
+LES of a channel at $Re_\tau=395$, raising $\eta_F$ from 1 to 3 and 5
+shifts the mean velocity upward and lowers the shear stress for
+$y^+\le20$, within the first element, more with the entropy-conserving
+Ismail–Roe flux than with the entropy-stable Godunov flux "because the
+centred EC flux produces larger jumps" (§III A 3, Figs. 13–14); their
+near-incompressible runs use $\eta_F=1$ in the interior and
+$\eta_{F,w}=8$ at the wall, and at bulk Mach 1.5 lowering $\eta_F$ from 5
+to 1 "mitigates" the excess dissipation of the entropy-stable scheme
+(§III A 3, Figs. 16–17). A formal lower bound on $\eta_F$ exists (as
+cited), but "even (reasonably) smaller values may be adopted" (§II). On a
+manufactured solution the entropy-stable scheme keeps order $N+1$ for
+$\eta_F=1$, 3 and 5 at $N=3$ (App. B). Their thesis is that the accuracy of
+such runs hinges on the dissipation in the wall-adjacent elements (§IV;
+see [numerical dissipation](/properties/numerical-dissipation.md)).
+
+## A gradient-jump penalty as a diagnostic on continuous spectral elements
+
+[Kumar et al. (2025)](/sources/kumar-2025.md), §4.3.1, see fluctuations of
+the $Q$-criterion at element interfaces in their
+[DDES](/methods/detached-eddy-simulation.md) of a NACA 0012 at
+$45^\circ$ in [Nek5000](/software/nek5000.md), from the $C^0$ continuity of
+the spectral-element method; adding a gradient-jump penalty, as in the
+cited works, on the fine grid removes them without changing the main
+structures and gives nearly identical lift and drag histories, so they
+call the fluctuations "merely a cosmetic issue" (results not shown in
+figures; no penalty value printed). See
+[continuous-Galerkin spectral-element method](/methods/spectral-element-method.md).
 
 ## Contrast: residual-based stabilization of continuous Galerkin
 
@@ -263,3 +302,5 @@ penalty does not change with $N$.
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §3 (BR2 face gradients in FR/CPR; explicit SGS dissipation instead).
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1 (stabilization term as ILES dissipation); §3.1, Eqs. (8)–(10) (SUPG/PSPG, $\tau_u$); §4.2, Table 5 (time-step dependence).
 - [Lederer et al. (2026)](/sources/lederer-2026.md) — arXiv 2408.06698v1: §1 (interest in jump penalties, citing Kou et al.); §3.2 (upwind jump as implicit eddy viscosity).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §II (BR2 penalties, lower bound as cited); §III A 3, Figs. 13–17 (effect of $\eta_F$ in channel implicit LES); App. B (orders for three penalties); App. C, Eqs. (C1)–(C5) (BR2 entropy contribution under frozen viscous matrices); §IV.
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §4.3.1 (gradient-jump penalty removes interface artefacts of $Q$ in Nek5000 DDES).

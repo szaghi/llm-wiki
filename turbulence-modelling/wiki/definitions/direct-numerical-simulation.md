@@ -5,7 +5,7 @@ description: "DNS solves the Navier–Stokes equations with no turbulence model 
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS, DNS-like simulation, fully resolved simulation with detailed chemistry, surrogate PC DNS, principal-component DNS]
 tags: [dns, les, combustion, boundary-layer, compressible, gpu, mhd]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:18:00Z
 ---
 
 # Direct numerical simulation
@@ -147,6 +147,38 @@ DNS (Ren & Goldin's estimate with its constant set to 1, as cited; Eq. 20),
 and at about 20 ns acoustic and 18 ns chemical for the component
 formulation (below).
 
+**A mesh built for DNS a priori.** [Barbera et al. (2026)](/sources/barbera-2026.md),
+§1–2.1 and §3.1, note that the classical check $\Delta/\eta=O(1)$ is a
+posteriori and gives no constructive way to design a DNS mesh, and build
+one during the run: a subgrid velocity is estimated from the box-filtered
+second-order Taylor expansion of the instantaneous velocity,
+$u^<\approx\tfrac12c_1\Delta^2\|\nabla^2\boldsymbol u\|_2$ ($c_1=1/5$ in
+three dimensions, $\Delta$ the radius of the equivalent sphere; page-local),
+and the mesh size is set so that the cell Reynolds number
+$\Delta u^</\nu$ meets a target, by analogy with the order-one Reynolds
+number of the Kolmogorov scale, the instantaneous sizes being averaged in
+time and remeshed until the cell count changes by less than 10%. On a
+forced round jet at $Re=4000$, targets from 0.5 to 0.05 give 75 to 920
+million elements with the same mean and rms velocities, and the target
+0.125 gives $\Delta/\eta\approx1.5$ in the fully turbulent region with less
+than 5% of the dissipation in the subgrid part (Figs. 2–5; see
+[turbulent round jet](/benchmarks/turbulent-round-jet.md) and
+[mesh adaptation](/methods/mesh-adaptation.md)); the authors call 0.125
+"the target value to achieve rigorous DNS if only this criterion is
+considered" (App. B). In their LES criterion the regions where the filter
+width set by a target integral-to-filter length ratio falls below this DNS
+size are run as DNS, so that the transition region of the jet and the wall
+region of a pipe at $Re_D=5300$ are meshed for DNS whatever the LES target
+(§2.3, §5.2).
+
+[Bezgin et al. (2025)](/sources/bezgin-2025.md), §4.1, state that
+$k_{\max}\eta\ge\pi$ ($\eta/\Delta x\ge1$) "is required to fully resolve
+all scales" and run their $512^3$ forced compressible reference at
+$k_{\max}\eta\approx2.3$, adding that the TENO6-A scheme of that reference
+"acts as an ILES model" where not all scales are resolved; the reference is
+used, box-filtered, as the target of a learned implicit LES (see
+[homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)).
+
 **Wall-normal criteria for wall heat flux and reacting boundary layers.**
 [Tang et al. (2024)](/sources/tang-2024.md), §2.2, Table 2, Figs. 5–9,
 run a five-grid study of a Mach 5 compression-ramp DNS and find the wall
@@ -200,6 +232,15 @@ $Re_c=4\times10^5$, $\alpha=5^\circ$ by Hosseini et al. in
 [Nek5000](/software/nek5000.md): about 3.2 billion points, about 35
 million core-hours over about six months for about ten chord lengths of
 advection (Fig. 43; see [NACA 4412](/benchmarks/naca-4412-airfoil.md)).
+The combustion review of [Posch et al. (2025)](/sources/posch-2025.md),
+§3.2.1, citing Pope, writes the number of operations of DNS as about $Re^3$
+with a minimum of $Re^{11/4}$, cites engine DNS that either do not resolve
+combustion (wall heat transfer) or are two-dimensional with highly reduced
+mechanisms (turbulent jet ignition), which "raises the issue of the
+cost-benefit ratio of applying DNS in this context", and judges that "the
+general use of DNS for turbulent combustion modeling is not on the horizon
+except for fundamental research in academic fields"; DNS of unit problems
+forms the base of their model-validation pyramid (§6, Fig. 17).
 
 **Exascale isotropic turbulence.** [Yeung et al. (2025)](/sources/yeung-2025.md)
 reach $Re_\lambda\approx2500$ on a $32\,768^3$ grid with a GPU Fourier
@@ -478,6 +519,28 @@ modified Ducros sensor (threshold 0.15) at $M_\infty=8$; Yu et al. caution
 that the shock-capturing dissipation makes their spectral budgets
 unreliable near the shocks (§7).
 
+For the canonical shock–turbulence interaction the review of
+[Cuadra et al. (2025)](/sources/cuadra-2025.md), §III A–B and §IV A,
+cites the scaling of Moin & Mahesh between the Kolmogorov length and the
+shock thickness, $\eta/\delta_{\mathrm{sh}}=0.13\sqrt{Re_\lambda}\,(M_1-1)/M_t$
+($\delta_{\mathrm{sh}}$ the shock thickness, $M_1$ the pre-shock Mach
+number; page-local), which makes shock-resolving DNS unfeasible once $M_1$
+exceeds 1.5, and they class the numerical frameworks as shock-resolving,
+shock-capturing and shock-fitting. The DNS they compile span (Table I)
+$M_1$ from 1.1 to 6, $M_t$ from 0.02 to 0.691 and $Re_\lambda$ from 9 to
+74, with $M_1\sim5$ reached only near $Re_\lambda\sim40$, whereas fully
+developed turbulence needs $Re_\lambda>100$ by the works they cite. The
+ratio of the Kolmogorov scales across the shock, which they cite as
+$\eta_2/\eta_1\sim\mathcal P\mathcal T^{11/8}$ ($\mathcal P$, $\mathcal T$
+the pressure and temperature jumps; page-local), places the worst DNS cost
+near the hypersonic border at Mach 5, small $M_t/M_1$ requires many
+flow-through times per eddy turnover, and the cost of a shock-capturing
+scheme grows with the square or cube of the number of unknowns (§IV A 2).
+Their conclusion is that the hypersonic regime ($M_1\ge5$) is nearly
+unexplored by DNS (see
+[shock-generated turbulence](/results/shock-generated-turbulence.md) and
+[linear interaction analysis](/methods/linear-interaction-analysis.md)).
+
 **Convergence of model-free schemes to DNS.** [Svärd (2022)](/sources/svard-2022.md),
 §2.2, distinguishes fixed-width LES, whose grid-converged solution solves
 the filtered equations, from "vanishing LES" (filter width proportional to
@@ -582,6 +645,30 @@ than an 8-core desktop and about as fast as some 300 cores of TianHe-II,
 and eight V100s run $512^3$ about three times faster than 1024 TianHe-II
 cores. The FLAME lattice Boltzmann code reaches 2.7 billion lattice updates
 per second at $512^3$ on three A100 GPUs (Foldes et al. 2023, §5).
+[Monteiro et al. (2026)](/sources/monteiro-2026.md) describe RHEA-X, an
+open-source C++ solver for compressible multiphysics DNS on Cartesian
+grids, made fully GPU-resident with OpenACC and CUDA-aware MPI: the whole
+time loop runs on the device, host transfers are limited to start-up and
+output, and explicit memory management replaces managed memory, which
+their earlier port found about two times slower (§3). Its numerics are
+second-order central differences with the kinetic-energy-preserving split
+form of Kennedy, Gruber and Pirozzoli, a pressure-equilibrium-preserving
+variant for ideal gases and a pressure-evolution form for real fluids (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+and [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)),
+SSP Runge–Kutta time stepping, a penalization
+[immersed boundary](/methods/immersed-boundary-method.md) and Lagrangian
+point particles. On H100 GPUs the routines run 11 to 46 times faster than
+on CPUs; with CUDA-aware MPI the maximum speed-up over CPUs is 66.25 on
+128 GPUs (Table 3; "approximately 70×" in the text), the strong-scaling
+efficiency stays above 90% up to 64 GPUs on the large mesh (97% in the
+abstract) and the weak-scaling efficiency mostly above 90% (§5). The
+validations are DNS of a channel at $Re_\tau=590$, a NACA 0012 in full
+stall at $Re_c=5\times10^4$, a supercritical nitrogen jet and particle-laden
+forced isotropic turbulence (§4; see
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md),
+[NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md) and
+[turbulent round jets](/benchmarks/turbulent-round-jet.md)).
 
 **Floating-point precision.** Wang et al. (2023b, §4.2, Table 8) compare
 single and double precision for channel DNS: single precision halves memory
@@ -948,6 +1035,11 @@ use or avoid the word in other senses:
   $y^+\le1$, which isotropic adaptive refinement makes "computationally
   prohibitive" for their Mach 4 compression ramp; with cells of 11 wall
   units and no subgrid or wall model they call their runs implicit LES.
+- **Two-dimensional laminar runs.** [Zou et al. (2025)](/sources/zou-2025-b.md),
+  §III C, call "direct numerical simulations" their two-dimensional
+  computations of the vortex-induced vibration of a cylinder at $Re_D=150$
+  with a moving-mesh DG solver, a laminar periodic wake with no turbulence
+  (see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
 
 ## DNS as reference and test bed
 
@@ -1016,6 +1108,24 @@ scheme near the stability limit, whereas in LES temporal errors are "more
 likely overshadowed by spatial errors" (abstract, §4.2–4.3, §5); the
 authors expect their predictions to hold "even if partially" in DNS of
 turbulence without testing one.
+
+**How far a DNS reference is trusted.** [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md),
+§VI, "view the DNS as a reference solution; however, it is not inherently
+error-free, as numerical errors can impact every numerical simulation
+during the implementation, and human errors can affect the setup", before
+comparing their implicit LES of a channel at $Re_\tau\simeq395$ with Moser,
+Kim & Mansour. Two compressible channel DNS used as references by
+[Alberti et al. (2025b)](/sources/alberti-2025-c.md), §III A 2, differ at
+$M_b=3$, $Re_\tau=450$: the centreline temperature is 2.570 in Modesti &
+Pirozzoli (Sutherland's law) and 2.490 in Coleman, Kim & Moser (a power
+law), against 2.467 in their own DG run, and the authors attribute their
+departure from the first beyond $y^+\approx45$ to the viscosity law. The
+Taylor–Green references are DNS too: a dealiased pseudo-spectral run at
+$512^3$ for the variational multiscale LES of
+[Sun et al. (2026)](/sources/sun-2026.md), §7.2, and the $512^3$
+sixth-order compact run of Dairay et al. for the WENO implicit LES of
+[Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md), §III F (see
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
 
 **Reacting and canonical DNS in recent reviews and validations.** The
 review of [Salehi et al. (2024)](/sources/salehi-2024.md), §2.1, §3.1–3.2,
@@ -1388,9 +1498,7 @@ layers (§7).
   "may not be safe for DNS ... especially for time-evolutionary turbulent
   flows", from instantaneous profiles of channel flow; Yeung et al. (2025)
   run stationary isotropic DNS in single precision and judge the effect on
-  their averaged small-scale statistics unlikely to be strong. The flows,
-  quantities and arguments differ, and neither source tests the other's
-  case, so no contradiction is recorded.
+  their averaged small-scale statistics unlikely to be strong.
 - **Shear-viscous compressible DNS.** Beattie et al. (2025) argue that
   without explicit bulk viscosity a compressible run is an implicit LES for
   the compressible modes. Seta & Federrath (2022), recorded above, justify
@@ -1603,3 +1711,13 @@ layers (§7).
 - [Le et al. (2024)](/sources/le-2024.md) — §3; §3.3 (review).
 - [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.3.
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §3.1–3.2.
+- [Barbera et al. (2026)](/sources/barbera-2026.md) — §1; §2.1–2.3, Eqs. 1–9, 20; §3.1, Figs. 2–5; §5.2; App. B.
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §4.1, Figs. 2–3.
+- [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.1; §6, Fig. 17 (review).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1–2, Eq. 38; §III B, Table I; §IV A 2, Eq. 40 (review).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §2.3, §3, §4, §5, Table 3.
+- [Zou et al. (2025)](/sources/zou-2025-b.md) — §III C (term usage for 2D laminar runs).
+- [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) — §VI (the DNS reference and its errors).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §III A 2, Table III, Fig. 5.
+- [Sun et al. (2026)](/sources/sun-2026.md) — §7.2 (DNS reference of the TGV).
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §III F (DNS reference of the TGV).

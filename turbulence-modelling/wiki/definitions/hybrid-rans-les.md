@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES, self-adaptive turbulence eddy simulation, SATES, very-large eddy simulation, VLES, scale-resolving hybrid model, SRH, hybrid temporal LES, HTLES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # Hybrid RANS/LES
@@ -224,7 +224,13 @@ Unified switches rely on ad hoc functions tuned per flow, such as the
 model-reduction factor of the flow-simulation methodology or the delaying
 function of delayed DES, so the methods "may not be predictive, in general".
 Dzanic et al. (2022, §1) note that most earlier high-order work on such
-models concerned RANS or zonal methods such as DES.
+models concerned RANS or zonal methods such as DES. Kumar et al. (2025, §1)
+motivate a high-order DES by the failure of RANS in massively separated
+flow and the cost of LES, review earlier DES in high-order and mixed-order
+codes, and judge the implicit upwind dissipation of such schemes too large
+for the LES part of a hybrid; their $k$-$\tau$ SST-DDES in a spectral
+element code is on the [DES page](/methods/detached-eddy-simulation.md)
+([Kumar et al. (2025)](/sources/kumar-2025.md), §1, §2.2).
 
 [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
 is a single-model unified hybrid: one parameter, the unresolved fraction
@@ -722,6 +728,20 @@ perturbation of the turbulence"; from "a mesh designer's perspective" they
 conclude that mesh-size changes should be avoided, and adapt meshes on
 time-averaged criteria so that the mesh converges to a static one
 ([Mozaffari et al. (2022)](/sources/mozaffari-2022.md), §1, Fig. 1, §3; see
+[mesh adaptation](/methods/mesh-adaptation.md)).
+Barbera et al. (2026), adapting meshes for LES and DNS, cite the earlier
+anisotropic adaptation of hybrid RANS/LES, with isotropic cells in the LES
+regions or time-averaged metrics (Mozaffari et al. 2022 among them), and
+the statement of Park et al. that "the straightforward transposition of
+RANS-oriented anisotropic metrics to LES is generally not valid"; their own
+LES size $\Delta=\min\{\Delta_{\langle u\rangle};\max\{\Delta_{\mathrm{DNS}};\Delta_c\}\}$
+combines a mean-flow and a DNS criterion, and §2.3 calls the resulting
+LES requirement "a compromise between the RANS" strategy (controlled by
+$\Delta_{\langle u\rangle}$ only) and the DNS strategy (controlled by
+$\Delta_{\mathrm{DNS}}$ only); they run no hybrid RANS/LES
+([Barbera et al. (2026)](/sources/barbera-2026.md), §1, §2.3, Eq. 20;
+$\Delta_{\langle u\rangle}$, $\Delta_{\mathrm{DNS}}$, $\Delta_c$ the mean-flow, DNS and
+filter-size targets, page-local; see
 [mesh adaptation](/methods/mesh-adaptation.md)).
 
 Dzanic et al. (2022) stress the numerical side: the excessive dissipation of
@@ -1331,3 +1351,5 @@ large time steps that A-stable BDF2 allows; see
 - [Guo & Wang (2025)](/sources/guo-2025.md) — §1, §2.1 (hybrid families, transition problems, three groups of DES improvements).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I, §III (SATES as a unified model, against Speziale's VLES).
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.D–F, Figs. 10–16 (grid dependence of hybrid interfaces, feasible switching region $7<y^+<15$, interface at $y^+\approx14$).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (motivation, DES in high-order codes); §2.2.
+- [Barbera et al. (2026)](/sources/barbera-2026.md) — §1 (hybrid RANS/LES mesh adaptation, as cited); §2.3, Eq. (20) (LES size between mean-flow and DNS bounds).

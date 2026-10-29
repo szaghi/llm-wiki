@@ -5,7 +5,7 @@ description: "A shock sensor or troubled-cell indicator is the switch that decid
 status: established
 aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator, extremum-property sensor, EP sensor, Ren discontinuity indicator]
 tags: [shock-capturing, numerical-dissipation, compressible, dg, implicit-les, boundary-layer]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Shock sensors and troubled-cell indicators
@@ -168,7 +168,14 @@ uses in the sources:
   $\Theta=|\nabla\times\boldsymbol u|^2/((\nabla\cdot\boldsymbol u)^2+|\nabla\times\boldsymbol u|^2)$
   the vortical complement (page-local)
   ([Ahn et al. 2023](/sources/ahn-2023.md), §III, Eqs. 1–6; formulas on
-  [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
+  [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md));
+- as the switch from the adaptive-local-deconvolution reconstruction and
+  flux to WENO5-JS in the compressible ALDM against which
+  [Bezgin et al. (2025)](/sources/bezgin-2025.md), §1, §5, compare their
+  machine-learned implicit LES; in their outlook they note that
+  three-dimensional flow information enters dimension-by-dimension
+  finite-volume schemes today only through such sensors (§1, §6; see
+  [implicit LES](/definitions/implicit-les.md)).
 
 The same switch between an energy-preserving central flux and WENO runs
 two further STREAmS DNS: [Yu et al. (2022)](/sources/yu-2022-e.md),
@@ -356,6 +363,44 @@ layers", where the blending factor is non-zero at first but "diminishes
 very quickly", so they impose it at the wall instead (§3.3; the wall
 modification is on the subcell page).
 
+**Three detectors compared in under-resolved compressible turbulence.**
+[Bilocq et al. (2025)](/sources/bilocq-2025.md), §3.5, Eqs. (29)–(30),
+use the same logistic map with the Hennemann calibration (sharpness
+$9.21024$, threshold $0.5\times10^{-1.8(N+1)^{1/4}}$, cut-off
+$\alpha_{\min}=0.001$) on the single-ratio modal-energy indicator of the
+density, $\mathbb E_{\mathrm P}=(\rho-\rho_{N-1},\rho-\rho_{N-1})_e/(\rho,\rho)_e$
+(their $\mathcal E$, Eq. 30; the Persson–Peraire ratio without the
+logarithm), to switch both a Laplacian
+artificial viscosity (DG-AV) and their selective entropy-stable DG (DG-ES,
+which uses the entropy-stable discretization only in flagged cells). In
+decaying compressible isotropic turbulence with eddy shocklets
+($M_{t,0}=0.6$, $Re_{\lambda,0}=100$, $N=5$) they compare three detectors
+(§4.1.5, Figs. 3–4, Table 4):
+
+- the original Persson–Peraire calibration flags close to 100% of the
+  cells and over-dissipates;
+- the Hennemann calibration flags at most about 10% of the elements, and
+  DG-AV and DG-ES then behave like the unstabilized DG;
+- the dilatation–vorticity shock sensor of Fernandez et al., which gives a
+  subcell-varying viscosity, fires in more cells than the Hennemann
+  calibration because the shocklets persist, damps the dilatation
+  fluctuations strongly, and fails on five of the coarse meshes on which
+  the Hennemann calibration is stable.
+
+DG-AV is strongly sensitive to the detector, DG-ES much less, and in the
+worst case it matches the fully entropy-stable scheme. In the supersonic
+Taylor–Green vortex ($M_0=1.25$, $Re=1600$, $N=3$) the flagged fraction
+falls from about 37% at $64^3$ degrees of freedom to about 6.5% at
+$128^3$ and below 1% at $512^3$ (§4.2.2, Table 6). For the strong
+vortex/shock interaction the plain Hennemann sensor keeps neither DG-AV nor
+DG-ES stable, and they widen it by one diffusion sweep over face
+neighbours, $\alpha\leftarrow\max_{\mathcal K}(\alpha,0.5\alpha_{\mathcal K})$,
+at the cost of a larger stabilized region (§4.3.2, Eq. 39). The sensor
+never fires inside the vortex, so the authors attribute the vortex damping
+of DG-AV to dissipation during the earlier passage through the shock
+(§4.3.3). See [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
+and [entropy conservation](/properties/entropy-conservation.md).
+
 **The smoothness indicator as a refinement indicator.**
 [Ims & Wang (2023)](/sources/ims-2023.md), §3.2, Eqs. (15)–(17), reuse the
 Persson–Peraire smoothness ratio, averaged over density, momentum and total
@@ -365,6 +410,26 @@ cascades it concentrates refinement in the boundary layers and converges
 the wake statistics more slowly than the two alternatives; on the T106a
 cascade it is no better than random refinement (§5.1–5.3, visual
 comparisons; see [mesh adaptation](/methods/mesh-adaptation.md)).
+For steady RANS and laminar flow,
+[Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §4.2–4.3,
+Eqs. (39)–(43), compare a "spectral decay" indicator (cited to Persson &
+Peraire and printed as the ratio of norms
+$\|(\rho\boldsymbol u)_N-(\rho\boldsymbol u)_{N-1}\|_{L^2(e)}/\|(\rho\boldsymbol u)_N\|_{L^2(e)}$,
+without the logarithm and on the momentum) with a small-scale-energy
+indicator and two interface non-conformity indicators for anisotropic
+$h$-adaptation of their isogeometric DG: on a laminar cylinder at $Re=40$
+all four give a speed-up of about 2 against a uniformly fine mesh, the
+spectral-decay indicator is "the most effective overall" and the
+small-scale-energy indicator over-refines the separation region (§4.3,
+Figs. 9–10). Side by side: Ims & Wang (2023) find, for adaptive implicit
+LES of turbine cascades, the small-scale-energy and residual indicators
+converge faster than the Persson–Peraire ratio, which on the T106a is no
+better than random; Bulgarini et al. (2025b) rank the spectral-decay ratio
+first and the small-scale-energy indicator last for steady laminar and
+RANS flow, with a normalization of the latter by the element size
+(Eq. 40). The two studies differ in flow regime (unsteady implicit LES
+against steady solutions), in the printed form of the indicators and in
+the quantity converged.
 
 **Density gradient.** The entropy-stable artificial viscosity of
 [HORSES3D](/software/horses3d.md) is switched by an element-wise
@@ -573,6 +638,25 @@ $\theta_{\mathrm K}=\tfrac65\big(1-\tfrac{12}{15+a_{\mathrm{cz}}}\big)$ ($a_{\ma
 $\theta_{\mathrm K}$ page-local, the source's $a$, $\theta$;
 see [WENO](/methods/weno-scheme.md)).
 
+**Central weight of CWENOZ as a reset switch.** In the ADDA algorithm of
+[Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §4.3,
+Remark 5, Fig. 3, a cell-wise energy-ratio sensor (the energy of the
+reconstructed momentum removed by a weak and by a strong modal filter;
+on [numerical dissipation](/properties/numerical-dissipation.md)) lowers
+or raises the dissipation of an unstructured CWENOZ finite-volume implicit
+LES, and the nonlinear weight $\mathsf w_1$ of the central stencil,
+computed for density and pressure, acts as the discontinuity detector:
+when it falls below a threshold $C$ the flux-dissipation multiplier is
+reset to its full value at once. The threshold is printed as
+"$C<0.999$" and the flowchart writes $\mathsf w_1\le C$; with the
+non-normalized central weight $1000$ of ADDA's low-dissipation setting,
+the normalized linear central weight is $1-1/1000=0.999$ *(compiler check,
+not in the sources)*. The authors state that the energy-ratio sensor
+responds to under-resolved turbulence and to discontinuities alike
+(Remark 3), and that the density-based reset prevents very-low-dissipation
+settings in cells whose stencils cross strong density gradients (§5.3,
+Fig. 24). Scheme on [WENO](/methods/weno-scheme.md).
+
 ## Indicators built from TENO stencil flags (finite differences)
 
 **Eight-point TENO-S indicator.** [Liang & Fu (2024)](/sources/liang-2024.md),
@@ -656,6 +740,18 @@ interpolation families is needed (the paper does not call this a sensor).
 The scheme is on
 [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
 
+**A sensor-free artificial viscosity.** The Brescia/Bergamo DG solvers
+used by [Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §2, Eq. (9),
+and [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §3.4,
+Eqs. (27)–(31), add the pressure-gradient-directed artificial viscosity of
+Bassi et al. in every element "without the use of any shock sensor": its
+coefficient is proportional to a jump residual, the lifted difference
+between the numerical and the physical inviscid flux on the element
+boundary, so it is "always and everywhere active, but introduces a
+numerical viscosity only where nonphysical oscillations occur"; formulas on
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md).
+Both papers are steady RANS computations (transonic RAE 2822, NACA 0012).
+
 By contrast, the OpenFOAM implicit-LES solver of
 [Cheng et al. (2023)](/sources/cheng-2023-b.md), §2.2, uses no sensor: one
 bounded (TVD) reconstruction, ROUND, acts at shocks and in turbulence
@@ -693,6 +789,18 @@ Persson's, and that its parallel cost fits within the 15–20% overhead of
 the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
 [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+## The sensor and the subgrid model
+
+In their review of the canonical shock–turbulence interaction,
+[Cuadra et al. (2025)](/sources/cuadra-2025.md), §III A 1, state that the
+overall dissipation of hybrid central/WENO (or TENO) schemes "depends
+strongly on the shock sensor", which motivates refined sensors (cited),
+and, §III A 3, that switching the subgrid fluxes off in the cells where
+the shock-capturing scheme is active improves LES (Bermejo-Moreno et al.
+2010, cited); their list of three elements for predictive LES of
+supersonic shock–turbulence interaction ends with "SGS fluxes only where
+the hybrid scheme is central" (§IV A 3). See [shock-generated turbulence](/results/shock-generated-turbulence.md).
+
 ## Qualifications
 
 - **What separates a shock from turbulence.** Carlsson et al. (2023) state
@@ -703,9 +811,7 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
   that penetrate a turbulent boundary layer, citing others, and test the
   Jameson indicator alone; Liang & Fu (2024) call their indicator more
   universal than the Ducros sensor without running the Ducros sensor.
-  The claims concern different flows (shocks inside or outside the
-  boundary layer) and none of the three compares the sensors on one case,
-  so no contradiction is recorded.
+  None of the three compares the sensors on one case.
 - **"Parameter-free" indicators.** Huang & Fu (2024) and Huang et al.
   (2025) use one parameter set ($\epsilon=10^{-3}$, $q=6$, $C_T=10^{-4}$)
   for eight and nine Euler tests on uniform grids at $N=2$; the limiters
@@ -765,6 +871,16 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
   sensor combines with the constant values $\alpha_{\mathrm b}$ it reports.
   The form differs from the Ducros factor $\Phi_i$ above, in which the
   vorticity enters the denominator.
+- **Evidence for detector sensitivity (Bilocq et al. 2025).** The
+  ranking of the three detectors rests on one decaying-turbulence case at
+  $N=5$, with "standard values of the parameters" that "have not been
+  fine-tuned for this problem" (§4.1.5); the selective
+  scheme DG-ES has no printed entropy-stability proof at the interfaces
+  between flagged and unflagged cells (§3.6).
+- **Printed forms in Tsoutsanis & Nogueira (2025).** Besides the threshold
+  "$C<0.999$" (above), §4.3 says a cell tagged for more dissipation
+  increases the central linear weight, while §4.2 and §5.1 obtain more dissipation by
+  reducing the central linear weight to 2.
 - Deng et al.'s (2022) statement that no indicator is universally best is
   a citation, not a comparison run in the paper; Ma et al.'s (2022)
   decoupling at discontinuities is derived under idealized weights
@@ -825,3 +941,9 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
 - [An et al. (2025)](/sources/an-2025.md) — §2; App. A, Eqs. (A.1)–(A.2) (modal-decay detector on $\rho\tilde\nu$ driving HWENO and positivity limiting).
 - [Wang et al. (2024b)](/sources/wang-2024-i.md) — Abstract, §I; §II.D, Eqs. (21)–(23) (extremum-property sensor); §III.E, Table III (cost).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §II.D, Eqs. (20)–(22) (Ren-type discontinuity measure setting an adaptive TENO cut-off).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §3.5, Eqs. (29)–(31) (Hennemann-calibrated modal-energy sensor); §3.6 (sensor-selected entropy-stable cells); §4.1.5, Figs. 3–4, Table 4 (Persson–Peraire, Hennemann and Fernandez detectors compared); §4.2.2, Table 6 (troubled-cell fractions); §4.3.2–4.3.3, Eq. (39) (sensor widening).
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1, §5, §6 (Ducros sensor of compressible ALDM; sensors as the only 3-D information of dimension-by-dimension schemes).
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §2, Eq. (9) (artificial viscosity without a shock sensor).
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §3.4, Eqs. (27)–(31) (jump-residual artificial viscosity); §4.2–4.3, Eqs. (39)–(43), Figs. 9–10 (spectral-decay and other refinement indicators).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1 (dissipation of hybrid schemes set by the sensor); §III A 3, §IV A 3 (subgrid fluxes switched off where shock capturing acts; review).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §4.3, Remarks 3, 5, Fig. 3 (CWENOZ central weight as discontinuity reset of ADDA); §5.3, Fig. 24.

@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-29T05:15:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -280,6 +280,21 @@ of $C^D$, $C^\phi$, $C^u$, $C^\rho$ and none on $C^L$, so their $\xi$ is
 Bernades et al.'s and the missing weight is $\tfrac14$ *(compiler check, not
 in the sources)*.
 
+The GPU-resident compressible DNS solver RHEA-X of
+[Monteiro et al. (2026)](/sources/monteiro-2026.md), §2.3.1,
+Eqs. (9)–(20), prints the same five forms and family, with the weight
+written $\xi$ (here $a_{\mathrm K}$), and takes $a_{\mathrm K}=\tfrac12$, the
+KGP split, as its baseline on second-order central differences $D_x$ of
+Cartesian grids, for "second-order accuracy, low dispersion, and exact
+discrete kinetic-energy conservation"; the discrete forms differ because
+$D_x(fg)\neq fD_xg+gD_xf$ (Eq. 14), which the authors name as the source
+of aliasing. Its other options are KEEP with pressure-equilibrium
+preservation for ideal gases and a pressure-evolution KEP-PEP form for
+real fluids (on
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)),
+and HLL-type Riemann fluxes that add "upwind-like dissipation for shocks
+at the expense of energy conservation" (Table A.1).
+
 **Kennedy–Gruber volume flux in a DG turbomachinery code.** The DGSEM of
 DLR's TRACE solver used by [Morsbach et al. (2024)](/sources/morsbach-2024.md),
 §2, for implicit LES of a low-pressure-turbine cascade stabilizes the
@@ -523,6 +538,16 @@ flux only through a diffused mass flux (formulas on
 [entropy conservation](/properties/entropy-conservation.md)), the
 diffusion acting on density alone (Condition E). Mateo-Gabín et al.
 (below) invoke the same unbounded pressure work.
+
+**Passing mentions.** The review of shock–turbulence interaction of
+[Cuadra et al. (2025)](/sources/cuadra-2025.md), §III A 1, lists
+skew-symmetric and energy-preserving central schemes (Pirozzoli 2011,
+Kennedy & Gruber 2008, cited) as the smooth-region partners of
+shock-capturing hybrids. [Sun et al. (2026)](/sources/sun-2026.md),
+Remark 1, use the advective form of the convective trilinear form in
+their isogeometric variational-multiscale LES and name the skew-symmetric
+form (better kinetic-energy conservation, de-aliasing) and the
+conservative form as alternatives they do not use.
 
 ## Kinetic energy as an entropy
 
@@ -779,6 +804,21 @@ conclusion "up to a time discretization error" (§6), with explicit
 Runge–Kutta time stepping; see the Qualifications below on KEP as a
 semi-discrete property.
 
+**KEP fluxes in a modal DG.** [Alberti et al. (2025b)](/sources/alberti-2025-c.md),
+§III A 3 c, run Ranocha's entropy-conserving and kinetic-energy-preserving
+flux in their entropy-corrected modal DG implicit LES of compressible
+channel flow and find results that agree with those of the Ismail–Roe
+entropy-conserving flux (Figs. 20–21), and state that the KEP property
+"does not discretely ensure this property on the adopted DG modal
+discretization"; their modal DG, in an orthonormal hierarchical basis,
+uses no summation-by-parts operators. They call their centred
+entropy-conserving setup "dissipation-free" and note, citing the
+literature, that kinetic energy is not strictly conserved in compressible
+inviscid flow but that, "net of the reversible pressure work", kinetic
+energy dissipation and entropy production coincide in the continuous
+setting for negligible heat conduction (§I; scheme on
+[entropy conservation](/properties/entropy-conservation.md)).
+
 **What KEP does not control.** Kinetic-energy preservation constrains momentum,
 not density and pressure. Flad & Gassner (2017, §5.1, Fig. 10) find that
 neither the KEP split form nor the Smagorinsky model damps pressure and density
@@ -963,3 +1003,7 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 - [Fang et al. (2025)](/sources/fang-2025.md) — §2.1, Eqs. (1)–(2), (5) (skew-symmetric momentum and induction equations against aliasing).
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — spatial-discretization section (staggered second-order central differences, energy-preserving in the inviscid limit, cited).
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.2, Eq. (14) (fourth-order skew-symmetric central flux of a WENO hybrid; no conservation claim).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §2.3.1, Eqs. (9)–(20) (split forms, KGP baseline of RHEA-X, product-rule aliasing); Table A.1.
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I (dissipation-free setup, kinetic energy against entropy); §III A 3 c, Figs. 20–21 (Ranocha's KEP flux not discretely KEP in modal DG).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1 (energy-preserving central schemes in shock–turbulence hybrids; review, passing).
+- [Sun et al. (2026)](/sources/sun-2026.md) — Remark 1 (skew-symmetric form named, advective form used; passing).

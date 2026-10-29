@@ -5,7 +5,7 @@ description: "WENO, TENO, weighted compact nonlinear and bounded normalized-vari
 status: established
 aliases: [WENO, TENO, US-WENO, AUS-WENO, HAUS-WENO, unequal-sized WENO, interpolation-based WENO, alternative finite-difference WENO, smooth TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-Z+, WENO-Z+M, WENO-ZQ, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme, TENO-THINC, TENO-S, TENOA, THINC, TENO limiter, boundary variation diminishing, BVD-AD, WCNS, weighted compact nonlinear scheme, WCNS-T, ROUND, OMP6 hybrid]
 tags: [shock-capturing, numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -306,7 +306,7 @@ to the smallest stencil total variation does not exceed a threshold, 3 to
 10 in the tests (Eqs. 24–26).
 
 The comparison schemes are printed in full (§2.2.2–2.2.8): WENO-JS,
-WENO-Z with $\tau_5=|\mathrm{IS}_0-\mathrm{IS}_2|$, WENO-CU6 ($C=20$,
+WENO-Z with the global indicator $\mathrm{IS}_{\mathrm G}=|\mathrm{IS}_0-\mathrm{IS}_2|$ (the source's $\tau_5$), WENO-CU6 ($C=20$,
 $d_k=(1,9,9,1)/20$, six-point indicator), TENO6 ($C_T=10^{-7}$, $q=6$,
 $C=1$), seventh-order WENO-BS and TENO8. Results, all with visual
 comparison except where numbers are given:
@@ -411,6 +411,13 @@ that coupling THINC with WENO above third order is generally avoided to
 prevent over-sharpening, whereas the MUSCL-THINC/QQ boundary-variation
 selection with only second-order candidates gave less error than
 third-order WENO (§IV, §IV A–B; THINC hybrids of TENO are below).
+
+The moving-mesh Runge–Kutta DG of [Zou et al. (2025)](/sources/zou-2025-b.md),
+§II B, for two-dimensional laminar flow past an oscillating cylinder with
+synthetic jets (the authors call these runs DNS), limits near the jet
+orifices with the unstructured-grid WENO limiter of Zhu et al. (2013)
+combined with the positivity-preserving limiter of Liu et al. (2016),
+both cited; no troubled-cell indicator or limiter parameter is printed.
 
 **WENO limiters for DG, and WENO against a DG level set.** The review of
 high-order discontinuous schemes for multiphase and multicomponent flows
@@ -1229,6 +1236,179 @@ cubic-curved upstream cells, it gives a fourth-order, mass-conservative
 semi-Lagrangian finite-volume scheme run at CFL numbers up to 10.2 (§3,
 §4).
 
+## Combining weight modifications: WENO5-H++
+
+[Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md), §II C,
+Eqs. (11)–(12), App., combine four published modifications of the
+fifth-order weights into one formula, WENO5-H++, for a Godunov-type
+finite-volume solver (HLLC, dimension-by-dimension reconstruction of
+primitive variables, five-stage fourth-order SSP Runge–Kutta,
+fourth-order central viscous terms; the paper does not name its code).
+In the notation above ($d_k$ ideal weights,
+$\mathrm{IS}_k$ smoothness indicators, $\mathrm{IS}_{\mathrm G}=|\mathrm{IS}_2-\mathrm{IS}_0|$
+the global indicator; page-local $g$, $\Psi_k$, $\tilde\Psi_k$,
+$\gamma^{\mathrm Z}_k$, $z$, $\eta_k$, $\lambda_{\mathrm H}$):
+$$\begin{aligned}
+a_k&=d_k\big(1+\Phi\,\Psi_k+\lambda_{\mathrm H}\,\eta_k\big),\qquad \mathsf w_k=\frac{a_k}{\sum_la_l},\qquad \Phi=\min\big(1,\sqrt{\mathrm{IS}_{\mathrm G}}\big),\\
+\Psi_k&=\Big(\frac{\mathrm{IS}_{\mathrm G}+\epsilon}{g(\mathrm{IS}_k)+\epsilon}\Big)^{3},\qquad g(\mathrm{IS}_k)=\mathrm{IS}_{\min}+\frac{(\mathrm{IS}_k-\mathrm{IS}_{\min})^{3}}{\mathrm{IS}_k^{2}+\epsilon},\\
+\lambda_{\mathrm H}&=579\,z,\qquad z=\frac{1+\tilde\Psi_{\min}}{\sum_kd_k(1+\tilde\Psi_k)},\qquad \eta_k=\Big(\frac{\mathrm{IS}_k+\epsilon}{\mathrm{IS}_{\mathrm G}+\epsilon}\Big)^{1/2},\\
+\tilde\Psi_k&=1+\frac{(\gamma^{\mathrm Z}_k-1)^3}{(\gamma^{\mathrm Z}_k-1)^2+100\,(\gamma^{\mathrm Z}_k)^2/d_k},\qquad \gamma^{\mathrm Z}_k=\Big(\frac{\mathrm{IS}_{\mathrm G}}{\mathrm{IS}_k+\epsilon}\Big)^{2}.
+\end{aligned}$$
+The modifier $\Phi$ is that of WENO-D (Wang et al. 2019), the mapping
+$g$ that of WENO-IM (Hu 2021), $\tilde\Psi_k$ the WENO-MZ weighting
+function (Tang & Li 2024), and the term $\lambda_{\mathrm H}\eta_k$, with
+579 and the square root, the extension of Luo & Wu (2021), which the
+authors call WENO-ZPM and which is the WENO-Z+M of the section above
+(same work; the authors prefer it to WENO-Z+ because it "corrects the
+negative dissipation aspects" of the latter). The authors' changes are
+the exponent 3 on $\Psi_k$ (equal to the number of substencils, after
+Gerolymos et al.; their WENO-JS uses 2 "unless otherwise stated") and
+$\epsilon=10\,\mathrm{epsilon}(1.0\mathrm{D}0)\approx2.22\times10^{-15}$
+(against $10^{-41}$ in their WENO-JS), both to curb noise from dispersion
+errors that the low-dissipation hybrid showed in preliminary trials (not
+shown); all other constants are the published ones. They state that with
+$N$ modifications there are $N!$ orders of combination, that the order
+changes the result (some too dissipative, others too dispersive) and that
+"there is no established framework" that explains it.
+
+Results against WENO5-JS, WENO5-Z+, WENO5-ZM (Hong et al.) and WENO5-MD
+(Tang & Li) (§III):
+
+| Test | Measure | JS | Z+ | ZM | MD | H++ |
+|---|---|---|---|---|---|---|
+| Step advection, 200 cells, $t=2$ (Table I) | $L^\infty$ error | 0.386 | 0.352 | 0.338 | 0.510 | 0.304 |
+| Double-vortex pairing, $64^2$ (Table III) | accumulated numerical dissipation / JS | 1 | 0.942 | 0.888 | 0.829 | 0.822 |
+| Double-vortex pairing (Table II) | inner vortex length (normalized) | 0.373 | 0.534 | 0.609 | 0.679 | 0.745 |
+
+WENO5-MD gives spurious oscillations at the step (with its modifier
+$\sqrt{\mathrm{IS}_{\mathrm G}}$), WENO5-H++ keeps the amplitude of the
+Titarev–Toro high-frequency waves to the end and resolves more of the
+slip-line roll-up of the double Mach reflection (Figs. 1, 3–4). In the
+Taylor–Green vortex at $Re=1600$, $M_0=0.1$, on $96^3$ cells without a
+subgrid model, WENO5-H++ gives the highest enstrophy peak and the lowest
+estimated numerical viscosity, followed by WENO5-MD, both below the
+eleventh-order WENO11-JS on the same grid according to the text (Fig. 10
+does not plot WENO11-JS); enstrophy and numerical viscosity improve by
+25.5% and 44.5% (reference scheme not stated) (§III F–G; measure on
+[numerical dissipation](/properties/numerical-dissipation.md)). The cost
+is 30–40% above WENO5-JS, WENO11-JS "over twice" (no timing table or
+hardware), and the authors state that the extra cost pays off chiefly for
+inviscid or under-resolved viscous flow (§III G). The double-vortex
+pairing case is on [temporal mixing layer](/benchmarks/temporal-mixing-layer.md).
+
+## Ninth-order WENO and low-Mach corrections in channel implicit LES
+
+[Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md), §III B,
+Eqs. (5)–(15), describe the ninth-order WENO (W9) of CNS3D, in primitive
+variables: each stencil is normalized to values in $(0,1]$ before
+reconstruction; a relative total-variation limiter sets the linear
+weights when the ratio of the largest to the smallest stencil total
+variation is below $P_{\mathrm{TV}}=2$ (Taylor et al. used 5, "too high"
+with the other augmentations) and the largest total variation is below
+$0.2(r-1)$ (registry §11; $r$ the substencil length, five for W9); the
+nonlinear weights use squared indicators and a Feng-type WENO-M mapping;
+and a Harten-type order reduction W9 → W7 → W5 → W3 → MUSCL is triggered
+by density or pressure jumps above 70% of the cell value, a condition
+"never met" in their channel.
+
+They report that such a scheme is nearly central in smooth regions yet
+still too dissipative at low Mach number on coarse grids: in implicit LES
+of a weakly compressible channel ($Re_\tau\simeq395$, $M_b=0.2$, $64^3$
+cells, against the DNS of Moser et al. with $Re_\tau=392.24$), W9 alone
+gives a mean $Re_\tau$ of 372.5, about 5.7% low (Table II). Low-Mach
+corrections blend the reconstructed left and right velocities toward
+their average after the reconstruction, by a factor
+$z_{\mathrm{LM}}=\min\big(1,\max(M_{\mathrm L},M_{\mathrm R})\big)$
+(page-local; the local Mach numbers of the two states), leaving density
+and pressure untouched (Thornber et al. 2008, cited). Applied to both
+velocity components with the face-normal Mach number (LM) the correction
+over-predicts ($Re_\tau=402.2$); with the velocity-magnitude Mach number
+of the original form it under-predicts (367, from the authors' earlier
+work); limiting only the face-normal velocity (LMn, after Simmonds et
+al.) gives 383, only the tangential one (LMt, LMtn) 372 and 371.1. Their
+contribution, NEHA, limits the normal and the tangential components each
+with its own Mach number (Eqs. 34–36) and gives 392 on $64^3$, against
+391 for W9 on $128^3$; its mean velocity is the closest to DNS and below
+$y^+\approx40$ more accurate than W9 on $128^3$ (§VII–VIII, Figs. 8–10).
+LM with W9 produces "fuzzy", dispersed vortices near mid-channel, which
+NEHA does not (Fig. 6). The overhead is below 10% (LM about 5%; no
+timing table). The dissipation reading is on
+[numerical dissipation](/properties/numerical-dissipation.md) and the
+implicit-LES setting on [implicit LES](/definitions/implicit-les.md).
+Tsoutsanis & Nogueira (2025), below, use the face-normal correction of
+Simmonds et al. on unstructured meshes.
+
+## CWENOZ with adaptive dissipation on unstructured meshes
+
+[Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §3.1.1,
+Eqs. (17)–(26), use in the open-source unstructured finite-volume code
+UCNS3D the CWENOZ reconstruction of Tsoutsanis & Dumbser: an optimal
+polynomial $p_{\mathrm{opt}}=\sum_sd_sp_s$ of one central
+arbitrary-order and several second-order directional least-squares
+polynomials, recombined with Z-type weights
+$a_s=d_s\big(1+(\tau_{\mathrm U}/(\epsilon+\mathrm{IS}_s))^4\big)$,
+$\tau_{\mathrm U}$ the mean absolute difference between the
+directional and the central indicators, $\epsilon=h^4$ ($h$ a cell size),
+and central linear weight $d_1=1-1/d'_1$ from a non-normalized value
+$d'_1$ ($d'_1$ page-local; the source's $\lambda_s$, $\lambda'_1$). Their
+ADDA algorithm makes $d'_1$ the dissipation control of implicit LES: an
+energy-ratio sensor (on [explicit modal filtering](/methods/explicit-modal-filtering.md))
+sets $d'_1=2$ (more dissipation, $d_1=0.5$) or $d'_1=1000$ (less,
+$d_1=0.999$ *(compiler check, not in the sources)*) cell by cell, and,
+for Roe and Rusanov fluxes, a multiplier of the flux dissipation between
+0.5 and 1; the nonlinear central weight resets that multiplier to 1 at
+discontinuities ([shock sensors](/definitions/shock-sensor.md)). On the
+inviscid Taylor–Green vortex, raising the order or $d_1$ lowers the
+dissipation and moves the results toward the Brachet et al. DNS and the
+$-5/3$ slope on $64^3$ hexahedra (§5.1, Figs. 8–10); the overhead of ADDA
+falls from 6.1–8.2% for CWENOZ3 to 1.8–2.2% for CWENOZ6 (Table 3). The
+authors state that the approach applies to WENO, WENO-Z, TENO, CWENO and
+CWENOZ families alike (§4.2). The low-Mach correction of Simmonds et al.
+(face-normal velocity only, $z_{\mathrm{LM}}$ from the velocity-magnitude
+Mach number, Eq. 27) strongly improves their hexahedral-mesh Taylor–Green
+results, and ADDA with it brings hexahedral and tetrahedral results
+close together (§5.1, Figs. 11–12). Results are on
+[numerical dissipation](/properties/numerical-dissipation.md) and
+[SD7003 airfoil](/benchmarks/sd7003-airfoil.md).
+
+## Learned weights: machine-learned implicit LES
+
+[Bezgin et al. (2025)](/sources/bezgin-2025.md), §3.1, Eqs. (10)–(20),
+keep the four Harten-type candidate polynomials of the six-point TENO6-A
+stencil (three three-point and one four-point downwind polynomial), the
+HLLC flux and TVD-RK3 time stepping, and replace only the TENO weighting
+(smoothness measures $\gamma^{\mathrm T}_k$, normalization $\chi^{\mathrm T}_k$,
+adaptive cut-off $C_T$, spectrally optimized $d_k$) by three small
+networks, one each for density, velocity (applied to each component) and
+pressure, whose inputs are the five first differences of the stencil
+and whose softmax outputs are the four convex weights; each network has
+three hidden layers of 20 units and 1044 parameters, 3132 in all. The
+authors note that "smoothness indicators in shock-capturing schemes are
+not informed by physical knowledge" (§1). The learned weights differ by
+field (§5.3, Figs. 10–12): for pressure the downwind polynomial gets a
+mean weight near zero, for density about 0.08, while the velocity weights
+"somewhat resemble" the spectrally optimized TENO6-A linear weights. The
+authors state that restricting the output to convex weights of Harten-type
+polynomials keeps the scheme at least third-order accurate and convergent
+under refinement (not tested beyond one refinement). Training, accuracy
+and cost are on [implicit LES](/definitions/implicit-les.md) and
+[model-consistent training](/methods/model-consistent-training.md).
+
+## WENO in shock–turbulence interaction
+
+The review of [Cuadra et al. (2025)](/sources/cuadra-2025.md), §III A 1,
+classes the numerical frameworks for the canonical shock–turbulence
+interaction as shock-resolving (feasible only when the Kolmogorov length
+is of the order of the laminar shock thickness, beyond a shock Mach number
+of about 1.5 unfeasible by the Moin–Mahesh scaling they print, Eq. 38),
+shock-capturing and shock-fitting; shock capturing uses ENO, WENO or TENO
+with flux splitting, hybridized with central or energy-preserving schemes
+through a sensor (Lee et al. 1997; Larsson & Lele 2009, cited), or
+artificial viscosity, and needs a grid fine enough to capture all scales of
+shock wrinkling; the overall dissipation depends strongly on the sensor
+(cited; see [shock sensors](/definitions/shock-sensor.md) and
+[shock-generated turbulence](/results/shock-generated-turbulence.md)).
+
 ## Cost on GPUs
 
 On the AMD MI60 GPU the inviscid upwind difference takes 70% of the
@@ -1251,6 +1431,34 @@ profiled; Tables 2–3).
 
 ## Qualifications
 
+- **Printed slips in Kokkinakis & Drikakis (2025).** The text gives the
+  $L^\infty$ reductions of WENO5-H++ and WENO5-ZM as "almost ~30%" and
+  "~14%"; relative to the WENO5-JS error of Table I they are 21.2% and
+  12.4%, and the printed values equal the error reductions divided by the
+  new errors, 27.0% and 14.2%, while the double-vortex percentages are
+  relative to WENO5-JS (17.8%, printed "approximately 18%" and in the
+  abstract "nearly 20%") *(compiler check, not in the sources)*. The
+  WENO-MZ weighting is printed in two forms that are not equivalent: in
+  Eq. (12) the ratio is raised to the power once, in Eq. (A18) twice
+  ($(\gamma^{\mathrm Z}_k)^p$ with $\gamma^{\mathrm Z}_k$ already raised to $p$). Eq. (12) sums
+  over $l$ a summand indexed $k$ and leaves $\tilde\Psi_{\min}$ undefined. Eq. (A3), stated to
+  reduce to the original WENO-M mapping for $A=1$, $K=2$, prints
+  $(\mathsf w_k+d_k)^{K+1}$ in the numerator ($\mathsf w_k$ the unmapped weight), where the reduction requires
+  $(\mathsf w_k-d_k)^{K+1}$ (their own Eq. A2) *(compiler check, not in the
+  sources)*; the same "+" appears in the mapping of
+  Kokkinakis & Drikakis (2025b), Eq. (11).
+- **Printed slips in Kokkinakis & Drikakis (2025b).** As printed, the
+  low-Mach blends (Eqs. 21, 28, 31, 35) give the left state
+  $\tfrac12[(1-z_{\mathrm{LM}})\boldsymbol u_{\mathrm L}+(1+z_{\mathrm{LM}})\boldsymbol u_{\mathrm R}]$,
+  so at $z_{\mathrm{LM}}=1$, where the correction should switch off, the
+  two states are exchanged *(compiler check, not in the sources)*. The
+  stencil normalization of Eq. (5) prints $g_{\max}=\mathrm{maxval}-q_{\min}$
+  with an undefined $q_{\min}$; the order of the WENO is given as $2r-1$
+  and, two paragraphs later, as $2(r-1)$; the total-variation condition
+  of Eq. (8) is printed without the conjunction between its two parts.
+  Table II prints the RMS fluctuation of $Re_\tau$ next to each mean
+  (3.3 for LMn at 383, 2.96 for NEHA at 392); the comparison is made on
+  one case and one grid.
 - Dang et al. (2022, §2.2.3) assign $\theta_J=\theta_2$ to both WENO branches
   ("$\theta_1<\theta\le\theta_2$" and "$\theta_2\le\theta$" in their
   symbols), and state that
@@ -1512,3 +1720,9 @@ profiled; Tables 2–3).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §II.B–D, Eqs. (8)–(23) (JS, Z, TENO and smooth-TENO weights in WCNS); §IV.C, §V.
 - [An et al. (2025)](/sources/an-2025.md) — §2; App. A, Eqs. (A.1)–(A.2) (HWENO and positivity limiting of $\tilde\nu$ in DG RANS).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Figs. 11–12, Table 1 (TENO reference of the supersonic Taylor–Green comparison; passing).
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §II C, Eqs. (11)–(12) (WENO5-H++); App., Eqs. (A1)–(A20) (WENO-M, Feng, AIM, FM, IM, Z, Z+, D, ZPM, ZM, MZ, MD); §III A–G, Tables I–III, Figs. 1–10 (advection, Shu–Osher, Titarev–Toro, double Mach reflection, double-vortex pairing, Taylor–Green vortex, cost).
+- [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) — §III B, Eqs. (5)–(15) (W9 with normalization, relative-TV limiter $P_{\mathrm{TV}}=2$, mapping, order reduction); §IV–V, Eqs. (21)–(36), Table I (LM, LMn, LMt, LMtn, NEHA); §VII–VIII, Table II, Figs. 6–10 (channel implicit LES).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §3.1.1, Eqs. (17)–(26) (CWENOZ on mixed-element meshes); §3.2, Eq. (27) (low-Mach correction); §4.2 (ADDA central weight); §5.1, Figs. 8–12, Table 3.
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §3.1, Eqs. (10)–(20) (TENO6-A polynomials, learned weights); §5.3, Figs. 10–12 (field-dependent learned weights).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1, Eq. (38) (shock-capturing classes for shock–turbulence interaction; review).
+- [Zou et al. (2025)](/sources/zou-2025-b.md) — §II B (unstructured WENO and positivity limiters in moving-mesh RKDG; 2-D laminar).

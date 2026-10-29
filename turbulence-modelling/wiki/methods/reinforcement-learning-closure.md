@@ -5,7 +5,7 @@ description: "Closures set or learned online by a policy trained with reinforcem
 status: established
 aliases: [RL closure, VYBA23, RLWM, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-28T17:40:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -763,6 +763,23 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
   9% drag reduction (§3.4, Table 4, as cited). They state that all RL
   methods share an interpretability problem that "requires the
   incorporation of explainable AI (XAI) tools" (§3.4).
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) (§1) set RL and online
+  training side by side as the two answers to offline training, whose
+  models "do not learn to account for their own prediction errors". In
+  RL "the closure model interacts with the environment, i.e., the CFD
+  solver, by providing actions and receiving rewards"; they cite Novati
+  et al. (2021) for explicit SGS models of incompressible turbulence and
+  Beck & Kurz (2023) for "discretization-consistent closure in the context
+  of discontinuous Galerkin methods". In online (end-to-end) training the
+  model is part of the solver, which is unrolled over several time steps,
+  and the loss gradients are backpropagated through it by adjoints or
+  automatic differentiation. Their own machine-learned implicit LES takes
+  the second route through the differentiable solver JAX-Fluids (§4.2):
+  the networks set the reconstruction weights of the finite-volume scheme
+  instead of the coefficients of an explicit model (see
+  [implicit LES](/definitions/implicit-les.md) and
+  [model-consistent training](/methods/model-consistent-training.md)). The
+  paper runs no RL closure.
 
 ## Qualifications
 
@@ -902,3 +919,4 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (RL closures as solver-specific, transferability and cost).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §3.4.2, §5 (three obstacles to deep RL); §3.4.3 (Q-learning reactor-control tutorial, combustion control, not a closure).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §2.4, Eq. 25 (policy gradient); §3.2 (multi-agent wall models cited); §3.4, Tables 3–4 (RL flow control, interpretability); §5.3 (Kurz et al. cited).
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1 (RL against online training; Novati et al. and Beck & Kurz cited); §4.2 (end-to-end training of their own scheme).

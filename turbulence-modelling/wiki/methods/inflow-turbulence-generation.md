@@ -5,7 +5,7 @@ description: "How a scale-resolving simulation is fed with turbulence at its inf
 status: established
 aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation, turbulence fluctuation library, TFL, rescaling–reintroduction]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-28T17:50:00Z
 ---
 
 # Inflow turbulence generation
@@ -349,6 +349,49 @@ superimposed on the mean inflow.
   turbulence; the supporting spectral analysis is in supplementary
   material not in the file read. See
   [direct numerical simulation](/definitions/direct-numerical-simulation.md).
+- **Steady Fourier modes through a radiation boundary condition.**
+  [Gao et al. (2025)](/sources/gao-2025.md), §III.B, Eqs. (21)–(22),
+  Table IV, App., feed a slip-wall WMLES in a high-order aeroacoustic
+  finite-difference solver with a "simplified Fourier mode synthesis":
+  the three outer-layer modes of Sandham et al. (as cited) with their time
+  dependence $\sin(\omega_jt)$ removed, so that the fluctuations are
+  steady and spanwise-periodic, and injected as source terms in the Tam &
+  Dong radiation condition at the inlet, the time invariance being chosen
+  to minimize spurious noise. With page-local amplitudes $c_{1j}$, $c_{2j}$,
+  peak heights $y_{p,j}$, spanwise wavenumbers $\kappa_{z,j}$, phases
+  $\varphi_{z,j}$ and Gaussian constants $a_{\mathrm G}$, $b_{\mathrm G}$
+  ($j=1,2,3$),
+  $$\begin{aligned}
+  u'&=\sum_jc_{1j}\Big[\frac{y}{y_{p,j}}e^{-y/y_{p,j}}+a_{\mathrm G}y^2e^{-b_{\mathrm G}y^2}\Big]\cos(\kappa_{z,j}z+\varphi_{z,j}),\\
+  v'&=\sum_jc_{2j}\Big[\frac{y}{y_{p,j}}e^{-y/y_{p,j}}+a_{\mathrm G}y^2e^{-b_{\mathrm G}y^2}\Big]\cos(\kappa_{z,j}z+\varphi_{z,j}),\\
+  w'&=-\sum_jc_{2j}\Big[\Big(1-\frac{y}{y_{p,j}}\Big)\frac{e^{-(y/y_{p,j})^2}}{y_{p,j}}+2a_{\mathrm G}\big(y-b_{\mathrm G}y^3\big)e^{-b_{\mathrm G}y^2}\Big]\frac{\sin(\kappa_{z,j}z+\varphi_{z,j})}{\kappa_{z,j}},
+  \end{aligned}$$
+  with $c_{1j}=0.24U_0$, $c_{2j}=-0.1U_0$ ($U_0$ the free-stream velocity),
+  $y_{p,2}=0.1\delta$ and $y_{p,j}$, $\kappa_{z,j}$ in the ratios 1.33,
+  1, 0.67, $\kappa_{z,2}=2\pi/(7\Delta z\times1.33)$ from the smallest
+  wavelength the dispersion-relation-preserving scheme resolves,
+  $a_{\mathrm G}=3$, $b_{\mathrm G}=6$, phases 0, 0.1, 0.15 (Table IV). On a
+  Mach 0.15 flat plate ($\delta_0=4$ mm, $Re_{\delta_0}=1.4\times10^4$,
+  inlet mean profile $(y/\delta_0)^{1/6}$, $967\times76\times91$ points,
+  sample point of the wall model at $y^+=44.1$) the flow becomes fully
+  turbulent after $20\delta_0$, the wall-pressure spectra become
+  self-similar by $20\delta$ to $30\delta$, and at $35\delta_0$
+  ($Re_\theta=1924$, $Re_\tau=674$) the mean velocity and the stresses
+  agree with Spalart's DNS for $y>0.2\delta$ (§III.B.2, Table VI,
+  Figs. 13–17); the wall-pressure spectrum there is 8.6 dB above Goody's
+  model and the rms wall pressure about 3.8 times a correlation the
+  authors cite, which they attribute to fluctuations transmitted through
+  the wall-model sample point and to the grid (Figs. 18–19; see
+  [slip-wall models](/methods/slip-wall-model.md) and
+  [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
+  They call the field rigorously divergence-free; with the printed forms,
+  $\partial_yv'+\partial_zw'$ cancels in the Gaussian terms but not in the
+  first terms, which carry $e^{-y/y_{p,j}}$ in $v'$ and
+  $e^{-(y/y_{p,j})^2}$ in $w'$ *(compiler check, not in the sources)*.
+  Their survey (§I.C) lists recycling, Fourier, digital-filter, synthetic
+  eddy, volume-forcing and divergence-free synthetic-eddy methods, and
+  states that the low-noise generator of Shur et al. still needs a
+  first-cell $y^+\approx1$.
 - **Digital-filter perturbations as an initial field.**
   [Wang et al. (2022)](/sources/wang-2022-j.md), §V, perturb the initial
   tanh profile of a weakly compressible
@@ -654,6 +697,21 @@ the corner; no recycling or synthetic turbulence is used, and the
 accuracy of the developed layer is delegated to the authors' conference
 paper ([shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 
+**Forced laminar shear layers at a jet inflow.**
+[Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md), §II C,
+Eq. (10), start their LES of compressible round jets at
+$Re=5\times10^5$ (on the diameter) with no nozzle in the domain, from a
+hyperbolic-tangent velocity profile of momentum thickness
+$\theta_0=0.05r_0$ ($r_0$ the inflow jet radius, page-local), excited by
+the vortex-ring forcing of Bogey et al. that they cite, the added
+fluctuation reaching at most 3.3% of the centreline velocity, with
+characteristic inflow conditions. They attribute part of their
+overprediction of the near-field noise of the $M_j=0.9$ jet, by at most
+1.5 dB against the measurements of Bogey et al., to the inflow momentum
+thickness, of order $10^{-2}r_0$ in the LES against $10^{-3}r_0$ in
+experiments (§III A, Fig. 8). See
+[turbulent round jet](/benchmarks/turbulent-round-jet.md).
+
 **Counter-flow body-force tripping.** [Kang & Lee (2024)](/sources/kang-2024.md),
 §II.B, Eq. (15), trip a laminar Blasius inflow of thickness
 $\delta_{\mathrm{in}}=2.5$ mm with the body force of Mullenix et al. and
@@ -925,3 +983,5 @@ compiles (§5.2).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §3.3.1, §3.4, Table 3 (machine-learning inflow generators, cited).
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — §II (Sandham / Li–Coleman inlet disturbances); §III C, Figs. 5–6 (transition, development and developed stages).
 - [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §III.A (laminar parabolic inflow with ±2% random perturbations).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I.C (survey of generators); §III.B, Eqs. (21)–(23), Table IV, App., Eq. (A1) (steady Fourier modes in a radiation boundary condition); §III.B.2, Tables V–VI, Figs. 13–19 (flat-plate development and wall pressure).
+- [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md) — §II C, Eq. (10) (tanh jet inflow with vortex-ring forcing); §III A, Fig. 8 (inflow momentum thickness and near-field noise).

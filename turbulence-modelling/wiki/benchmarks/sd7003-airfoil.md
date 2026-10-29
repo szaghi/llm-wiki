@@ -5,7 +5,7 @@ description: "The Selig–Donovan SD7003 airfoil at chord Reynolds numbers 23,00
 status: established
 aliases: [SD7003, SD 7003, Selig–Donovan SD7003, SD7003 wing, High-Order CFD Workshop case C3.3]
 tags: [benchmark, transition, implicit-les, separated-flow, flux-reconstruction, rans]
-timestamp: 2026-10-28T07:02:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # SD7003 airfoil
@@ -78,6 +78,44 @@ Table 6). Across the four references printed by the two sources $C_L$
 spans 0.92 to 0.969 and $C_D$ 0.039 to 0.050 *(compiler check, not in the
 sources)*.
 
+### Implicit finite-volume LES on unstructured meshes
+
+[Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §5.2, run the
+same incidence, $Re_c=6\times10^4$ and $\alpha=8^\circ$, at $M=0.2$ as an
+implicit LES with the high-order finite-volume
+[CWENOZ reconstruction](/methods/weno-scheme.md) of UCNS3D on two hybrid
+hexahedral/prismatic meshes, span $0.2c$ periodic and the domain extending $50c$ up- and downstream:
+mesh A of 5.3 million cells (wall spacings $y^+=0.87$, $x^+=3.1$,
+$z^+=5.4$) and mesh B of 12.3 million cells ($0.87$, $0.9$, $4.0$). All
+runs use a Roe flux, the low-Mach correction of Simmonds et al. and
+second-order implicit dual-time stepping with $\Delta t=t_c/500$, averaged
+over $20t_c$ after a transient of $20t_c$. The fourth-order CWENOZ4, with
+and without the authors' a priori, cell-by-cell
+[dissipation–dispersion adjustment](/properties/numerical-dissipation.md)
+(ADDA), is set against a second-order MUSCL scheme with the Barth–Jespersen
+limiter on both meshes (Table 4; $x_{\mathrm{sep}}$ and $x_{\mathrm{re}}$
+in chords):
+
+| Run or reference | $C_L$ | $C_D$ | $x_{\mathrm{sep}}$ | $x_{\mathrm{re}}$ |
+|---|---|---|---|---|
+| MUSCL2, mesh A | 0.918 | 0.050 | 0.026 | 0.26 |
+| MUSCL2, mesh B | 0.933 | 0.041 | 0.023 | 0.23 |
+| CWENOZ4, mesh A | 0.926 | 0.044 | 0.039 | 0.28 |
+| CWENOZ4-ADDA, mesh A | 0.927 | 0.045 | 0.041 | 0.27 |
+| reference [12] (DGSEM), as printed by Tsoutsanis & Nogueira | 0.923 | 0.045 | 0.027 | 0.310 |
+| Galbraith & Visbal (FDLI3D), as printed by Tsoutsanis & Nogueira | 0.917 | 0.044 | 0.031 | 0.303 |
+
+CWENOZ4 on the coarser mesh A agrees better with the PyFR, STAR-CCM+,
+DGSEM and FDLI3D references in $C_p$ and $C_f$ than MUSCL2 does even on
+mesh B, and ADDA improves $C_f$ further (Fig. 19). The authors judge
+second-order MUSCL "unsuitable for iLES simulations at under-resolved grid
+settings, due to their excessive dissipation characteristics", since its
+skin friction, separation and reattachment move unpredictably from mesh A
+to mesh B (§5.2). The ADDA indicator selects low dissipation in the
+bubble, switches to high-dissipation-dominant settings in the turbulent
+region after transition and returns to low dissipation further downstream
+(Fig. 18).
+
 ## Transitional RANS from $Re_c=23{,}000$ to 200,000
 
 [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) use the
@@ -134,6 +172,12 @@ transition-model page; the bubble physics is on
 - Both sources use scale-resolving simulations as the reference at
   $Re_c=6\times10^4$; experiments enter as PIV (Carreño Ruiz &
   D'Ambrosio) and at $Re_c=2\times10^5$.
+- In the finite-volume implicit LES the convective scheme moves the
+  bubble: on the same mesh A, CWENOZ4 and MUSCL2 give separation at 0.039
+  and 0.026 and reattachment at 0.28 and 0.26, and the authors ascribe the
+  unsuitability of MUSCL2 to "excessive dissipation characteristics"
+  ([Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §5.2,
+  Table 4).
 
 ## Qualifications
 
@@ -156,9 +200,27 @@ transition-model page; the bubble physics is on
   fails to reattach at $Re_c=3\times10^4$, while their Table 7 gives the LES
   reattachment at 0.53. Their RANS is two-dimensional.
 - [Wang et al. (2013)](/sources/wang-2013.md) specify the case only.
+- The references are printed with different values by different sources.
+  For Galbraith & Visbal at $\alpha=8^\circ$, Carreño Ruiz & D'Ambrosio
+  (2022), Table 6, print $x_{\mathrm{sep}}=0.04$, $x_{\mathrm{re}}=0.28$,
+  $C_L=0.92$, $C_D=0.043$; Tsoutsanis & Nogueira (2025), Table 4, print
+  0.031, 0.303, 0.917, 0.044. For the DGSEM reference, Vermeire (2024),
+  Table 3, prints "Beck et al. (DG, $N=7$)" with $C_L=0.932$,
+  $C_D=0.050$; Tsoutsanis & Nogueira (2025) cite their ref. [12], whose
+  first author is Beck, as "Frank et al." throughout and print 0.923 and
+  0.045 without naming the run, polynomial degree or Mach number of the
+  reference. In the bibliography both cite Beck et al. (2014); for
+  Galbraith & Visbal, Carreño Ruiz & D'Ambrosio cite the 2010 AIAA paper
+  and Tsoutsanis & Nogueira the 2008 one.
+- Tsoutsanis & Nogueira (2025), §5.2, write that "marginal differences are
+  noticed in the separation location and reattachment between all
+  predictions", while their Table 4 gives CWENOZ4 separation at
+  0.039–0.041 against 0.027–0.031 for the references and reattachment at
+  0.27–0.28 against 0.303–0.310.
 
 # Citations
 
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §4.3, Eqs. 22–24, Table 3, Figs. 19–21; §5.
 - [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §3.3–3.5, Tables 1–8, Figs. 4–7; §4, Tables 9–10, Figs. 8–10; §5, Table 11; §6.1, Figs. 15–17; §7.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §4.13 (case C3.3; specification only).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §5.2, Table 4, Figs. 18–19.

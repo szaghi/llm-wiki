@@ -157,10 +157,11 @@ item is unparseable.
 
 # Pages created or updated
 
-Chunk 11 (2026-10-27). This source is cited on:
+Chunk 11 (2026-10-27), cited further in chunk 15. This source is cited on:
 
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)

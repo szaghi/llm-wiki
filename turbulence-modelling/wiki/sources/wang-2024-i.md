@@ -175,11 +175,12 @@ after ref. 53, out of the alphabetical order; names are kept as printed
 
 # Pages created or updated
 
-Chunk 14 (2026-10-28). This source is cited on:
+Chunk 14 (2026-10-28), cited further in chunk 15. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Pressure dilatation](/definitions/pressure-dilatation.md)
 - [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [High-order gas-kinetic schemes for turbulence simulation](/methods/high-order-gas-kinetic-scheme.md)
 - [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
 - [Symbolic-regression turbulence closures](/methods/symbolic-regression-closure.md)

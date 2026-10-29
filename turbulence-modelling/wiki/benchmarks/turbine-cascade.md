@@ -5,7 +5,7 @@ description: "Linear turbine cascades as transition, loss, vortex and mesh-adapt
 status: established
 aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106A, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, Pack B, L2F, tip-leakage turbine cascade, Arts transonic turbine cascade]
 tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des, mesh-adaptation]
-timestamp: 2026-10-28T12:28:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # Turbine cascades (T106, T161, VKI LS89)
@@ -43,6 +43,8 @@ exit state, $Re_{2,is}$ and $M_{2,is}$ (page-local), on the chord.
 | T108 (front-loaded LPT) | [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.2 | as T106C, pitch/chord 1.1 | as above |
 | T161 (high-lift LPT between diverging end walls) | [Morsbach et al. (2024)](/sources/morsbach-2024.md), §3.1–3.2, Tables 1–2 | $Re_{2,is}=9\times10^4$, $M_{2,is}=0.6$, inflow angle 41°, synthetic turbulent end-wall layers and free-stream turbulence | implicit LES, [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) $N=5$ with kinetic-energy-preserving split form, $1.89\times10^8$ degrees of freedom; RANS with SST and SSG/LRR-ω plus γ-$Re_\theta$ |
 | T106A (LPT) | [Ma et al. (2022)](/sources/ma-2022.md), §3.3 | $Re\approx6\times10^4$ on exit velocity and axial chord; single passage, pitchwise and spanwise periodic; geometry and boundary conditions from Wang et al.; Mach number and inflow turbulence not printed | implicit LES with weighted compact nonlinear schemes (WCNS-E, WCNS-T, linear WCNS-E), block-structured grid of about $1.2\times10^7$ points |
+| T106A | [Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §8.1, Tables 8–9 | $Re_{2,is}=5\times10^5$, $M_{2,is}=0.59$ and 0.955, $Tu_1=4\%$, inlet angle 37.7°; quasi-3D midspan and 3D with end walls | steady RANS, log-$\omega$ [$k$-$\omega$ model](/methods/k-omega-model.md), modal DG $N\le3$ with $p$-multigrid, 1271 to 77,300 quadratic hexahedra; reference: Hoheisel's experiment and the $k_L$-$k$-$\omega$ RANS of Lorini et al. |
+| T106A | [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §6.3, Tables 3–4 | $M_{2,is}=0.59$, $Re=1.1\times10^6$ (downstream isentropic, chord), pitch/chord 0.799, inlet angle 37.7°, adiabatic blade | steady 2D RANS, [Spalart–Allmaras](/methods/spalart-allmaras-model.md) with the negative-$\tilde\nu$ modification, [isogeometric](/methods/isogeometric-analysis.md) DG on nine degree-2 NURBS patches with anisotropic $h$-adaptation; reference: Hoheisel's experiment and a fine-mesh run |
 | Pak-B (LPT) | [Menter et al. (2022)](/sources/menter-2022.md), Fig. 24 | $Re=5\times10^4$ to $1.72\times10^5$ on inlet velocity and axial chord, $Tu=0.08\%$ to 4% | RANS with three [local-correlation transition models](/methods/local-correlation-based-transition-model.md) |
 | VKI LS89 (transonic HPT vane) | [Wang (2024)](/sources/wang-2024-b.md), §4.3, Tables 5–6 | MUR129: exit $Re=1.13\times10^6$, no free-stream turbulence in the computation (0.8% measured), wall temperature 297.75 K | implicit LES, $N=2$ and 3, 10 to 20 spanwise layers, $6.6\times10^6$ to $31.3\times10^6$ degrees of freedom |
 | VKI LS89 | [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.1, Table 4 | Mur224, Mur228 ($Re_{2,is}\approx6\times10^5$), Mur239, Mur247 ($\approx2.1\times10^6$), $M_{2,is}\approx0.92$–0.93, $Tu=6\%$ and 1% | steady 2D RANS, laminar kinetic energy model, $3\times10^5$ cells |
@@ -332,6 +334,49 @@ Wang (their ref. [26]); [Wang (2024)](/sources/wang-2024-b.md) compares its
 T106C implicit LES with the CPR $N=3$ results of Alhawwary & Wang and with
 the experiment of Michálek et al. (§4.2, Table 4, Fig. 8).
 
+**Steady high-order RANS of T106A: convergence acceleration and CAD-exact
+adaptation.** The Brescia group runs the T106A as an industrial case of two
+solver developments. [Bulgarini et al. (2025)](/sources/bulgarini-2025.md),
+§8.1, accelerate a modal DG RANS solver by $p$-multigrid. In the subsonic
+case ($M_{2,is}=0.59$) the saving against single-order implicit time
+stepping reaches about 90% (−91.41% on the coarse quasi-3D mesh at $N=3$,
+−90.99% on the fine 3D mesh at $N=1$; Table 8); the saving grows with $N$
+on the coarse quasi-3D mesh and shrinks with $N$ on the fine 3D mesh; in the transonic case ($M_{2,is}=0.955$) it reaches about 95%
+(up to −93.61%, Table 9) for all domains, meshes and degrees, with no loss
+as $N$ rises. The residual of the $\tilde\omega_\ell=\ln\omega$ equation is the last to
+converge, and at a
+residual of about $10^{-3}$ the saving is already 95.01% against 90.76% at
+full convergence on the coarse quasi-3D mesh at $N=3$. The blade $C_p$
+agrees with Hoheisel's experiment and with the $k_L$-$k$-$\omega$ RANS of
+Lorini et al. (see
+[laminar kinetic energy transition model](/methods/laminar-kinetic-energy-transition-model.md)).
+[Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §6.3, adapt an
+isogeometric DG discretization by NURBS knot insertion with the
+spectral-decay indicator: from 933 patches to 5106, against a fine
+reference of 6847, the indicator refining the boundary layer, the wake,
+the leading and trailing edges and the first half of the pressure side
+(Table 3, Figs. 20–22). The suction-side $C_f$ of the adapted mesh is "in
+perfect agreement" with the fine mesh, and the total-pressure loss
+coefficient $\zeta=(p_{0,1}-p_{0,2})/(p_{0,1}-p_2)$, mass-flow averaged
+(the source's Eq. 46; $p_0$ total pressure, 1 inlet, 2 outlet; page-local),
+deviates from the fine-mesh $\zeta_{\mathrm{ref}}=2.417\times10^{-2}$ by
+less than 1.5% (Table 4):
+
+| fraction of elements refined per cycle | DOF | speed-up | $\zeta$ deviation |
+|---|---|---|---|
+| 5% | 33,392 | ≈2.6× | 0.17% |
+| 10% | 56,800 | ≈1.7× | 1.49% |
+| 15% | 81,696 | ≈1.5× | 0.24% |
+
+On a mesh with linear (straight-sided) boundaries at about equal degrees
+of freedom the non-physical phenomena seen on the transonic
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) are "less evident", but full
+convergence then needed a smaller exponent of the CFL law and the $C_p$
+and $C_f$ distributions are not smooth (§6.3, Fig. 23). The ranking of
+refinement indicators by the same authors on the
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) is set
+there beside that of Ims & Wang (2023) on T106c and T106a.
+
 **What the sources share.** Steady RANS with transition models captures
 the onset of separated-flow and bypass transition on these blades but not
 its extent: transition develops too quickly on LS89 and sets in too early
@@ -399,6 +444,16 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
   refinement". Their T106a blade angle (46.1°) differs slightly from the
   workshop's, as they state, and the $uv$ stress is plotted without its
   sign or normalization.
+- The two Brescia T106A runs print different conditions for the same
+  cascade at $M_{2,is}=0.59$: $Re_{2,is}=5\times10^5$ with $Tu_1=4\%$
+  ([Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §8.1) and
+  $Re=1.1\times10^6$ ([Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md),
+  §6.3); both compare with Hoheisel's experiment. The pitch/chord ratio of
+  the second, 0.799, is printed as 0.798 by Ims & Wang (2023) for their
+  T106a.
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §8.1, write that
+  "the worst reduction ... guarantees a saving of about 49%", while the
+  smallest reduction in their Table 8 is −53.09% (3D fine mesh, $N=3$).
 
 # Citations
 
@@ -413,3 +468,5 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — review: §3.1.2, Fig. 1 (spectral gap); §3.2.1–3.2.3, Fig. 4 (inflow turbulence, wakes, shedding, Boussinesq misalignment); §3.3.1, Eq. 1; §3.3.3, Figs. 5–6 (bypass and wake-induced transition); §4.2 (entropy loss on LS89); §4.3, Eq. 2, Fig. 7 (data-driven closures).
 - [Ims & Wang (2023)](/sources/ims-2023.md) — §3–§4 (indicators, marking, constraints); §5.1, Figs. 5–16 (T106c); §5.2, Figs. 18–30 (T106a); §5.2.1, Figs. 31–34 (random refinement); §5.3, §6.
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §4, Fig. 8 (T161 DNS shown as an application; no data).
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §8.1, Tables 8–9 (T106A, $p$-multigrid DG RANS).
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §6.3, Eq. 46, Tables 3–4, Figs. 20–23 (T106A, isogeometric DG with $h$-adaptation).

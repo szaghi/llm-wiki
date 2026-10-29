@@ -132,11 +132,12 @@ of different works (ref. 7, Tang & Liu, Chin. J. Aeronaut. 35(11):1–17; ref.
 
 # Pages created or updated
 
-Chunk 13 (2026-10-28). This source is cited on:
+Chunk 13 (2026-10-28), cited further in chunk 15. This source is cited on:
 
 - [Compressor cascades](/benchmarks/compressor-cascade.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [OpenFOAM](/software/openfoam.md)

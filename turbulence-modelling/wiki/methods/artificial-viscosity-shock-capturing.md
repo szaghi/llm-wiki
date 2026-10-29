@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-28T12:24:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -202,6 +202,26 @@ transition of the NLR-7301 near $M_\infty=0.724$–$0.748$ is where the
 transition model's onset error is largest (81.16%, §V, where the authors
 state that the shock dominates transition), see
 [laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md).
+The same group's $p$-multigrid DG RANS solver of
+[Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §2, Eq. (9),
+prints the identical term (logarithmic pressure, $|s_p|+|d_p|$, the factor
+$f_p=|\nabla_h\ln p|h_K/N$, $C=0.2$), active in every element "without the
+use of any shock sensor" and, they state, introducing viscosity only where
+nonphysical oscillations occur; its transonic RAE 2822 case converges with
+the multigrid without "any robustness issue with the shock" (§7.2,
+Table 7). The isogeometric DG of
+[Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §3.4,
+Eqs. (27)–(31), prints the Bassi et al. form in conservative variables,
+$\nu_{\mathrm{av}}=C\,h^2|s_p|/|p|$ with $s_p=(\partial p/\partial\boldsymbol q)\cdot\boldsymbol s_k$
+and $\boldsymbol s_k$ the lifted jump between numerical and physical normal
+inviscid fluxes, along $\boldsymbol b=\nabla p/(|\nabla p|+\epsilon)$,
+$C=0.2$, without the $d_p$ and $f_p$ factors of the two papers above
+(page-local $\boldsymbol q$ the conserved variables). It replaces the
+element size $h_K$ by the minimum distance between element corners,
+because the control points of a Bézier element do not interpolate its
+borders (after Duvigneau, cited); the term then captures the shock of the
+transonic [NACA 0012](/benchmarks/naca-0012-airfoil.md) on adapted meshes
+(§6.2; see [shock sensors](/definitions/shock-sensor.md)).
 
 **Artificial bulk viscosity in finite volumes and ALE codes.** The
 [charLES](/software/charles.md) solver adds an artificial bulk viscosity at
@@ -350,6 +370,25 @@ Two sources add no artificial viscosity:
 with a bounded (TVD) reconstruction alone (see [WENO](/methods/weno-scheme.md)),
 and [Fureby & Nilsson (2023)](/sources/fureby-2023.md), §3.4, name
 localized artificial diffusivity only as an alternative they do not use.
+In the review of the canonical shock–turbulence interaction of
+[Cuadra et al. (2025)](/sources/cuadra-2025.md), §III A 1, artificial
+viscosity (von Neumann–Richtmyer, Jameson et al., and the LES-oriented
+forms of Cook 2007 and Mani et al. 2009, all cited) is one of the two
+shock-capturing classes next to nonlinear ENO/WENO/TENO reconstructions,
+"less invasive", with similar stabilization and "sometimes more
+dissipation"; both need a grid fine enough to capture all scales of shock
+wrinkling (see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+The moving-mesh DG of [Zou et al. (2025)](/sources/zou-2025-b.md), §II B,
+judges artificial viscosity parameter-dependent and over-dissipative, and
+reconstruction-based capturing hard in complex geometry, and uses a
+positivity-preserving limiter with an unstructured WENO limiter instead,
+in two-dimensional laminar runs of a cylinder with synthetic jets (no
+troubled-cell indicator or parameter printed). The entropy correction of
+[Alberti et al. (2025b)](/sources/alberti-2025-c.md), §II A 1, is likened
+by its authors to artificial viscosity and to the entropy viscosity of
+Guermond et al., but they state that it is "not designed to have
+shock-capturing capabilities" (see
+[entropy conservation](/properties/entropy-conservation.md)).
 Three further sources on discontinuous high-order methods review
 artificial viscosity and choose another route:
 
@@ -426,8 +465,70 @@ itself also offers Persson–Peraire-type AV (§3.2), which the authors
 describe as requiring parameterisation and as able to reduce the maximum
 stable explicit time step; they give no results with it.
 
+## Comparison with entropy-stable stabilization in DGSEM
+
+[Bilocq et al. (2025)](/sources/bilocq-2025.md) compare, in one Cartesian
+collocated Gauss–Legendre DGSEM with local Lax–Friedrichs flux and
+incomplete interior penalty, five discretizations of under-resolved
+compressible turbulence with shocks or shocklets: unstabilized DG, DG with
+Laplacian AV (DG-AV), fully entropy-stable DG on Gauss–Legendre and on
+Gauss–Lobatto nodes, and a selective scheme DG-ES that uses the
+entropy-stable discretization only in sensor-flagged cells. DG-AV is the
+Persson–Peraire Laplacian $\nabla\cdot(\mu_{\mathrm{av}}\nabla\boldsymbol q)$
+with the Hennemann calibration of the modal-energy sensor and the scaling
+of Vandenhoeck et al. (§3.5, Eqs. 29–31):
+$$\mu_{\mathrm{av}}=\alpha\,\mu_{\mathrm{av},0},\qquad \mu_{\mathrm{av},0}=C_{\mathrm V}\,\frac{h}{N}\,\lambda_{\max},\qquad C_{\mathrm V}=0.27\,\frac{M_\infty-1}{M_\infty},$$
+elementwise constant, with $\alpha\in[0,1]$ the logistic sensor value
+(on [shock sensors](/definitions/shock-sensor.md)), $\lambda_{\max}$ the
+largest wave speed and $M_\infty$ bounded below by 1.2 to keep
+$C_{\mathrm V}$ positive ($C_{\mathrm V}$ page-local, the source's $c$;
+the Vandenhoeck form is stated to remove the need for parameter tuning).
+Findings (§4, §5):
+
+- **Cost and robustness.** DG-AV costs 1.07–1.08 times the unstabilized DG,
+  DG-ES 1.25–1.27 and the entropy-stable Gauss–Legendre scheme 1.86–2.27
+  times (Tables 3, 8); where DG-AV is the baseline, DG-ES costs 1.21–1.28
+  and the entropy-stable Gauss–Legendre scheme 1.58–1.68 times DG-AV
+  (Tables 10, 12; 2× AMD EPYC 7763). DG-AV stabilizes every coarse mesh
+  on which the unstabilized DG diverges (Tables 1, 6). Its largest stable
+  CFL is 0.8 on the strong vortex/shock case, where the schemes with an
+  entropy projection drop to 0.16 and 0.08 (Table 9).
+- **Shocks.** In the supersonic [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+  ($M_0=1.25$, $Re=1600$, $N=3$) DG-AV gives a thicker but
+  oscillation-free shock and underpredicts the dilatational dissipation at
+  all resolutions because it "reduces shock intensity", while the entropy-stable
+  schemes overpredict it; its solenoidal dissipation is among the highest,
+  close to the unstabilized DG at the two finest grids (§4.2.3, Figs. 7,
+  9–10).
+- **Vortices and post-shock turbulence.** In the vortex/shock interaction
+  DG-AV captures the shock cleanly but under-resolves the vortex; since
+  the sensor never fires inside the vortex, the authors attribute the
+  damping to the earlier interaction with the shock (§4.3.3, Figs. 12–14); in the
+  canonical shock–turbulence interaction ($M=1.28$, $M_t=0.22$,
+  $Re_\lambda=40$) the entropy-stable methods capture the post-shock
+  amplification of $R_{11}$ and $R_{22}$ better than DG-AV on the coarse
+  grid (§4.4.3, Fig. 15). Their conclusion: "even modest dissipation"
+  added near shocks degrades the post-shock turbulence although no
+  stabilization acts there.
+- **Sensitivity.** DG-AV is strongly sensitive to the detector calibration
+  and to the node set: a collocated Gauss–Legendre basis beats
+  Gauss–Lobatto interpolation with Gauss–Legendre quadrature, a
+  sensitivity DG-AV shows, in the authors' words, "somewhat unexpectedly"
+  (§4.1.5, Figs. 3–5).
+
+They recommend DG-AV when robust and efficient shock resolution is the
+main concern, DG-ES when under-resolved turbulent structures must be
+captured accurately (§5); the entropy-stable side is on
+[entropy conservation](/properties/entropy-conservation.md), the
+dissipation measure on [numerical dissipation](/properties/numerical-dissipation.md).
+
 ## Qualifications
 
+- **Printed forms in Bilocq et al. (2025).** The AV term is printed as
+  $\nabla\cdot(\mu_{\mathrm{av}}\nabla u)$ with $u$ the symbol of the
+  conservative variables, and Eq. (31) writes $h/p$ with italic $p$, the
+  symbol also used for pressure, while the degree is written p elsewhere
+  and $N$ in the quadrature statements.
 - **Printed slips (Cernetic et al. 2024, arXiv v2).** Eq. (13) prints the
   entropic-function evolution with a factor $\tfrac12$,
   $\mathrm dA_s/\mathrm dt=-\tfrac12\frac{\gamma-1}{\rho^\gamma}p_{\mathrm{av}}\nabla\cdot\boldsymbol u$;
@@ -514,3 +615,9 @@ stable explicit time step; they give no results with it.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §II C, Eqs. (16)–(19) (Ducros-switched AUSM-type diffusion on a split energy-preserving flux).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2 (Persson–Peraire-type AV in PyFR: parameterised, time-step penalty); §5.1, Figs. 11–12, Table 1 (entropy filtering against the AV and subcell solvers of the supersonic Taylor–Green comparison).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (survey of DG artificial viscosity: Johnson, Persson–Peraire, three axes of extension, preference over limiting in LES, tuning); §7 (parameter dependence).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §3.5, Eqs. (29)–(31) (Persson–Peraire Laplacian AV, Hennemann calibration, Vandenhoeck scaling); §4.1–4.4, Tables 1–12, Figs. 3–5, 7, 9–15 (comparison with entropy-stable and selective entropy-stable DG: cost, CFL, dissipation, post-shock turbulence, sensitivity); §5.
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §2, Eq. (9) (sensor-free residual-based directional AV in $p$-multigrid DG RANS); §7.2, Table 7.
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §3.4, Eqs. (27)–(31) (Bassi et al. AV with corner-distance element size on Bézier elements); §6.2.
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1 (artificial viscosity as a shock-capturing class for shock–turbulence interaction; review).
+- [Zou et al. (2025)](/sources/zou-2025-b.md) — §II B (AV judged parameter-dependent and over-dissipative; limiters used instead; 2-D laminar runs).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §II A 1 (entropy correction likened to AV, not a shock-capturing device).

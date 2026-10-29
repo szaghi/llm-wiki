@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-28T17:47:00Z
 ---
 
 # Compressible velocity transformations
@@ -461,6 +461,30 @@ judge, initialize or close a simulation.
   reference by construction; there is no external DNS. See
   [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
 
+- **Equivalent incompressible Reynolds numbers for implicit DG LES.**
+  [Alberti et al. (2025b)](/sources/alberti-2025-c.md) (§III A, Eq. 39,
+  Fig. 8) print the Trettel–Larsson pair in the form
+  $y^*=(\langle\rho\rangle/\langle\mu\rangle)\sqrt{\tau_w/\langle\rho\rangle}\,y$,
+  $U^+_{TL}=\int_0^{u^+}\sqrt{\langle\rho\rangle/\rho_w}\,\big[1+\tfrac12\,(y/\langle\rho\rangle)\,d\langle\rho\rangle/dy-(y/\langle\mu\rangle)\,d\langle\mu\rangle/dy\big]\,du^+$
+  (averages over time and wall-parallel planes; they report Favre averages
+  and state no significant difference from Reynolds averages, as cited),
+  and use it to pair their isothermal-wall channels with incompressible
+  ones and to choose grids for a modal entropy-stable DG
+  [implicit LES](/definitions/implicit-les.md) (see
+  [entropy conservation](/properties/entropy-conservation.md)). Under the
+  transformation the cases $M_b=1.5$, $Re_\tau=222$ and $M_b=3$,
+  $Re_\tau=450$ collapse on the incompressible DNS at $Re_\tau=180$ of Moser,
+  Kim & Mansour (as cited), $M_b=1.5$, $Re_\tau=1000$ corresponds to
+  $Re_\tau=590$ and $Re_\tau=500$ to about 350 (Fig. 8). On these
+  "moderately under-resolved" grids (polynomial degree $N=8$ or 9, DNS-to-DG
+  degree-of-freedom ratios 33–199) the untransformed mean velocity,
+  Reynolds stresses and temperature agree with the compressible DNS of
+  Modesti & Pirozzoli and of Coleman, Kim & Moser (as cited), except at
+  $M_b=3$, where the profiles depart from the former beyond $y^+\approx45$
+  in velocity and after the first cell in temperature, which the authors
+  attribute to its Sutherland viscosity against the power law of the
+  latter (§III A 2, Figs. 2–5). The transformation is used without a
+  comparison against the alternatives above.
 - **Wall-modelled hybrid LES of a supersonic plate.** [Zangeneh (2021)](/sources/zangeneh-2021.md)
   (§III.A.1, Fig. 6) plots the van Driest-scaled mean velocity of an SST-IDDES
   used as wall-modelled LES of a zero-pressure-gradient boundary layer at
@@ -668,6 +692,14 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
   $g_I=\mu^+\,d(y^+\sqrt{\rho^+}/\mu^+)/dy^+$ of the table gives exactly this
   integrand, so Aiello et al. agree with Cogo et al. and Huang et al.
   *(compiler check, not in the sources)*.
+  [Alberti et al. (2025b)](/sources/alberti-2025-c.md) (Eq. 39) print the
+  same integrand as Aiello et al., with $\sqrt{\langle\rho\rangle/\rho_w}$
+  outside the bracket and no square root over it.
+- Alberti et al. (2025b) state in §III A that the case $M_b=3$,
+  "$Re=450$" corresponds to "an incompressible simulation at $Re=140$",
+  while Fig. 8 and its discussion pair it with the incompressible
+  $Re_\tau=180$; the captions of their Figs. 6–7 call the same $M_b=3$ case
+  "incompressible".
 - Aiello et al. (2026) evaluate $Re_\tau^*$ with centreline density and
   viscosity. Their Fig. 1 caption writes the log law in $y^+$ where the text
   writes it in $y^*$ (§4.1).
@@ -726,3 +758,4 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Eq. (8), Fig. 1.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §III B, Eqs. (35)–(36), Figs. 10–11.
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.B, Figs. 1–2 (van Driest velocity as the yardstick of LES and hybrid runs; passing).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §III A, Eq. (39), Fig. 8 (Trettel–Larsson pairing with incompressible channels); §III A 2, Figs. 2–7.

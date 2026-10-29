@@ -112,7 +112,13 @@ bundle's notation.
 
 ## Status
 
-**Chunk 14 completed 2026-10-28 (staged, awaiting commit):** 20 papers of
+**Chunk 15 staged 2026-10-29:** 20 papers of 2025–2026; 300 of 307
+ingested, 189 concept pages plus the registry, 14078 bibliography entries,
+deep lint done, two contradictions opened (twelve open). Chunk 16 (the last
+7 papers, with the whole-bundle deep lint and the closing `--dupes` sweep)
+follows.
+
+**Chunk 14 committed 2026-10-28 (3eaca8f):** 20 papers of
 2024–2026; 280 of 307 ingested, 183 concept pages plus the registry, 13050
 bibliography entries, deep lint done, no contradiction opened (ten open).
 Chunk 15 follows.

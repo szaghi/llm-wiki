@@ -5,7 +5,7 @@ description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flu
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # Flux reconstruction
@@ -156,6 +156,7 @@ discontinuous spectral element method"; the code is described on
 | Liu & Yuan (2023), §2, §5 | 1-D research code | local Lax–Friedrichs | none (Euler) | SSP-RK3, CFL $1/(2N+1)$ | $N=2$–$5$ |
 | Witherden et al. (2025), §2, §3.5–§3.6, §5 | PyFR v2.0.3 | "an appropriate Riemann solver" (not specified further) | not stated | explicit, with adaptive steps from embedded low-storage Runge–Kutta pairs; dual time stepping with $p$-multigrid for the artificial-compressibility solver | $N=3$ (supersonic Taylor–Green), "seventh-order solution polynomials" (scaling) |
 | Vermeire (2024), §3 | not named | Rusanov with Davis wave speed | BR2 | classical RK4 (Taylor–Green), optimal explicit Runge–Kutta (channel), paired explicit Runge–Kutta (airfoil) | $N=1$–$6$ |
+| Gao et al. (2025b), §II A, §II D, §III | not named | HLLC at the wall (hybrid with a weakly prescribed flux); interior flux not stated | not stated | low-dissipation low-dispersion Runge–Kutta of Hu et al., 2N-storage | $N=2$–$4$ |
 
 Wang (2024, §2.2) reads the Rusanov flux as a central flux with scalar
 dissipation (the largest local wave speed) and the Roe flux as a central flux
@@ -577,6 +578,54 @@ turbulent eddies at the first element are always under-resolved", so the
 matching height equals the first element height; they call a near-wall
 aspect ratio of one desirable.
 
+**Wall model at the first solution point.**
+[Gao et al. (2025b)](/sources/gao-2025-b.md), §II C–D, build a
+wall-stress WMLES in an FR/CPR solver with the
+[Vreman model](/methods/vreman-model.md) ($c_v=0.07$, isotropic filter
+width) and three departures from the earlier DG/FR practice of Frère et
+al., Shi et al. and Wang that they cite:
+
+- **Input point.** The wall model reads the velocity at the solution point
+  of the wall-adjacent element closest to each wall flux point, not at the
+  interface between the first and second elements, to keep the compact
+  stencil on unstructured meshes; they state that the second-cell input
+  leaves "pronounced oscillations" in the first-cell velocity profiles of
+  those studies even after long averaging (§I, §II C3, Fig. 1). Duan &
+  Wang (2024, §4) above take the input from the second element because
+  "the turbulent eddies at the first element are always under-resolved".
+- **Non-iterative wall laws.** The equilibrium law of Allmaras, Johnson &
+  Spalart is inverted by a five-branch fit of $y^+$ against the local
+  Reynolds number $Re_y=Uy/\nu$ (registry §11), and a pressure-gradient
+  correction after Shih et al. is applied in a second step (§II C1–C2,
+  App. A); details on [equilibrium wall model](/methods/equilibrium-wall-model.md)
+  and [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md).
+- **No-slip wall with a hybrid inviscid wall flux.** Instead of the slip
+  condition "previous wall-model studies all stressed", they impose
+  no-slip and take the inviscid wall flux as a convex combination
+  $C_1F_{\mathrm{PRE}}+C_2F_{\mathrm{RM}}$, $C_1+C_2=1$, of a weakly
+  prescribed flux, accurate but producing grid-level wall oscillations
+  except in simple channels, and a weak-Riemann HLLC flux, stable but
+  giving "an excessively steep mean velocity profile"; $C_2$ is the
+  smallest stable value, $1/12$ to $1/5$ (§II D, Eqs. 33–37, Fig. 2;
+  page-local $C_1$, $C_2$, $F_{\mathrm{PRE}}$, $F_{\mathrm{RM}}$). Rusanov
+  is rejected at the wall as too dissipative, because the extrapolated
+  tangential velocity at the wall flux point is not zero (§II D3).
+
+On a [channel](/benchmarks/turbulent-channel-flow.md) at $Re_\tau=2000$,
+5200 and $10\,000$ ($48\times24\times24$ elements, $N=2$–4; first solution
+point at $y^+\approx120$ at $Re_\tau=10^4$) the mean velocity follows the
+log law without the first-element oscillations of the cited data at
+$Re_\tau=5200$ (Figs. 3–5). On the [periodic hill](/benchmarks/periodic-hill.md)
+at $Re=10\,595$ (meshes of $32\times12\times16$ and $48\times24\times24$
+quadratic hexahedra) the $L_2$ errors of mean velocity and Reynolds stress
+against the PIV data fall with $N$ from 2 to 4 and with refinement
+(Fig. 13), and $Re=37\,000$ runs at $N=3$ on the coarse mesh (§III B).
+Shi et al., as they cite them, preferred an even degree in the wall
+element (quadratic over cubic); Gao et al. report improvement monotone
+in $N$ from 2 to 4 on the hill. On one core the standard and generalized
+wall models add 6% and 12.5% to the run time (§III B). See
+[wall-modelled LES](/methods/wall-modelled-les.md).
+
 ## Stabilization of FR implicit LES
 
 Under-resolved FR needs an added dissipation mechanism. Duan & Wang (2024,
@@ -929,6 +978,19 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - Ims & Wang (2023) report no error norms, cell counts, time steps or
   timings; their ranking of indicators rests on visual comparison of
   fields and spectra.
+- **Printed slips (Gao et al. 2025b).** The friction velocity is printed
+  $u_\tau=U/yF^{-1}(Re_y)$ (Eq. 19), while $F^{-1}$ returns $y^+$, so the
+  dimensionally consistent form is $u_\tau=\nu F^{-1}(Re_y)/y$; the
+  pressure-gradient velocity is printed $u_p=(\nu/\rho)|\partial p_w/\partial x_i|$
+  (Eq. 20), a velocity cubed; Eq. (31) omits the factor $u_p/u_c$ that
+  solving Eq. (28) for the wall stress gives *(compiler checks, not in the
+  sources)*. The $Re=37\,000$ run is described as "128 × 48 × 60 points"
+  on $32\times12\times16$ elements at $N=3$, which with $N+1=4$ points
+  per direction gives $128\times48\times64$ *(compiler check, not in the
+  sources)*;
+  the value of $C_2$ in each case, the constants $\kappa$, $C$, $\alpha$,
+  $\beta$ of the Shih functions and the fourth coefficient of the last fit
+  branch are not printed.
 - Witherden et al. (2025, §2) print the correction term of Eq. (7) as
   $\mathfrak F_\alpha f^{(f_\perp)}-f^{(f_\perp)}$, without the tildes and
   the "C" superscript of the common flux of Eq. (5) and with a stray "$*$";
@@ -959,3 +1021,4 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §1–§2, Eqs. (1)–(5) (EDAC); §3, Eqs. (6)–(13) (FRDG in lifting-collocation-penalty form, metrics, Rusanov/BR2, time integrators); §4.1–§4.3, Figs. 3–21, Tables 1–3 (Taylor–Green, channel, SD7003); §5; Eq. (17).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §3.3, Eqs. (23)–(27) (one-dimensional FR, correction functions, energy-stable FR, PyFR); §4.2 (limiter-assisted FR LES of the CRM, as cited).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §2, Eqs. (1)–(7), Fig. 1 (FR recap, point sets, FR as a discontinuous spectral element method); §3.2 (four stabilization strategies); §3.4 (conservative metric); §3.5–§3.6; §5.1, Figs. 11–12, Table 1 (supersonic Taylor–Green comparison); §5.2, Tables 2–3 (scaling).
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I (input point and wall condition of earlier DG/FR WMLES, as cited); §II A, Eqs. (1)–(10) (FR/CPR, LDDRK); §II B (Vreman); §II C, Eqs. (17)–(32), Fig. 1, App. A (first-solution-point input, non-iterative wall laws); §II D, Eqs. (33)–(37), Fig. 2 (no-slip wall, hybrid inviscid wall flux); §III A–B, Figs. 3–15 (channel, periodic hill, cost); printed slips in Eqs. (19), (20), (31), §III B2.

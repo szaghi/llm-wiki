@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [data-driven, neural-network, rans, boundary-layer]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -284,6 +284,28 @@ PINNs without running one.
   variational method is avoided"; Le et al. state the exponential cost
   growth.
 
+## PINNs in a combustion review (Posch et al. 2025)
+
+[Posch et al. (2025)](/sources/posch-2025.md), reviewing turbulent
+combustion models for engine CFD, place PINNs under machine learning for
+chemistry integration, not under turbulence closures (§6.4.1). Data-driven
+models such as networks lack extrapolation capability, so the training
+data must cover the temperature and pressure range of the engine's
+operating conditions; "to deal with the issue of missing extrapolation
+capability, so-called hybrid methods which combine data-driven and
+physics models (e.g., physics-informed neural networks [475]) may be
+beneficial", ref. [475] being Raissi et al. (2019). They cite Zhang et
+al. (2024, CRK-PINN) for solving combustion reaction kinetics "by
+integrating the required ODEs into the loss function of an ANN"
+(§6.4.1). On the closure side (§6.4.2) they cite super-resolution
+generative networks for the subgrid mixture-fraction flux and Reynolds
+stresses with "physics-informed loss functions based on the continuity
+equation" (Bode et al., as cited), the example Ihme et al. (2022) also
+give (above; see [super-resolution SGS models](/methods/super-resolution-sgs-model.md)),
+and state that machine-learned closures "have been mostly developed and
+tested on benchmark flame simulation cases", their transfer to engines
+being "not straight forward". The review runs no PINN.
+
 ## Qualifications
 
 - **Data requirement.** The reconstruction of each turbulent case uses
@@ -336,3 +358,4 @@ PINNs without running one.
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §1.3 (knowledge-guided against purely data-driven); §3.5, §3.5.1, Fig. 25, Eqs. 64–66 (four insertion points of prior knowledge; constraint relaxed to a penalty; PINNs as the example).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §2.1, Eq. 9, Fig. 4c (PINN loss); §4.2.2, Fig. 9, Table 4 (soft constraint, SA-augmented and $k$-$\varepsilon$ PINNs, PT-PINNs, Eivazi et al. cited, interpretability claim).
 - [Le et al. (2024)](/sources/le-2024.md) — §2.2.3, p. 7, Fig. 6 (loss, variants, cost claim); §3.3, Fig. 17 (flame reconstruction); §4.3, p. 26, Table 8 (physics-informed reconstruction of inlet fields).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §6.4.1 (PINNs as hybrid remedy for missing extrapolation, CRK-PINN cited); §6.4.2 (physics-informed GAN loss cited; closures tested on benchmark flames).

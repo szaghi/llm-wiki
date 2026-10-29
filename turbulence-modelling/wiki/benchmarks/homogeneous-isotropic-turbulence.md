@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-28T17:52:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -847,6 +847,80 @@ state that adjustable dissipation "is believed to work" in place of an
 explicit subgrid model (Remark 2). The scheme's shock tests are on
 [WENO schemes](/methods/weno-scheme.md).
 
+[Bilocq et al. (2025)](/sources/bilocq-2025.md), §4.1, run the same
+case of Johnsen et al. (uniform $\rho$, $p$, $T$, solenoidal velocity with
+$E(k)\sim k^4\exp[-2(k/k_0)^2]$, $k_0=4/L$ on $[-\pi L,\pi L]^3$,
+$M_{t,0}=0.6$, $Re_{\lambda,0}=100$, viscosity $\propto T^{3/4}$,
+$Pr=0.71$, RK(4,4) at $\Delta t=5\times10^{-3}\tau_0$, to $t=4\tau_0$) as
+the first test of stabilized Gauss–Legendre DGSEM, against the DNS of
+Hillewaert et al. at $1920^3$ degrees of freedom. On the main mesh,
+$11^3$ elements at $N=5$ ($66^3$ degrees of freedom), vanilla DG with a
+local Lax–Friedrichs flux is stable, but it diverges on every coarser
+mesh tried ($4^3$ and $8^3$ at $N=3$, $3^3$ and $6^3$ at $N=4$, $3^3$ and
+$5^3$ at $N=5$), where artificial viscosity (DG-AV), full entropy
+stability on Gauss–Legendre or Gauss–Lobatto nodes (ESDG-GL, ESDG-GLL) and
+the selective entropy-stable DG-ES all run (Table 1); the authors infer
+that it "appears sufficient to satisfy the second law of thermodynamics
+only in the troubled cells" (see
+[entropy conservation](/properties/entropy-conservation.md)). The full
+entropy-stable schemes underestimate the peak of the mean-square
+vorticity, ESDG-GL through the projection of the entropy variables, while
+DG-AV and DG-ES flag at most about 10% of the elements and behave like
+vanilla DG; vanilla DG has the smallest error of the kinetic-energy budget
+(solenoidal and dilatational dissipation, pressure dilatation, boundary
+flux) and ESDG-GL the largest (Figs. 1–2). Costs relative to vanilla DG are
+1.07–1.08 (DG-AV), 1.25–1.27 (DG-ES), 2.19–2.27 (ESDG-GL) and 1.24–1.53
+(ESDG-GLL) for $N=3$ to 5 (Table 3), and the schemes with an entropy
+projection have the smallest stable time steps (Table 2). DG-AV is
+strongly sensitive to the sensor calibration: the original Persson–Peraire
+calibration flags nearly every cell and over-dissipates, and a
+dilatation–vorticity shock sensor damps the dilatation and is less stable,
+while DG-ES is much less sensitive and, in the worst case, matches ESDG-GL
+(Figs. 3–5, Table 4; see [shock sensors](/definitions/shock-sensor.md)).
+
+**A machine-learned implicit LES on compressible decay.**
+[Bezgin et al. (2025)](/sources/bezgin-2025.md) train ML-ILES, a
+finite-volume implicit LES whose HLLC + TENO6-A scheme keeps its four
+Harten-type candidate polynomials but replaces the TENO weighting by three
+small networks (density, velocity, pressure; three hidden layers of 20
+units, 3132 parameters in all) that output the convex weights (see
+[implicit LES](/definitions/implicit-les.md) and
+[model-consistent training](/methods/model-consistent-training.md)). The
+data are $512^3$ TENO6-A runs of forced compressible turbulence at
+$M_t=0.4$, 0.6 and 0.8 ($Re_\lambda\approx200$, solenoidal forcing at
+$k=2$ with uniform cooling, steady after $t/\tau\approx25$), whose snapshots
+start decaying runs to $t/\tau_\lambda\approx10$, box-filtered by 16 in
+space and time to $32^3$ (§4.1). The networks are trained end to end
+through the differentiable JAX-Fluids solver, unrolled over $N_T=1$, 2 or
+5 coarse steps. Eddy shocklets appear at $M_t=0.8$ as thin regions of
+negative dilatation; at $M_t=0.4$ the flow is essentially shock free
+(Fig. 5). In the short unrolled test on unseen trajectories, which the
+authors call a priori, each model is best at its own training horizon
+(Table 2); in the full a posteriori decay at $32^3$ the $N_T=1$ model has
+the lowest total spectral error at every Mach number and the $N_T=5$ model
+the highest (Table 3, mean absolute error):
+
+| Model | $M_t=0.4$ | $M_t=0.6$ | $M_t=0.8$ |
+|---|---|---|---|
+| ML-ILES, $N_T=1$ | 0.8849 | 0.7923 | 0.6178 |
+| ML-ILES, $N_T=5$ | 1.480 | 1.562 | 1.428 |
+| TENO6-A | 1.110 | 1.153 | 1.173 |
+| ALDM | 1.099 | 1.252 | 1.428 |
+
+The authors conclude that "the cell-wise error computed in the previous
+section does not necessarily correspond to good spectral properties during
+the decay" (§5.2; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+ML-ILES follows the filtered-DNS kinetic-energy spectrum up to the cutoff
+with less high-wavenumber dissipation than TENO6-A, gives the best density
+spectra at the higher Mach numbers, where ALDM degrades, and generalizes to
+an unseen $64^3$ grid (Figs. 7–9). The learned weights differ by field:
+the pressure reconstruction discards the downwind polynomial, the density
+keeps a weight of about 0.08 for it, and the velocity weights resemble the
+spectrally optimized linear weights of TENO6-A (Figs. 10–12). Per cell and
+step on an RTX A6000 the cost is 327.20 ns (ALDM), 452.70 ns (TENO6-A) and
+1238.14 to 2004.14 ns (ML-ILES with 5 to 20 units per layer) (Table 5).
+
 **Pressure terms of entropy-conservative fluxes.**
 [Aiello et al. (2026)](/sources/aiello-2026.md), §4 and §4.2, cite the
 authors' companion paper and Gassner et al. for the finding that the
@@ -1024,6 +1098,37 @@ The resolution criterion $k_{\max}\eta\ge1.5$ ($k_{\max}$ page-local, the
 largest resolved wavenumber) holds with 2.31 and 4.25 in the two mixtures
 (Table I). What the turbulence does to the detonation is on
 [shock-generated turbulence](/results/shock-generated-turbulence.md).
+
+**Isotropic turbulence convected through a normal shock.** The canonical
+shock–turbulence interaction feeds a box of decaying isotropic turbulence
+through a normal shock (see
+[shock-generated turbulence](/results/shock-generated-turbulence.md) and
+[linear interaction analysis](/methods/linear-interaction-analysis.md)).
+[Cuadra et al. (2025)](/sources/cuadra-2025.md), §I and §III B, Table I,
+characterize the incoming turbulence by $M_t$, $Re_\lambda$ and the
+spectrum shape, and compile the upstream states of the DNS studies of
+the interaction: pre-shock Mach numbers 1.1 to 6, $M_t$ from 0.02 to
+0.691 and $Re_\lambda$ from 9 to 74, against the $Re_\lambda>100$ they
+state fully developed turbulence needs. [Bilocq et al. (2025)](/sources/bilocq-2025.md),
+§4.4, generate their inflow for the case of Larsson & Lele from a
+precursor decaying run (Ristorcelli & Blaisdell initialization, Gaussian
+spectrum peaked at $k=6$), developed until the velocity-derivative
+skewness is about $-0.5$ and the flatness about 4.0, and convect it with
+Taylor's hypothesis at $M_t=0.22$ and $Re_\lambda=40$ ahead of a Mach-1.28
+shock.
+
+**A GPU DNS solver on forced and decaying boxes.**
+[Monteiro et al. (2026)](/sources/monteiro-2026.md), §4.6 and §5, use the
+periodic box twice in RHEA-X, a second-order kinetic-energy-preserving
+finite-difference compressible solver. Forced turbulence at low Mach
+number on $320^3$ points, with the solenoidal linear forcing of Watanabe
+et al. targeting $Re_\lambda\approx90$, carries $10^6$ passive tracers
+whose Voronoi-cell volumes follow the Gamma distribution of randomly
+placed tracers, showing no spurious numerical clustering (Fig. 9).
+Decaying turbulence, ideal-gas and supercritical CO2 at twice the critical
+pressure at the pseudo-boiling temperature, on $32^3$ to $1000^3$ points,
+is the benchmark of their GPU performance study, timed over 100 steps (see
+[direct numerical simulation](/definitions/direct-numerical-simulation.md)).
 
 **Not this case: isotropic turbulence ahead of a flame.**
 [Chambers et al. (2022)](/sources/chambers-2022.md) generate nominally
@@ -1289,6 +1394,23 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   $c_{\mathrm{diss}}=0.001$ unchanged to their channel and bump runs (see
   [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)); its
   sensitivity there is not shown.
+- The $512^3$ reference of [Bezgin et al. (2025)](/sources/bezgin-2025.md)
+  has $k_{\max}\eta\approx2.3$, below the $k_{\max}\eta\ge\pi$ that the
+  authors state "is required to fully resolve all scales"; they add that
+  TENO6-A "acts as an ILES model" where not all scales are resolved
+  (§4.1). Their printed Taylor microscale (Eq. 34) has the summed
+  dilatation $\langle(\partial_iu_i)^2\rangle$ in the denominator, which
+  with their dilatation rms gives $\tau_\lambda=\sqrt3/\theta_{\mathrm{rms}}$
+  of about 3.9 at $M_t=0.4$ and 0.84 at 0.8 ($\theta$ the dilatation,
+  page-local), while their Table 1 prints $\tau_\lambda\approx0.42$ at all
+  three Mach numbers *(compiler check, not in the sources)*. They write
+  "$Re_\tau\approx200$" for the Taylor-scale Reynolds number (§4.1, Fig.
+  5), call the run to $t=10\tau_\lambda$ "approximately 10 eddy turn-over
+  times", and define $p_{\mathrm{rms}}=\langle p'p'\rangle$ without a
+  square root. Their "a priori" evaluation runs the models inside the
+  solver for up to 20 steps.
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) is a review; the upstream
+  states of Table I are compiled from the cited DNS.
 
 # Citations
 
@@ -1353,3 +1475,7 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Yeung et al. (2025b)](/sources/yeung-2025-b.md) — §2–§3; §4.1–4.2, Table 2.
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §3.2, Fig. 33 (cited flame DNS, review).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §5.2 (cited neural operators, review).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §4.1, Tables 1–4, Figs. 1–5; §4.4 (precursor inflow).
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §3.1; §4.1–4.2, Table 1, Figs. 2–5; §5.1–5.4, Tables 2–5, Figs. 7–12.
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §I; §III B, Table I (review, compiled DNS).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §4.6, Fig. 9; §5.

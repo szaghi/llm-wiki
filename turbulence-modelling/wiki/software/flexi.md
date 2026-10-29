@@ -5,7 +5,7 @@ description: "FLEXI is an open-source high-order DGSEM framework for compressibl
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-28T12:27:00Z
+timestamp: 2026-10-28T17:51:00Z
 ---
 
 # FLEXI
@@ -295,6 +295,14 @@ RANS, multiphase, particle, aeroacoustics or immersed-boundary capability,
 as judged by the HORSES3D authors in June 2022 (see
 [HORSES3D](/software/horses3d.md)).
 
+[Bilocq et al. (2025)](/sources/bilocq-2025.md), §5, cite FLEXI's
+framework paper (Krais et al.) among "entropy-stable methods with
+positivity-preserving limiters to reduce sensitivity to shocks" and add
+that such schemes "often rely on first or second order finite-volume
+discretizations, leading to potential accuracy degradation that requires
+further evaluation"; their own selective entropy-stable DGSEM runs in a
+different code (see [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)).
+
 Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 "in-house DG simulation framework" that the paper does not name; Krais et al.
 (2021, §2.2.3, §7.1) cite it as the basis of FLEXI's implicit-LES approach.
@@ -359,3 +367,4 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1, §3.1 (GALÆXI as a FLEXI port, MPI strategy); §4.4 (CPU optimum per core); §5.2 (identical Taylor–Green results); §6.3, Table 3 (Rotor 37 CPU reference, energy).
 - [Gao et al. (2023)](/sources/gao-2023.md) — §1, §3.1–3.3 (split-form ALE DGSEM in FLEXI, confined adaptive filter, beam solver, coupling, mesh motion); §5.1–5.4, Table 4, Eq. (68) (set-up, PID, cost, separation and spectra).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (FLEXI among the comparators of entropy-filtered PyFR on the supersonic Taylor–Green vortex).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §5, ref. [64] (FLEXI among entropy-stable methods with positivity-preserving limiters, cited; passing).

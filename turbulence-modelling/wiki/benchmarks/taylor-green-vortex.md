@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "Triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 it separates Smagorinsky and implicit LES errors; at Re 100–10,000 it splits numerical dissipation and tests subgrid models, filters and split forms; compressible to Mach 2.5 for shock capturing; with an imposed field for MHD; inviscid for energy conservation; laminar and 2D for commutators."
+description: "Triply periodic vortex flow that transitions from a single-mode field to decaying turbulence: at Re 40,000 it separates Smagorinsky and implicit LES errors; at Re 100–10,000 it splits numerical dissipation and tests subgrid models, filters and split forms; compressible to Mach 2.5 for shock capturing; with an imposed field for MHD; inviscid for energy conservation; laminar and 2D for commutators."
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, compressible Taylor–Green vortex, MHD Taylor–Green vortex, TGV-MHD, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving, mhd]
-timestamp: 2026-10-28T17:07:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # Taylor–Green vortex
@@ -125,6 +125,9 @@ to the fully turbulent state.
 | [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) | [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md) (subgrid stress from a database of DNS on representative volume elements) against a dynamic $k$-equation LES; domain of side $2\pi$, to $\hat t=20$ | $64^3$, $32^3$, $16^3$ | $512^3$ DNS, cited from [Wang et al. (2013)](/sources/wang-2013.md) |
 | [Vermeire (2024)](/sources/vermeire-2024.md) | incompressible [flux reconstruction](/methods/flux-reconstruction.md) recovering nodal DG on Gauss points, Rusanov and BR2, with entropically damped artificial compressibility (incompressibility factor $1/5$ to $1/40$); implicit LES, classical RK4, to $t=20$ | nominally $64^3$ and $128^3$ DOF (a quarter and a half of the reference DNS per direction), $N=1$ to 6 | spectral DNS of van Rees et al. |
 | [Wei et al. (2023)](/sources/wei-2023.md) | compressible finite volumes in OpenFOAM: the in-house scramjetFoam (discretely energy-preserving split convective flux, Ducros-switched AUSM diffusion) against reactingFoam and rhoCentralFoam; inviscid, no model, to $t=10$ | $64^3$ | approximate analytical enstrophy of Brachet et al. |
+| [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) | unstructured finite volumes (UCNS3D), CWENOZ3 to CWENOZ6 with and without the a priori dissipation–dispersion adjustment ADDA, HLLC or Roe flux, optional low-Mach correction; inviscid, $p_0=100$, $M\approx0.08$, SSP RK4 at CFL 1.4 | hexahedra $64^3$ and $128^3$; tetrahedral mesh of 2,069,247 cells with $64^3$-equivalent edge length | viscous dissipation rate of Brachet et al. (DNS); $k^{-5/3}$ spectrum |
+| [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) | finite volumes, HLLC, fifth-order WENO variants (JS, Z+, ZM, MD and the authors' WENO5-H++) and WENO11-JS, five-stage SSP-RK4, no model; $M_0=0.1$ | $96^3$ | DNS of Dairay et al. ($512^3$, sixth-order compact) |
+| [Sun et al. (2026)](/sources/sun-2026.md) | incompressible residual-based [variational multiscale](/methods/variational-multiscale-method.md) LES on $C^1$ quadratic NURBS ([isogeometric analysis](/methods/isogeometric-analysis.md)), half-explicit Runge–Kutta HERK($s$,$p$)-VMS against generalized-$\alpha$ VMS; on $[-\pi,\pi]^3$ | $64^3$, $96^3$, $128^3$ elements | dealiased pseudo-spectral DNS at $512^3$ |
 
 **The workshop case definition.** The $Re=1600$ case as most of these
 sources run it is case C3.5 of the first International Workshop on
@@ -842,6 +845,91 @@ T106A cascade, open cavity) are on
 [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) and
 [turbine cascades](/benchmarks/turbine-cascade.md).
 
+**A hybrid fifth-order WENO in implicit LES.**
+[Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md), §III F–G,
+run the case at $Re=1600$ and $M_0=0.1$ on $96^3$ cells, with isothermal
+initialization, as an implicit LES that compares their WENO5-H++ (a
+combination of the WENO-D modifier, a WENO-IM mapping, a WENO-MZ-type
+adaptive weight and the WENO-ZPM extra term, with smoothness-indicator
+power 3; see [WENO schemes](/methods/weno-scheme.md)) with WENO5-JS,
+WENO5-Z+, WENO5-ZM, WENO5-MD and WENO11-JS. WENO5-JS decays earliest in
+kinetic energy and WENO5-H++ stays closest to the DNS of Dairay et al.
+"for most of the simulation duration" (Fig. 9); WENO5-H++ gives the largest
+enstrophy peak and the lowest numerical viscosity, followed by WENO5-MD,
+both below WENO11-JS on the same grid (stated in the text; Fig. 10 does not
+plot WENO11-JS), and all schemes underestimate the enstrophy on this grid.
+The kinetic energy and dissipation change little between schemes, while
+enstrophy and numerical viscosity improve by 25.5% and 44.5% with
+WENO5-H++ (the reference scheme of the percentages is not named). At
+$t=9$ and 15 WENO5-MD and WENO5-H++ resolve more vortical structures than
+WENO11-JS, while WENO5-Z+ and WENO5-ZM are on a par with it (Q-criterion,
+Figs. 7–8). WENO5-H++ costs 30–40% more than WENO5-JS and WENO11-JS "over
+twice"; the authors restrict the benefit to inviscid or under-resolved
+viscous flows (§III G). The same paper's double-vortex pairing is on the
+[temporal mixing layer](/benchmarks/temporal-mixing-layer.md) page and
+its code on [CNS3D](/software/cns3d.md).
+
+**Adaptive dissipation–dispersion adjustment on unstructured meshes.**
+[Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §4.1 and
+§5.1, use the inviscid TGV both to calibrate and to test ADDA, which sets
+cell by cell, at every step, the central linear weight of the CWENOZ
+reconstruction to 2 (more dissipation) or 1000 (less) and, with Roe or
+Rusanov fluxes, a flux-dissipation multiplier between 0.5 and 1 (steps of
+0.05), from an energy ratio of the unlimited central reconstruction before
+and after a sharp modal filter, with thresholds 0.95 and 1.2 (see
+[numerical dissipation](/properties/numerical-dissipation.md) and
+[implicit LES](/definitions/implicit-les.md)). Of seven candidate filters
+only a sharp and an exponential one give a usable signal (Fig. 5), and
+tetrahedral and hybrid meshes show more cells above 1.2 than hexahedra,
+which the authors read as their dispersive behaviour (Fig. 6). Raising the
+polynomial order or the central weight lowers the dissipation and improves
+the agreement with the dissipation rate of Brachet et al. and with the
+$k^{-5/3}$ slope on $64^3$ hexahedra; ADDA with the Roe flux, acting on
+both weight and flux, beats ADDA with HLLC, acting on the weight only
+(Figs. 8–10). The low-Mach correction of Simmonds et al. strongly improves
+the hexahedral results; ADDA brings the hexahedral $128^3$ and the
+tetrahedral runs much closer together and, with the correction, greatly
+reduces the double peak of the dissipation rate near $t\approx9.5$; neither
+ADDA nor the correction alone brings hexahedra to the tetrahedral spectrum
+(Figs. 11–13). The 0.05 step of the multiplier introduces high-frequency
+oscillations in the dissipation history. On $64^3$ hexahedra (ARCHER2, 16
+MPI processes with 16 threads each) the ADDA overhead is 6.1%/8.2%
+(HLLC/Roe) for CWENOZ3, 4.8%/6.5% for CWENOZ4, 2.7%/3.1% for CWENOZ5 and
+1.8%/2.2% for CWENOZ6, whose costs without ADDA are 1.00, 2.37, 4.21 and
+5.80 (Table 3). The comparison of an inviscid run with the viscous
+Brachet et al. rate is acknowledged by the authors as a comparison of the
+dissipation mechanism only.
+
+**Half-explicit Runge–Kutta for variational multiscale LES.**
+[Sun et al. (2026)](/sources/sun-2026.md), §7.2, discretize first in time
+by a half-explicit Runge–Kutta scheme, which treats convection and
+viscosity explicitly and incompressibility implicitly at each stage, and
+then apply the VMS analysis to the linear, Darcy-like stage operator, so
+that the fine-scale velocity is a fixed fraction $\tau$ of the stage
+residual (here $\tau=1/2$; see
+[variational multiscale method](/methods/variational-multiscale-method.md)).
+On $C^1$ quadratic NURBS meshes of $64^3$, $96^3$ and $128^3$ elements, the
+residual-based VMS with generalized-$\alpha$ time integration, VMS-Gen-$\alpha$(0.5),
+shows "an anomalous double-peaked structure in the dissipation rate, with
+the secondary peak occurring at $t\approx11$" on all meshes, while
+HERK(3,3)-VMS has none and closely matches the DNS on $128^3$ elements
+(Fig. 10). Lowering the time step of VMS-Gen-$\alpha$(0.5) from
+$5\times10^{-2}$ to $10^{-2}$ improves it, but $10^{-3}$ makes the
+dissipation deviate again, which the authors attribute to small-time-step
+instabilities, whereas HERK(3,3)-VMS is only mildly sensitive to the step
+(Fig. 11). In the split of the dissipation the resolved (enstrophy-based)
+part of VMS-Gen-$\alpha$ is only a fraction of the total, the secondary
+peak comes from the model, and the resolved part does not approach the DNS
+as the step falls; for HERK(3,3)-VMS the resolved dissipation follows the
+DNS and the model part is small, mainly near the peak (Fig. 12). At $t=9$
+the HERK(3,3)-VMS spectrum on the finest mesh agrees with the DNS "up to
+nearly 80% of the resolved wavenumbers", with energy accumulating at
+wavenumbers 20–40 on the coarsest mesh, while VMS-Gen-$\alpha$ is
+over-damped at high wavenumbers (Figs. 13–14). The values $\tau=0.2$, 0.5
+and 0.8 give nearly indistinguishable spectra and 0.1 and 0.9 failed to
+converge; adding a fine-scale pressure changes nothing up to a coefficient
+of 2 and over-dissipates at 20 (Fig. 16).
+
 **Temporal LES with a lattice Boltzmann method at $Re=800$ and 3000.**
 [Simonis et al. (2022)](/sources/simonis-2022.md) filter the
 incompressible equations in **time** with a causal exponential kernel of
@@ -997,6 +1085,64 @@ and SD3D, which the authors read as entropy filtering not introducing
 comparison data were supplied by Chapelier and collaborators
 (acknowledgements).
 
+**Selective entropy stability in DGSEM.** [Bilocq et al. (2025)](/sources/bilocq-2025.md),
+§4.2, run the case of Chapelier et al. (Sutherland's law with $S=0.4042$,
+$\gamma=1.4$, $Pr=0.71$, RK(4,4) with $\Delta t=3\times10^{-4}t_c$, to
+$t=20t_c$) with Gauss–Legendre DGSEM at $N=3$ on $16^3$ to $128^3$
+elements ($64^3$ to $512^3$ degrees of freedom) and five stabilizations:
+none (vanilla DG), Laplacian
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+with the Hennemann calibration of the modal sensor (DG-AV), fully
+entropy-stable DG on Gauss–Legendre (ESDG-GL) and Gauss–Lobatto
+(ESDG-GLL) nodes, and their selective scheme DG-ES, entropy-stable only in
+the cells the sensor flags (see
+[entropy conservation](/properties/entropy-conservation.md) and
+[shock sensors](/definitions/shock-sensor.md)). Vanilla DG is unstable up
+to $128^3$ degrees of freedom and stable at $256^3$ and $512^3$; all
+stabilized schemes are stable everywhere, the flagged fraction falling
+from about 37% at the coarsest resolution to about 6.5% at $128^3$ and
+below 1% at the finest (Table 6). The largest stable CFL numbers are
+(Table 7; "/" unstable):
+
+| Scheme | $64^3$ | $128^3$ | $256^3$ | $512^3$ |
+|---|---|---|---|---|
+| DG | / | / | 0.25 | 0.15 |
+| DG-AV | 0.51 | 0.27 | 0.25 | 0.15 |
+| DG-ES | 0.23 | 0.27 | 0.25 | 0.15 |
+| ESDG-GL | 0.23 | 0.27 | 0.25 | 0.15 |
+| ESDG-GLL | 0.51 | 0.54 | 0.31 | 0.19 |
+
+DG-ES and DG-AV give the highest solenoidal dissipation at every
+resolution, close to vanilla DG on the two finest; ESDG-GL underpredicts it
+from the peak on, ESDG-GLL more still, and all converge at the finest
+resolution (Fig. 7). DG-AV underpredicts the dilatational dissipation at
+all resolutions because it weakens the shocks, while the summation-by-parts
+schemes overpredict it, those with the entropy projection most (Fig. 9).
+At $t/t_c=2.5$ DG-AV gives a thicker, oscillation-free shock, ESDG-GL and
+DG-ES larger under- and overshoots (Fig. 10). The pressure dilatation of
+ESDG-GL has the largest errors and slowest convergence, attributed to the
+ill-conditioned entropy-to-conservative map near large pressure gradients;
+its reference is vanilla DG at $512^3$, since no literature data exist
+(Fig. 11; see [pressure dilatation](/definitions/pressure-dilatation.md)).
+Costs relative to DG on $64^3$ cells are 1.07 (DG-AV), 1.27 (DG-ES), 1.86
+(ESDG-GL) and 1.16 (ESDG-GLL) (Table 8). The reference curves are the
+TENO6 run at $2048^3$ and an incompressible pseudo-spectral run at $512^3$.
+
+**Adaptive dissipation in unstructured finite volumes.**
+[Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §5.3, run the
+supersonic case ($Re=1600$, $M_0=1.25$, density from the equation of state)
+on $128^3$ hexahedra and a $64^3$-equivalent tetrahedral mesh of 2,069,247
+cells, with the Roe flux, the low-Mach correction and explicit third-order
+Runge–Kutta at CFL 0.7, to $t=20$. Without ADDA, CWENOZ5 underpredicts the
+total dissipation; ADDA improves it substantially on both meshes, and
+CWENOZ6-ADDA agrees best with the $128^3$ CODA and OpenSBLI data of
+Chapelier et al. and with Lusher & Sandham; the hexahedral and tetrahedral
+results converge to each other, and at $t=12$ the tetrahedral mesh follows
+the $k^{-5/3}$ slope better, attributed to its lower dissipation (Figs.
+22–23). Because ADDA reads the nonlinear central weight of the density,
+cells whose stencils cross strong density gradients are kept from the
+lowest-dissipation settings (Fig. 24).
+
 **Interpolation-based WENO from Mach 0.1 to 2.5.**
 [Wang et al. (2024b)](/sources/wang-2024-i.md) compare four fifth-order
 finite-difference WENO schemes on the compressible TGV: the classical
@@ -1140,6 +1286,13 @@ equation (see
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md)
 and [divergence-consistent LES](/methods/divergence-consistent-les.md)).
 
+[Monteiro et al. (2026)](/sources/monteiro-2026.md), App. B, use the same
+2D field, $\boldsymbol u=U_0(\sin x\cos y,-\cos x\sin y,0)$ with
+$p=p_0+\tfrac14\rho_0U_0^2(\cos2x+\cos2y)$ on $L=2\pi$, at $Re=100$ and
+$M=0.1/\sqrt\gamma$, $\gamma=1.4$, CFL 0.9, as a verification of the GPU
+solver RHEA-X: the $L^2$ errors of $u$ and $v$ against the analytic decay
+converge at second order on both CPU and GPU (Fig. B.1).
+
 The 3D initial condition of Vicente Cruz & Lamballais and the 2D solution of
 Agdestein & Sanderse differ by an overall sign of the velocity *(compiler check, not in the
 sources)*.
@@ -1225,8 +1378,7 @@ sources)*.
   on $64^3$ and $128^3$ finite-volume cells and spectral vanishing
   viscosity on $8^3$ and $16^3$ continuous-Galerkin elements. Each verdict
   is stated for its own models, schemes and grids (Duan & Wang §5.1; Saini
-  et al. §5), so it is recorded as a difference of set-up, not a conflict
-  of claims. Duan & Wang do not state the model coefficients
+  et al. §5). Duan & Wang do not state the model coefficients
   used.
 - [Wang (2024)](/sources/wang-2024-b.md) sets $V_0=0.1\sqrt{p/\rho}$ and
   calls the case Mach 0.1. The initial field (Eq. 23) is printed without the amplitude
@@ -1371,6 +1523,25 @@ sources)*.
   field from the OTV flow", while its printed $B_x=-2\sin(2y/L)\sin(z/L)$,
   $B_y=2\sin(x/L)+\sin(z/L)$ differ from the $B_x$, $B_y$ of their own 3D
   Orszag–Tang field (Eq. 20).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) take the Mach profile
+  along $y$ at $x=z=0$ in the text and at $x=y=0$ in the caption of Fig.
+  10, and their Table 6 has a $32^3$ column that no other table
+  of the case has.
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) attribute
+  the spike of the total dissipation between $t=2$ and 4 to "very fine
+  resolutions ($768^3$)" and two sentences later to "very fine mesh
+  resolutions ($2048^3$)" without naming the source of the latter (§5.3);
+  the Fig. 22 caption names the dilatational dissipation $\varepsilon_t$;
+  §4.3 speaks of increasing dissipation "through the increase of" the
+  central weight, while §4.2 and §5.1 increase it by reducing that weight
+  to 2; and the overhead is given as "approximately (1.8 − 8%)" (§5.1) and
+  "(2-8%)" (conclusions) while Table 3 reaches 8.2%.
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) give no
+  timing table or hardware for their 30–40% cost estimate, and do not name
+  the reference scheme of their 25.5% and 44.5% improvements.
+- [Sun et al. (2026)](/sources/sun-2026.md) solve the incompressible
+  equations and name their scheme both RK-VMS(3,3) and RK(3,3)-VMS; the
+  supplementary material of the paper was not available.
 
 # Citations
 
@@ -1415,3 +1586,8 @@ sources)*.
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2 (entropy filtering); §5.1, Figs. 11–12, Table 1; §5.2, Tables 2–3, Fig. 13.
 - [Wang et al. (2024b)](/sources/wang-2024-i.md) — §II.B–D; §III.B–E, Eqs. 25–29, Tables I–III, Figs. 3–19; §IV.
 - [Fang et al. (2025)](/sources/fang-2025.md) — §2.1–2.3; §4, Eqs. 23–26, Table 8, Figs. 18–25.
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §4.1–4.3, Table 1, Figs. 5–6; §5.1, Tables 2–3, Figs. 8–13; §5.3, Figs. 22–24.
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §III F–G, Eqs. 29–30, Figs. 7–10.
+- [Sun et al. (2026)](/sources/sun-2026.md) — §4; §7.2, Table 6, Figs. 10–16.
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §4.2, Eqs. 33–36, Tables 6–8, Figs. 7–11.
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — App. B, Fig. B.1 (2D TGV, verification).

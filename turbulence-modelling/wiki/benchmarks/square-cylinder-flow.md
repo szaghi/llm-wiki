@@ -5,7 +5,7 @@ description: "Turbulent flow past a square cylinder with separation fixed at the
 status: established
 aliases: [square cylinder, square-cylinder wake, flow over a square cylinder, SQCYL]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, dg, des, immersed-boundary]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # Flow past a square cylinder
@@ -228,6 +228,52 @@ between probe and wall and to the coarse mesh (Figs. 12–13). The cost is
 13.2 CPU hours per shedding cycle, against about 1058 and 676 hours they
 infer for two wall-resolving LES (Table V).
 
+**A $p$-adaptive DG LES with dynamic load balancing.**
+[Valvo & Abbà (2025)](/sources/valvo-2025.md), §5, use the cylinder at
+$Re=22{,}000$ and $M=0.3$ as the second test of dynamic load balancing in
+the $p$-adaptive local discontinuous Galerkin solver dg-comp: a
+two-dimensional section of side $L_{\mathrm{sq}}=1$ extruded over a span of
+$4L_{\mathrm{sq}}$, with domain extents $L_f=10$ upstream, $L_r=20$
+downstream and $L_y=10$ cross-stream (their Table 8), 23,816 tetrahedra refined near the body, sponge layers at
+inflow and outflow, slip walls top and bottom, periodic span; a compressible
+[Smagorinsky](/methods/smagorinsky-model.md) LES with $\Delta t=0.0004$,
+the degree adapted within $2\le N\le4$ by a structure-function indicator
+of under-resolution (see [mesh adaptation](/methods/mesh-adaptation.md)).
+Their Table 9 compares the uniform $N=4$ run (833,560 degrees of freedom)
+with the adaptive run without load balancing (about 463,000):
+
+| Run or reference | mean $C_D$ | column "RMS$_{C_L}$" | column "RMS$_{C_D}$" |
+|---|---|---|---|
+| uniform $N=4$ | 2.445 | 0.1531 | 1.366 |
+| $p$-adaptive, no load balancing | 2.3818 | 0.1934 | 1.305 |
+| "Other LES data" (Rodi et al. workshop, as printed) | 1.66–2.77 | 0.10–0.27 | 0.38–1.79 |
+
+The authors place both mean drags within the LES range of Rodi et al. and
+call the statistics of the two runs equivalent (Table 9; Fig. 16 compares
+the two centreline velocities only, with no experimental or DNS curve).
+The case is used to measure cost: adaptation without load balancing saves
+only 9.2% of the elapsed time (18,568 s to 16,866 s) although the degrees
+of freedom fall by about 45%, while repartitioning with Zoltan saves 40.9%
+to 44.6% against the uniform run, which the authors call "near to the
+theoretical optimum" (Tables 10–11). The averaging window is not printed.
+
+**Vortex-driven $h$-adaptation of a laminar wake.**
+[Lv et al. (2025)](/sources/lv-2025.md), §V A, take a laminar,
+two-dimensional version of the case, $Re=150$ and $M_\infty=0.3$ (after
+Jacobs & Armstrong), to test a high-order discontinuous Galerkin solver
+($N=2$, direct DG viscous flux, SSP-RK3) with $h$-adaptive refinement on
+quadrilaterals with hanging nodes, driven either by the $\Omega$ criterion
+or by a characteristic-based vortex indicator found by symbolic regression
+(see [vortex identification criteria](/definitions/vortex-identification-criterion.md)).
+Both adaptive runs, from 13,268 elements with two refinement levels,
+concentrate cells in the vortex street and resolve it about as well as a
+uniform grid of 80,000 elements at $t=2$ (Figs. 6–7); the serial CPU times
+are 12.05 min (coarse uniform), 230.37 min (fine uniform), 40.88 min
+($\Omega$-driven) and 43.58 min (indicator-driven), reductions of 82.25%
+and 81.08% against the fine grid (Table I). No force coefficient, Strouhal
+number or reference data is printed; the flow is laminar and no turbulence
+model is used.
+
 **Adjoint solvers.** [Fanizza et al. (2025)](/sources/fanizza-2025.md),
 §3.4.1, Fig. 2, use the first adjoint system of this optimization to
 compare linear solvers at a 180-vector memory budget: GMRES(180) with
@@ -283,6 +329,22 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
   wall-resolving LES as inferred from those works; they define their
   $l_r$ only as the "length of the recirculation bubble" (nomenclature) and
   write $D$ for the side.
+- The Rodi workshop range is printed differently by two sources:
+  [Guo & Wang (2025)](/sources/guo-2025.md), Table 4, give mean $C_D$
+  2.17–2.77, rms $C_L$ 1.15–1.79 and rms $C_D$ 0.14–0.27;
+  [Valvo & Abbà (2025)](/sources/valvo-2025.md), Table 9, give mean $C_D$
+  1.66–2.77 and, under the column headings RMS$_{C_L}$ and RMS$_{C_D}$,
+  0.10–0.27 and 0.38–1.79. Valvo & Abbà's own entries under the same
+  headings are 0.1531 and 1.366 (uniform run) and 0.1934 and 1.305
+  (adaptive run). The two sources cite different works of the workshop:
+  Guo & Wang the J. Wind Eng. Ind. Aerodyn. comparison of LES and RANS
+  around bluff bodies, Valvo & Abbà the J. Fluids Eng. workshop report
+  (both 1997).
+- [Valvo & Abbà (2025)](/sources/valvo-2025.md) compare the cylinder
+  statistics only between their adaptive and uniform runs and with the
+  workshop range; no averaging window is printed.
+- [Lv et al. (2025)](/sources/lv-2025.md) compare their adaptive runs
+  with the uniform grids visually only.
 
 # Citations
 
@@ -293,3 +355,5 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
 - [Wu et al. (2024)](/sources/wu-2024.md) — §3.1b, Figs. 5–6.
 - [Guo & Wang (2025)](/sources/guo-2025.md) — §2.1; §2.2.1; §3.1, Table 4, Figs. 10–20.
 - [Yan et al. (2024)](/sources/yan-2024.md) — §III B, Tables IV–V, Figs. 10–13.
+- [Valvo & Abbà (2025)](/sources/valvo-2025.md) — §5, Tables 8–11, Fig. 16.
+- [Lv et al. (2025)](/sources/lv-2025.md) — §V A, Table I, Figs. 5–7.

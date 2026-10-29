@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-28T17:03:00Z
+timestamp: 2026-10-29T05:16:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -432,6 +432,58 @@ dissipation of the nonlinear weights in supersonic turbulence to future
 work (§3.3, §4). The same paper finds the turbulence model mattering more
 than the scheme or the grid for the pressure distribution (§3.4; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+**Upwind dissipation of a ninth-order WENO at low Mach number.**
+[Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) (§I, §VI–VIII,
+Table II) find that a ninth-order WENO, whose large central-stencil weight
+makes it nearly central in smooth regions, is still too dissipative in
+implicit LES of a channel at bulk Mach 0.2 on $64^3$ cells, where the mean
+Mach number falls below 0.1 near the wall and toward 0.01 at it (Fig. 4):
+$Re_\tau$ comes out 5.7% low, the mean velocity departs from DNS from
+$y^+\approx10$, and the near-wall flatness is under-predicted, which they
+read as a sign of over-dissipation. Blending the reconstructed velocities
+toward their average by a Mach-number factor removes the deficit; applied
+to the whole velocity it adds dispersion instead ("fuzzy" spurious
+vortices), applied to the normal and tangential components with separate
+Mach numbers (NEHA) it gives $Re_\tau$ within 1% of DNS. The authors keep
+the two failure modes apart: excess dissipation (the uncorrected scheme)
+and excess dispersion (the scheme with the original correction). The
+scheme is on [WENO](/methods/weno-scheme.md). The face-normal correction
+of Simmonds et al. likewise "strongly" improves the hexahedral-mesh
+Taylor–Green results of the unstructured CWENOZ implicit LES of
+[Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) (§3.2, §5.1,
+Figs. 11–12).
+
+**Lower dissipation exposes dispersion.** Two 2025 finite-volume sources
+address the trade between the two. Kokkinakis & Drikakis (2025, §II C)
+found that their combined low-dissipation WENO weights showed
+"significant dispersion errors" in preliminary trials, and raised the
+smoothness-indicator exponent to 3 and the regularization to about
+$2.2\times10^{-15}$ to curb the resulting noise, not pursuing further
+hybridization for that reason (trials not shown). Tsoutsanis & Nogueira
+(2025, §1, §4.1) state that for nonlinear schemes on unstructured meshes
+dissipation and dispersion are entangled, dispersion errors becoming more
+pronounced as dissipation falls and being overwhelmed when it rises, and
+that dispersion-relation analysis does not extend usefully to that
+setting; tetrahedral and hybrid meshes show more cells with excess
+high-mode energy than hexahedral ones, "indicative of their dispersive
+properties" (Fig. 6), while elsewhere the same paper calls them lower in
+dissipation than hexahedra (§5.1, §5.3).
+
+**Three dissipation mechanisms of a Riemann flux, and learned weights.**
+[Bezgin et al. (2025)](/sources/bezgin-2025.md), §3.2, Eq. (28), write the
+HLLC flux in central form, the mean of the two one-sided fluxes minus
+half the sum of the three wave-speed-weighted state jumps, which "reveals
+three dissipation mechanisms, corresponding to the three-wave solution of
+the underlying Riemann problem" (citing Fleischmann et al.), and propose
+assembling future learned fluxes from such a library. Their machine-learned
+reconstruction weights already change the dissipation of an HLLC + TENO6-A
+scheme: in compressible decaying isotropic turbulence at $32^3$ the
+learned scheme gives "considerable improvements in terms of dissipation
+properties in the high wave number range" over TENO6-A (§5.2, Fig. 7);
+they recall, citing Thornber et al., that under-resolved turbulence needs
+a dissipation different from that at shocks (§1; see
+[implicit LES](/definitions/implicit-les.md)).
 
 **A tunable TVD reconstruction for unstructured implicit LES.**
 [Cheng et al. (2023)](/sources/cheng-2023-b.md) (§2.2, Eqs. 2.9–2.14)
@@ -909,6 +961,59 @@ dissipation (Fig. 11).
   both marginally ($u^+$ 2% high at $y^+=100$) and a slight log-layer
   overestimate in the turbulent-kinetic-energy budget (Figs. 8–10).
 
+- **Residual of the kinetic-energy balance, accumulated.** Kokkinakis &
+  Drikakis (2025, §III E 3, Eqs. 22–28) obtain the numerical dissipation
+  of a closed two-dimensional double-vortex-pairing problem as
+  $\varepsilon-\varepsilon_\nu-\varepsilon_p$, the kinetic-energy decay
+  rate minus the viscous and the
+  [pressure-dilatation](/definitions/pressure-dilatation.md) terms, and
+  integrate it to $t=6$ s; normalized by WENO5-JS it is 0.942 (WENO5-Z+),
+  0.888 (WENO5-ZM), 0.829 (WENO5-MD) and 0.822 (WENO5-H++), the initial
+  velocity jump between the streams being "the leading contributing
+  factor" (Table III). For the Taylor–Green vortex they use
+  $\varepsilon=2(\nu+\nu_{\mathrm n})\mathcal Z$ with $\mathcal Z$ the mean of
+  $\tfrac12\omega_i\omega_i$, i.e. a normalized numerical viscosity
+  $\nu_{\mathrm n}/\nu=\varepsilon/(2\mathcal Z\nu)-1$ (Eqs. 33–35;
+  $\nu_{\mathrm n}$ page-local), which is $\nu^\omega_{\mathrm{eff}}/\nu-1$
+  in registry terms *(compiler check, not in the sources)*; WENO5-H++
+  lowers it by 44.5% (reference not stated) and below the
+  eleventh-order WENO11-JS on $96^3$ (§III F–G).
+- **Budget imbalance as an instantaneous error.**
+  [Bilocq et al. (2025)](/sources/bilocq-2025.md), §2.1, §4.1.2, split the
+  kinetic-energy decay into solenoidal and dilatational dissipation,
+  pressure dilatation and boundary flux, and take the difference between
+  the measured decay rate and their sum as an "instantaneous" indicator
+  of numerical error, after Wang et al. (2024); in decaying compressible
+  isotropic turbulence the unstabilized DG has the smallest budget error
+  and the entropy-stable Gauss–Legendre DG the largest (Fig. 2).
+- **Model and resolved dissipation of a VMS-LES.** [Sun et al. (2026)](/sources/sun-2026.md),
+  §7.2, Eqs. (7.1)–(7.2), Fig. 12, take the difference between the total
+  kinetic-energy decay rate and the enstrophy-based viscous dissipation of
+  the Taylor–Green vortex at $Re=1600$ as "numerical or model
+  dissipation": with the generalized-$\alpha$ variational multiscale
+  method the resolved part is only a fraction of the total and a spurious
+  second dissipation peak at $t\approx11$ comes from the model part, and
+  reducing the time step does not bring the resolved part to the DNS;
+  with their half-explicit Runge–Kutta VMS the resolved dissipation
+  follows the DNS and the model part is small, mainly near the peak (see
+  [variational multiscale method](/methods/variational-multiscale-method.md)).
+- **A local energy ratio.** Tsoutsanis & Nogueira (2025, §4.1, Eq. 29)
+  measure, cell by cell, the momentum energy removed from the unlimited
+  reconstruction by a weak against a strong modal filter; values well
+  above one, the authors state, mark an unphysical build-up of energy in the high modes, not
+  only under-resolution, and the mean ratio rises during the transition of
+  the inviscid Taylor–Green vortex and then stabilizes (Figs. 5–6; filter
+  choice on [explicit modal filtering](/methods/explicit-modal-filtering.md)).
+- **Dissipative by construction, and second order.** For the
+  pressure-evolution scheme of the GPU DNS solver RHEA-X,
+  [Monteiro et al. (2026)](/sources/monteiro-2026.md), §2.3.1, state that
+  total energy is not strictly conserved but "the residual error is
+  dissipative and decays quadratically with grid refinement" (cited; see
+  [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)),
+  and that its HLL-type Riemann options add "controlled upwind-like
+  dissipation" for shocks, the central KGP split being the
+  non-dissipative baseline (§2.3, Table A.1).
+
 ## Scheme design against excess dissipation
 
 **Selective filters of central schemes.** Volpiani (2024, §2.2.2, §4,
@@ -1077,6 +1182,26 @@ filter applied periodically, and the wall-modelled LES code of
 eighth-order low-pass filter to the conservative variables "at regular
 intervals to eliminate aliasing errors" on top of sixth-order compact
 differences; neither paper prints the filtering interval.
+
+- **Adjusting dissipation and dispersion a priori, cell by cell.** The
+  ADDA algorithm of Tsoutsanis & Nogueira (2025, §4, Fig. 3) classifies
+  each cell by its energy ratio (more dissipation above 1.2, less below
+  0.95), sets the non-normalized central linear weight of the CWENOZ
+  reconstruction to 2 or 1000, and for Roe and Rusanov fluxes changes a
+  multiplier $c^{\mathrm F}_i$ of cell $i$ (page-local, as on the Source
+  page; the source's $d_i$) of the flux dissipation,
+  $\hat F=\tfrac12(F_{\mathrm L}+F_{\mathrm R})-\tfrac12c^{\mathrm F}_i\Lambda_{\max}(U_{\mathrm R}-U_{\mathrm L})$
+  (Eq. 38; $U$ the conserved state and $\Lambda_{\max}$ the largest wave
+  speed, page-local), in steps of 0.05 within
+  $[0.5,1]$ ($c^{\mathrm F}_i<0.5$ was not robust), with a reset to 1 at
+  discontinuities and the larger of the two cell values at each face for
+  conservation. The 0.05 step produces high-frequency oscillations of the
+  dissipation-rate history, smaller with 0.01 and larger with 0.1 (no
+  figure). On the SD7003 airfoil the algorithm chooses low dissipation in
+  the laminar separation bubble, switches to high dissipation in the
+  turbulent region and back further downstream (§5.2, Fig. 18). The
+  authors state that it applies to WENO, TENO and CWENO families and
+  extends to DG (§4.2, §6); overhead 1.8–8.2% (Table 3).
 
 ## Interaction with the subgrid model
 
@@ -1430,11 +1555,37 @@ differences; neither paper prints the filtering interval.
   iso-surfaces (see
   [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
+- **Understand the baseline before adding a model.** In no-model DG
+  implicit LES of channels, [Alberti et al. (2025b)](/sources/alberti-2025-c.md)
+  (§I, §IV) conclude that the implicit-LES behaviour of the baseline scheme
+  "should be fully understood before isolating any potentially beneficial
+  effect of physics-inspired subgrid-scale models", from their finding
+  that the choice of interface flux, BR2 penalty and wall condition alone
+  moves the mean profile above or below the DNS (below).
+- **Filtering as the subgrid dissipation.** In the single-step
+  approximate-deconvolution LES of compressible round jets of
+  [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md), §II B,
+  the second application of the deconvolution-and-filter operator per
+  time step replaces the relaxation term of the original model as the
+  "additional regularization" that mimics the unresolved dissipative
+  scales; there is no eddy viscosity, and the statistics are those of the
+  resolved scales (method on
+  [scale-similarity model](/methods/scale-similarity-model.md)).
+- **High-order codes and hybrid RANS/LES.** [Kumar et al. (2025)](/sources/kumar-2025.md),
+  §1, motivate a $k$-$\tau$ basis for DDES in the spectral-element code
+  Nek5000 by the "negligible numerical diffusion" of high-order codes,
+  which makes the arbitrarily large wall value of $\omega$ used in
+  low-order codes produce persistent oscillations (citing earlier work),
+  and recall that implicit upwind schemes are too dissipative for the LES
+  part of hybrid RANS/LES (see
+  [$k$-$\tau$ model](/methods/k-tau-model.md) and
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
 ## Shock capturing and dissipation in compressible turbulence
 
-Four sources measure what shock capturing does to the turbulent scales,
-in decaying and driven compressible turbulence and in a transonic
-cascade.
+Several sources measure what shock capturing does to the turbulent
+scales, in decaying and driven compressible turbulence, in a transonic
+cascade and in shock interactions.
 
 - **Seven schemes on the supersonic Taylor–Green vortex.**
   [Chapelier et al. (2024)](/sources/chapelier-2024.md) (§III–V, Figs. 5–8)
@@ -1646,6 +1797,36 @@ turbulent scales by design:
   physically (lower Reynolds number) prevents the vortex too (Fig. 16;
   see [WENO](/methods/weno-scheme.md)).
 
+- **Artificial viscosity against entropy stability in DG.**
+  [Bilocq et al. (2025)](/sources/bilocq-2025.md) (§4–5) compare, in one
+  DGSEM and without a model, Laplacian artificial viscosity, two fully
+  entropy-stable discretizations and a selective entropy-stable one on
+  decaying compressible isotropic turbulence with shocklets, the
+  supersonic Taylor–Green vortex, a vortex/shock interaction and the
+  canonical shock–turbulence interaction. The entropy-stable schemes add no
+  explicit dissipation, yet "significantly impact" the kinetic-energy
+  budgets (§1): both fully entropy-stable schemes damp the mean-square
+  vorticity (attributed to the entropy projection on Gauss–Legendre and
+  to under-integration on Gauss–Lobatto nodes) and lower the solenoidal
+  dissipation of the Taylor–Green vortex from its peak onward, and the
+  schemes with the projection overpredict the dilatational dissipation,
+  while the artificial viscosity underpredicts it because it "reduces
+  shock intensity" (Figs. 1, 7, 9). Even modest artificial
+  viscosity near shocks degrades the post-shock turbulence, and the
+  selective scheme gives the most accurate turbulent structures across
+  the four tests. Details are on
+  [entropy conservation](/properties/entropy-conservation.md) and
+  [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md).
+- **Shock-capturing dissipation and the comparison with theory.** In
+  their review of the canonical shock–turbulence interaction,
+  [Cuadra et al. (2025)](/sources/cuadra-2025.md), §III A 1, state that
+  the dissipation of hybrid schemes depends strongly on the sensor and
+  that artificial viscosity sometimes dissipates more than nonlinear
+  reconstruction; resolving the shock is unfeasible beyond a shock Mach
+  number of about 1.5 by the Moin–Mahesh scaling they print (Eq. 38) (see
+  [linear interaction analysis](/methods/linear-interaction-analysis.md)
+  and [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+
 ## Dissipation of compressible modes
 
 When the only physical viscosity is shear viscosity, the compressible
@@ -1813,6 +1994,30 @@ Fig. 4). On the Taylor–Green vortex the two schemes differ only by a more
 oscillatory dissipation curve for Chandrashekar's flux on $32^3$ (§5.3,
 Fig. 7).
 
+- **Both directions in the first wall cells.** In severely
+  under-resolved DG implicit LES of channel flow (DNS-to-DG ratios of
+  degrees of freedom up to 2100), Alberti et al. (2025b, §III A 3, §IV)
+  find that too much near-wall dissipation shears out the turbulent
+  stresses and the mean velocity approaches the DNS "from above", while
+  too little, with over-predicted buffer-layer fluctuations, gives a mean
+  velocity below the DNS; their thesis is that accuracy rests on the
+  "correct" numerical dissipation in the first wall-adjacent cells. Near
+  the incompressible limit the dissipation-free entropy-conserving flux
+  with an entropy-stable wall and a small interior penalty is best and
+  the entropy-stable Godunov flux too dissipative; at $M_b=1.5$ and 3 the
+  entropy-stable flux is best, the entropy-conserving one under-predicts
+  the velocity and at $M_b=3$ crashes until an upwind bias is added
+  (Figs. 9–21; details on [implicit LES](/definitions/implicit-les.md)).
+  They place this against Murman & Frontin (cited), who found the least
+  dissipative entropy-conserving flux best at low Mach number: the same at
+  low Mach number, the opposite for high-Mach channels (§III A 3 c).
+- **Unphysical build-up in the high modes.** Tsoutsanis & Nogueira (2025,
+  §1) state that a method with very low dissipation is unsuitable for
+  implicit LES on under-resolved grids because it produces an unphysical
+  "build-up" of energy in the high modes, and that it "has been considered
+  ideal" to minimize dissipation and dispersion, "but this is far from
+  true".
+
 ## Numerical diffusion of flames
 
 [Cuenot et al. (2022)](/sources/cuenot-2022.md) (§2–5, Tables 2–3,
@@ -1885,8 +2090,29 @@ evidence is one-dimensional and laminar.
   jump disappears on the refined mesh except at 25% span, outside the
   interstage refinement block.
 
+- **Adaptive refinement against dissipated vortices.** [Lv et al. (2025)](/sources/lv-2025.md),
+  §I, §V, motivate a vortex indicator for $h$-adaptive DG (no turbulence
+  model, two-dimensional laminar and inviscid tests) by the statement that
+  on coarse grids numerical dissipation makes vortices "dissipative" and
+  that some identification criteria miss such vortices smaller than the
+  grid scale, which then stay under-resolved during adaptation (see
+  [vortex identification criteria](/definitions/vortex-identification-criterion.md)
+  and [mesh adaptation](/methods/mesh-adaptation.md)).
+
 ## Qualifications
 
+- **Printed percentages and signs (Kokkinakis & Drikakis 2025).** The
+  abstract gives a dissipation reduction of "nearly 20%" for the
+  double-vortex pairing, Table III 0.822 of WENO5-JS, i.e. 17.8%
+  *(compiler check, not in the sources)*; §III F writes
+  $\varepsilon=\mathrm dE_k/\mathrm dt$ where Eq. (22) defines
+  $\varepsilon=-\mathrm de_k/\mathrm dt$, and Eq. (23), called a
+  "volumetric-averaged" kinetic energy, is printed without the $1/V$
+  factor.
+- **Evidence for ADDA (Tsoutsanis & Nogueira 2025).** The thresholds 0.95
+  and 1.2 come from filter experiments on one case, "fine-tuning" being
+  out of scope (§4.1); the inviscid Taylor–Green runs are compared with a
+  viscous DNS, which the authors acknowledge (§5.1).
 - **The MUSCL variant of Wu et al. (2024).** §2.4 describes a
   "third-order MUSCL interpolation" with a second-order flux difference,
   §3.2 and §4 speak of "the second-order MUSCL scheme", and §3.2 later of
@@ -2129,3 +2355,15 @@ evidence is one-dimensional and laminar.
 - [An et al. (2025)](/sources/an-2025.md) — §3–4 (lower DG dissipation as a stated cause of model-error amplification).
 - [Guo & Wang (2025)](/sources/guo-2025.md) — §3.1, Figs. 12–15 (dissipation suppression claimed for a modified DDES; qualitative).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (shock dissipation of entropy filtering).
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §II C (dispersion exposed by low dissipation); §III E 3, Eqs. (22)–(28), Table III (accumulated numerical dissipation of WENO variants); §III F–G, Eqs. (33)–(35), Fig. 10 (normalized numerical viscosity in the Taylor–Green vortex).
+- [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) — §I, §VI–VIII, Table II, Figs. 4, 6–10 (low-Mach upwind dissipation of W9 in channel implicit LES; dissipation against dispersion of the corrections).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §1 (right amount of dissipation, build-up in high modes); §3.2; §4, Eqs. (29)–(38), Fig. 3 (energy ratio, ADDA); §5.1–5.3, Table 3, Figs. 5–6, 11–12, 18 (dissipation–dispersion entanglement, element types, overhead).
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1; §3.2, Eq. (28) (three dissipation mechanisms of HLLC); §5.2, Fig. 7 (learned high-wavenumber dissipation).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §2.1, Eqs. (2)–(4), §4.1.2, Fig. 2 (budget imbalance as error indicator); §4.1–4.4, Figs. 1, 7, 9 (dissipation of entropy-stable DG against artificial viscosity); §5.
+- [Sun et al. (2026)](/sources/sun-2026.md) — §7.2, Eqs. (7.1)–(7.2), Figs. 10–12 (model against resolved dissipation; time-integrator effect).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §2.3, §2.3.1, Table A.1 (non-dissipative KGP baseline, dissipative second-order energy error of the pressure-evolution scheme, upwind-like HLL options).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I, §IV (baseline before SGS models); §III A 3, Figs. 9–21 (near-wall dissipation from above and below; EC against ES with Mach number; Murman & Frontin).
+- [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md) — §II B (filtering as the regularization that replaces the subgrid dissipation).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (negligible numerical diffusion of high-order codes and the $\omega$ wall value; implicit upwind dissipation in hybrid RANS/LES).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1, Eq. (38) (sensor-dependent dissipation of shock capturing in shock–turbulence interaction; review).
+- [Lv et al. (2025)](/sources/lv-2025.md) — §I, §V (dissipated vortices on coarse grids as motivation for adaptive refinement; passing).

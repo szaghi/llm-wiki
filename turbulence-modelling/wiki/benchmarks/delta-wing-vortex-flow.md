@@ -5,7 +5,7 @@ description: "Separation-induced vortices of swept wings and aircraft (sharp and
 status: established
 aliases: [delta wing, delta-wing vortex flow, concentrated vortex flow, leading-edge vortex, vortex breakdown, blunt-leading-edge vortex separation, VFE-2, VFE-2 65° delta wing, AVT-183 diamond wing, AVT-080 delta wing, SACCON, CAWAPI, F-16XL, X-31, AVT-316 triple delta wing]
 tags: [benchmark, separated-flow, hybrid-rans-les, des, mesh-adaptation, rans]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-28T17:43:00Z
 ---
 
 # Delta-wing and concentrated vortex flows
@@ -23,11 +23,13 @@ turbulence and transition modelling must predict. On this page $\Lambda$
 is the leading-edge sweep, $\alpha$ the angle of attack, $r_{\mathrm{le}}$
 the leading-edge radius and $Re_{\mathrm{mac}}$, $Re_{c_r}$ the Reynolds
 numbers on the mean aerodynamic and the root chord (all page-local). The
-sole source is the capability survey of
+main source is the capability survey of
 [Luckring & Rizzi (2024)](/sources/luckring-2024.md), built from the
 authors' experience and a literature database of "over 6000 articles
 spanning approximately 20 years"; it computes nothing and reproduces its
-evidence from the cited studies.
+evidence from the cited studies. The VFE-2 wing also appears as a
+solver-performance case of high-order DG RANS
+([Bulgarini et al. (2025)](/sources/bulgarini-2025.md)).
 
 ## Classification of concentrated vortex flows
 
@@ -127,7 +129,18 @@ trailing edge (Fig. 54); for the blunt edge at $\alpha=13.3^\circ$ a DLR TAU
 RANS reproduces the inner vortex, the vortex starting about halfway down
 the edge, but "little was established for the details of the incipient
 separation region", and the correlation with experiment varied among the
-participants (§3.1.1.2, Fig. 57).
+participants (§3.1.1.2, Fig. 57). The same blunt-edge condition, $M=0.4$,
+$\alpha=13.3^\circ$, at $Re_c=3\times10^6$, serves
+[Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §6.2, as a
+solver-performance benchmark only: steady RANS with the log-$\omega$
+[$k$-$\omega$ model](/methods/k-omega-model.md) on a half model of 13,816
+quadratic hexahedra (agglomerated from Crippa's linear mesh, far field at
+$15c$), modal DG up to $N=6$. They compare no flow quantity with
+experiment; their $p$-multigrid with line- and block-implicit Runge–Kutta
+smoothers needs 86.36% ($N=2$) and 83.96% ($N=3$–6) less memory than
+single-order implicit time stepping, and cuts the wall-clock time by up to
+about 83% at a GMRES tolerance of $10^{-12}$ and 92% at $10^{-2}$ (Tables
+4–5).
 
 **The AVT-183 $53^\circ$ diamond wing** (NACA 64A006 section, Technische
 Universität München low-speed tunnel, $M=0.15$, $Re_{\mathrm{mac}}=2.7\times10^6$,
@@ -269,7 +282,9 @@ strake vortex with experiment (§3.2.2.2, Figs. 78–80).
 
 ## Qualifications
 
-- Every result on this page is reproduced from a cited study; the survey
+- Every survey result on this page is reproduced from a cited study (the
+  only computation of an ingested source is the solver benchmark of
+  Bulgarini et al. (2025), which compares no flow quantity); the survey
   gives no error metrics and computes nothing beyond cost estimates. The
   model rankings it reports (a $k$-$\varepsilon$ model with grid refinement
   improving the secondary vortex on CAWAPI-2; SA closer than SST on
@@ -297,3 +312,4 @@ strake vortex with experiment (§3.2.2.2, Figs. 78–80).
 # Citations
 
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.1, Fig. 18; §2.3.1–2.3.2, Figs. 21–32; §2.4.1–2.4.2, Table 1, Figs. 43–53; §3.1.1–3.1.2, Figs. 54–75; §3.2.1–3.2.3, Figs. 76–98; §4.1–4.2; §5, Tables 2–3.
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §6.2, Tables 4–5 (VFE-2 wing as a solver-performance case).

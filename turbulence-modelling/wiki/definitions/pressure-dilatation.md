@@ -5,7 +5,7 @@ description: "The pressure dilatation, the product of pressure and velocity dive
 status: established
 aliases: [pressure-dilatation, pressure–dilatation correlation, pressure dilatation work, pressure-dilatation work, pressure-dilatation term, SGS pressure dilatation, subgrid pressure dilatation, pressure dilatation dissipation rate]
 tags: [compressible, dns, les, rans, numerical-dissipation]
-timestamp: 2026-10-28T12:22:00Z
+timestamp: 2026-10-29T05:10:00Z
 ---
 
 # Pressure dilatation
@@ -95,6 +95,36 @@ exchange between kinetic and internal energy.
   scheme oscillates spuriously; collocation reduces and upwind interface
   dissipation removes the oscillations (§3.1.7, Figs. 17–18; see
   [flux reconstruction](/methods/flux-reconstruction.md)).
+- **As one term of a budget-error diagnostic.**
+  [Bilocq et al. (2025)](/sources/bilocq-2025.md), §2.1, Eqs. (2)–(4),
+  split the decay of the density-weighted kinetic energy into solenoidal
+  dissipation, dilatational dissipation, the pressure dilatation $\epsilon_4$
+  (their label; $-\int p\,\nabla\cdot\boldsymbol u\,dV$ under the brace) and
+  a boundary flux, and use the imbalance between the measured decay rate
+  and the sum of the four terms as an "instantaneous" indicator of
+  numerical error, after Wang et al. (2024), whom they cite. In the
+  supersonic Taylor–Green vortex ($M_0=1.25$, $Re=1600$, $N=3$, $64^3$ to
+  $512^3$ degrees of freedom) the fully entropy-stable Gauss–Legendre DG
+  (ESDG-GL) has the largest pressure-dilatation errors and the slowest
+  convergence, which they attribute to the ill-conditioning of the
+  entropy-to-conservative map near large pressure gradients, under-resolved
+  features or near-vacuum states (the internal energy is exponential in
+  the entropy, their Eq. 12); the selective scheme DG-ES, which confines
+  the entropy projection to troubled cells, improves on it, and DG with
+  Laplacian artificial viscosity is best on the coarsest grid (§4.2.3,
+  Fig. 11). The reference is their own vanilla DG at $512^3$, because no
+  literature data for this term exist. See
+  [entropy conservation](/properties/entropy-conservation.md) and
+  [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md).
+- **Subtracted to isolate the numerical dissipation.**
+  [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md), §III E 3,
+  Eqs. (22)–(28), compute the numerical dissipation of WENO variants in a
+  closed two-dimensional double-vortex-pairing problem as the residual
+  $\varepsilon-\varepsilon_\nu-\varepsilon_p$ of the kinetic-energy decay
+  rate, with the pressure-dilatation part printed as
+  $\varepsilon_p=-\frac1\rho\int p\,\nabla\cdot\boldsymbol u\,dV$ (Eq. 26),
+  and accumulate it over the run; the scheme ranking is on
+  [numerical dissipation](/properties/numerical-dissipation.md).
 - **Discrete consistency.** [Kuya et al. (2018)](/sources/kuya-2018.md),
   §2.4.2, derive the pressure-diffusion flux consistent with a central
   discretization of the pressure work $u_j\partial_jp$ and of the pressure
@@ -276,6 +306,12 @@ protocol on
   Table V garbled ("$P_k-\bar\rho\langle u_i''u_i''\rangle\frac{\langle u_i\rangle}{\partial x_j}$",
   with a minus sign for the equals sign, a repeated index and no
   $\partial$ in the numerator).
+- **Boundary flux in Bilocq et al. (2025).** Eqs. (2) and (4) print the
+  boundary flux with $-\rho k\boldsymbol v$ (their $k$ the specific
+  kinetic energy), where the kinetic-energy equation obtained from the
+  mass and momentum equations of their Eq. (1) gives $+\rho k\boldsymbol v$;
+  the term vanishes in their periodic cases *(compiler check, not in the
+  sources)*.
 - **Evidence.** All findings above are from single configurations: one
   shock-interaction DNS each (Yu et al., whose 2023 study neglects the
   term in the recovery region by citation; Tonicello et al.), two LES of
@@ -304,3 +340,5 @@ protocol on
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §2, Eq. (2-5) (Suzen–Hoffmann pressure-dilatation model).
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §IV.D, Eq. (22), Table V (pressure dilatation listed in the Favre budget of a Mach 2.9 ramp DNS, not analysed).
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.1, Eqs. (3.7)–(3.14), Fig. 7 (semi-locally scaled budget of Mach 6 cold-wall boundary layers; pressure diffusion and dilatation grouped).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §2.1, Eqs. (2)–(4) (kinetic-energy budget with $\epsilon_4$, budget imbalance); §4.2.3, Fig. 11 (pressure-dilatation errors of entropy-stable and artificial-viscosity DG in the supersonic Taylor–Green vortex).
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §III E 3, Eqs. (22)–(28) (pressure dilatation subtracted from the kinetic-energy decay to isolate numerical dissipation).

@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES, RSM-IDDES, RSM-DynIDDES, dynamic IDDES, modelled-stress depletion, grid-induced separation]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-28T17:03:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -216,7 +216,8 @@ in the numerator and $\kappa=0.41$ (§2.2, Eq. 26; below). Lodares et al.
 (an entropy-stable RANS near walls coupled to entropy-stable LES; an SST
 form of the [$k$-$\tau$ model](/methods/k-tau-model.md)) as future work
 ([Lodares et al. (2022)](/sources/lodares-2022.md), §8;
-[Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §4).
+[Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §4); Kumar et
+al. (2025) build the second (below).
 
 Haering et al. (2022) count the delaying function of DDES among the ad hoc
 unified switches "tuned per flow", which make such methods possibly not
@@ -962,6 +963,94 @@ They call the self-adjusting LES branch "a dynamic Smagorinsky model";
 the paper uses no test filter or Germano identity
 (§3.1.2; see the [dynamic procedure](/methods/dynamic-procedure.md)).
 
+## $k$-$\tau$ SST-DDES in a spectral-element solver
+
+Kumar et al. (2025) build the DDES that Tomboulides et al. (2025, §4) had
+listed as future work: an SST form of the [$k$-$\tau$ model](/methods/k-tau-model.md)
+($\tau_t=1/\omega$, registry §11) made delayed-detached in
+[Nek5000](/software/nek5000.md), which they state is, "to the best of our
+knowledge", the first DDES in a [spectral element](/methods/spectral-element-method.md)
+solver based on the $k$-$\tau$ model
+([Kumar et al. (2025)](/sources/kumar-2025.md), §1, §2.2, Eqs. 20–28).
+Only the $k$ equation changes; its destruction becomes
+$\rho k^{3/2}/l_{\mathrm{DDES}}$ with the $l_{\mathrm{DDES}}$ of Carlsson et al.
+above and
+
+$$l_{\mathrm{RANS}}=\frac{\sqrt k\,\tau_t}{C_\mu},\qquad l_{\mathrm{LES}}=C_{\mathrm{DES}}\frac{h_{\max}}{N},\qquad C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1),$$
+
+$h_{\max}$ the longest edge of the spectral element and $N$ the polynomial
+degree, $C_\mu=0.09$, $\kappa=0.41$, $a_1=0.31$, and the shielding
+function $f_d=1-\tanh\big[(C_{d1}r_d)^{C_{d2}}\big]$, $C_{d1}=20$,
+$C_{d2}=3$, $r_d=(\nu_t+\nu)/\big(\kappa^2d^2\sqrt{\tfrac12(S^2+\Omega^2)}\big)$
+with $S$, $\Omega$ the strain and vorticity magnitudes (normalization not
+printed; Eqs. 25–28). The $\tau_t$ equation is untouched. Delassaux et al.
+and Mozaffari et al. (2024) (above) print the same $C_{\mathrm{DES}}$ blend and
+$C_{d1}$, $C_{d2}$, Mozaffari et al. the same $r_d$; Delassaux et al. print
+$l_{\mathrm{RANS}}=\sqrt k/(\beta^*\omega)$, where Kumar et al. print $C_\mu$ in the
+denominator and no value of $\beta^*$ anywhere (§2.1–§2.2).
+The authors cite Strelets (2001) for $f_d$, Menter, Kuntz & Langtry (2003)
+for the SST-DDES $k$ equation, and Spalart et al. (2006) for grid-induced
+separation (§2.2). The appendix gives the same DDES on the
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md), with
+$l_{\mathrm{RANS}}=\sqrt k/(C_\mu\omega)$ and $h_{\max}$ "the maximum edge length
+of the cell" (App. A.6, Eqs. A32–A40). Time integration is the
+semi-implicit BDF3/EXT3 splitting with characteristics-based steps at a CFL
+number of 3.0 (§2.2).
+
+Kumar et al. divide the element edge by $N$ in a $C^0$ nodal
+spectral-element method; Alberti et al. (2025), in modal DG, found
+$s_\Delta=N+1$ to perform best and $s_\Delta=N$ to move the solution too fast
+toward RANS at low and moderate degree (above).
+
+**Evidence** (Kumar et al. 2025, §4):
+
+- **Averaging time.** On the NACA 0021 at $60^\circ$ and $Re=2.7\times10^5$
+  with a one-chord span (0.8M degrees of freedom, $N=7$), the running mean
+  of $C_L$ needs about 600 convective time units $c/U_\infty$ to settle within
+  0.2% of the mean, "about one-third" of the time quoted by Garbaruk et al.
+  for a fully implicit low-order code; the relaxed $\pm2\%$ criterion is met
+  in the first 100–150 units. The authors could not compare directly, since
+  it is unclear whether Garbaruk et al. discarded the transient, and adopt
+  at least 200 units on four-chord spans with a stated $\pm2\%$ error
+  (§4.2, Fig. 7b).
+- **Span.** With a four-chord span (2.9M degrees of freedom) they obtain
+  $C_L=0.89$, $C_D=1.48$ against $C_L=1.0$, $C_D=1.76$ on one chord, 0.93
+  and 1.51 measured by Swalwell et al., and 0.88 and 1.38 from the SA-DES of
+  Garbaruk et al. on four chords; the shedding Strouhal number on the
+  projected chord is about 0.19 in all datasets. They attribute the 7% drag
+  difference to sampling: the $C_D$ histogram is skewed to large values, and
+  their mean step $\Delta t\approx7\times10^{-5}$ gives about 8.5 million samples
+  against about 75 000 at $\Delta t=0.02$ in the reference (§4.2, Fig. 7).
+- **Grid convergence.** On the [NACA 0012](/benchmarks/naca-0012-airfoil.md)
+  at $Re_c=2\times10^6$ and $5^\circ$–$90^\circ$ (four-chord span, Coarse 0.8M,
+  Medium 2.6M, Fine 6.5M degrees of freedom, $N=7$, first node at
+  $1.2\times10^{-5}c$), Coarse, Medium and Fine differ minimally, so the DDES is
+  grid-converged at the Coarse level, whereas the second-order
+  finite-volume IDDES of Bidadi et al. converged at the Medium level; the
+  authors credit the high-order convergence of the spectral-element method
+  (§4.3.2, §5, Fig. 11). The converged loads agree with Bidadi et al. at all
+  angles; the DES of Strelets ($Re_c=10^5$, one-chord span) lies higher
+  post-stall, which they attribute to the lower Reynolds number and the
+  narrower span; post-stall drag falls increasingly below the wall-corrected
+  experiments, by about 11% at $90^\circ$ (§4.3.2). The authors write that
+  Shur et al.'s justification of post-stall NACA 0012 computations at
+  $Re=10^5$ by Reynolds-number insensitivity "is not supported" by Bidadi et
+  al., who found about 10% under-prediction of $C_L$ and $C_D$ at a ten
+  times higher Reynolds number (§1).
+- **Element-interface artefacts.** $Q$-criterion fluctuations at element
+  interfaces come from the $C^0$ continuity of the method; a gradient-jump
+  penalty at $45^\circ$ on the Fine grid removes them with nearly identical
+  $C_L$ and $C_D$ histories, a "merely a cosmetic issue" in the authors'
+  words, with results not shown in figures (§4.3.1; see
+  [jump-penalty stabilization](/methods/jump-penalty-stabilization.md)).
+- **Wind-tunnel confinement.** At $90^\circ$ a DDES inside the tunnel
+  cross-section of Critzos et al. ($15c\times6c$, 10.4M degrees of freedom,
+  tunnel walls under-resolved at $y^+\sim O(10)$) gives a $C_D$ up to about 13%
+  above the unconfined DDES at $Re_c=2\times10^6$ and within 5% of the raw
+  (uncorrected) measurement, while the unconfined result differs from the
+  corrected measurement by about 11%; the authors call for a reassessment of
+  wind-tunnel wall corrections (§4.4.2, §5, Fig. 14).
+
 ## Grid dependence and mesh adaptation
 
 Because the cell size sets the switch, any change of cell size perturbs a
@@ -1441,6 +1530,16 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
   (2024) call DES and RANS the engineering research hotspot, DNS and LES
   being too costly for engineering use, as they state
   ([Le et al. (2024)](/sources/le-2024.md), §3).
+- **Against wall-modelled LES.** Gao et al. (2025) set aside wall-resolved
+  LES and DDES for their high-order aeroacoustic solver because both still
+  need $y^+\approx1$ at the wall, and state that their slip-wall WMLES,
+  whose mean velocity follows the log law for first-point placements
+  $y^+=55$–220 in channel flow at $Re_\tau\approx2000$, circumvents the
+  log-layer mismatch "that typically plagues conventional detached eddy
+  simulation (DES) and WMLES approaches"; they run no DES
+  ([Gao et al. (2025)](/sources/gao-2025.md), §I, §III.A.1, Fig. 5; see
+  [slip-wall models](/methods/slip-wall-model.md) and
+  [log-layer mismatch](/definitions/log-layer-mismatch.md)).
 
 ## Qualifications
 
@@ -1669,3 +1768,5 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 - [Wang et al. (2024d)](/sources/wang-2024-k.md) — Table I (Ahmed-body drag of cited DES and IDDES).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I (DES deficiencies cited).
 - [Le et al. (2024)](/sources/le-2024.md) — §3 (DES and RANS in engineering use).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (first $k$-$\tau$ DDES in a spectral element code; Shur et al. and Bidadi et al.); §2.2, Eqs. (20)–(28), App. A.6, Eqs. (A32)–(A40) ($k$-$\tau$ SST-DDES and $k$-$\omega$ SST-DDES, $h_{\max}/N$); §4.2, Fig. 7 (NACA 0021, averaging time, span); §4.3, Figs. 10–11 (NACA 0012 grid convergence, gradient-jump penalty); §4.4.2, Fig. 14 (confined DDES); §5.
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I (DDES needs $y^+\approx1$); §III.A.1, Fig. 5 (log-layer mismatch of DES, as stated).

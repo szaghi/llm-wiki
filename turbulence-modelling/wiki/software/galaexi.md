@@ -5,7 +5,7 @@ description: "GALÆXI is the GPU port of the FLEXI DGSEM framework in CUDA Fortr
 status: established
 aliases: [GALAEXI, Galaexi, GPU FLEXI]
 tags: [software, dg, gpu, implicit-les, turbomachinery]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T17:51:00Z
 ---
 
 # GALÆXI
@@ -183,6 +183,16 @@ cited to Kopper's PhD thesis (University of Stuttgart, 2024) and not shown; GAL�
 FLEXI without a comparison figure, and no turbulence statistics or wall-unit
 resolutions are printed.
 
+## As cited by other GPU solvers
+
+[Monteiro et al. (2026)](/sources/monteiro-2026.md), §1, Table 1, list
+GALÆXI among open-source GPU-accelerated turbulent-flow solvers as a
+compressible code in Fortran, MPI and CUDA that "targets high-order
+compressible flows on fully unstructured hexahedral meshes, utilizing CUDA
+Fortran", without immersed boundaries, particles or real-fluid
+thermodynamics, the capabilities by which they distinguish their
+finite-difference DNS solver RHEA-X; they print no GALÆXI figures.
+
 ## Qualifications
 
 - "Provable stability near shocks" (§1) comes from the blend of Hennemann
@@ -217,3 +227,4 @@ resolutions are printed.
 - [Fischer et al. (2022)](/sources/fischer-2022.md) — NekRS strong-scaling limit compared by Kurz et al.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — supersonic Taylor–Green reference used by Kurz et al.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §3.3 (Pirozzoli and entropy-conserving split forms listed as distinct options).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §1, Table 1 (GALÆXI among open-source GPU solvers, cited).

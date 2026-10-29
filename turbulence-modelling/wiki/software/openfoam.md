@@ -5,7 +5,7 @@ description: "OpenFOAM is the open-source unstructured finite-volume toolbox tha
 status: established
 aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES, foam-extend, pUCoupledFoam, rhoCentralFoam, detonationFoam]
 tags: [software, rans, les, data-driven, numerical-dissipation, combustion]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-28T17:51:00Z
 ---
 
 # OpenFOAM
@@ -277,6 +277,15 @@ a flat-plate boundary layer, at about 2 cells per boundary-layer thickness,
 as less accurate than their spectral-element results. In
 [Nek5000](/software/nek5000.md) the same condition fails (see that page and
 [wall-modelled LES](/methods/wall-modelled-les.md)).
+[Gao et al. (2025)](/sources/gao-2025.md), §III.A.2, Fig. 10, compare the
+wall-pressure spectra of their slip-wall WMLES in a fourth-order
+dispersion-relation-preserving finite-difference code
+($127\times41\times95$ points) with an OpenFOAM WMLES of Fan et al. at
+$Re_\tau=1000$ ($127\times101\times127$), which shows "a spurious
+spectral peak, larger amplitude discrepancies, and premature decay in the
+mid-frequency range"; they attribute the difference to "inherent
+limitations of conventional low-order numerical schemes" (their wall
+treatment is on [slip-wall models](/methods/slip-wall-model.md)).
 
 **A hybrid RANS/LES model implemented as OpenFOAM classes.**
 [Guo & Wang (2025)](/sources/guo-2025.md), §2.1, Fig. 1, implement their
@@ -432,3 +441,4 @@ set-ups (as cited there).
 - [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.2, Fig. 4 (pimpleFoam WALE reference in decaying isotropic turbulence); §3.4, Figs. 14, 16 (pimpleFoam $k$-equation LES reference on the curved-wall bump).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — review: OpenFOAM implementations of CSE and fireFoam LES, as cited (passing).
 - [Fang et al. (2026)](/sources/fang-2026.md) — review: mixed-precision OpenFOAM and the McConkey et al. dataset with OpenFOAM set-ups, as cited (passing).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §III.A.2, Fig. 10 (OpenFOAM WMLES of Fan et al. as a low-order comparison, cited).

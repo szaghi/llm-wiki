@@ -149,7 +149,7 @@ publication". Eleven articles in press print no volume or pages.
 
 # Pages created or updated
 
-Chunk 14 (2026-10-28). This source is cited on:
+Chunk 14 (2026-10-28), cited further in chunk 15. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Temporally developing mixing layer](/benchmarks/temporal-mixing-layer.md)
@@ -157,6 +157,7 @@ Chunk 14 (2026-10-28). This source is cited on:
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Turbulent Prandtl number and turbulent heat-flux models](/definitions/turbulent-prandtl-number.md)
+- [Conditional moment closure](/methods/conditional-moment-closure.md)
 - [Conditional source-term estimation](/methods/conditional-source-term-estimation.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)

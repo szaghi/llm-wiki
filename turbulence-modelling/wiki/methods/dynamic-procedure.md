@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -612,6 +612,21 @@ filter-width question.
   coefficient, a constant coefficient and no subgrid model; the wall
   treatment decides it (see the
   [Smagorinsky model](/methods/smagorinsky-model.md)).
+- **Shock–turbulence interaction (cited).** [Cuadra et al. (2025)](/sources/cuadra-2025.md)
+  (§III A 3, §IV A 3), reviewing LES of isotropic turbulence through a
+  normal shock, cite Garnier et al. (2002): DSM (cited to Germano et al.
+  and Moin et al.) improved the filtered kinetic energy and Reynolds
+  stresses of well-resolved runs "significantly" relative to coarsened DNS
+  (under-dissipative) and the static Smagorinsky model (over-dissipative),
+  while on grids where the shock corrugations become subgrid the
+  predictions deteriorate "not necessarily due to breakdown of the
+  post-shock subgrid model performance but instead due to insufficient
+  resolution of the shock wave itself". They write the compressible closure as an eddy
+  viscosity on the Favre-filtered traceless strain and list three
+  elements of predictive LES of supersonic shock–turbulence interaction:
+  dynamic modelling, a grid that resolves the shock corrugations, and
+  subgrid fluxes active only where the hybrid scheme is central (§IV A 3;
+  see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
 
 ## Dynamic closures of scalar fluxes and of one-equation models
 
@@ -935,3 +950,4 @@ squares from a 6×4 system; see the
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.1, Eqs. (7)–(10) (compressible DSM, $3\times3\times3$ test filter); §3.3.2, Fig. 12.
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — §II.B, Eqs. (12)–(13) (dynamic Smagorinsky–Yoshizawa model, dynamic $Pr_t$).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §2.2 (Germano identity as analogue of conditional source-term estimation; filter ratios).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 3, Eq. (39); §IV A 3 (DSM in shock–turbulence LES, Garnier et al. cited). Review, citation only.

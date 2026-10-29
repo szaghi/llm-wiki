@@ -137,10 +137,11 @@ no volume or pages. There are no printed duplicates and no unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 6. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 6, 15. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+- [Turbulent round jets](/benchmarks/turbulent-round-jet.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)

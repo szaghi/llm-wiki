@@ -5,7 +5,7 @@ description: "Eddy-viscosity LES closures that transport the subgrid kinetic ene
 status: established
 aliases: [k-equation model, one-equation SGS model, subgrid kinetic energy equation model, LDKM, localized dynamic k-equation model, dynamic k-equation model, DKSGS, dk-equation model, Yoshizawa one-equation model, quasi-dynamic SGS kinetic energy equation model, QKM]
 tags: [les, sgs-model, eddy-viscosity, compressible, combustion]
-timestamp: 2026-10-28T12:25:00Z
+timestamp: 2026-10-28T17:41:00Z
 ---
 
 # One-equation subgrid kinetic-energy models
@@ -66,7 +66,23 @@ sources use both ends of this relation:
 - the same isotropic form, $\tau_{kk}=2C_I\bar\rho\Delta^2\lvert\tilde S\rvert^2$,
   is the Yoshizawa trace added to compressible Smagorinsky models (see the
   [Smagorinsky model](/methods/smagorinsky-model.md) and the
-  [dynamic procedure](/methods/dynamic-procedure.md)).
+  [dynamic procedure](/methods/dynamic-procedure.md));
+- [Barbera et al. (2026)](/sources/barbera-2026.md) (§2.2, Eqs. 15–16)
+  invert the two closure relations, without solving a transport equation,
+  to estimate the subgrid energy and dissipation from the viscosity of an
+  algebraic model (the [Sigma model](/methods/sigma-model.md)) on the
+  current mesh of a mesh-adaptation loop:
+  $$k_{\mathrm{sgs}}=\frac{\nu_t^2}{c_k^2\Delta^2},\qquad \varepsilon_{\mathrm{sgs}}=c_\varepsilon\frac{k_{\mathrm{sgs}}^{3/2}}{\Delta},\qquad c_k=0.1,\quad c_\varepsilon=0.85,$$
+  with $\Delta$ the local mesh size (the radius of the sphere of equal
+  second moment, §2.1) and $\varepsilon_{\mathrm{sgs}}$ the subgrid part of
+  the dissipation (page-local). They attribute the relations to
+  "Deardoff's model", citing Deardorff's (1973) paper on subgrid transport
+  equations. The two ratios $k_{\mathrm{sgs}}/k_{\mathrm{tot}}$ and
+  $\varepsilon_{\mathrm{sgs}}/\varepsilon$, set against a Kolmogorov
+  spectrum, give the Kolmogorov wavenumber and the filter size that
+  resolves a prescribed range of scales; that criterion is on
+  [LES grid-point requirements](/results/les-grid-point-requirements.md)
+  and [mesh adaptation](/methods/mesh-adaptation.md).
 
 ## Localized dynamic $k$-equation model
 
@@ -189,6 +205,12 @@ CPUs, Table 5).
   length-scale equation), which they make dynamic (see
   [detached-eddy simulation](/methods/detached-eddy-simulation.md) and the
   [dynamic procedure](/methods/dynamic-procedure.md)).
+- **Engine LES.** [Posch et al. (2025)](/sources/posch-2025.md) (§3.2.3)
+  name, beside the Smagorinsky model, "the dynamic structure models" of
+  Pomraning & Rutland as subgrid closures of LES of internal combustion
+  engines; the cited paper is titled "Dynamic one-equation nonviscosity
+  large-eddy simulation model" (their ref. [48]). The review prints no
+  model equation.
 - **Astrophysical codes.** In [RAMSES](/software/ramses.md), as used by
   [Liu et al. (2022)](/sources/liu-2022.md) (§2.3), a transport
   equation for the subgrid turbulent kinetic energy (production by resolved
@@ -262,3 +284,5 @@ CPUs, Table 5).
 - [Liu et al. (2022)](/sources/liu-2022.md) — §2.3.
 - [Volpiani (2024)](/sources/volpiani-2024.md) — App. 2, Eq. (28).
 - [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.4, Figs. 14–16 (OpenFOAM k-equation LES as Reynolds-stress reference of the bump channel).
+- [Barbera et al. (2026)](/sources/barbera-2026.md) — §2.1; §2.2, Eqs. (15)–(16).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.3, ref. [48].

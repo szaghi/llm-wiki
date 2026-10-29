@@ -5,7 +5,7 @@ description: "Spatially developing turbulent boundary layers on flat walls: zero
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-28T12:32:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -102,6 +102,41 @@ magnitude more than with the constants tuned for their channel; it reaches
 its logarithmic limit near $y^+=150$, close to the wake at low Reynolds
 number (App. A, Figs. 20–21). The channel runs are on
 [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
+
+[Gao et al. (2025)](/sources/gao-2025.md), §III B, run a ZPG layer at
+$M=0.15$ in a high-order computational-aeroacoustics finite-difference
+solver (seven-point fourth-order DRP scheme, selective filter, Vreman
+model) with a [slip-wall model](/methods/slip-wall-model.md): the
+equilibrium wall-model equations, fed at the second off-wall point, give
+$\tau_w$, and the wall velocity is extrapolated linearly from the sample
+point with the gradient $\tau_w$ over the total viscosity there (see
+[equilibrium wall model](/methods/equilibrium-wall-model.md)). The inflow
+is the profile $U/U_0=(y/\delta_0)^{1/6}$ with steady, divergence-free,
+spanwise-periodic synthetic fluctuations injected as source terms of the
+Tam & Dong radiation condition (see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)),
+$\delta_0=0.004$ m, $Re_{\delta_0}=1.4\times10^4$; the domain is
+$45\delta_0$ plus a sponge of $15\delta_0$ long, $5.6\delta_0$ high and
+$3\delta_0$ wide on $967\times76\times91$ points ($\Delta x=0.05\delta_0$,
+25 wall-normal layers of $0.04\delta_0$, sample point at $y^+=44.1$),
+sampled over $8\times10^5$ steps of $5\times10^{-8}$ s. The layer becomes
+fully turbulent after $20\delta_0$ and reaches $\delta=1.2\delta_0$ at
+$x=35\delta_0$, where Table VI gives $U_\infty=53.0$ m/s,
+$u_\tau=2.05$ m/s, $\tau_w=5.15$ Pa, $Re_\tau=674$, $Re_\theta=1924$. The
+mean velocity there agrees with the DNS of Spalart and the LES of Wang &
+Wang in the outer region with a slight near-wall underprediction, and the
+turbulence intensities and shear stress agree with the DNS for
+$y>0.2\delta$ (Figs. 14–15). The wall-pressure spectra become self-similar
+by $x=20\delta$; against Goody's model the spectrum at $35\delta_0$ is too
+high, a shift of 8.6 dB aligning it up to $\omega\delta/u_\tau=600$, with
+an $\omega^{-0.7}$ mid-frequency decay and a high-frequency decay steeper
+than $\omega^{-5}$ (Figs. 17–18). The rms wall pressure rises from about 15
+Pa near the inflow to 39.58 Pa at $35\delta_0$, "about 3.8 times" the 10.29
+Pa they derive from Viazzo's correlation
+$p_{\mathrm{rms}}^2/\tau_w^2=3+2\ln(Re_\tau/250)$ (their Eq. 25; Fig. 19).
+The authors attribute the excess to velocity fluctuations at the sample
+point reaching the wall through the wall model and to the coarse grid.
+Their channel runs are on [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
 
 **What the layer offers a wall model.** The review of
 [Bose & Park (2018)](/sources/bose-2018.md) uses ZPG layers to set the
@@ -292,6 +327,43 @@ Huang et al. also reconstruct a manufactured composite wall-law profile
 on meshes of aspect ratio $5\times10^2$ and about $10^3$ to choose the
 weights of their reconstruction (§2.4.3, Table 3); see
 [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
+
+**The $k$-$\tau$ SST model in spectral elements.**
+[Kumar et al. (2025)](/sources/kumar-2025.md), §3.1, verify their
+[$k$-$\tau$](/methods/k-tau-model.md) SST model and the regularized
+$k$-$\omega$ SST in [Nek5000](/software/nek5000.md) on the TMR plate at
+$Re_L=5\times10^6$ (domain $2.24L\times L$, uniform inflow with zero $k$,
+$\omega$ and $\tau_t$, no transition model). In the $p$-convergence study
+on $34\times24$ elements with $N=2$, 4, 8, 16 (3381 to 209,825 degrees of
+freedom, mean wall $y^+$ from 0.93 to 0.028) the velocity and eddy-viscosity
+profiles at $x/L=0.97$ converge at $N=16$ to the CFL3D SST data, and the
+friction and drag coefficients change by less than 0.5% between $N=4$ and
+16, similar to SA in CFL3D/FUN3D and better than $k$-$\omega$ SST-Vm in the
+same codes
+(Figs. 2–3). In the $r$-convergence study ($37\times16$ elements, $N=6$,
+21,631 degrees of freedom, first spacing $0.5\times10^{-6}L$ to
+$16\times10^{-6}L$, mean wall $y^+$ 0.09 to 2.9) the drag oscillates for
+$y^+>1.5$ with both models; the regularized $k$-$\omega$ converges like SA
+in CFL3D while $k$-$\tau$ SST keeps an oscillatory convergence, which the
+authors read as a greater sensitivity to the aspect ratio, all values
+lying within 1% of the other models (Fig. 4).
+
+**Spalart–Allmaras on CAD-exact adapted meshes.**
+[Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §5.3 and §6.1,
+verify an [isogeometric](/methods/isogeometric-analysis.md) DG solver
+with the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+(negative-$\tilde\nu$ modification of Crivellini et al.) on the plate at
+$M=0.2$ and $Re=1.1\times10^7$ on the plate length against the
+[law of the wall](/definitions/law-of-the-wall.md) ($\kappa=0.41$, $B=5$)
+and the data of Wieghardt & Tillmann: on 8800 linear elements with
+$y_1^+<1$ at $N=4$, $C_f$ and $u^+$ agree "perfectly" (Fig. 14). The
+adaptive run starts from $36\times32=1152$ patches at $y_1^+=100$, where
+the profile is badly wrong in the viscous sublayer but $C_f$ only slightly
+off, and ends after seven cycles of spectral-decay-driven anisotropic
+knot insertion at 1834 patches with $y_1^+\approx1$, matching the
+reference data with about 60% fewer degrees of freedom and less computing
+time than a non-adapted mesh of 4617 elements at $y_1^+=1$ (Fig. 15; see
+[mesh adaptation](/methods/mesh-adaptation.md)).
 
 **$k$-$\omega$ SST and $k$-$\sqrt kL$ in high-order discretizations.**
 [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md), §4.1, verify
@@ -1433,6 +1505,23 @@ Bruce et al., as cited).
 - [Kimmel et al. (2025)](/sources/kimmel-2025.md) use $z$ wall-normal
   (translated to $y$ above); their wall resolution is coarser than the
   first-point $y^+\le1$ they quote for DNS.
+- [Gao et al. (2025)](/sources/gao-2025.md) print 10.29 Pa as the value of
+  their Eq. 25 at $x=35\delta_0$; with their Table VI values
+  ($\tau_w=5.15$ Pa, $Re_\tau=674$) the printed correlation gives
+  $5.15\sqrt{3+2\ln(674/250)}=11.50$ Pa, while 10.29 Pa follows from
+  $3+\ln(674/250)$; the ratio "about 3.8" fits 10.29 Pa ($39.58/10.29=3.85$),
+  and with 11.50 Pa it would be 3.44 *(compiler check, not in the
+  sources)*.
+- [Kumar et al. (2025)](/sources/kumar-2025.md), §3.1.3, write that the
+  degrees of freedom of the final $r$-convergence mesh equal the
+  $257\times97$ grid of the NASA codes; $37\times16$ elements at $N=6$
+  give $223\times97=21{,}631$ nodes, the number of their Table 1
+  *(compiler check, not in the sources)*.
+- The Wieghardt–Tillmann plate is run at $M_\infty=0.096$ and
+  $Re_L=11.1\times10^6$ by [Ghidoni et al. (2026)](/sources/ghidoni-2026.md)
+  and at $M=0.2$ and $Re=1.1\times10^7$ by
+  [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), who call the
+  case "incompressible flow over a flat plate" in their §1.
 
 # Citations
 
@@ -1495,3 +1584,6 @@ Bruce et al., as cited).
 - [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A; §III.A, Table 1, Fig. 3; §IV.C.
 - [An et al. (2025)](/sources/an-2025.md) — §3.1; §3.2 (precursor plate).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §3.4 (cited works, review).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §II B; §III B, Eqs. 21–25, Tables V–VI, Figs. 13–19.
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §3.1, Table 1, Figs. 2–4.
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §5.3, Fig. 14; §6.1, Table 5, Fig. 15.

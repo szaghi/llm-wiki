@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-28T12:25:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Vreman model
@@ -75,6 +75,8 @@ not print the value of $C_v$ used in their runs.
 | 0.1 (prefactor printed as $2.5C_s^2$, with $C_s=0.1$ after Sayadi & Moin and Yu et al., cited) | sixth-order finite-difference LES of compressible channels and a supersonic boundary layer, baseline against a learned model | [Xu et al. (2023)](/sources/xu-2023.md), §2.2 |
 | constant $c=0.025$ and $c=0.07$ printed, formula not printed | incompressible second-order finite-volume wall-modelled LES of the Gaussian bump | [Zhou & Bae (2024)](/sources/zhou-2024-b.md), §2.1 |
 | constant $C=0.07$ printed, "as specified in the original paper", formula not printed | compressible reacting LES of a rotating detonation rocket engine | [Vignat et al. (2024)](/sources/vignat-2024.md), §3.3 |
+| prefactor $c_v=0.07$ printed in $\mu_t=\bar\rho\,c_v\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$, with an isotropic filter width | flux-reconstruction wall-modelled LES of channels and the periodic hill | [Gao et al. (2025b)](/sources/gao-2025-b.md), §II B, Eqs. (11)–(16) |
+| not printed | high-order finite-difference (aeroacoustic) wall-modelled LES of channels and a boundary layer | [Gao et al. (2025)](/sources/gao-2025.md), §II.A |
 
 Cao et al. (2022b, Eqs. 10–11) print the dynamic viscosity
 $\mu_t=\bar\rho\,c\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ in the index
@@ -350,6 +352,30 @@ $N$ (the paper's $P$), with $N=5$.
   dynamic Smagorinsky or no subgrid closure. The authors state that the
   adequacy of subgrid models for highly compressible, turbulent, reacting
   flows is open, and they do not vary the model (§3.3, §3.8).
+- **Wall-modelled LES with flux reconstruction.** [Gao et al. (2025b)](/sources/gao-2025-b.md)
+  (§II B, Eqs. 11–16) close the compressible FR/CPR wall-modelled LES of
+  channels at $Re_\tau=2000$, 5200 and 10 000 and of the
+  [periodic hill](/benchmarks/periodic-hill.md) with the Vreman model in
+  the index order of Kim et al. ($\alpha_{ij}=\partial_i\bar u_j$,
+  $\beta_{ij}=\Delta_m^2\alpha_{mi}\alpha_{mj}$), $c_v=0.07$ ($c_v$
+  page-local) and the filter width "simplif[ied]" to an isotropic one,
+  whose definition on an FR element is not stated. They print the stress
+  as $2\mu_t S_{ij}$, the opposite-sign convention, without a trace term.
+  The subgrid model is not varied; the paper's subject is the wall-model
+  input point and a hybrid inviscid wall flux (see
+  [wall-modelled LES](/methods/wall-modelled-les.md) and
+  [flux reconstruction](/methods/flux-reconstruction.md)); the
+  filter-width study of Duan & Wang is below.
+- **Aeroacoustic finite-difference WMLES.** [Gao et al. (2025)](/sources/gao-2025.md)
+  (§II.A) use the model in a high-order computational-aeroacoustics
+  finite-difference solver with a [slip-wall model](/methods/slip-wall-model.md),
+  stating that it improves on the Smagorinsky model "by
+  significantly reducing numerical dissipation and providing improved
+  accuracy for inhomogeneous turbulent flows" and "achieves an accuracy
+  comparable to that of the Dynamic Smagorinsky model, while avoiding the
+  need for computationally intensive spatial averaging and filtering
+  procedures"; these are stated with a citation of Vreman (2004), not
+  tested in the paper, and the constant is not printed.
 - **Named, not run, in a GPU channel solver.** [Xiao et al. (2025)](/sources/xiao-2025.md)
   do not implement the model in [CaLES](/software/cales.md): they name it
   as one the solver "can easily incorporate" (§5), and cite Vreman's
@@ -513,3 +539,5 @@ computed and subtracted from the mean-stress model.
 - [Hu et al. (2024)](/sources/hu-2024.md) — §4.
 - [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1; §3.8.
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — §4.2, Fig. 8 (streamwise-stress peak over-estimate, Vreman cited); §5 (model named for future inclusion). Not run.
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II B, Eqs. (11)–(16) (form, $c_v=0.07$, isotropic filter width).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §II.A (model choice and stated advantages; constant not printed).

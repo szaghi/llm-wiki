@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-28T12:25:00Z
+timestamp: 2026-10-28T17:45:00Z
 ---
 
 # WALE model
@@ -289,6 +289,18 @@ instead (below).
   are not printed. Both catch the $-5/3$ slope at $t^*=98$ and depart from
   it only near the Nyquist wavenumber; the authors call the OpenFOAM run
   "slightly less dissipative".
+- **Explicit LES against implicit LES in compressible channels, as
+  cited.** [Alberti et al. (2025b)](/sources/alberti-2025-c.md) (§I)
+  cite Hamzehloo et al. (their ref. 25, a study of WENO/TENO schemes in
+  DNS and LES of high-speed flows) for a compressible channel in which
+  "LES-WALE" on a moderately under-resolved finite-difference grid
+  reproduced the DNS, while the implicit LES on the same discretization
+  deviated from it in streamwise velocity and Reynolds stresses. Their own
+  entropy-stable modal DG solver runs implicit LES with no subgrid model
+  and is reported "more accurate, for example, than the iLES of Hamzehloo
+  et al." for the $M_b=1.5$ channel (§III A); no WALE run is made (see
+  [implicit LES](/definitions/implicit-les.md) and
+  [entropy conservation](/properties/entropy-conservation.md)).
 
 ## Qualifications
 
@@ -305,6 +317,8 @@ instead (below).
   tensor is traceless only with the minus sign of Duan & Wang's form; the
   printed plus sign leaves a trace of $-2\bar\Omega_{mn}\bar\Omega_{mn}$
   *(compiler check, not in the sources)*.
+- Alberti et al. (2025b) print the friction Reynolds number of the cited
+  Hamzehloo et al. channel as 215 (§I) and as 222 (§III A).
 - Lederer et al., Duan & Wang and Zhao et al. print the formula; Saini et al. and Lewis et al. use
   the model without it, so the page cannot check whether their
   implementations use the same invariant or filter width.
@@ -333,3 +347,4 @@ instead (below).
 - [Xu et al. (2023)](/sources/xu-2023.md) — §2.2, Eqs. (2.15)–(2.31), Figs. 1–3; §4.1, Figs. 13–20, Table 4.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §3.1, Tables 2–3.
 - [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.2, Fig. 4 (OpenFOAM WALE reference LES of decaying isotropic turbulence).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I (WALE LES against implicit LES of Hamzehloo et al., cited); §III A.

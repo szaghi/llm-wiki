@@ -5,7 +5,7 @@ description: "Flow past circular cylinders, chiefly at Re_D=3900, with separatio
 status: established
 aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark, drag crisis, critical cylinder flow, supercritical cylinder]
 tags: [benchmark, separated-flow, les, implicit-les, neural-network, pans, immersed-boundary, field-inversion, des, hybrid-rans-les, aeroacoustics]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Circular-cylinder wake
@@ -284,6 +284,78 @@ not a turbulence model.
   against an experimental value of about 0.19. The authors take this
   overprediction of the shedding frequency as a known shortcoming of URANS
   (§1, §4.2).
+- [Zou et al. (2025)](/sources/zou-2025-b.md), §III B–C, verify a
+  moving-mesh interior-penalty DG solver with block-based adaptive
+  refinement (schemes IP(2), IP(3), IP(4) of second to fourth order, the
+  polynomial degree not printed; vorticity threshold
+  $|\omega_z|D/(2U_\infty)>0.25$ for the finest of five levels) on the
+  shedding cylinder at $Re_D=150$, $M=0.2$, $D=0.1$, in a domain
+  $[-2.4,4.4]\times[-2.4,2.4]$ (Table II):
+
+  | Run or reference | mean $C_D$ | $\Delta C_D$ | $\Delta C_L$ | $St$ |
+  |---|---|---|---|---|
+  | IP(2) | 1.33 | 0.0497 | 1.016 | 0.187 |
+  | IP(3) | 1.3503 | 0.0518 | 1.04 | 0.1845 |
+  | IP(4) | 1.3547 | 0.0512 | 1.0456 | 0.1847 |
+  | Zhang et al. (as printed) | 1.348 | 0.0519 | 1.048 | 0.184 |
+  | Müller (as printed) | 1.34 | 0.05228 | 1.0406 | 0.183 |
+
+  ($\Delta$ the peak-to-peak amplitude.) The IP(2) flow field shows
+  "significant flow field distortion", and the IP(3) and IP(4) vorticity
+  fields differ negligibly (Fig. 8). Six
+  transverse vortex-induced vibration runs (mass ratio 2, no damping,
+  reduced velocity 3 to 8, $M=0.085$, IP(3)) reproduce the lock-in
+  amplitude curve of Ahn & Kallinderis and of Borazjani et al., with
+  lock-in between reduced velocities of about 4 and 7 (Fig. 10). With two
+  synthetic jets at reduced velocity 4 and momentum coefficient 3.0, the
+  vibration amplitude falls from 0.562 to 0.0001 at dimensionless actuation
+  frequency 5, and to 0.0113, 0.2149 and 0.3153 at 50, 75 and 90 (Table
+  III), which the authors attribute to the jet energy leaving as acoustic
+  waves at the higher frequencies, from density contours (Figs. 15–17). The
+  authors call these two-dimensional laminar runs without a turbulence
+  model "direct numerical simulations" (§III C; see
+  [direct numerical simulation](/definitions/direct-numerical-simulation.md)).
+
+**Steady laminar cylinder for $h$-adaptation indicators.**
+[Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §4.3, compare
+four refinement indicators of an isogeometric DG solver (see
+[isogeometric analysis](/methods/isogeometric-analysis.md) and
+[mesh adaptation](/methods/mesh-adaptation.md)) on the steady cylinder at
+$Re_D=40$ and $M=0.1$: an O-type $N=2$ geometry of $16\times18$ rational
+Bézier patches with far field at $20D$, four adaptation cycles from a
+converged $N=3$ solution, 25% of the elements refined per cycle, and a
+reference uniform mesh of 4608 elements at $N=3$ (73,728 degrees of
+freedom) with $C_{D,\mathrm{ref}}=1.41764$. The indicators are the
+small-scale energy density (SSED: the $L^2$ norm of the momentum content
+above degree $N-1$, normalized by the element size), the spectral decay
+(SD: the same norm divided by the $L^2$ norm of the momentum, cited to
+Persson & Peraire), and a local and a global non-conformity measure of the
+interface jumps (LNC, GNC; Eqs. 39–43). All four mark the separation and
+the edge of the recirculation and give a speed-up of about 2 against the
+reference mesh; SSED over-refines the detachment region, GNC and SSED also
+refine regions outside those of interest, SD is "the most effective
+overall", LNC performs similarly and "should be used for lower solution
+approximations", and anisotropic refinement is more efficient than
+isotropic (Figs. 9–10). The same authors then use SD on the
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) and the T106A
+[turbine cascade](/benchmarks/turbine-cascade.md).
+
+**A transonic cylinder for adaptive-dissipation implicit LES.**
+[Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §5.4, run the
+cylinder at $Re_D=1.66\times10^5$ and $M_\infty=0.8$, the experiment of
+Murthy & Rose, as an [implicit LES](/definitions/implicit-les.md) with
+CWENOZ3 and CWENOZ4 reconstructions plus their a priori
+dissipation–dispersion adjustment (ADDA; see
+[numerical dissipation](/properties/numerical-dissipation.md)): a hybrid
+mesh of about 12 million cells, $20D$ upstream, $50D$ downstream, span
+$\pi D$ with 240 cells, $y^+\approx1$, wake refinement over $20D$ with mean
+cell length $0.04D$; second-order implicit time stepping with
+$\Delta t=t_c/500$, $t_c=D/U_\infty$, $40t_c$ of transient and $90t_c$ of
+statistics. CWENOZ4-ADDA gives a shorter wake, more resolved structures and
+more high-dissipation regions than CWENOZ3-ADDA; the surface $C_p$ agrees
+with Macha and with Murthy & Rose up to $83^\circ$, beyond which all
+predictions are sensitive; the scheme stays robust with the shocks,
+shocklets and shock/boundary-layer interaction of the flow (Figs. 26–29).
 
 **Implicit LES with a weighted compact nonlinear scheme.**
 [Ma et al. (2022)](/sources/ma-2022.md), §3.2, run the cylinder at
@@ -617,8 +689,7 @@ both lean on Parnaudeau et al. for reference data.
   al. an experiment (Fig. 2); [Dzanic et al. (2022)](/sources/dzanic-2022.md)
   call them an LES. Both cite the same work, whose printed title
   ("Experimental and numerical studies of the flow over a circular cylinder
-  at Reynolds number 3900") names both kinds of study; this is recorded as
-  a qualification, not a contradiction.
+  at Reynolds number 3900") names both kinds of study.
 - In [Dzanic et al. (2022)](/sources/dzanic-2022.md) the reference data
   disagree among themselves: low-order PANS at $f_k=0.1$ agrees with the
   LES of Parnaudeau et al. and at $f_k=0.3$ with the DNS (§3.2), so the
@@ -730,6 +801,35 @@ both lean on Parnaudeau et al. for reference data.
   The authors note that, because SATES-σ runs close to LES mode, transition
   "may not be captured accurately if the computational grid resolution is
   insufficient" (§4).
+- Two sources print different drag for the steady cylinder at $Re_D=40$:
+  [D'Ayer et al. (2026)](/sources/dayer-2026.md), Table 2, give
+  $C_D=1.52$–1.55 at $M=0.2$ in a domain reaching $30D$ upstream and to the
+  sides and $50D$ downstream; [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md),
+  §4.3, give the reference $C_{D,\mathrm{ref}}=1.41764$ at $M=0.1$ with the
+  far field at $20D$, and call the $M=0.1$ flow "incompressible". Neither
+  source compares with the other.
+- The rankings of refinement indicators differ between two adaptive DG
+  studies. [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §4.3,
+  on this steady laminar cylinder with an isogeometric DG
+  discretization, find the spectral-decay indicator (cited to Persson &
+  Peraire) "the most effective overall" and the small-scale energy density
+  over-refining. [Ims & Wang (2023)](/sources/ims-2023.md), §5, on the
+  unsteady implicit LES of the T106c and T106a cascades with flux
+  reconstruction, find the small-scale-energy and residual indicators
+  converging fastest and the Persson–Peraire smoothness indicator lagging,
+  no faster than random refinement on T106a (see
+  [turbine cascade](/benchmarks/turbine-cascade.md)). Bulgarini et al.
+  normalize the small-scale energy by the element size (their Eq. 40),
+  Ims & Wang use a curvilinear Toosi–Larsson variant; Bulgarini et al. cite
+  Ims & Wang (their ref. [19]) and do not discuss the difference.
+- [Zou et al. (2025)](/sources/zou-2025-b.md) call their two-dimensional
+  laminar runs at $Re_D=150$ "direct numerical simulations" and $M=0.085$
+  an "incompressibility condition"; they print no base-mesh resolution or
+  degree-of-freedom count and no cost for the adaptive refinement they
+  credit with "substantial computational efficiency gains".
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md), §2.4.1, list an
+  immersed-boundary cylinder at $Re_D=3900$ in the public test suite of
+  RHEA-X but show no result for it.
 
 # Citations
 
@@ -751,3 +851,7 @@ both lean on Parnaudeau et al. for reference data.
 - [Yan et al. (2024)](/sources/yan-2024.md) — §III A, Tables II–III, Figs. 3–9.
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.4; §3.3.1–3.3.2, Figs. 6–13; §5.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §3.4, Table 4 (cited control work, review).
+- [Zou et al. (2025)](/sources/zou-2025-b.md) — §II D; §III B, Table II, Figs. 6–9; §III C, Table III, Figs. 10–17 (laminar, 2D).
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §4.2–4.3, Eqs. 39–45, Table 5, Figs. 9–10.
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §5.4, Figs. 26–29.
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §2.4.1 (test-suite case named, no result).

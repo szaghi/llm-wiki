@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NACA 0012 airfoil"
-description: "The symmetric NACA 0012 airfoil: static RANS at chord Reynolds numbers of 1 to 6 million up to 45° and transonic, high-order workshop cases, low-Reynolds-number unsteady separation, pitching in dynamic stall, and a rod–airfoil noise case: it validates high-order RANS, near-wall and immersed-boundary treatments, data-driven corrections, output-based adaptation, and LES and DDES of dynamic stall."
+description: "The symmetric NACA 0012 airfoil: static RANS and DDES at chord Reynolds numbers of 1 to 6 million up to 90° and transonic, high-order workshop cases, low-Reynolds-number unsteady separation, pitching in dynamic stall, and a rod–airfoil noise case: it validates high-order RANS, near-wall and immersed-boundary treatments, data-driven corrections, output-based adaptation, and LES and DDES of dynamic stall."
 status: established
 aliases: [NACA0012, NACA 0012, NACA-0012]
 tags: [benchmark, rans, hybrid-rans-les, les, data-driven, immersed-boundary, dg, separated-flow, des, transition, aeroacoustics]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # NACA 0012 airfoil
@@ -270,6 +270,48 @@ whereas the NASA codes over-predict both; its lift error is smaller than
 that of the standard $k$-$\omega$ in either NASA code. $C_p$ agrees with
 Gregory & O'Reilly and Ladson at both angles (Fig. 16).
 
+**$k$-$\tau$ SST RANS and DDES in spectral elements.**
+[Kumar et al. (2025)](/sources/kumar-2025.md) build the SST form of the same
+[$k$-$\tau$ model](/methods/k-tau-model.md) and a
+[delayed detached-eddy simulation](/methods/detached-eddy-simulation.md) on
+it in [Nek5000](/software/nek5000.md). On the NASA TMR case
+($Re_c=6\times10^6$; O-grid to $80c$, closed trailing edge, $64\times32$
+elements, $N=9$ at $0^\circ$ with 1.5 million and $N=11$ at $10^\circ$ and
+$15^\circ$ with 2.7 million degrees of freedom, wall $y^+$ from 0.006 to
+1.6) the forces lie within 5% of CFL3D (§3.2.2, Table 3):
+
+| $\alpha$ | $C_L$: $k$-$\tau$ SST / experiment / CFL3D SA / CFL3D SST | $C_D$: same order |
+|---|---|---|
+| $0^\circ$ | ≈0 / −0.00724 / ≈0 / ≈0 | 0.008 / 0.008 / 0.008 / 0.008 |
+| $10^\circ$ | 1.05 / 1.05 / 1.08 / 1.08 | 0.013 / 0.012 / 0.013 / 0.012 |
+| $15^\circ$ | 1.45 / 1.49 / 1.51 / 1.51 | 0.023 / 0.018 / 0.022 / 0.022 |
+
+The 20% drag excess at $15^\circ$ against experiment, shared with CFL3D, is
+attributed possibly to the limits of RANS in the strong adverse pressure
+gradient, and the slightly low suction peak at $15^\circ$ to compressibility
+in CFL3D; $C_p$ and $C_f$ agree with the CFL3D SA data (Fig. 6). The DDES
+runs the airfoil at $Re_c=2\times10^6$ from $5^\circ$ to $90^\circ$ on a
+periodic span of $4c$ with $N=7$ (Coarse $32\times14\times5$ elements, 0.8
+million degrees of freedom; Medium 2.6 million; Fine 6.5 million), first
+grid spacing $1.2\times10^{-5}c$, at least 200 convective times averaged
+(§4.3). The flow stays attached at $5^\circ$ and $17^\circ$, near maximum
+lift, and separates massively beyond, the separated region at $90^\circ$
+extending over more than three chords (Fig. 10). The three grids differ
+little even at high incidence, so the DDES is grid-converged on the Coarse
+grid, one level coarser than the second-order IDDES of Bidadi et al., with
+which lift and drag agree at all angles; the DES of Strelets
+($Re_c=10^5$, span $1c$) is consistently higher after stall (Fig. 11).
+Below stall the forces lie on the upper experimental envelope; after stall
+the drag falls increasingly below the wall-corrected experiments, by about
+11% at $90^\circ$. A confined run at $90^\circ$ in the $15c\times6c$ tunnel
+section of Critzos et al. gives a drag up to about 13% above the unconfined
+one and within 5% of Critzos' uncorrected data at $Re_c=2\times10^6$,
+which the authors take as a call to reassess wind-tunnel wall corrections
+(§4.4, Fig. 14). The statistical-sampling study of the same paper uses a
+NACA 0021 at $60^\circ$ and $Re_c=2.7\times10^5$: the running mean of $C_L$
+settles within 0.2% after about 600 convective times on a span of one chord,
+and within ±2% after 100–150 (§4.2).
+
 **Dynamic-stall onset in DDES.** In the constant-rate pitch-up of
 [Batther & Lee (2022)](/sources/batther-2022.md), DDES with
 SST Langtry–Menter, SA Medida–Baeder, SA amplification-factor-transport
@@ -372,6 +414,31 @@ ONERA data, but "the ending position of the shock wave slightly lags
 behind", attributed to an overestimated shock–boundary-layer interaction
 (Figs. 5-9–5-11); see
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
+[Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §6.2, run a
+transonic case at $M_\infty=0.751$, $Re_c=3.91\times10^6$,
+$\alpha=1.99^\circ$, against the experiment of McDevitt & Okuno, with
+steady [Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS in an
+[isogeometric](/methods/isogeometric-analysis.md) DG solver whose airfoil
+is one degree-2 NURBS surface, so that every refinement keeps the exact
+geometry. Anisotropic $h$-adaptation by the spectral-decay indicator takes
+a coarse mesh of $48\times35=1680$ patches (mean first-element $y^+$ 177)
+to 8308 patches, against a fine reference of 15,360 with
+$C_{D,\mathrm{ref}}=1.80200\times10^{-2}$; it refines the shock, boundary
+layer, wake and a separation bubble, and improves the shock position and
+the $C_p$ and $C_f$ against the experiment, the coarse-mesh $C_f$ being
+"completely wrong" (Table 1, Figs. 16–18). With the fraction of elements
+refined per cycle (Table 2):
+
+| fraction | DOF | speed-up | $C_D$ | deviation |
+|---|---|---|---|---|
+| 6% | 46,528 | ≈5.9× | $1.80805\times10^{-2}$ | 0.34% |
+| 12% | 81,232 | ≈2.9× | — | 1.90% |
+| 20% | 132,928 | ≈2.7× | — | 1.88% |
+
+Meshes with straight-sided boundaries at about the same degrees of freedom
+produce spurious near-wall phenomena that prevent full convergence and
+distort $C_p$ and $C_f$ near the leading edge (Fig. 19).
 
 **Implicit LES polars.** [Ferrer et al. (2023)](/sources/ferrer-2023.md),
 §4.1, Fig. 7, cite the group's earlier paper: a DG implicit LES at
@@ -573,6 +640,33 @@ RANS (§6.1). The adjoint-weighted inversion objective tightens the
 estimates while leaving the actual errors nearly unchanged. Only two to
 four unsteady runs per adapted mesh are needed (§5.2).
 
+**Stall at low Reynolds number with a penalty immersed boundary.**
+[Monteiro et al. (2026)](/sources/monteiro-2026.md), §4.4, validate the
+volume-penalization [immersed boundary](/methods/immersed-boundary-method.md)
+of the GPU solver RHEA-X on the airfoil in full stall, $\alpha=12^\circ$,
+$Re_c=5\times10^4$, $M=0.1$, as a DNS: domain $30c\times20c\times0.2c$ with
+periodic span, $1086\times1037\times128$ points on an imported mesh,
+$y^+\lesssim1$ at the cells next to the airfoil, the surface from an STL
+file with Monte Carlo sub-cell tagging. The $C_p$ and $C_f$ agree closely
+with the DNS of Rodríguez et al., including the leading-edge suction peak,
+the pressure plateau and the separation-induced reversal of $C_f$ (Figs.
+5–6). The averaging time is not printed.
+
+**Vortex-driven $h$-adaptation at high incidence, laminar.**
+[Lv et al. (2025)](/sources/lv-2025.md), §V C, run the airfoil at
+$M_\infty=0.3$ and $\alpha=15^\circ$ in two dimensions, without a turbulence
+model, with a DG solver ($N=2$) whose quadrilateral mesh is refined by the
+$\Omega$ criterion or by a characteristic-based vortex indicator (see
+[vortex identification criteria](/definitions/vortex-identification-criterion.md)):
+from 13,280 elements with two refinement levels, against a uniform fine
+grid of 53,120 elements clustered at the wall. Both indicators capture
+the leading-edge vortices and their growth and detachment at the trailing
+edge "without relying on pre-refined boundary layer grids", and the
+authors find the regression-indicator field closest to the fine grid,
+from flow-field figures without a quantitative measure (Figs. 11–13). Serial CPU times are 60.83 min (coarse), 415.01 min (fine), 62.27
+min ($\Omega$) and 65.40 min (indicator), reductions of 85.00% and 84.24%
+(Table III). No force, pressure or experimental comparison is printed.
+
 **What the sources share.** Away from stall the RANS solutions of all
 three discretizations match the reference forces; the discrepancies
 gather at the leading edge at high incidence: the $10^\circ$ lift deficit
@@ -599,6 +693,24 @@ at the outer edge of the boundary layer (§2.5), Lodares et al. by a
 negative-$\tilde\nu$ model variant (§2), and Tomboulides et al. by
 transporting $\tau_t=1/\omega$ to avoid the near-wall singularity of
 $\omega$ (§1–§2).
+
+## Contradictions
+
+**Measured lift at $\alpha=10^\circ$, $Re_c=6\times10^6$.** *Open.*
+[Kumar et al. (2025)](/sources/kumar-2025.md), §3.2.2, Table 3, print the
+experimental $C_L=1.05$ (and $C_D=0.012$) and find their $k$-$\tau$ SST
+results "inline with the values reported by the experiments"; the text
+cites the experiments of their refs. [52, 53] (Ladson, Hill & Johnson
+1985, a Boeing BAC I airfoil report, and Ladson 1988, NASA TM 4074), the
+Table 3 caption ref. [52] alone.
+[Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.4, Tables
+3–4, print the experimental $C_L=1.075$ (and $C_D=0.012$) from Ladson
+(1988) at the same chord Reynolds number, and use it to judge their
+$k$-$\tau$ lift of 1.0618 as under-predicted. Kumar et al. cite
+Tomboulides et al. (their ref. [27]) for the $k$-$\tau$ model, not for
+the experimental value. [Zhao et al. (2023b)](/sources/zhao-2023-b.md),
+§5.2, Table 5-1, also compare with $C_L=1.05$ at $10^\circ$, attributed
+to McCroskey (table above).
 
 ## Qualifications
 
@@ -689,6 +801,22 @@ $\omega$ (§1–§2).
   Larsson et al. table without its derivation, and call wall-resolved LES
   "currently restricted to low Reynolds numbers (on the order of
   $10^4$)" (§4.1.1) while surveying the Benton–Visbal run at $Re_c=10^6$.
+- The computed values of the two Nek5000 $k$-$\tau$ studies at
+  $\alpha=10^\circ$ differ: $C_L=1.05$, $C_D=0.013$ with the $k$-$\tau$
+  SST of [Kumar et al. (2025)](/sources/kumar-2025.md) on $64\times32$
+  elements at $N=11$ (Table 3), against $C_L=1.0618$, $C_D=0.01381$ with
+  the $k$-$\tau$ model of [Tomboulides et al. (2025)](/sources/tomboulides-2025.md)
+  on 5974 elements at $p=5$–7 (Table 4). The measured lift they compare
+  with is under Contradictions.
+- Kumar et al. write "five" angles of attack for the DDES and list six.
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) list $N=2$ as
+  the degree used for adaptation of the transonic case (Table 5) while the
+  captions of Figs. 16–18 state an $N=3$ solution.
+- [Lv et al. (2025)](/sources/lv-2025.md) print $Re=1$E6 in the text and
+  $10^5$ in the captions of Figs. 12–13 for their laminar run.
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) call their immersed
+  boundary "sharp-interface" in §1 and describe a volume-penalization
+  (porous-medium) method with a sub-cell indicator in §2.4.1.
 
 # Citations
 
@@ -715,3 +843,7 @@ $\omega$ (§1–§2).
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1, Eqs. 10–12; §3.3, Table 6, Figs. 23–26.
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4, Table 1; §3.1.1.2; §4.1.1 (survey, cited works).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.3, Fig. 13 (cited works, review).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §3.2.2, Table 3, Fig. 6; §4.2, Fig. 7 (NACA 0021); §4.3, Figs. 10–11; §4.4, Fig. 14.
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §6.2, Tables 1–2, 5, Figs. 16–19.
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §2.4.1; §4.4, Figs. 5–6.
+- [Lv et al. (2025)](/sources/lv-2025.md) — §V C, Table III, Figs. 10–13 (laminar, 2D).

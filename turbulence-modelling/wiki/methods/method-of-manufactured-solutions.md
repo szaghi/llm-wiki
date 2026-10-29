@@ -4,8 +4,8 @@ title: "Method of manufactured solutions"
 description: "The method of manufactured solutions verifies a flow solver by choosing an analytic solution, adding the residual it leaves in the governing equations as a source term, and measuring the observed order of accuracy; this page gives the manufactured solutions used for Euler, RANS, GPU DG and immersed-boundary codes and what they verify."
 status: established
 aliases: [MMS, manufactured solution, manufactured solutions, code verification by manufactured solutions]
-tags: [verification, dg, rans, software]
-timestamp: 2026-10-28T07:05:00Z
+tags: [verification, dg, rans, software, entropy-stable]
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Method of manufactured solutions
@@ -95,6 +95,35 @@ also exercises the negative branch of their SA formulation (see
 [entropy conservation](/properties/entropy-conservation.md)) *(compiler
 check, not in the sources)*.
 
+**Sinusoidal Navier–Stokes solution for an entropy-corrected DG.**
+[Alberti et al. (2025b)](/sources/alberti-2025-c.md), App. B, Eq. (B1),
+Table VII, verify their entropy-conserving and entropy-stable modal DG
+(on [entropy conservation](/properties/entropy-conservation.md)) with the
+two-dimensional form of Roy et al. (cited), applied to
+$\rho$, $u$, $v$ and $p$,
+$$\psi(x,y)=a^\psi_0+a^\psi_1f_1\Big(\frac{b^\psi_1\pi x}{L}\Big)+a^\psi_2f_2\Big(\frac{b^\psi_2\pi y}{L}\Big)+a^\psi_{12}f_{12}\Big(\frac{b^\psi_{12}\pi xy}{L^2}\Big),$$
+($\psi$, $a^\psi$, $b^\psi$, $f$ page-local; $f$ sines or cosines, the
+constants in Table VII) on $[0,L]^2$, $L=1$ m, steady and subsonic,
+$Re=100$ on the mean density, sound speed and $L$, $Pr=0.72$, a power-law
+viscosity with exponent 0.75, on meshes $2^i\times2^i$, $i=1,\dots,4$.
+The error is measured on the entropy-like quantity $\rho s$ ($s$ the
+physical entropy, page-local) rather than on a conserved variable.
+
+**Time-dependent incompressible solution on NURBS meshes.**
+[Sun et al. (2026)](/sources/sun-2026.md), §7.1, verify a half-explicit
+Runge–Kutta variational-multiscale formulation on
+[isogeometric](/methods/isogeometric-analysis.md) discretizations with
+$$\boldsymbol u=\tfrac12(1-\cos20\pi t)\big(-\sin\pi x\cos\pi y,\ \cos\pi x\sin\pi y,\ 0\big),\qquad p=p_0+\tfrac18(1-\cos20\pi t)(\cos2\pi x+\cos2\pi y),$$
+$p_0=1$, $\rho=1$, $\mu=0.01$, on $[0.25,2.25]^2\times[-0.1,0.1]$ (shifted
+so that the normal velocity does not vanish on the boundary), traction on
+$z=0.1$ and time-dependent Dirichlet data elsewhere, to $T=0.05$, where
+velocity and pressure peak. The spatial study uses the fourth-order
+scheme with $\Delta t=2.5\times10^{-4}$ and $C^1$ quadratic or $C^2$ cubic
+NURBS of equal order for velocity and pressure; the temporal study a
+fixed $80\times80\times4$ mesh of $C^3$ quartic NURBS with $\Delta t$ from
+$2.5\times10^{-4}$ to $1.25\times10^{-3}$, errors in velocity, pressure
+and the velocity time derivative.
+
 **Radial solution around an immersed sphere.**
 [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.7, Eqs.
 (43)–(44), verify the boundary closure of their Cartesian
@@ -140,6 +169,8 @@ with Pan et al.'s geometric weight diverge on the first mesh (Table 3). See
 | HDG, RANS MMS at $Re=10^7$, $N=3$ triangles | 10, 13, 21, 28 cells per direction, first-cell $y^+$ 0.77 to 0.18 | velocity error $1.69\times10^{-4}$ to $2.70\times10^{-6}$, rates 4.62, 3.79, 3.82 ($\approx N+1$); pressure rates 2.84, 2.94, 2.97 ($\approx N$); $k$ and $\omega$ equations also optimal | Elzaabalawy et al. (2023), §5.1, Table 1 |
 | GALÆXI, DGSEM, travelling wave | $N=2$ to 9, 1 to $64^3$ elements | design order of the density $L_2$ error for standard DG on Gauss nodes and split-form DG on Gauss–Lobatto nodes | Kurz et al. (2025), §5.1, Fig. 9 |
 | Gauss–Lobatto DGSEM, RANS–SA travelling wave; standard, Pirozzoli (kinetic-energy-preserving) and Chandrashekar (entropy-conserving) volume fluxes | $4^3$ to $10^3$ elements, $N=2$–9 | spectral $p$-convergence for all three; $h$-rates of the total error (standard / Pirozzoli / Chandrashekar) 0.72 / 0.77 / 1.42 at $N=2$, 3.06 / 3.16 / 4.33 at $N=4$, 4.95 / 4.59 / 5.83 at $N=6$, 7.09 / 6.49 / 7.34 at $N=8$, 7.77 / 8.14 / 8.60 at $N=9$; for $\rho\tilde\nu$ at $N=9$ 5.83 / 5.21 / 7.74; the Chandrashekar form has a higher $L_2$ error and an even–odd behaviour in density | Lodares et al. (2022), §7.1, Table 1, Figs. 3–4 |
+| Modal DG with entropy projection and entropy correction, steady Navier–Stokes, Roy-type MMS at $Re=100$ | meshes $2^i\times2^i$, $i=1$–4, $N=3,4$; BR2 penalty $\eta_F=5$ ($1,3,5$ at $N=3$) | error in $\rho s$: order $N+1$ with the entropy-stable (exact-Riemann) flux, order $N$ with the entropy-conserving Ismail–Roe flux; $N+1$ kept for all three penalties | Alberti et al. (2025b), App. B, Figs. 22–23 |
+| Half-explicit RK variational multiscale, isogeometric NURBS, incompressible time-dependent MMS | quadratic and cubic NURBS (spatial); quartic NURBS, five $\Delta t$ (temporal) | $L^2$ order 3 and 4, $H^1$ order 2 and 3 for velocity and pressure with quadratic and cubic NURBS; temporal orders 1–4 for the four Runge–Kutta tableaux in velocity, pressure and its time derivative | Sun et al. (2026), §7.1, Figs. 6–7 |
 | Cartesian immersed-boundary finite differences (fourth-order centred interior, third-order WENO boundary stencils, one ghost cell), unit sphere | refined Cartesian grids; slopes of $\ln\varepsilon$ against $\ln\Delta x$ | interpolation $L_2$/$L_\infty$ orders 2.30–3.00 (pressure 2.658/2.300, velocity components 2.994–2.998 in $L_2$, 2.712–2.831 in $L_\infty$); ghost-cell filling $L_2$ 2.84–2.96, $L_\infty$ 1.86–1.99; convective operator with the boundary 2.65–2.98 in $L_2$, 1.97–2.12 in $L_\infty$; viscous operator 2.01–2.32 in $L_2$, 2.05–2.38 in $L_\infty$ | van Noordt et al. (2022), §2.7, Tables 1–2 |
 
 Elzaabalawy et al. (2023, §5.1, Figs. 4–6) also use the manufactured
@@ -220,6 +251,17 @@ the estimated truncation error is the bottleneck (§4.2, §5).
   source's $\alpha$, in their convex blend of centred and WENO fluxes,
   Table 2), not the small blending factors of
   their turbulent runs.
+- **Rates against the label.** Sun et al. (2026, §7.1) call the $L^2$
+  order $N+1$ and $H^1$ order $N$ of their NURBS runs ($N$ the spline
+  degree) "higher than those from the error analysis for the Darcy
+  equations" and, in the next sentence, "optimal accuracy". Alberti et
+  al. (2025b) report one order less for the entropy-conserving flux than
+  for the entropy-stable one on the same meshes and give no further
+  explanation of the difference (App. B). Neither test involves
+  turbulence.
+- **Printed table entry (Alberti et al. 2025b).** Table VII prints the
+  coefficient $a^\psi_{12}$ of the pressure as "−250 00", with a digit
+  grouping unlike that of the other entries ("100 000", "−30 000").
 - Kurz et al. show only the density error, and Wang & Roy state no hardware
   for the costs of their error equations (Table 1).
 - Wang & Roy print "discretion error" for discretization error (§3.1) and
@@ -234,3 +276,5 @@ the estimated truncation error is the bottleneck (§4.2, §5).
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.3, Eq. (52), Table 3 (manufactured boundary-layer profile for a static reconstruction test).
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1 (order of FR-SA verified by MMS in earlier work).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1, §2.3 (boundary stencils, face against derivative order); §2.7, Eqs. (43)–(44), Tables 1–2 (manufactured solution on a unit sphere, interpolation, ghost-cell and operator orders).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — App. B, Eq. (B1), Table VII, Figs. 22–23 (Roy-type MMS for entropy-conserving and entropy-stable modal DG; orders $N$ and $N+1$).
+- [Sun et al. (2026)](/sources/sun-2026.md) — §7.1, Figs. 6–7 (time-dependent incompressible MMS on NURBS; spatial and temporal orders of HERK-VMS).

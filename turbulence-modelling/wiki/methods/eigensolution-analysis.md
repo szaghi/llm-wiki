@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Eigensolution (dispersion–dissipation) analysis"
-description: "Eigensolution analysis inserts Bloch waves into a linear discretization of advection to obtain numerical dispersion and dissipation; the page gives its temporal and spatial, semi- and fully-discrete forms for DG, flux reconstruction and spectral difference, mode counting, the time-step effects it predicts, and where under-resolved turbulence stops following it."
+description: "Eigensolution analysis inserts Bloch waves into a linear discretization of advection to obtain numerical dispersion and dissipation; the page gives its temporal and spatial, semi- and fully-discrete forms for DG, flux reconstruction, spectral difference and spline VMS, mode counting, the time-step effects it predicts, and where under-resolved turbulence stops following it."
 status: established
 aliases: [eigenanalysis, von Neumann analysis, dispersion–dissipation analysis, dispersion–diffusion analysis, spatial eigenanalysis, temporal eigenanalysis, fully-discrete eigenanalysis, semi-discrete eigenanalysis, wave propagation analysis, approximate dispersion relation, ADR]
 tags: [numerical-dissipation, dg, flux-reconstruction, implicit-les, dns]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # Eigensolution (dispersion–dissipation) analysis
@@ -212,6 +212,54 @@ are not the ones they use in turbulence: their Taylor–Green penalties are
 larger than those of the Burgers test, which they attribute to the $1/Re$
 scaling of the penalty (§4.2).
 
+## Advection–diffusion with a stabilized model: time-first against space-first VMS
+
+[Sun et al. (2026)](/sources/sun-2026.md), §5, App. B, apply a fully
+discrete Fourier analysis to the one-dimensional advection–diffusion
+equation $\partial_tu+a\,\partial_xu-\nu\,\partial_x^2u=0$ (periodic,
+uniform mesh) discretized by $C^1$ quadratic B-splines, a five-point
+stencil, with a residual-based
+[variational-multiscale](/methods/variational-multiscale-method.md) model.
+A mode $e^{\sigma t+\mathrm ikx}$ has the exact damping $\nu k^2$ and
+frequency $-ak$; the scheme's one-step amplification factor
+$\zeta^h=e^{\sigma^h\Delta t}$ gives the numerical damping
+$-\mathrm{Re}(\ln\zeta^h)/\Delta t$ and frequency
+$\mathrm{Im}(\ln\zeta^h)/\Delta t$, plotted against $k\Delta x$ for
+Courant number $a^*=a\Delta t/\Delta x$ and diffusion number
+$\nu^*=\nu\Delta t/\Delta x^2$ (page-local $\sigma$, $\zeta^h$, $a^*$,
+$\nu^*$, the source's $\nu$, $\kappa^*$). Three schemes are compared:
+
+- **RK($s,p$)-VMS**, time first (Rothe method): each explicit Runge–Kutta
+  stage is a steady problem whose fine scale is a mesh-independent
+  multiple $\tau^*\in(0,1)$ (page-local) of the stage residual;
+- **VMS-RK($s,p$)**, space first: the residual-based VMS
+  semi-discretization with the classical stabilization parameter
+  $\big[(2/\Delta t)^2+(2a/\Delta x)^2+9(4\nu/\Delta x^2)^2\big]^{-1/2}$
+  (Eq. 5.5), then Runge–Kutta;
+- the IMEX scheme of Le & Moin (Wray's RK3 with stage-wise Crank–Nicolson
+  for diffusion), written VMS-RK(3,3)-CN.
+
+Findings (§5.2–5.3, Tables 2–3, Figs. 1–5): both VMS variants have
+temporal order $p$; the time-first variant has leading spatial errors
+$O(\Delta x^4)$ in damping and $O(\Delta x^6)$ in frequency plus mixed
+$\Delta x^2\Delta t$-type terms, while in the space-first variant the
+stabilization parameter enters the mixed terms, so that when
+$\Delta x\ll\Delta t$ in advection-dominated conditions its spatial
+accuracy drops to third order in damping and fourth in frequency. The
+time-first variant's stability region extends further along $a^*$
+(convection-dominated), the space-first one is "more amenable to
+diffusion-dominated regimes"; decreasing $\tau^*$ widens the region along
+$a^*$, and except at $\tau^*=0.9$ raising the Runge–Kutta order widens it
+too. At high wavenumbers and large $a^*$ the time-first variant has the
+smaller damping and frequency errors. The implicit viscous treatment of
+the IMEX scheme enlarges stability at large $\nu^*$ (both explicit
+third-order variants are unstable for $\nu^*\gtrsim0.6$), at second-order
+temporal accuracy only. The authors add (Remark 4) that in Kolmogorov
+units the convective step limit, not the diffusive one, controls at high
+Reynolds number, so implicit diffusion "does not significantly enlarge the
+time step". The amplification factors of each variant are printed in
+closed form (Tables B.1–B.2).
+
 ## A nonlinear relative: the approximate dispersion relation
 
 Eigensolution analysis needs a linear scheme. For the nonlinear weighted
@@ -227,6 +275,17 @@ of the linear scheme over a wide wavenumber range, the smooth cutoff has
 linear scheme. No values are tabulated; the scheme's behaviour in scale-resolving runs is on
 [numerical dissipation](/properties/numerical-dissipation.md) and
 [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md).
+
+**Where neither applies.** [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md),
+§1, §4.1, citing Pirozzoli and Ruano et al., state that
+approximate-dispersion-relation analysis is limited to linear schemes,
+or one dimension without nonlinear interactions, and that their extension
+to unstructured meshes "leads to results that are not understandable and
+therefore of unclear value at present"; for nonlinear CWENOZ
+reconstructions on mixed-element meshes they adjust dissipation and
+dispersion cell by cell from a measured energy ratio instead (see
+[numerical dissipation](/properties/numerical-dissipation.md) and
+[WENO](/methods/weno-scheme.md)).
 
 ## Qualifications
 
@@ -277,3 +336,5 @@ linear scheme. No values are tabulated; the scheme's behaviour in scale-resolvin
 - [Kou et al. (2023)](/sources/kou-2023.md) — §3, App. A, App. C.1, Table 1, Table C.2, Figs. 1–4, C.17–C.18 (temporal eigensolution analysis of jump-penalized DG, spurious mode with central flux, CG limit); §4.2, §5 (penalties in the Taylor–Green vortex).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §5.2, Figs. 2–3 (von Neumann analysis of filtered artificial viscosity against Riemann-solver dissipation).
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §IV.A, Fig. 4 (approximate dispersion relation of fifth-order WCNS with linear, JS, Z, TENO-type and smooth-cutoff weights).
+- [Sun et al. (2026)](/sources/sun-2026.md) — §5.1–§5.3, Eqs. (5.2)–(5.8), Tables 2–3, Figs. 1–5, App. B, Tables B.1–B.2 (Fourier analysis of time-first and space-first VMS and Le–Moin IMEX with $C^1$ quadratic B-splines; Remark 4).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §1, §4.1 (limits of eigen-type and ADR analyses for nonlinear unstructured schemes, as cited).

@@ -5,7 +5,7 @@ description: "A turbulent boundary layer meeting a shock from a compression or s
 status: established
 aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet, shock train, pseudo-shock, expansion–compression corner, compression/expansion ramp, IUSTI interaction, Bachalo–Johnson bump]
 tags: [benchmark, compressible, hypersonic, boundary-layer, shock-boundary-layer-interaction, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg, wmles, data-driven, flux-reconstruction]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -247,6 +247,22 @@ $\Delta z^+=100$, $y^+=2.7$; mean and RMS wall pressure "converge
 gradually" and the selected grid agrees reasonably with the finest
 (§IV A, Table III, Fig. 4). See
 [grid-point requirements](/results/les-grid-point-requirements.md).
+The same group's later scheme paper,
+[Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md), names
+shock–boundary-layer interactions as a target application of its
+WENO5-H++ reconstruction (Abstract; §III) but simulates none; the scheme
+is recorded on [WENO schemes](/methods/weno-scheme.md).
+
+**Isolating the shock–turbulence physics.**
+[Cuadra et al. (2025)](/sources/cuadra-2025.md), §I, cite the growing
+number of scale-resolving studies of turbulent shock/boundary-layer
+interactions and argue that "it is crucial to isolate the various
+thermo-physical flow phenomena involved", so that the interaction of
+shocks with turbulence "also warrants analysis through isolated studies":
+the canonical shock–turbulence interaction, isotropic turbulence
+convected through a normal shock, which they review on
+[shock-generated turbulence](/results/shock-generated-turbulence.md) and
+with [linear interaction analysis](/methods/linear-interaction-analysis.md).
 
 **RANS with a compressibility correction.**
 [Zhao et al. (2023b)](/sources/zhao-2023-b.md) discretize the mean-flow
@@ -1654,3 +1670,5 @@ fin (Figs. 20, 27, 31, 35–40). Each case is one SST URANS run of about
 - [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A (PeleC, embedded boundaries); §III.A, Table 1, Figs. 2–3 (Mach 4 ramp, AMR, implicit LES resolution, inflow); §III.B–C, Eqs. (8)–(13) (cross-correlation, rescaled deformed-panel loads, SPOD extension); §IV.A, Figs. 5–7 (wall-pressure spectra and downstream propagation); §IV.B, Figs. 8–10 (one-way coupling); §IV.C, Eq. (12), Figs. 11–12 (intensity–dynamic-pressure threshold map); §V.
 - [Ye et al. (2024)](/sources/ye-2024.md) — §II A–D (SST URANS, AUSM+, MUSCL, FEM plate, loose coupling); §III A, Table I, Fig. 3 (sharp-fin validation); §IV C, Figs. 9–10 (quasi-conical structure, $\lambda$ shock); §IV D, Figs. 12–40 (panel response, modes, pressure fluctuations, separation-shock depression).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.1, Figs. 8–9 (Bayesian calibration of SST for compression corners, cited); §3.1.2 (Reynolds-stress discrepancy inversion, cited); §6 (prospects).
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — Abstract; §III (interactions as a target application of WENO5-H++; passing mention).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §I (canonical shock–turbulence interaction as the isolated study of the physics of these interactions; passing mention).

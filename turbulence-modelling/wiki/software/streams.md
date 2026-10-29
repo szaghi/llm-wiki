@@ -5,7 +5,7 @@ description: "STREAmS is an open-source multi-GPU finite-difference solver for c
 status: established
 aliases: [STREAmS-2.0, STREAmS 2.1, STREAMS]
 tags: [software, gpu, dns, compressible, implicit-les, immersed-boundary, boundary-layer]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-28T17:51:00Z
 ---
 
 # STREAmS
@@ -225,6 +225,19 @@ LESGO, CaNS and their incompressible GPU LES code [CaLES](/software/cales.md));
 their table does not list it among the codes that support LES. Placco et
 al. (above) run STREAmS as implicit LES.
 
+[Monteiro et al. (2026)](/sources/monteiro-2026.md), §1, Table 1, list
+STREAmS (both releases) among open-source GPU solvers as a compressible
+code in "Fortran / OpenMP / CUDA / HIP", and state that STREAmS and URANOS
+"deliver shock-capturing formulations on GPUs via CUDA and
+Fortran/OpenACC, respectively"; they also cite an OpenMP-offload
+evaluation of STREAmS on Intel GPU Max 1550 (Salvadore et al. 2024, their
+ref. [32]). [Cuadra et al. (2025)](/sources/cuadra-2025.md), §I, cite
+STREAmS-2 and its exascale porting among the finite-difference frameworks
+built for GPU architectures, in their review of shock–turbulence
+interaction (see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+Cogo et al. (2022, above) describe the code running on GPUs through CUDA
+Fortran; Monteiro et al. list OpenMP, CUDA and HIP back ends.
+
 ## Qualifications
 
 - [Kurz et al. (2025)](/sources/kurz-2025.md), §1, describe STREAmS (citing
@@ -257,3 +270,5 @@ al. (above) run STREAmS as implicit LES.
 - [Yu et al. (2023)](/sources/yu-2023.md) — §2 (reuse of the STREAmS database of Yu et al. 2022, numerics, boundary conditions, statistics).
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Eq. (6), Table I, Fig. 1 (STREAmS numerics and sensor, hypersonic oblique-shock DNS set-up and validation); §III B, Figs. 3–4; §V (RANS numerics).
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — §1, Table 1 (STREAmS-2 as a compressible GPU DNS solver among open-source codes).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §1, Table 1, ref. [32] (STREAmS among open-source GPU solvers; OpenMP offload evaluation, cited).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §I (STREAmS-2 among GPU finite-difference frameworks, cited; passing).

@@ -5,7 +5,7 @@ description: "The spectral difference method is a nodal high-order element schem
 status: established
 aliases: [SD, SD method, spectral difference, staggered-grid Chebyshev multidomain method]
 tags: [flux-reconstruction, dns, compressible, immersed-boundary, implicit-les, numerical-dissipation]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-28T17:50:00Z
 ---
 
 # Spectral difference method
@@ -309,7 +309,7 @@ modal Runge–Kutta DG, not for SD.
 
 ## Uses cited by other sources
 
-Five further sources mention SD only through the works they cite:
+Six further sources mention SD only through the works they cite:
 
 - **Wall-modelled LES.** In their review of
   [wall-modelled LES](/methods/wall-modelled-les.md),
@@ -337,6 +337,15 @@ Five further sources mention SD only through the works they cite:
   methods developed for unstructured meshes. None of the workshop
   participants in their Tables II–VII submitted SD results; the entries
   are DG, CPR, finite-difference and finite-volume codes.
+- **High-order DDES as motivation for WMLES.**
+  [Gao et al. (2025)](/sources/gao-2025.md), §I, cite their group's
+  delayed detached-eddy simulation in a high-order SD solver and its
+  30P30N high-lift-airfoil noise computation (their refs. 2–3), which
+  "successfully resolves separated flows and aeroacoustics, though the
+  near-wall resolution requirement ($y^+\approx1$) remains a limitation",
+  as the motivation of their slip-wall
+  [wall-modelled LES](/methods/wall-modelled-les.md) in a finite-difference
+  aeroacoustics solver (see [slip-wall models](/methods/slip-wall-model.md)).
 - **EDAC implicit LES.** [Vermeire (2024)](/sources/vermeire-2024.md),
   §3, writes flux reconstruction in lifting-collocation-penalty form with
   constant lifting coefficients chosen to recover DG (FRDG) and states that
@@ -409,3 +418,4 @@ Five further sources mention SD only through the works they cite:
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — review: §1, §3.2, Eqs. 21–22 (one-dimensional SD form).
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §3, Eqs. 10–13 (lifting coefficients recover SD, cited; FRDG used).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (SD3D among the comparators of entropy-filtered PyFR on the supersonic Taylor–Green vortex).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I (the group's high-order SD DDES and 30P30N noise computations, cited; $y^+\approx1$ requirement).

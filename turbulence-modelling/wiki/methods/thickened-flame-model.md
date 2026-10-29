@@ -5,7 +5,7 @@ description: "The thickened flame model of LES combustion widens the flame front
 status: established
 aliases: [TF model, TFLES, thickened-flame LES, dynamically thickened flame, DTF, DTFLES, artificially thickened flame, thickening factor, non-premixed thickened flame, flame sensor, minor-species correction, wrinkling factor]
 tags: [combustion, les, numerical-dissipation, thickened-flame]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Thickened flame model
@@ -240,6 +240,58 @@ whose LES with and without a subgrid combustion model gave similar
 results. The proposal is untested: there is no turbulent flame in the
 paper, and the authors restrict the analysis to high Damköhler number.
 
+## The model in engine LES
+
+The review of combustion models for internal-combustion-engine CFD by
+[Posch et al. (2025)](/sources/posch-2025.md), §4.5, states the model
+after Butler & O'Rourke and Colin et al., as cited: the flame is thickened
+from $\delta_u$ to $F\delta_u$ ($\delta_u$ the
+laminar flame thickness, page-local, as in the Fureby & Nilsson paragraph below) and an efficiency function, which
+plays the role of the wrinkling factor $\Xi_\Delta$ of the previous
+sections (the source's $E$), accounts for the wrinkling by eddies smaller
+than $F\delta_u$. The Favre-filtered species equation becomes
+(Eq. 43; $\tilde Y_k$ the Favre-filtered mass fraction, $D_k$ the molecular
+diffusivity of species $k$, $\bar{\dot\omega}_k$ its filtered rate,
+page-local)
+$$\frac{\partial\bar\rho\tilde Y_k}{\partial t}+\frac{\partial}{\partial x_i}\big(\bar\rho\tilde u_i\tilde Y_k\big)=\frac{\partial}{\partial x_i}\Big(\bar\rho\,\Xi_\Delta FD_k\frac{\partial\tilde Y_k}{\partial x_i}\Big)+\frac{\Xi_\Delta}{F}\bar{\dot\omega}_k-\frac{\partial}{\partial x_i}\Big[\bar\rho\big(\widetilde{u_iY_k}-\tilde u_i\tilde Y_k\big)\Big],$$
+the same form as Zhang et al.'s progress-variable equation above. The
+filtered rate comes from the Arrhenius laws "as in DNS", which the authors
+call a major advantage, since ignition and flame–wall interaction then
+need no submodel. The dynamic form of Légier et al. uses the sensor
+$$\Omega_{\mathrm{fs}}=\tilde Y_{\mathrm F}^{\nu_{\mathrm F}}\tilde Y_{\mathrm O}^{\nu_{\mathrm O}}\exp\!\Big(-\Gamma_{\mathrm a}\frac{T_{\mathrm a}}{\tilde T}\Big),\qquad F=1+(F_{\max}-1)\tanh\!\Big(b_{\mathrm{tf}}\frac{\Omega_{\mathrm{fs}}}{\Omega_{\mathrm{fs},\max}}\Big)$$
+(Eqs. 44–45; fuel and oxidizer mass fractions with their reaction orders,
+$T_{\mathrm a}$ the activation temperature, $\Gamma_{\mathrm a}<1$ a factor
+that lowers it artificially, $b_{\mathrm{tf}}$ the transition parameter and
+$\Omega_{\mathrm{fs},\max}$ the maximum of the sensor, analytic for a
+stoichiometric premixed flame; all page-local, the source's $\Gamma$,
+$\xi$, $\Omega_{TF}$, $\Omega_{max}$); its non-premixed application is
+DTFLES. On coarser grids, where $F$ and the efficiency both grow, the
+diffusion number can exceed the Courant number and restrict the time step,
+as the authors cite (§4.5). They cite the non-premixed TFM of Cuenot et
+al. as tested only on laminar steady strained flames (§4.5), which is the
+scope recorded in the sections above.
+
+The review's assessment of the model (§5.1.4, Table 6): because the
+formulation assumes no flamelets, it "can be considered as a
+regime-independent combustion model for LES"; the original form with
+global $F$ and static efficiency, calibrated against experiments, is
+limited to low-dynamics flows, and the dynamic form avoids altering mixing
+and diffusion away from the front; for highly stretched flames the burning
+velocity of the thickened flame is not conserved, and the stretch-aware
+variants with different thickening factors for mass and thermal diffusion
+and modified source terms are "still not widely applied" in engine
+simulation. Among the engine applications of Table 6, Granet et al.
+simulated 75 cycles (50 unstable, 25 stable) of a premixed propane
+research engine with the efficiency set to 2.0, reporting thickening
+factors below 8 for the unstable and close to 50 for the stable operating
+condition; other entries use the Charlette efficiency function, a dynamic
+exponent, adaptive mesh refinement, FGM chemistry, a stratified dynamic
+TFM with a fifth-order polynomial laminar flame speed and a wall treatment
+with $F$ and the efficiency set to 1 at walls (§5.1.4, Table 6, as
+cited). A thermodiffusive extension of the efficiency function derived from
+two-dimensional laminar simulations (Schuh et al.) is cited for hydrogen
+(§6.2.1).
+
 ## Finite-rate alternatives and the flame resolution of LES
 
 Thickening is one of several finite-rate closures of the filtered reaction
@@ -279,6 +331,29 @@ thermal thickness spans five points of a grid six times coarser than the
 DNS grid, five being "a typical number of points in the thermal thickness
 of a LES calculation" (§3.3, footnote 9). Their stretch results are on
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
+
+**The partially stirred reactor in RANS.** Posch et al. (2025), §4.2,
+state the RANS form of the same reactor model: the cell is split into
+reacting fine structures and non-reacting surroundings, mixed and then
+reacted in sequence, with the rate
+$\gamma^*_{\mathrm{PaSR}}\,\bar\rho\,(Y^*_k-Y^0_k)/\tau^*$ (Eq. 28; $Y^*_k$,
+$Y^0_k$ the fine-structure and surrounding compositions and $\tau^*$ the
+residence time in the fine structures, page-local), the reacting fraction
+$\gamma^*_{\mathrm{PaSR}}=\tau_{\mathrm{ch}}/(\tau_{\mathrm{ch}}+\tau_{\mathrm{mix}})$
+(Eq. 29, the form of Fureby & Nilsson's), the chemical time taken as the
+slowest, $\tau_{\mathrm{ch}}=\max\big(Y^*_k/\lvert\mathrm dY^*_k/\mathrm dt\rvert\big)$
+(Eq. 30), and the mixing time $\tau_{\mathrm{mix}}=C_{\mathrm{mix}}k/\varepsilon$
+(Eq. 31; $C_{\mathrm{mix}}$ page-local) with $C_{\mathrm{mix}}$ between 0.001
+and 0.3; the engine applications they review use 0.01–0.1, 0.005 and 0.1
+(§5.1.1, §5.2.1, Table 8). For LES they cite a phenomenological mixing
+time built from the subgrid dissipation rate and the fractal dimension of
+the turbulent field, where Fureby & Nilsson write
+$\tau_{\mathrm{mix}}\approx\sqrt{\tau_\eta\tau_\Delta}$. Posch et al. also
+state the eddy break-up rate $C_{\mathrm{EBU}}\bar\rho(\varepsilon/k)\tilde c(1-\tilde c)$
+(Eq. 27; $\tilde c$ the Favre progress variable, $C_{\mathrm{EBU}}$
+page-local), valid for high Reynolds and Damköhler numbers, which
+overestimates the rate where $\varepsilon/k$ is large and predicts
+non-physical burning near walls (§4.2).
 
 **Where conditional closures place the model.** The review of
 [conditional source-term estimation](/methods/conditional-source-term-estimation.md)
@@ -368,6 +443,13 @@ in the paper. See the [discontinuous Galerkin spectral element method](/methods/
   not tested separately; the authors mention a dynamic wrinkling exponent,
   which they cite, as an alternative to the fixed $\beta_{\mathrm{Ch}}=0.5$.
 - **Printed count in Salehi et al. (2024).** §1 announces that the closures "can be classified into the following four categories" and then numbers five (algebraic, reactor-type, laminar flamelet, conditional moment closure, transported PDF); the five are recorded above as printed.
+- **Posch et al. (2025).** §4.5 states that "the model constant $\beta$
+  has to be adjusted to the numerical scheme", while no $\beta$ appears in
+  the printed formulation (Eqs. 43–45). The review calls the model
+  "regime-independent" for LES (§5.1.4) and in §4.5 restricts it to cases
+  where emissions and strain effects are not essential, because thickened
+  flames still carry considerable unresolved content. All its evidence is
+  cited from the reviewed studies.
 - Agostinelli et al. and Cuenot et al. do not overlap in configuration:
   Agostinelli et al. apply the premixed dynamic form to a technically premixed swirl flame
   without studying it, and Cuenot et al. analyse non-premixed flames
@@ -382,3 +464,4 @@ in the paper. See the [discontinuous Galerkin spectral element method](/methods/
 - [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2 (DTFLES with Charlette efficiency function, $\beta_{\mathrm{Ch}}=0.5$, ARC chemistry, mesh); §3.1–3.3 (thermoacoustic outcome under two thermal wall treatments).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §6.3, Fig. 14 (DG LES with $N=3$ of the Volvo bluff-body flame with the thickened flame model; one or two elements across the reaction zone).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §1 (closure families, thickened flamelet model among topology-based approaches originally proposed for LES; flame resolution on LES meshes).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §4.2, Eqs. (27)–(31) (eddy break-up and partially stirred reactor in RANS); §4.5, Eqs. (43)–(45) (thickened species equation, Légier sensor, time-step restriction); §5.1.1, §5.2.1, Table 8 ($C_{\mathrm{mix}}$ values); §5.1.4, Table 6 (engine applications, regime independence, stretch); §6.2.1 (thermodiffusive efficiency function; review).

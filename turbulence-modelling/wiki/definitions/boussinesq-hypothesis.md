@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-28T17:45:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -436,6 +436,17 @@ and treatments of the trace; translated to the registry they agree.
   Eqs. 6–7). An et al. (2025) put the eddy viscosity into the viscous stress
   in the same way, $\rho(\nu+\nu_t)\big[\nabla\boldsymbol u+(\nabla\boldsymbol u)^{\mathsf T}-\tfrac23(\nabla\cdot\boldsymbol u)\mathbf I\big]$
   ([An et al. (2025)](/sources/an-2025.md), §2.1, Eq. 4).
+- **RANS of reacting engine flows.** Posch et al. (2025) state the
+  hypothesis for the Favre-averaged Reynolds stress $\langle\rho\rangle\langle u_i''u_j''\rangle_\rho$
+  of internal-combustion-engine CFD, with $\mu_t$ from zero-equation
+  (Prandtl), one-equation (Spalart–Allmaras) or two-equation ($k$-$\varepsilon$,
+  Jones & Launder) models, the Reynolds-stress model with six further
+  transport equations as the alternative, and turbulent Schmidt and Prandtl
+  numbers closing the species and enthalpy fluxes (see
+  [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)); they
+  add that the isotropy assumption of most RANS models "neglects significant
+  features" that affect mixture formation and flame–turbulence interaction
+  ([Posch et al. (2025)](/sources/posch-2025.md), §3.2.2, Eqs. 9–10).
 
 ### A traceless Reynolds stress
 
@@ -1366,3 +1377,4 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Ye et al. (2024)](/sources/ye-2024.md) — §II A, Eqs. (6)–(7) (stress and conductivity of an SST URANS).
 - [An et al. (2025)](/sources/an-2025.md) — §2.1, Eq. (4) (eddy viscosity in the viscous stress).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1, §3.1.2, Fig. 12 (eddy-viscosity assumption and discrepancy inversion, as cited).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.2, Eqs. (9)–(10) (Favre-averaged RANS closed by the Boussinesq approximation in engine CFD; isotropy assumption).

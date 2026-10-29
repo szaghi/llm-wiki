@@ -5,7 +5,7 @@ description: "A discretization is entropy conservative when its convective terms
 status: established
 aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability, entropy-stable RANS]
 tags: [entropy-stable, kinetic-energy-preserving, compressible, dg, dns, numerical-dissipation]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-29T05:15:00Z
 ---
 
 # Entropy conservation and entropy stability
@@ -430,10 +430,150 @@ Goc et al. (2021) with a KEEP scheme, which predicted the maximum lift of
 the High-Lift Prediction Workshop configuration (see
 [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
 
+The GPU-resident DNS solver RHEA-X of
+[Monteiro et al. (2026)](/sources/monteiro-2026.md), §2.3.1, offers the
+KEEP scheme of Kuya & Kawai, which preserves kinetic energy and entropy
+discretely, in the pressure-equilibrium-preserving form of Shima et al.
+(both cited; see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md));
+its baseline is the kinetic-energy-preserving split form without entropy
+preservation.
+
 **Entropy behaviour of a non-EC scheme.** In the real-gas mixing layer of
 [Bernades et al. (2023)](/sources/bernades-2023.md), §4.2, the
 pressure-equilibrium-preserving KGP-Pt scheme shows "good conservation" of
 global entropy although it is not entropy preserving.
+
+## Entropy projection and direct enforcement of the entropy balance (modal DG)
+
+[Alberti et al. (2025b)](/sources/alberti-2025-c.md), §II, make a modal
+DG (orthonormal hierarchical basis of total degree $N$ in physical space,
+arbitrary quadrature, any element type) entropy conserving or entropy
+stable without special nodes or split forms. With
+$\mathcal E=-\rho s/(\gamma-1)$, $s=\ln(p\rho^{-\gamma})$ (the entropy of
+Mateo-Gabín et al. above), entropy flux $u_j\mathcal E$ and potentials
+$\theta=W^{\mathsf T}Q-\mathcal E=\rho$, $\psi_j=W^{\mathsf T}F_j-u_j\mathcal E=\rho u_j$
+($F_j$ the inviscid flux; page-local $\theta$, $\psi_j$):
+
+- **Entropy projection.** The unknowns stay conservative, but every
+  space operator is evaluated from $W_h$, the $L^2$ projection of the
+  entropy variables of the discrete solution onto the polynomial space
+  (Eqs. 8, 11–12; the authors' earlier inviscid work).
+- **Direct enforcement of the entropy balance (DEEB).** Inexact quadrature
+  breaks the commutation of volume and surface integrals on which the
+  entropy balance rests (Eq. 19). An element-wise correction after
+  Abgrall (Eqs. 23–25), with amplitude
+  $$a^{\mathrm{DEEB}}_K=\int_K\Big(\frac{\partial W_h}{\partial x_j}\Big)^{\mathsf T}F_j(W_h)\,dV-\oint_{\partial K}\psi_j(W_h)\,n_j\,dS$$
+  ($a^{\mathrm{DEEB}}_K$ page-local, $K$ the element, as on the Source
+  page; not the DG/FV blending factor $\alpha$), is distributed
+  over all modal coefficients except the element mean (so the means stay
+  conservative), in proportion to the fluctuation of $W_h$ about its
+  element mean, and is skipped when its denominator is below $10^{-14}$.
+  The authors call it "completely free from user-defined parameters";
+  it costs below 1% of the CPU time for $N\ge2$, the projection 2.5%
+  ($N=1$) to 6.6% ($N=9$), together "never" more than 7% (App. A,
+  Table VI).
+- **Flux choice decides the property.** With the correction, the
+  semi-discrete entropy production reduces to the interface terms
+  $-\oint[\![W_h]\!]^{\mathsf T}\hat F-[\![\psi_j]\!]n_j$ (Eq. 26), so a
+  numerical flux satisfying Tadmor's condition
+  $[\![W_h]\!]^{\mathsf T}\hat F-[\![\psi_j]\!]n_j\ge0$ (Eq. 22) gives an
+  entropy-stable convective discretization: Ismail–Roe (equality, entropy
+  conserving) or the Godunov flux of the exact Riemann solver (entropy
+  stable). The entropy-conserving flux converges at order $N$, the
+  entropy-stable one at $N+1$ on a manufactured solution (App. B; see
+  [method of manufactured solutions](/methods/method-of-manufactured-solutions.md)).
+- **Entropy-stable isothermal wall.** For the weakly imposed no-slip wall
+  with mirrored velocity and extrapolated thermodynamic state, the
+  boundary entropy flux of the convective part is
+  $(p^*-p^-)\,W^-_{1+i}n_i$ (Eq. 31; $p^-$ the interior pressure, $p^*$ the
+  wall pressure, $W^-_{1+i}=\rho u_i/p$ on the interior side), positive
+  when $p^*$ is the exact Riemann solution against a wall (reflected shock
+  for inflow toward the wall, expansion otherwise, Eqs. 28–29), so the
+  wall is entropy stable; extrapolating the pressure ($p^*=p^-$, the
+  Ismail–Roe choice) gives zero, an entropy-conserving wall. The
+  relations are exact only with DEEB. The viscous part imposes $T_w$
+  through the BR2 flux with its own wall penalty. The authors state that
+  this condition is "the standard method used in our code ... following
+  the original work of Bassi, even though it is not explicitly documented
+  in [Bassi's] literature" (§II B).
+- **Viscous terms.** No entropy-stability proof of BR2 for the
+  Navier–Stokes equations exists (cited). Freezing the viscous matrix at
+  element means, the authors bound the BR2 interface contribution by
+  non-negative terms (generalized Young inequality), so the penalty
+  $\eta_F$ (page-local) multiplies an entropy source that grows with the
+  interface jumps (App. C, Eqs. C1–C5).
+
+Without DEEB the baseline DG in conservative variables "is not able to
+run" their compressible channels (§III A 2, no figure); a run at $N=9$
+without the correction but with the entropy projection does run at
+$M_b=3$ (Figs. 6–7). Their implicit-LES results, entropy-conserving flux
+best near the incompressible limit, entropy-stable flux best at high Mach
+number, the pure entropy-conserving flux crashing at $M_b=3$ until a
+Rusanov-like upwind bias is added, are on
+[implicit LES](/definitions/implicit-les.md) and
+[numerical dissipation](/properties/numerical-dissipation.md).
+
+## Global against selective entropy stability in DGSEM
+
+[Bilocq et al. (2025)](/sources/bilocq-2025.md), §3.3–3.6, compare, in
+one Cartesian collocated DGSEM, two fully entropy-stable discretizations
+and a selective one on under-resolved compressible turbulence with shocks
+or shocklets (entropy $-\rho s$, a factor $\gamma-1$ from $\mathcal E$;
+convention in words):
+
+- **ESDG-GL**, on Gauss–Legendre nodes: interpolation in entropy
+  variables, flux differencing with Chan's hybridized skew-symmetric
+  summation-by-parts operator and the Chandrashekar two-point flux, the
+  three-step entropy projection, and an interface flux of the
+  entropy-conservative flux plus a Lax–Friedrichs penalty on the jump of
+  the entropy variables (Eqs. 24–27);
+- **ESDG-GLL**, on Gauss–Lobatto nodes with the generalized
+  summation-by-parts operator, where the projection is the identity but
+  quadrature is exact only to degree $2N-1$ (Eq. 28);
+- **DG-ES**, the authors' contribution: ESDG-GL only in cells flagged by
+  a modal-energy sensor, the unstabilized DG elsewhere (§3.6; no entropy
+  inequality is printed for the mixed interfaces).
+
+Findings (§4):
+
+- **Accuracy in decaying isotropic turbulence** ($M_{t,0}=0.6$,
+  $Re_{\lambda,0}=100$, $N=5$, $11^3$ elements): both fully entropy-stable
+  schemes underestimate the peak of the mean-square vorticity, which the
+  authors call "surprising" for ESDG-GL; they attribute it, for ESDG-GL, to the error of
+  projecting the non-polynomial entropy variables and, for ESDG-GLL, to
+  under-integration; over-integration would reduce the projection error
+  but "significantly degrades computational performance" (§4.1.2, Fig. 1).
+- **Supersonic Taylor–Green vortex** ($M_0=1.25$, $Re=1600$, $N=3$):
+  ESDG-GL underpredicts the solenoidal dissipation from the peak onward,
+  ESDG-GLL more; the schemes with the projection overpredict the
+  dilatational dissipation, because entropy variables perturb surface
+  quantities and hence the velocity divergence; ESDG-GL has the largest
+  [pressure-dilatation](/definitions/pressure-dilatation.md) errors, which
+  they attribute to the ill-conditioning of the entropy-to-conservative
+  map near large pressure gradients (§4.2.3, Figs. 7, 9, 11).
+- **Robustness.** Every stabilization runs the coarse meshes on which the
+  unstabilized DG diverges, and the selective DG-ES is enough for all of
+  them (§4.1.3, Table 1): the authors conclude that it "appears sufficient to
+  satisfy the second law of thermodynamics only in the troubled cells".
+  The entropy projection restricts the time step most; with strong
+  shocks the time-step constraint decreases "quadratically with grid
+  refinement" (§4.3.2; Tables 2, 7, 9, 11).
+- **Cost** relative to the unstabilized DG (Tables 3, 8): ESDG-GL
+  1.86–2.27, ESDG-GLL 1.16–1.53, DG-ES 1.25–1.27; relative to DG-AV
+  (Tables 10, 12): 1.58–1.68, 1.01–1.06 and 1.21–1.28; the summation-by-parts operator
+  needs $O(N^4)$ two-point flux evaluations against $O(N^3)$ single-point
+  ones (§4.1.4).
+- **Overall.** DG-ES gives the most accurate turbulent structures across
+  the four tests and is barely sensitive to the detector and to the node
+  set; full entropy stability damps vortical structures and degrades the
+  pressure dilatation, an impact the authors say the literature "has not
+  really acknowledged nor quantified" (§1, §5).
+
+The artificial-viscosity side of the same comparison is on
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md),
+the selective use of the sensor on
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
 
 ## Limits
 
@@ -450,7 +590,11 @@ global entropy although it is not entropy preserving.
   Gauss–Lobatto nodes (§3.3).
 - **Walls and hypersonic transients.** Potluri et al. (2023, §1) note,
   citing earlier work, that entropy-stable wall boundary conditions cannot
-  accommodate isothermal walls; their entropy-conservative split-form
+  accommodate isothermal walls; Alberti et al. (2025b, §II B, Eq. 31)
+  print an isothermal no-slip wall whose convective part is entropy
+  stable with the exact-Riemann wall pressure, with the wall temperature
+  imposed in the BR2 viscous flux, for which they state no
+  entropy-stability proof (App. C); their entropy-conservative split-form
   DGSEM with subcell blending crashes in the initial transient of laminar
   hypersonic boundary layers at $M_\infty\ge6$ until the viscous residual
   is limited near the wall (§3.3; see
@@ -468,6 +612,18 @@ global entropy although it is not entropy preserving.
   for the Peng–Robinson equation of state (a conjecture).
 
 ## Qualifications
+
+- **Printed signs in Alberti et al. (2025b).** With their stated jump
+  $[\![\cdot]\!]=(\cdot)^+-(\cdot)^-$ and normal from $-$ to $+$, element-wise
+  integration by parts gives the face terms of Eqs. (9) and (26) with the
+  opposite sign; the printed Eqs. (9), (22) and (26) are consistent with
+  each other if the jump is read as $(\cdot)^--(\cdot)^+$ *(compiler
+  check, not in the sources)*.
+- **Evidence in Bilocq et al. (2025).** The robustness of the selective
+  scheme is shown on four test cases, with no entropy inequality printed
+  for it; the
+  comparison uses one solver, one Riemann flux (local Lax–Friedrichs) and
+  RK4 time stepping.
 
 - **"Entropy stable" with a source term.** In Lodares et al. (2022) the
   bound admits entropy growth wherever SA production exceeds destruction
@@ -550,3 +706,6 @@ global entropy although it is not entropy preserving.
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §1; §2, Eqs. (13)–(17) (compressible SA, negative variant, clipped diffusion); §3.1–3.2, Eqs. (29)–(50) (SA entropy, split analysis); §4.3–4.5, Eqs. (68)–(77) (two-point flux, interface flux, walls); §5, Eqs. (83)–(118) (semi-discrete entropy laws); §7.1–7.2, Figs. 3–6.
 - [Potluri et al. (2023)](/sources/potluri-2023.md) — §1 (entropy-stable wall conditions and isothermal walls, cited); §3.1.2 (Chandrashekar volume flux, blended matrix-dissipation surface flux); §3.2 (BR1 in entropy variables); §3.3.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4 (KEP and KEEP fluxes for scale-resolving simulation, cited; CharLES KEEP at high lift, cited).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §II, Eqs. (8)–(26) (entropy projection, DEEB, Tadmor condition, EC and ES fluxes); §II B, Eqs. (27)–(32) (entropy-stable and entropy-conserving isothermal walls); App. A, Table VI (cost); App. B (orders $N$ and $N+1$); App. C, Eqs. (C1)–(C5) (BR2 entropy contribution); §III A 2, Figs. 6–7.
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §2.2, Eqs. (5)–(12) (entropy function and variables); §3.3–3.6, Eqs. (24)–(28) (ESDG-GL, ESDG-GLL, DG-ES); §4.1–4.4, Tables 1–12, Figs. 1, 7, 9, 11 (accuracy, robustness, time step, cost); §1, §5.
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §2.3.1, Eq. (21) (KEEP and KEEP-PEP options of RHEA-X; passing).

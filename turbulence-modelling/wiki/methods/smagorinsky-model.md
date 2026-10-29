@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-28T17:45:00Z
 ---
 
 # Smagorinsky model
@@ -94,6 +94,7 @@ are variants of the same eddy-viscosity idea.
 | printed $\nu_t=C_s\Delta^2\lvert\bar S\rvert$ with $C_s=0.12$ "as in Ref. 60", the coefficient to the first power (so 0.12 plays the role of the registry's $C_s^2$), $\Delta$ the cube root of the cell volume | second-order central comparison run beside a sixth-order compact scheme with implicit spectral vanishing viscosity, bluff-body wall-modelled LES in Xcompact3d | [Yan et al. (2024)](/sources/yan-2024.md), App. B2, Eqs. (B9)–(B11); their Ref. 60 is Wang et al. (2024d) (row above), which prints $(C_s\Delta)^2$ with $C_s=0.12$ |
 | dynamic, with a Yoshizawa isotropic part of constant $C_I=0.06$ (after Vreman et al., cited) | compressible LES with a curvilinear immersed boundary, hybrid central/WENO fluxes | [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §2.1, Eqs. (7)–(10) |
 | dynamic $C_s^2$, Yoshizawa coefficient and turbulent Prandtl number, $\Delta=V_c^{1/3}$ ($V_c$ the cell volume) | wall-resolved LES of a supersonic boundary layer at $M_\infty=2.0$, seventh-order WENO | [Wang et al. (2024c)](/sources/wang-2024-j.md), §II.B, Eqs. (12)–(13) |
+| not printed (the compressible model of Abbà et al., cited), the filter being the projection onto the local polynomial space | $p$-adaptive local DG LES of the square cylinder at $Re=22\,000$, $M=0.3$, degrees 2–4 on tetrahedra | [Valvo & Abbà (2025)](/sources/valvo-2025.md), §2.1, §5 |
 
 Wang et al. (2021, §3.1), citing earlier work, relate the coefficient to
 the Kolmogorov constant by $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$
@@ -914,6 +915,40 @@ methods (Hou et al., cited).
   Roe implicit LES that gives results comparable to the Smagorinsky model
   on a channel and a stator–rotor cavity (see
   [implicit LES](/definitions/implicit-les.md)).
+- **Static against dynamic in the shock–turbulence interaction (cited).**
+  [Cuadra et al. (2025)](/sources/cuadra-2025.md) (§III A 3), reviewing
+  LES of isotropic turbulence convected through a normal shock, cite
+  Garnier et al. (2002): with the explicitly modelled subgrid stress of
+  the dynamic Smagorinsky model the filtered kinetic energy and Reynolds
+  stresses of well-resolved runs improved "significantly" relative to
+  coarsened DNS and to the static Smagorinsky model, "which proved under-
+  and over-dissipative, respectively"; on coarser grids, where the shock
+  corrugations become subgrid, the predictions deteriorate "not
+  necessarily due to breakdown of the post-shock subgrid model" but from
+  the insufficient resolution of the shock. They cite Bermejo-Moreno et
+  al. for switching the subgrid fluxes off in cells where the
+  shock-capturing scheme is active, so that subgrid dissipation does not
+  add to the numerical one, and note that the isotropic part of the
+  subgrid stress becomes "increasingly important" with the turbulent Mach
+  number and must be modelled in the energy equation too (see
+  [dynamic procedure](/methods/dynamic-procedure.md),
+  [shock sensors](/definitions/shock-sensor.md) and
+  [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+- **An explicit model on a dissipation-free DG baseline, against implicit
+  LES (cited).** [Alberti et al. (2025b)](/sources/alberti-2025-c.md) (§I)
+  cite Flad & Gassner's kinetic-energy-preserving DGSEM with a dynamic
+  Smagorinsky model for an under-resolved low-Mach channel at
+  $Re_\tau=590$, with "substantial agreement" with DNS "even on coarse
+  grids"; their own entropy-conservative modal DG runs the same kind of
+  channel as an [implicit LES](/definitions/implicit-les.md) with no model,
+  and they report its stability without a model as "similar to that
+  reported for DGSEM by Flad and Gassner" (§I).
+- **Named in engine LES.** [Posch et al. (2025)](/sources/posch-2025.md)
+  (§3.2.3) name the Smagorinsky model, with the dynamic one-equation
+  structure models of Pomraning & Rutland (see
+  [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md)),
+  as the subgrid closures of LES of internal combustion engines, in a
+  review that prints no subgrid result.
 - **Baseline beaten by learned models (cited).** [Fang et al. (2026)](/sources/fang-2026.md),
   a review, relay that a deep network trained on DNS of the atmospheric
   boundary layer predicts subgrid stresses better than the Smagorinsky
@@ -1130,3 +1165,7 @@ methods (Hou et al., cited).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.2, §5.1 (learned models beating Smagorinsky baselines, cited). Review, citation only.
 - [Wu et al. (2024b)](/sources/wu-2024-b.md) — §II, Eqs. (28)–(38) (Smagorinsky limit of SATES, $C_s=0.1$, $C_x=0.61$).
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §3.1.1–3.1.2, Eq. (25), Figs. 5, 10 (equivalent Smagorinsky constant of DES branches in DG).
+- [Valvo & Abbà (2025)](/sources/valvo-2025.md) — §2.1, §5 (compressible Smagorinsky in $p$-adaptive LDG LES of the square cylinder; constant not printed).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 3 (static against dynamic Smagorinsky in shock–turbulence LES, Garnier et al. cited; subgrid fluxes switched off at shocks; isotropic part). Review, citation only.
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I (dynamic Smagorinsky on KEP-DGSEM of Flad & Gassner, cited).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.3 (named among engine-LES closures). Review, citation only.

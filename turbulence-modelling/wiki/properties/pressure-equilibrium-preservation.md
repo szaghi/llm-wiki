@@ -5,7 +5,7 @@ description: "A scheme is pressure-equilibrium preserving when uniform pressure 
 status: established
 aliases: [PEP, pressure equilibrium preserving scheme, KGP-Pt, KGP-PT scheme, pressure-equilibrium-preserving split form, CDHD, central differential flux with high-order dissipation, primitive-variable hybrid scheme]
 tags: [pressure-equilibrium, kinetic-energy-preserving, compressible, real-gas, numerical-dissipation, dns]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-29T05:15:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -240,6 +240,31 @@ streamwise Reynolds stress (max-norm relative difference) at Mach 5 (§4.2, Tabl
 thermodynamic coupling in the pressure treatment" is, with entropy
 consistency, "essential" (§5).
 
+**Both routes in a GPU DNS solver.** The open-source GPU-resident
+solver RHEA-X of [Monteiro et al. (2026)](/sources/monteiro-2026.md),
+§2.3.1, Eqs. (21)–(23), carries one scheme of each route next to its KGP
+baseline. For ideal gases, the KEEP scheme of Kuya & Kawai with the
+pressure-equilibrium-preserving internal-energy flux of Shima et al.
+(both cited), whose pressure–velocity part at the face between points $m$
+and $m+1$ is printed as
+$$\tilde I_j=\frac{(p_{m+1}+p_m)(u_{j,m+1}+u_{j,m})}{4(\gamma-1)},$$
+($\tilde I_j$ page-local, not a Favre-filtered quantity), stated to keep a
+uniform pressure invariant and recommended for weakly compressible and
+variable-density ideal-gas DNS at low Mach number. For real fluids, the
+KGP-Pt pressure equation of Bernades et al. with $a_p=0$ (the source's
+$\eta$), with the viscous and conductive source terms of the pressure
+equation scaled by a ratio of two thermodynamic coefficients that the
+paper does not define (Eq. 22); total energy is not strictly conserved,
+"the residual error is dissipative and decays quadratically with grid
+refinement", and the scheme is preferred for transcritical and
+supercritical flows. The pressure is advanced in lockstep with the
+conserved variables and updated first at each Runge–Kutta stage
+(Algorithm 1). This real-fluid configuration (Peng–Robinson equation of
+state, Chung et al. transport) is the baseline of the performance study;
+on CPUs real-fluid thermodynamics adds 82–88% to the run time (§5.1).
+The supercritical nitrogen jet they validate with it agrees with Raman
+density data (§4.5, Fig. 8).
+
 **Named but not used in an LES comparison.** [Volpiani (2024)](/sources/volpiani-2024.md),
 §2.2.3, lists pressure-equilibrium-preserving and entropy-preserving split
 forms (Shima et al., De Michele & Coppola, Bernades et al.) among the
@@ -339,13 +364,11 @@ review's evidence for any of the four.
   from the cited works, that double flux gives oscillation-free
   solutions; Bernades et al. (2023, §4.1.2) find that double flux keeps
   pressure equilibrium with an upwind (HLLC) flux but not with the KGP
-  split. The two statements concern different base fluxes and
-  discretizations (DG with Riemann fluxes against centred differences),
-  so no contradiction is recorded. Xu et al. (2026, §1) judge the
+  split; the first statement concerns DG with Riemann fluxes, the second
+  centred differences. Xu et al. (2026, §1) judge the
   $L^2$-projection approach (in Ching et al.'s DG form) able to leave
-  "small deviations from pressure equilibrium", consistent with the
-  0.1–1% oscillation level that Lv & Ekaterinaris report for Franchina et
-  al.'s form.
+  "small deviations from pressure equilibrium"; Lv & Ekaterinaris report
+  a 0.1–1% oscillation level for Franchina et al.'s form.
 - **Printed slips.** §4.2 gives the perturbation wavelength as
   $\lambda=1/k=1/3$ m for $k=6$; for $\sin(k\pi x)$ the wavelength is $2/k$,
   which the same section uses in $t_c=2/(k\Delta u)$ *(compiler check, not
@@ -377,3 +400,4 @@ review's evidence for any of the four.
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §2.2.3, Eqs. (14)–(17) (split forms with enthalpy splitting; PEP schemes named, not treated); §3.2 (Taylor–Green setup).
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1 (definition, requirements); §2.1, Eqs. (2)–(4) (pressure equation); §3.1, Eqs. (8)–(13) (semi-discrete framework, split forms, KEP family); §3.1.2, Eqs. (14)–(28) (induced pressure and energy equations, chain rule, CR class, KGP-Pt); §3.1.3, Table 1; §3.2, Table 2 (comparison schemes); §4.1, Figs. 1–3; §4.2, Figs. 4–7; §4.3, Figs. 8–10; §5.
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.3, Figs. 3–4 (mechanism of spurious pressure oscillations with variable thermodynamics; γ-advection, pressure evolution, double flux and its hybrid, $L^2$-projected equation of state); §4.2 (interface-consistent WENO limiting; review).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §2.3.1, Eqs. (21)–(23) (KEEP-PEP for ideal gases, KGP-Pt with $a_p=0$ for real fluids in RHEA-X); Algorithm 1; §4.5, Fig. 8; §5.1.

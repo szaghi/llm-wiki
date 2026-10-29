@@ -3,9 +3,9 @@ type: Method
 title: "Conditional source-term estimation"
 description: "Conditional source-term estimation closes the mean or filtered reaction rate of RANS and LES with the conditional moment closure hypothesis, recovering the conditional means by a regularized inversion of an integral equation over ensembles of cells instead of transporting them; this page gives the inversion, its regularization, presumed PDFs, double conditioning and the assessed errors."
 status: established
-aliases: [CSE, conditional source-term estimation, doubly conditional source-term estimation, DCSE, localized CSE, conditional moment closure, CMC, first conditional moment closure hypothesis, presumed PDF, beta PDF, Tikhonov regularization]
+aliases: [CSE, conditional source-term estimation, doubly conditional source-term estimation, DCSE, localized CSE, first conditional moment closure hypothesis, presumed PDF, beta PDF, Tikhonov regularization]
 tags: [combustion, les, rans, a-priori-a-posteriori, presumed-pdf]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-28T17:46:00Z
 ---
 
 # Conditional source-term estimation
@@ -54,6 +54,10 @@ the molecular, turbulent and total diffusivities, $Sc_t$ the turbulent
 Schmidt number.
 
 ## Conditional moment closure: the hypothesis CSE inherits
+
+The parent model, its transport equation, closures, cost and engine
+applications are on [conditional moment closure](/methods/conditional-moment-closure.md);
+this section keeps what CSE inherits from it.
 
 Evaluating the rate at the mean or filtered state,
 $\tilde{\dot\omega}_k\approx\dot\omega_k(\bar\rho,\tilde Y_k,\tilde T)$
@@ -302,6 +306,15 @@ neither does well for F; CMC needs more resources and is more sensitive to
 inlet conditions and to the conditional scalar-dissipation model (§2.10,
 Table 3).
 
+CSE has also served as the LES formulation of CMC itself: in the
+review of engine combustion models by
+[Posch et al. (2025)](/sources/posch-2025.md), Huang et al. apply CMC in
+LES of a diesel-pilot natural-gas dual-fuel engine and "used conditional
+source term estimation" for the CMC LES formulation, with
+low-dimensional manifolds for the chemistry, and claim agreement with
+measured in-cylinder pressure and emissions (§4.7, §5.2.3, Table 10;
+the review reports the claim without assessing it).
+
 **Applications** reported in the review (§3, as reproduced):
 
 | Flame | Model | Result |
@@ -365,3 +378,4 @@ spray flames, engines and a semi-industrial furnace, several run in
 # Citations
 
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §1, Eq. (1) (first-moment closure, closure families, LES resolution); §2.1, Eqs. (2)–(4), Fig. 1, Table 2 (CMC hypothesis and transport, a priori illustration); §2.2, Eqs. (5)–(7), Table 1 (CSE identity, ensembles, Germano analogy); §2.3, Eqs. (8)–(10), Fig. 2; §2.4, Eqs. (11)–(14), Fig. 44 (DCSE); §2.5–2.6, Eq. (15), Figs. 3–5 (ensemble selection, cost, parallel inversion); §2.7, Eqs. (16)–(31), Figs. 6–8 (presumed and joint PDFs, scalar transport); §2.8.3 (detailed chemistry, elemental conservation); §2.9.1–2.9.5, Eqs. (39)–(56), Figs. 13–18 (ill-posedness, Picard condition, Tikhonov, TSVD, parameter choice, solvers, NNLS, Bernstein polynomials); §2.10, Table 3 (CSE against CMC); §3.1.1, Figs. 19–21; §3.2.1, Fig. 34; §3.2.2, Eq. (58), Figs. 38–43; §3.3.2, Table 6; §3.4.3; §4.1–4.3.
+- [Posch et al. (2025)](/sources/posch-2025.md) — §4.7; §5.2.3, Table 10 (CMC in LES of a dual-fuel engine with CSE as its LES formulation; passing mention).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Slip-wall models"
-description: "Wall-modelled LES boundary conditions that let the filtered velocity slip at the wall instead of imposing a wall stress: the dynamic Robin slip condition of Bose & Moin as reviewed by Bose & Park, the volume-filtered wall slip of Rickard & Kasbaoui with its van Driest and slip-length closures, and the slip target velocities of diffused-interface immersed boundaries."
+description: "Wall-modelled LES boundary conditions that let the filtered velocity slip at the wall instead of imposing a wall stress: the dynamic Robin slip of Bose & Moin reviewed by Bose & Park, the volume-filtered slip of Rickard & Kasbaoui with its closures, and slip velocities extrapolated from wall-stress models on immersed boundaries and body-fitted grids."
 status: established
 aliases: [slip wall, dynamic slip wall, dynamic slip-wall model, Robin slip condition, wall-slip model, slip-length model, Van Driest slip model]
 tags: [wall-model, wmles, filtering, immersed-boundary]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Slip-wall models
@@ -287,6 +287,69 @@ velocity at the marker.
   by the immersed-boundary force, "mimicking the slip boundary condition"
   (§II D, §III A, Fig. 1).
 
+## Slip velocity from an equilibrium wall-model gradient (body-fitted grids)
+
+A slip velocity extrapolated from a wall-model gradient, as in Yan et al.
+above, is also imposed on a body-fitted grid, without an immersed
+boundary, by [Gao et al. (2025)](/sources/gao-2025.md) (§I.B, §II.B).
+They contrast it with the differential-filter slip, whose
+equation they cite (Eq. 3, after Bose & Moin, Bae et al. and Germano, as
+they cite them) with the slip length set dynamically "without predefined
+coefficients": their slip comes from a predefined
+[equilibrium wall model](/methods/equilibrium-wall-model.md) instead.
+With $U_{\mathrm{LES}}$ the tangential LES velocity at the sample point
+and $h_{\mathrm{wm}}$ its wall distance (registry §5), $u_{\mathrm{slip}}$
+the tangential velocity imposed at the wall (the wall slip velocity of
+registry §11; Yan et al.'s $u^{\mathrm{BR}}_s$ above) and
+$\mu^w_{\mathrm{sgs}}$ the mixing-length eddy viscosity of the wall model
+(registry §11):
+
+- the compressible equilibrium ODEs are solved on a one-dimensional
+  virtual mesh of 100 points (hyperbolic-tangent stretching factor 2.0)
+  between the wall and the sample point, which is the **second** grid
+  point off the wall "to mitigate numerical and SGS errors" at the first
+  one (following Kawai & Larsson, as cited), and give $\tau_w$
+  (§II.B.1, Eqs. 8–12);
+- since $\mu^w_{\mathrm{sgs}}=0$ at the wall, integrating the momentum ODE
+  gives a constant total stress, so the modelled gradient at the sample
+  point is $\tau_w/(\mu+\mu^w_{\mathrm{sgs}})|_{h_{\mathrm{wm}}}$ (Eqs.
+  13–16);
+- a straight line through the sample-point velocity with that gradient,
+  extrapolated to the wall, gives the slip (Eqs. 17–18),
+
+  $$u_{\mathrm{slip}}=U_{\mathrm{LES}}-h_{\mathrm{wm}}\frac{\tau_w}{(\mu+\mu^w_{\mathrm{sgs}})\big|_{h_{\mathrm{wm}}}},$$
+
+  imposed as the tangential wall velocity with zero wall-normal velocity.
+  The stated rationale is numerical stability of the LES in the
+  wall-adjacent cells and consistency with the log-law region (§II.B.2).
+
+Set side by side with Yan et al.'s Eq. (23), the printed gradients differ
+by the pressure-gradient term: Yan et al. keep
+$h_{\mathrm{wm}}\,\partial p/\partial s$ in the numerator, Gao et al. use
+the equilibrium (zero-pressure-gradient) total stress $\tau_w$ alone and
+name the pressure-gradient source terms as future work (§IV). Gao et al.
+run the condition in a fourth-order DRP finite-difference
+computational-aeroacoustics code with the Vreman model, on channel flow
+at $Re_\tau=576$–5100 and a flat-plate boundary layer at Mach 0.15; the
+mean velocity follows the log law for sample points at $y^+=55$–220 (see
+[log-layer mismatch](/definitions/log-layer-mismatch.md)), and the
+resolutions and wall-pressure errors are on the
+[wall-modelled LES](/methods/wall-modelled-les.md) page. The authors list
+as limitations that the condition adds low-frequency acoustic content,
+attributed to fluctuations at the sample point transmitted to the wall
+through the wall function, and that it does not account for natural
+transition (§III.B.2).
+
+The opposite choice is made in a high-order
+[flux reconstruction](/methods/flux-reconstruction.md) WMLES by
+[Gao et al. (2025b)](/sources/gao-2025-b.md) (§II D): they write that
+"previous wall-model studies all stressed the importance of the slip
+boundary condition" and that Shi et al. (as cited) found that the slip
+wall works better, and they impose no slip instead, the modelled stress
+entering through the wall viscous flux and the inviscid wall flux being a
+hybrid of a weak-prescribed and a weak-Riemann flux (details on the
+[wall-modelled LES](/methods/wall-modelled-les.md) page).
+
 ## Zero-shear slip walls are not slip-wall models
 
 An inviscid slip wall, with only no penetration and zero wall shear stress,
@@ -339,3 +402,5 @@ the stalled state at 19.9° was largely invariant to it (§V, Figs. 35–36).
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1 (slip conditions among prior bump WMLES; passing).
 - [Yan et al. (2024)](/sources/yan-2024.md) — §I, Table I (wall-modelled diffused-interface IBMs by modified quantity); §II C, Eqs. (21)–(23), (31)–(32) (slip target velocity and its limiters).
 - [Wang et al. (2024d)](/sources/wang-2024-k.md) — §II D, Fig. 1; §III A (slip velocity at the forcing point of the diffusive-interface IBM).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I.B, Eq. (3) (differential-filter slip, cited); §II.B, Eqs. (8)–(18) (slip velocity from the equilibrium wall-model gradient at the second grid point); §III.B.2, §IV (limitations, future work).
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II D (no-slip wall chosen against the slip condition).

@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs an energy-preserving central flux with much-r
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation, dispersion-relation-preserving scheme, optimized selective filter, FDo11p, RFo11p]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -439,6 +439,30 @@ integrator (§2.3). The filter's role as the dissipation of implicit LES
 is on [explicit modal filtering](/methods/explicit-modal-filtering.md)
 and [implicit LES](/definitions/implicit-les.md).
 
+**DRP differences, selective filter and LDDRK time stepping in two
+wall-modelled LES.** Two 2025 papers of one group use the classical
+members of this family. In the high-order computational-aeroacoustics
+finite-difference solver of [Gao et al. (2025)](/sources/gao-2025.md),
+§II.A, the convective derivatives are the seven-point fourth-order
+dispersion-relation-preserving scheme of Tam & Webb, time integration is
+the four-step fourth-order Adams–Bashforth scheme at Courant numbers below
+0.15, and the Bogey–Bailly selective filter damps grid-scale waves, with
+the Vreman model as subgrid closure and a slip-wall model at the wall (on
+[slip-wall models](/methods/slip-wall-model.md)). Against the OpenFOAM
+wall-modelled LES of Fan et al. at $Re_\tau=1000$, which shows "an
+spurious spectral peak, larger amplitude discrepancies, and premature
+decay in the mid-frequency range" of the wall-pressure spectrum, the
+authors' run on $127\times41\times95$ points agrees better with DNS
+spectra, which they attribute to the "inherent limitations of
+conventional low-order numerical schemes" (§III.A.2, Fig. 10). In
+the flux-reconstruction wall-modelled LES of
+[Gao et al. (2025b)](/sources/gao-2025-b.md), §II A, the time marching is
+the low-dissipation low-dispersion Runge–Kutta scheme of Hu, Hussaini &
+Manthey (1996) in 2N-storage form, and their periodic-hill reference LES
+(Gloerfelt & Cinnella, cited) uses an 11-point DRP finite-difference
+scheme on $512\times256\times256$ points (§III B; see
+[wall-modelled LES](/methods/wall-modelled-les.md)).
+
 **Split dispersion and dissipation of TENO-S.**
 [Liang & Fu (2024)](/sources/liang-2024.md), §3.3.1, Eqs. (36)–(46),
 optimize the two halves of an eight-point scheme separately, the
@@ -587,3 +611,5 @@ footnote 1).
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2.1–2.2.2, Eqs. (12)–(15) (fourth-order WCNS with near-linear and Z-type weights, blended central/upwind interpolation with $\sigma_b=0.02$); §3.3, Table 2, Fig. 11 (scheme dissipation and lift of the 30P30N airfoil); §4.
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §4.8 (compact finite differences developed to minimize dispersion error; historical, passing).
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eqs. (8)–(9) (sixth-order compact differences with eighth-order compact filter, adaptive second-order filter at shocks).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §II.A (Tam–Webb DRP scheme, Adams–Bashforth, Bogey–Bailly selective filter in a WMLES solver); §III.A.2, Fig. 10 (wall-pressure spectra against a low-order WMLES).
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II A (Hu–Hussaini–Manthey LDDRK time marching); §III B (DRP reference LES of the periodic hill; passing).

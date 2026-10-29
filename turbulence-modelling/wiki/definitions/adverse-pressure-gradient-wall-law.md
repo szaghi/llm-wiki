@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -349,6 +349,55 @@ the small leading- and trailing-edge bubbles of wall-resolved LES are
 missed, which they attribute to the assumed constant pressure gradient
 between probe and wall and to the coarse mesh (§III B).
 
+## A two-part generalized wall function (Shih et al.)
+
+A second pressure-gradient law, with its own pressure-gradient velocity
+scale $u_p$ (for its printed form see Qualifications), is the generalized wall function of Shih,
+Povinelli & Liu (2003), which
+[Gao et al. (2025b)](/sources/gao-2025-b.md) (§II C2, App. A) use in a
+wall-modelled LES (following Tennekes & Lumley, as they cite them).
+Page-local symbols: $p_w$ the wall pressure; $u_p$ the pressure-gradient
+velocity scale; $u_c=u_\tau+u_p$ the hybrid scale (Eq. 27);
+$y_p^+=u_py/\nu$; $U$ the wall-tangential velocity at the input point and
+$U_1$, $U_2$ its wall-stress and pressure-gradient parts; $f_1$, $f_2$
+the profile functions. Integrating the surface-layer momentum balance
+(Eq. 21) from the wall gives, for $u_cL/\nu\gg1$ ($L$ a length scale of
+the flow, as printed),
+
+$$-R_{12}+\nu\frac{\partial U}{\partial y}=\frac{\tau_w}{\rho}+\frac{y}{\rho}\frac{\partial p_w}{\partial x}\qquad\text{(Eq. 22)},$$
+
+and the velocity and shear stress are split linearly into a part driven
+by $\tau_w/\rho$ and a part driven by $(y/\rho)\,\partial p_w/\partial x$
+(Eqs. 23–24):
+
+$$\frac{U_1}{u_\tau}=\frac{\tau_w}{\rho u_\tau^2}f_1(y^+),\qquad
+\frac{U_2}{u_p}=\frac{\partial p_w/\partial x}{\lvert\partial p_w/\partial x\rvert}f_2(y_p^+)\qquad\text{(Eqs. 25–26)}.$$
+
+The unified law per wall-tangential direction $i$ (Eq. 28) is
+
+$$\frac{U_{t,i}}{u_c}=\frac{\tau_{w,i}}{\rho u_\tau^2}\frac{u_\tau}{u_c}f_1(y^+)+\frac{\nu}{\rho}\frac{\partial p_w/\partial x_i}{u_c^3}\frac{u_p}{u_c}f_2(y_p^+).$$
+
+Gao et al. state that it reduces to the zero-pressure-gradient law when
+the gradient vanishes and stays valid at zero wall stress, because $u_c$
+is always positive (§II C2). The profile functions are piecewise fits
+(Eqs. A2–A3, Tables III–IV):
+
+| | branch 1 | branch 2 (quartic) | branch 3 (quartic) | outer branch |
+|---|---|---|---|---|
+| $f_1(y^+)$ | $y^+\le5$: $y^++1.0\times10^{-2}(y^+)^2-2.9\times10^{-3}(y^+)^3$ | $5\le y^+\le30$: coefficients $-0.872$, $1.465$, $-7.02\times10^{-2}$, $1.66\times10^{-3}$, $-1.495\times10^{-5}$ | $30\le y^+\le140$: $8.6$, $0.1864$, $-2.006\times10^{-3}$, $1.144\times10^{-5}$, $-2.551\times10^{-8}$ | $y^+>140$: $\kappa^{-1}\ln y^++C$ |
+| $f_2(y_p^+)$ | $y_p^+\le4$: $0.5(y_p^+)^2-7.31\times10^{-3}(y_p^+)^3$ | $4\le y_p^+\le15$: $-15.138$, $8.4688$, $-0.81976$, $3.7292\times10^{-2}$, $-6.3866\times10^{-4}$ | $15\le y_p^+\le30$: $11.925$, $0.9340$, $-2.7895\times10^{-2}$, $4.6262\times10^{-4}$, $-3.1442\times10^{-6}$ | $y_p^+>30$: a logarithm with two constants |
+
+(quartic coefficients listed from the constant to the fourth power). The
+values of $\kappa$ and $C$ in $f_1$ and of the two constants of the outer
+branch of $f_2$ are not printed. The non-iterative two-step procedure in
+which Gao et al. apply the law, and its periodic-hill results, are on the
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
+page. Set side by side with Yan et al.'s law above, the pressure gradient
+enters Yan et al.'s correction through the inner-scaled $\Delta p_s^+$
+added to a power law, and Shih et al.'s through a separate velocity
+scale $u_p$ and a second profile $f_2$ in its own wall coordinate
+$y_p^+$.
+
 In a different role, [An et al. (2025)](/sources/an-2025.md) (§3.1, Table 3)
 use no wall law but list pressure-gradient boundary layers among the
 regions where several calibrated Spalart–Allmaras constants ($c_{b1}$,
@@ -392,6 +441,16 @@ and on the interaction page.
   review's own definitions of $\beta_{RC}$ and $C_f$ the factor is $C_f/2$
   *(compiler check, not in the sources)*; the review's Eq. (3.29) for $K_{\mathrm{acc}}$
   checks the same way without discrepancy.
+- Gao et al. (2025b, Eq. 20 and Fig. 1, step 3) print the pressure-gradient
+  scale as $u_p=(\nu/\rho)\lvert\partial p_w/\partial x_i\rvert$, which has
+  the dimension of a velocity cubed, while their Eq. (27) adds $u_p$ to
+  $u_\tau$ and Eq. (28) needs $(\nu/\rho)\,\partial p_w/\partial x_i$ to be
+  a velocity cubed to be dimensionless; Knopp (2022) and Bose & Park (2018)
+  print $u_p$ with the cube root *(compiler check, not in the sources)*.
+- Evaluating the printed fits at their junctions, $f_1$ gives 4.888 and
+  4.896 at $y^+=5$ and 12.609 and 12.675 at $y^+=30$; $f_2$ gives 7.532 and
+  7.844 at $y_p^+=4$ and 20.976 and 21.061 at $y_p^+=15$ *(compiler check,
+  not in the sources)*.
 
 # Citations
 
@@ -407,3 +466,4 @@ and on the interaction page.
 - [Tang et al. (2024)](/sources/tang-2024.md) — §2.3, Fig. 11a (upstream log law of a Mach 5 ramp interaction); §4.1, Fig. 21 (pointer).
 - [Yan et al. (2024)](/sources/yan-2024.md) — §II C, Eqs. (26)–(31) (APG power law and separation indicator); §III A, Figs. 7, 9b; §III B.
 - [An et al. (2025)](/sources/an-2025.md) — §3.1, Table 3 (pressure-gradient boundary layers in the coefficient sensitivity; passing).
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C2, Eqs. (20)–(28); App. A, Eqs. (A2)–(A3), Tables III–IV (generalized wall function of Shih et al.).

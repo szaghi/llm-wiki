@@ -152,7 +152,7 @@ is unparseable; [158], [198] and [199] print no pages.
 
 # Pages created or updated
 
-Chunk 14 (2026-10-28). This source is cited on:
+Chunk 14 (2026-10-28), cited further in chunk 15. This source is cited on:
 
 - [Delta-wing and concentrated vortex flows](/benchmarks/delta-wing-vortex-flow.md)
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
@@ -165,6 +165,7 @@ Chunk 14 (2026-10-28). This source is cited on:
 - [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)

@@ -5,7 +5,7 @@ description: "A periodic shear layer between two counter-flowing streams that tr
 status: established
 aliases: [temporal mixing layer, temporally evolving mixing layer, TML, free-shear mixing layer, temporally evolving free-shear layer]
 tags: [benchmark, les, sgs-model, data-driven, neural-network, dns, combustion]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # Temporally developing mixing layer
@@ -257,6 +257,42 @@ as a shear-free temporal mixing layer (Figs. 19–20); the mixing layers
 of this page are sheared; see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
 
+**Two-dimensional double-vortex pairing for shock-capturing schemes.**
+[Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md), §III E, use a
+two-dimensional relative of the configuration, the double-vortex
+pairing of Winant & Browand, to measure the numerical dissipation of WENO
+reconstructions (see [WENO schemes](/methods/weno-scheme.md) and
+[numerical dissipation](/properties/numerical-dissipation.md)). Two streams
+of 4.06 and 1.44 cm/s ($\Delta U=2.62$ cm/s) are computed in the frame of
+their mean, so that they move at $\pm\Delta U/2=\pm1.31$ cm/s, with the
+profile $u=-\tfrac{\Delta U}{2}\tanh\big(y/(2\theta_0)\big)$,
+$\theta_0=0.03$ cm, $\nu=0.01$ cm²/s, $\gamma=5/3$, a Mach number of 0.2 on
+$\Delta U$, and $Re\simeq1600$ on $\Delta U$, the streamwise period and
+$\nu$. The perturbation is the sum of two Kelvin–Helmholtz eigenmodes, the
+second of twice the wavenumber, with amplitudes $0.025\Delta U$ and
+$0.05\Delta U$; the box is periodic in $x$ and reflective in $y$, the
+initial pressure solves a Poisson equation, and a passive scalar marks the
+streams. On $64^2$ cells against a $256^2$ reference, run to $t=6$ s, every
+enhanced WENO5 sharpens the scalar field relative to WENO5-JS and the
+authors' hybrid WENO5-H++ agrees best with the reference (Fig. 5). Their
+Tables II–III, normalized by the downsampled reference lengths (inner 2.90
+cm, outer 3.15 cm) and by the accumulated numerical dissipation of
+WENO5-JS:
+
+| Scheme | inner vortex length | outer vortex length | accumulated numerical dissipation |
+|---|---|---|---|
+| WENO5-JS | 0.373 | 0.496 | 1 |
+| WENO5-Z+ | 0.534 | 0.586 | 0.942 |
+| WENO5-ZM | 0.609 | 0.674 | 0.888 |
+| WENO5-MD | 0.679 | 0.895 | 0.829 |
+| WENO5-H++ | 0.745 | 0.868 | 0.822 |
+
+The rotation angle of the merged vortex is the same for all schemes, and
+the authors name the initial velocity jump between the streams "the
+leading contributing factor" of the accumulated dissipation (§III E 3). At
+finer grids the differences between the WENO5 variants shrink (stated,
+not shown). The runs use no subgrid model.
+
 **Mixing-layer statistics as a reference elsewhere.** Statistics of free
 shear layers also serve as a reference outside this configuration.
 [Yu et al. (2023)](/sources/yu-2023.md) identify a mixing layer embedded
@@ -311,6 +347,14 @@ enters their comparison.
   SGM-7-19 for the isotropic-turbulence runs only. Their ILES of the
   mixing layer runs on the eighth-order central scheme, and its
   dissipation mechanism is not described.
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) state in
+  the abstract that WENO5-H++ "reduces numerical dissipation by nearly
+  20%", and in the conclusions "nearly 20%" and "~18%", while their Table
+  III gives 0.822 of WENO5-JS, a reduction of 17.8% *(compiler check, not
+  in the sources)*; they call the WENO5-H++ inner vortex length "more than
+  twice" that of WENO5-JS, while Table II gives $0.745/0.373=1.997$
+  *(compiler check, not in the sources)*. Their double-vortex pairing is
+  two-dimensional, unlike the three-dimensional layers above.
 
 # Citations
 
@@ -322,3 +366,4 @@ enters their comparison.
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §3.1; §4.2 (historical).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — Table 1, Eq. 6, Fig. 8; §2.3, Table 2, Eq. 16; §2.3.4, §3.1.
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §3.1.1, Figs. 19–21 (cited reacting DNS, review).
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §III E, Eqs. 18–21, Tables II–III, Figs. 5–6 (two-dimensional double-vortex pairing).

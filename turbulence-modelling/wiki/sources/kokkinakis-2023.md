@@ -135,7 +135,7 @@ the printed page range "213–138". No printed duplicates.
 
 # Pages created or updated
 
-Chunk 12 (2026-10-28). This source is cited on:
+Chunk 12 (2026-10-28), cited further in chunk 15. This source is cited on:
 
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
@@ -148,3 +148,4 @@ Chunk 12 (2026-10-28). This source is cited on:
 - [WENO and hybrid shock-capturing schemes in scale-resolving simulation](/methods/weno-scheme.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)
+- [CNS3D](/software/cns3d.md)

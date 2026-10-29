@@ -5,7 +5,7 @@ description: "Wall-stress models of wall-modelled LES that keep unsteadiness, co
 status: established
 aliases: [NEQWM, non-equilibrium wall model, nonequilibrium wall model, TBLE wall model, thin-boundary-layer-equation wall model, two-layer zonal wall model, integral wall model, wall-model integrated LES, integrated wall model]
 tags: [wall-model, wmles, boundary-layer, separated-flow]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Non-equilibrium wall models
@@ -181,6 +181,63 @@ pressure gradient without the convective and unsteady terms is inconsistent
 with the outer momentum equation; Yan et al. keep only the pressure
 gradient and do not discuss that argument.
 
+**A generalized wall function applied in two steps (flux reconstruction).**
+[Gao et al. (2025b)](/sources/gao-2025-b.md) (§II C2–C3, Fig. 1, Eqs.
+29–32) keep the pressure gradient, and only it, through the generalized
+wall function of Shih, Povinelli & Liu (2003), which splits the
+tangential velocity into a wall-stress part $U_1$ and a pressure-gradient
+part $U_2$ with the scales $u_\tau$, $u_p$ and $u_c=u_\tau+u_p$ (the law,
+its profile functions $f_1$, $f_2$ and the symbols are on the
+[wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)
+page). To avoid iterating for $u_\tau/u_c$ they apply it in two steps at
+each wall flux point of a high-order
+[flux reconstruction](/methods/flux-reconstruction.md) solver, with
+$\boldsymbol U_t$ the tangential velocity at the first solution point
+inside the wall-adjacent element and $p_w$ the wall pressure:
+
+1. $u_\tau$ from the equilibrium law of Allmaras, Johnson & Spalart,
+   inverted explicitly by a piecewise fit (see the
+   [equilibrium wall model](/methods/equilibrium-wall-model.md));
+2. $u_p$ from the wall-pressure gradient and $U_2$ from $f_2$;
+3. the wall-stress part
+   $U_1=\Bigl|\,\lvert\boldsymbol U_t\rvert-\dfrac{\boldsymbol U_t\cdot\partial p_w/\partial x_i}{\lvert\boldsymbol U_t\cdot\partial p_w/\partial x_i\rvert}\,U_2\Bigr|$
+   (Eq. 30), from which $u_\tau$ is recomputed with the same fit;
+4. the corrected wall stress, as printed (Eq. 31),
+   $$\tau_{w,i}=\left(\frac{U_{t,i}}{u_c}-\frac{\nu}{\rho}\frac{\partial p_w/\partial x_i}{u_c^3}f_2(y_p^+)\right)\frac{u_c}{u_\tau f_1(y^+_\tau)}\,\rho u_\tau^2,$$
+   imposed as the wall-normal viscous flux, $\boldsymbol n\cdot\hat{\boldsymbol F}^v=-\boldsymbol\tau_w$
+   (Eq. 32), with no slip kept at the wall.
+
+In the procedure $u_\tau$ comes from the inverse of the Allmaras et al.
+law and the profile $f_1$ of Eq. (31) from Shih et al.'s fit. On the
+[periodic hill](/benchmarks/periodic-hill.md) at $Re=10\,595$ (the paper does not state the reference length and velocity; Mesh 1,
+$32\times12\times16$ elements; Mesh 2, $48\times24\times24$; quadratic
+27-node hexahedra; polynomial degree $N=2$–4; Vreman SGS model) the mean
+streamwise velocity at the hill top shows a minor discrepancy for $N=2$
+and "excellent agreement" for $N=4$, the skin friction approaches the DNS
+of Krank et al. (as cited) as $N$ increases, separation and reattachment
+agree with the references, and the $L_2$ errors of the mean velocity and
+the Reynolds stress at ten stations against the PIV of Rapp & Manhart (as
+cited) decrease with $N$ and with mesh refinement (§III B1, Figs. 8–13).
+At $Re=37\,000$ ($N=3$, Mesh 1) the mean velocity agrees with experiment
+and with the LES of Gloerfelt & Cinnella (as cited, $512\times256\times256$
+points) except a slight deviation of the wall-normal velocity in the
+recirculation, and the shear-layer intensities are over-estimated, as in
+that LES (§III B2, Figs. 14–15). The authors call their meshes
+"significantly coarser than those employed by other researchers", too
+coarse at the crest to resolve the boundary layer (§III B, Table I). The
+hill runs use only the generalized law, so they carry no
+equilibrium-against-non-equilibrium comparison. Side by side with
+Hickel et al.'s argument cited by Bose & Park (above): Gao et al. keep the
+pressure gradient without the convective and unsteady terms and do not
+discuss that argument.
+
+[Gao et al. (2025)](/sources/gao-2025.md) (§I.A, Eq. 1) print the
+thin-boundary-layer equations after Cabot & Moin (as cited), with the
+equilibrium model dropping all terms but the wall-normal diffusion,
+and run only the equilibrium form; adding pressure-gradient source terms
+to their wall-model equations is named as future work (§IV; see
+[slip-wall models](/methods/slip-wall-model.md)).
+
 ## When is equilibrium enough? An integral bound
 
 Bose & Park (2018, §2.1, Eqs. 7–8) give their own von Kármán integral
@@ -268,7 +325,7 @@ $y$ carry wall stress, since $dy^i/dy=0$ at the wall for $i\ge2$; for their
 third-order scheme ("P3", whose wall-parallel factors are quadratic, Eq. 11;
 polynomial degree $N=2$ in the registry's sense *(compiler check, not in the
 sources)*) the basis is $\{1,y,\phi_w\}$. The authors state that the
-integral wall model "truncates at $p=3$", so that with this basis "(s)he is
+integral wall model "truncates at $p=3$", so that with this basis "[one] is
 practically applying the integral wall model — but without an algebraic
 solver outside the LES" (§II B 3), and that the linear coefficient absorbs the
 non-equilibrium effects. The inspiration is the von Kármán–Pohlhausen
@@ -433,7 +490,11 @@ implicit SVV, against 18.16 h for a second-order scheme with the
 [Smagorinsky model](/methods/smagorinsky-model.md) on the same mesh, and
 13.2 core-hours per shedding cycle on the square cylinder against about
 1058 and 676 h inferred for two wall-resolved LES (as they cite them); the
-wall model's own share of the cost is not separated.
+wall model's own share of the cost is not separated. Gao et al. (2025b,
+§III B) time 100 steps of the hill on one core (Mesh 1, 6144 elements,
+1024 at the wall): 135.6 s without wall model, 143.8 s with the
+equilibrium law and 152.7 s with the two-step generalized law (+6 % and
++12.5 % as printed), which they attribute to the absence of iterations.
 
 ## Qualifications
 
@@ -477,6 +538,18 @@ wall model's own share of the cost is not separated.
   which appears in Eq. (4); the Fig. 2 caption and §II C call the velocity
   gradient $\partial U/\partial y$ a "pressure gradient". The van Driest
   constant 19 is printed without comment.
+- **Printed items of Gao et al. (2025b).** Solving their Eq. (28) for
+  $\tau_{w,i}$ gives the second term of Eq. (31) multiplied by $u_p/u_c$,
+  a factor that the printed Eq. (31) and Fig. 1 (step 7) omit; Eq. (28)
+  writes $f_1(y^+)$ where Eq. (31) writes $f_1(Y^+_\tau)$ in the source's
+  symbols *(compiler check, not in the sources)*. $152.7/135.6=1.126$, so
+  the printed "12.5 %" is 12.6 % to one decimal *(compiler check, not in
+  the sources)*. The $Re=37\,000$ run is printed as "a mesh of only
+  128 × 48 × 60 points"; Mesh 1 with $N+1=4$ points per direction gives
+  $128\times48\times64$, as the paper's own count $96\times36\times48$ for
+  $N=2$ does with 3 *(compiler check, not in the sources)*. Which hybrid
+  wall-flux weight is used in each case, how $\partial p_w/\partial x_i$
+  is evaluated and whether the input is filtered in time are not stated.
 - Lv et al.'s own reference [24], the DG wall-model method of Lv, Yang,
   Park & Ihme (2021), is a different work from the Physics of Fluids paper
   read here.
@@ -498,3 +571,5 @@ wall model's own share of the cost is not separated.
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1; §2.2.2, Eqs. (3)–(9); §3.2, Figs. 13–16; §4.
 - [Hu et al. (2024)](/sources/hu-2024.md) — §1 (taxonomy; matching-location sensitivity, Hu et al. 2023 and Park 2017 as cited); §6.1; §7.
 - [Yan et al. (2024)](/sources/yan-2024.md) — §I, Table I; §II C, Eqs. (22)–(32), Fig. 2; §III A–B, Tables II–V, Figs. 7, 9.
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C2–C3, Eqs. (28)–(32), Fig. 1 (two-step generalized wall function); §III B, Table I (timings); §III B1–B2, Figs. 8–15 (periodic hill).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I.A, Eq. (1) (TBLE, cited); §IV (pressure-gradient extension as future work).

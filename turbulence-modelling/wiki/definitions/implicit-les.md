@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, coarse-grained simulation, CGS, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-28T17:03:00Z
+timestamp: 2026-10-29T05:12:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -373,6 +373,46 @@ can carry.
      al., PPM and TVD schemes, whose artificial viscosity "mimics the
      physical production of entropy across a shock-wave" (as cited);
      their own scheme is under usage 2.
+   - **The interface flux as the subgrid model of DG.**
+     [Alberti et al. (2025b)](/sources/alberti-2025-c.md), §I, state that
+     in DG implicit LES the role of the subgrid model is "left to the
+     inbuilt numerical dissipation of the interface convective flux":
+     upwind-biased fluxes localize dissipation at high wavenumbers, so the
+     Riemann solver acts as a low-pass spatial filter. Their channel
+     computations vary that flux (entropy-conserving, entropy-stable,
+     upwind-biased entropy-conserving), the BR2 penalty and the wall
+     condition, with no model (evidence below), and they conclude that the
+     implicit-LES behaviour of the baseline scheme "should be fully
+     understood before isolating any potentially beneficial effect of
+     physics-inspired subgrid-scale models" (§I, §IV).
+   - **Godunov-type finite volumes.**
+     [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md), §III,
+     define implicit LES in their code [CNS3D](/software/cns3d.md) as
+     relying on the finite-volume discretization, Godunov-type (upwind)
+     methods and the grid to remove the small scales, the unresolved
+     scales being modelled by the nonlinear dissipation of the
+     high-resolution convective scheme (Grinstein et al.; Drikakis &
+     Geurts, cited). The same authors' Taylor–Green and double-vortex
+     runs ([Kokkinakis & Drikakis 2025](/sources/kokkinakis-2025.md),
+     §III E–F) use no model and do not use the term; they state that the
+     extra cost of their low-dissipation WENO pays off chiefly for
+     inviscid or under-resolved viscous flow (§III G).
+   - **DNS or ILES by resolution.** In the $p$-adaptive local DG solver
+     dg-comp used by [Valvo & Abbà (2025)](/sources/valvo-2025.md), §2,
+     dropping the subgrid flux gives DNS or ILES "according to the adopted
+     level of resolution", and $p$-adaptive ILES solvers of other groups
+     are described as "under-resolved $p$-adaptive DNS"; their viscous
+     vortex at $Re=22\,000$ runs without an explicit closure, the square
+     cylinder with the Smagorinsky model. The paper is about load
+     balancing (see [mesh adaptation](/methods/mesh-adaptation.md)).
+   - **Stabilizations compared without a model.** The comparison of
+     [Bilocq et al. (2025)](/sources/bilocq-2025.md) solves the
+     compressible Navier–Stokes equations with no subgrid model (Eq. 1)
+     for every scheme, unstabilized DG, Laplacian artificial viscosity and
+     three entropy-stable variants, in cases the authors call
+     under-resolved and set in the context of LES, which "results in
+     highly under-resolved turbulence" (§1) (results on [entropy conservation](/properties/entropy-conservation.md)
+     and [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -553,6 +593,49 @@ can carry.
    cases (§2.2, §3.2). No stability or modified-equation analysis is
    given. Results are under the evidence below and on
    [numerical dissipation](/properties/numerical-dissipation.md).
+
+   Three further sources design the dissipation for implicit LES of
+   compressible flow:
+
+   - **Learned reconstruction weights (ML-ILES).**
+     [Bezgin et al. (2025)](/sources/bezgin-2025.md), §1, §3, start from
+     the ALDM view that "the nonlinear discretization error of the
+     convective term functions as an SGS model" and that the truncation
+     error can be shaped to the desired subgrid behaviour, and keep the
+     candidate polynomials, HLLC flux and TVD-RK3 of an HLLC + TENO6-A
+     finite-volume scheme while three small networks (density, velocity,
+     pressure; 3132 parameters) output the convex reconstruction weights
+     (scheme on [WENO](/methods/weno-scheme.md)). The networks are
+     trained end to end through the differentiable solver JAX-Fluids on
+     box-filtered DNS of compressible decaying isotropic turbulence at
+     $M_t=0.4$, 0.6, 0.8, filtered by 16 in space and time to $32^3$
+     (§4; training on
+     [model-consistent training](/methods/model-consistent-training.md)).
+     They argue that machine-learned components inside the discretization
+     "may provide better extrapolation capabilities to unseen meshes and
+     flow configurations" than explicit learned closures (§1).
+   - **Adaptive dissipation/dispersion adjustment (ADDA).**
+     [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §1, §4,
+     hold that a scheme with very low dissipation is unsuitable for
+     implicit LES on under-resolved grids because of an unphysical
+     "build-up" of energy in the high modes, and that implicit LES needs
+     "the right amount" of dissipation and dispersion, which for
+     nonlinear schemes on unstructured meshes are entangled. Their ADDA
+     algorithm adjusts, cell by cell and before each step (a priori, so
+     that it also works with implicit dual time stepping), the central
+     linear weight of an unstructured CWENOZ reconstruction and, for Roe
+     and Rusanov fluxes, a multiplier of the flux dissipation, from an
+     energy-ratio sensor of modally filtered reconstructions; overhead
+     1.8–8.2% (§5.1, Table 3; details on
+     [numerical dissipation](/properties/numerical-dissipation.md)).
+   - **Low-Mach correction of the reconstructed velocities (NEHA).**
+     Kokkinakis & Drikakis (2025b, §IV–V) limit the jump between the
+     reconstructed left and right velocities at low Mach number, the
+     normal and the tangential components each scaled by its own local
+     Mach number, to remove the excess upwind dissipation of a ninth-order
+     WENO in weakly compressible wall turbulence without the dispersive
+     artefacts of the original correction (scheme on
+     [WENO](/methods/weno-scheme.md)).
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -1112,6 +1195,77 @@ interpretation they flag as needing further work).
   Table 3). The author concludes that EDAC with FR suits "low and
   moderately resolved" ILES with $N\le4$ (§5).
 
+- **Entropy-aware modal DG, compressible channel flow.** Alberti et al.
+  (2025b, §III A) run channels with no model on "moderately under-resolved"
+  grids ($N=8$ or 9, DNS-to-DG ratio of degrees of freedom $r=9.4$–198.6)
+  and collapse on the DNS of Moser et al. ($Re_\tau=180$, 395, 590,
+  near-incompressible) and of Modesti–Pirozzoli and Coleman et al.
+  ($M_b=1.5$ at $Re_\tau=222$, 500, 1000; $M_b=3$ at $Re_\tau=450$) in mean
+  velocity, Reynolds stresses and temperature; centreline temperatures at
+  $M_b=1.5$ are 1.396, 1.377 and 1.367 against 1.387, 1.372 and 1.369 in
+  the DNS, and the wall heat-flux coefficient is $p$-converged (0.0501 and
+  0.0503 at $N=6$ and 8 for $Re_\tau=222$, against 0.048 and 0.049)
+  (Figs. 1–4, Table III). On "severely under-resolved" grids ($r$ up to
+  2100, $8\times8\times6$ to $12\times12\times12$ elements) near the
+  incompressible limit, the dissipation-free entropy-conserving
+  (Ismail–Roe) flux with the entropy-stable wall and a small interior
+  penalty "significantly enhances the accuracy" over the entropy-stable
+  Godunov flux, which over-shears the near-wall fluctuations and
+  overshoots the mean velocity (Figs. 9–10); with uniform penalty
+  $\eta_F=3$ the entropy-stable wall gives a profile "almost coincident"
+  with DNS where the entropy-conserving wall "abundantly undershoots"
+  (Fig. 15). In the compressible cases the entropy-stable flux is best,
+  and an upwind bias added to the entropy-conserving flux improves the
+  mean profile at $r=637.4$ and 2100 (Figs. 16–21). The authors claim
+  about half the degrees of freedom of the Flad & Gassner DGSEM at
+  $Re_\tau=590$, and that an upwind-free entropy-conserving convective
+  discretization "has not been reported" for high-Mach channel implicit
+  LES with other DG solvers (§III A 3). Their thesis, that accuracy rests
+  on the "correct" dissipation in the first wall-adjacent cells, is on
+  [numerical dissipation](/properties/numerical-dissipation.md).
+- **Low-Mach correction, channel at $Re_\tau\approx395$.** With NEHA, the
+  ninth-order WENO implicit LES of Kokkinakis & Drikakis (2025b,
+  §VII–VIII, Table II) on $64^3$ cells gives a mean $Re_\tau$ of 392
+  against 392.24 in the DNS (372.5 without correction, 391 on $128^3$
+  without correction); the mean velocity is the closest to DNS of all
+  variants and below $y^+\approx40$ more accurate than the uncorrected
+  scheme on $128^3$; skewness and flatness of the streamwise velocity
+  near the wall are the closest to DNS (Figs. 8–10).
+- **Learned implicit LES of compressible isotropic turbulence.** A
+  posteriori, over the full decay at $32^3$, the ML-ILES of Bezgin et al.
+  (2025, §5.2, Table 3) trained on one-step unrolls gives the lowest
+  spectral error at the three Mach numbers (mean absolute error 0.8849,
+  0.7923, 0.6178 at $M_t=0.4$, 0.6, 0.8, against 1.110, 1.153, 1.173 for
+  TENO6-A and 1.099, 1.252, 1.428 for the compressible ALDM), follows the
+  filtered-DNS kinetic-energy spectrum up to the cutoff with less
+  high-wavenumber dissipation than TENO6-A, and gives the best density
+  spectra at the higher Mach numbers (Fig. 7); at $64^3$, a mesh not seen
+  in training, it "clearly outperforms TENO6-A" (Fig. 9). It costs 2.7 to
+  4.4 times TENO6-A per cell and step on an RTX A6000 (1238.14 and
+  2004.14 ns against 452.70 ns, Table 5; the text says "roughly
+  three-times" and "roughly 4.5 times", §5.4) *(compiler check, not in the
+  sources, for the ratios 2.7 and 4.4)*.
+- **Adaptive dissipation on unstructured meshes.** With ADDA,
+  Tsoutsanis & Nogueira (2025) bring hexahedral and tetrahedral results
+  of the inviscid Taylor–Green vortex together and closer to the
+  Brachet et al. dissipation and the $-5/3$ slope, best with the Roe
+  flux, on which both ADDA controls act (§5.1, Figs. 8–12); on the
+  supersonic Taylor–Green vortex ($M=1.25$, $Re=1600$) CWENOZ5 without
+  ADDA under-predicts the total dissipation and CWENOZ6 with ADDA agrees
+  best with the DG and TENO data of Chapelier et al. at $128^3$ (§5.3,
+  Fig. 22). On the [SD7003 airfoil](/benchmarks/sd7003-airfoil.md)
+  ($Re=60\,000$, $\alpha=8^\circ$) fourth-order CWENOZ on 5.3 million
+  cells agrees better with the reference $C_p$ and $C_f$ than a
+  second-order MUSCL scheme even on 12.3 million cells, and ADDA improves
+  $C_f$; $C_L=0.927$, $C_D=0.045$ against $0.917$–$0.923$ and $0.044$–$0.045$
+  in two references (§5.2, Fig. 19, Table 4).
+- **Low-dissipation WENO without a model, Taylor–Green vortex.**
+  Kokkinakis & Drikakis (2025, §III F) at $Re=1600$ on $96^3$: WENO5-H++
+  gives the kinetic-energy history closest to the $512^3$ DNS of Dairay
+  et al. "for most of the simulation duration", the highest enstrophy
+  peak and the lowest numerical viscosity; all fifth-order variants
+  underestimate the enstrophy on this grid (Figs. 9–10).
+
 ## Evidence: when it fails
 
 - **High polynomial degrees without enough dissipation.** In the same
@@ -1416,6 +1570,40 @@ interpretation they flag as needing further work).
   [temporal mixing layer](/benchmarks/temporal-mixing-layer.md)). The
   dissipation mechanism of the mixing-layer run is not described.
 
+- **Dissipation in the wrong place near the wall.** In the severely
+  under-resolved channels of Alberti et al. (2025b, §III A 3), the
+  entropy-stable Godunov flux always over-shears the turbulent
+  fluctuations of the viscous layer near the incompressible limit, the
+  entropy-conserving wall gives an under-shooting, over-turbulent
+  profile, and raising the BR2 penalty from 1 to 5 shifts the mean
+  velocity upward with the change confined to the first cell
+  ($y^+\le20$) (Figs. 9–15); at $M_b=3$ the pure entropy-conserving flux
+  "results in an abrupt crash" and the upwind-biased version runs only
+  with the entropy correction, still under-predicting the velocity with
+  excessive shear stress (Figs. 18–19). Too much near-wall dissipation
+  approaches the DNS mean profile "from above", too little "from below"
+  (§IV).
+- **Too much upwind dissipation at low Mach number.** Without a low-Mach
+  correction the ninth-order WENO implicit LES of Kokkinakis & Drikakis
+  (2025b) under-predicts $Re_\tau$ by about 5.7% on $64^3$ and departs from
+  the DNS mean velocity from $y^+\approx10$; the original correction of
+  Thornber et al. applied with this nearly central scheme makes it
+  "excessively dispersive", with "fuzzy" spurious vortices near the
+  channel centre (§VI–VII, Table II, Fig. 6).
+- **Second-order MUSCL in under-resolved implicit LES.** Tsoutsanis &
+  Nogueira (2025, §5.2) call MUSCL schemes "unsuitable for iLES
+  simulations at under-resolved grid settings, due to their excessive
+  dissipation characteristics", from the SD7003 case, where skin
+  friction, separation and reattachment change unpredictably between the
+  5.3 and the 12.3 million-cell meshes.
+- **An under-resolved reference.** The $512^3$ "DNS" that
+  trains and tests the ML-ILES of Bezgin et al. (2025, §4.1, Figs. 2–3)
+  has $k_{\max}\eta\approx2.3$, while the authors state that
+  $k_{\max}\eta\ge\pi$ "is required to fully resolve all scales" and that
+  TENO6-A, the scheme of the reference, "acts as an ILES model" when not
+  all scales are resolved; the training data and the TENO6-A baseline
+  of the comparison come from the same scheme.
+
 ## A DNS that is an implicit LES for some modes
 
 [Beattie et al. (2025)](/sources/beattie-2025.md) (§6, App. D, §9.1) apply
@@ -1514,6 +1702,25 @@ viscosity effects" (§1, citing Bazilevs et al. and Hughes et al.).
 Prieto Saavedra et al. (2024), above, use the SUPG/PSPG truncation of the
 same closure.
 
+[Sun et al. (2026)](/sources/sun-2026.md) (§1, §4) state that in the
+variational multiscale framework "the numerical method is not just a
+vehicle for solving the equations, but in fact defines the model", and
+derive the fine scales on each stage of a half-explicit Runge–Kutta
+scheme (time discretized first, after Rothe), where the stage operator is
+linear and of Darcy type: the fine-scale velocity is exactly a projection
+of the stage momentum residual, modelled as $-\tau_{\mathrm{RV}}\,(\Delta t/\rho)$
+times that residual with a mesh-independent $\tau_{\mathrm{RV}}=\tfrac12$
+(page-local; not the classical $\tau_{\mathrm M}$, which depends on the
+mesh size). On the Taylor–Green vortex at $Re=1600$ (quadratic NURBS,
+$64^3$–$128^3$ elements) this closure removes a spurious second peak of
+the dissipation rate at $t\approx11$ that the generalized-$\alpha$ VMS
+produces, its resolved (enstrophy-based) dissipation follows the DNS
+with a small model part near the peak, and its spectra at $t=9$ agree
+with the DNS up to about 80% of the resolved wavenumbers on the finest
+mesh (§7.2, Figs. 10–13). Details are on
+[variational multiscale method](/methods/variational-multiscale-method.md)
+and [isogeometric analysis](/methods/isogeometric-analysis.md).
+
 ## Weak entropy solutions as an a posteriori filter (inline)
 
 [Svärd (2022)](/sources/svard-2022.md) gives implicit LES a rationale
@@ -1587,6 +1794,40 @@ WMLES" (model details on
 
 ## Qualifications
 
+- **Printed numbers (Alberti et al. 2025b).** For $Re_\tau=180$ the
+  degrees of freedom of Tables I and IV imply DNS counts of about
+  $3.18\times10^6$ ($16\times16\times8$ elements, $N=8$, 165 modes per
+  element by their count $\prod_{m=1}^3(N+m)/m$, $r=9.4$) and $2.11\times10^6$ ($32\,256$ degrees of freedom,
+  $r=65.5$), a factor 1.5 apart, while the other Reynolds numbers agree
+  within 1% *(compiler check, not in the sources)*. The text gives "1/1000
+  of the DoF" for the $M_b=3$ case of Table V, which prints $r=1412.3$;
+  Hamzehloo et al.'s channel is quoted at $Re_\tau=215$ (§I) and 222
+  (§III A); and §III A says the $M_b=3$, $Re_\tau=450$ case corresponds to
+  an incompressible "$Re=140$", while Fig. 8 and its text say it
+  reproduces "almost exactly" the incompressible case at $Re_\tau=180$.
+- **Printed definitions (Bezgin et al. 2025).** Eq. (34) prints the
+  Taylor microscale with the summed square of $\partial u_i/\partial x_i$
+  in the denominator, i.e. the dilatation; with $\langle u_iu_i\rangle=3u_{\mathrm{rms}}^2$
+  (their Mach-number definition), the Taylor time $\lambda/u_{\mathrm{rms}}$ of
+  Eq. (35) and the dilatation rms of Table 1 ($0.44$ at $M_t=0.4$, $2.05$
+  at $0.8$) it gives $\sqrt3/0.44\approx3.9$ and $\sqrt3/2.05\approx0.84$,
+  against the 0.42 of Table 1 for all Mach numbers *(compiler check, not
+  in the sources)*. The Taylor Reynolds number is
+  printed once as "$Re_\tau\approx200$". Their "a priori evaluation"
+  unrolls the models inside the solver for up to 20 steps from filtered
+  DNS states (§5.1; the bundle's terms are on
+  [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+- **Printed numbers (Tsoutsanis & Nogueira 2025).** The ADDA overhead is
+  given as "approximately (1.8 − 8%)" (§5.1) and "(2-8%)" (conclusions)
+  against a Table 3 maximum of 8.2%. Table 4 gives separation at
+  $x_s=0.039$–0.041 chord for fourth-order CWENOZ against 0.027 and
+  0.031 in the two references, and reattachment at 0.27–0.28 against
+  0.303–0.310, while the text reports "marginal differences" in
+  separation and reattachment between all predictions (§5.2).
+- **Averaging time (Kokkinakis & Drikakis 2025b).** Statistics are
+  averaged over $900\,\delta/u_b$ (printed as $u_b/\delta$), stated to be
+  "just over 21 flow-throughs"; with the printed $L_x=6\pi\delta$ that time
+  is about 47.7 flow-throughs *(compiler check, not in the sources)*.
 - **Printed forms (De Cosmo et al. 2025).** Eq. (5) prints the Roe flux
   as $\tfrac12(F_L+F_R)-\tfrac12|A_{\mathrm{Roe}}|(\Phi_L-\Phi_R)$ and,
   in the same line, as $\tfrac12F_{\mathrm{cen}}-\tfrac12|A_{\mathrm{Roe}}|\Delta\Phi$,
@@ -1723,10 +1964,9 @@ WMLES" (model details on
   unhelpful on dissipation-free entropy-stable flux reconstruction at
   $96^3$ degrees of freedom, while Flad & Gassner (2017, §4) propose a
   dissipation-free kinetic-energy-preserving DG baseline plus an explicit
-  Smagorinsky model for decaying isotropic turbulence at $48^3$. Flows,
-  resolutions and schemes differ, and Brillon & Nadarajah limit their
-  verdict to transitional free-shear flow, so no contradiction is
-  recorded.
+  Smagorinsky model for decaying isotropic turbulence at $48^3$;
+  Brillon & Nadarajah state their verdict for transitional free-shear
+  flow.
 - Zhao et al. (2021) state in the abstract and conclusions that iLES is
   superior for the Reynolds stress, while their §V.B reports for
   $Re_\tau=180$ that "for the Reynolds stress, the results for D-model
@@ -1880,3 +2120,11 @@ WMLES" (model details on
 - [Yan et al. (2024)](/sources/yan-2024.md) — §II A, App. B1 (implicit SVV in Xcompact3d with a wall-modelled immersed boundary).
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — Abstract; §3.2; §3.3.2, Fig. 12 (explicit SGS model loses importance on fine grids; WENO dissipation).
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §3.1.1, Fig. 5; §3.1.3, Table 4, Fig. 14; §4 (DES in high-order DG drifting to ILES-like eddy viscosity).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I (interface flux as the subgrid model; baseline scheme before SGS models); §III A 1–3, Tables I–V, Figs. 1–21 (moderately and severely under-resolved channels, EC against ES fluxes, penalty and wall condition); §IV.
+- [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) — §III (ILES definition in CNS3D); §IV–V (LM, LMn, LMt, NEHA); §VI–VIII, Table II, Figs. 6–10 (channel $Re_\tau\approx395$, $M_b=0.2$).
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §III E–G, Figs. 9–10 (no-model double-vortex pairing and Taylor–Green vortex with WENO5-H++).
+- [Valvo & Abbà (2025)](/sources/valvo-2025.md) — §2 (DNS or ILES by resolution in dg-comp; passing).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §4 (no-model comparison of stabilizations; passing here).
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1 (ALDM lineage, truncation error as SGS model); §3–4 (ML-ILES, end-to-end training); §4.1, Figs. 2–3 (under-resolved reference); §5.2, Tables 3–5, Figs. 7–9 (a posteriori spectra, generalization, cost).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §1 (right amount of dissipation and dispersion); §4 (ADDA); §5.1–5.3, Tables 3–4, Figs. 8–12, 19, 22 (Taylor–Green vortices, SD7003, MUSCL2).
+- [Sun et al. (2026)](/sources/sun-2026.md) — §1, §4 (VMS model defined by the numerical method; HERK-VMS fine scales); §7.2, Figs. 10–13.

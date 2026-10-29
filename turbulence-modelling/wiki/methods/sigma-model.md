@@ -5,7 +5,7 @@ description: "The Sigma model of Nicoud et al. builds a static subgrid eddy visc
 status: established
 aliases: [σ model, σ-model, sigma subgrid-scale model, Nicoud model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T05:09:00Z
 ---
 
 # Sigma model
@@ -61,6 +61,7 @@ asymptote.
 | not printed | second-order finite-volume LES of a jet | Moratilla-Vega et al. (2024), §2.1 |
 | not printed | second-order finite-volume wall-modelled LES of an airfoil (OpenFOAM) | [Nuca et al. (2025)](/sources/nuca-2025.md), §II, §VI |
 | not printed | wall-resolved reacting LES of a swirl combustor (AVBP, TTGC scheme) | [Agostinelli et al. (2021)](/sources/agostinelli-2021.md), §2 |
+| not printed | incompressible unstructured finite-volume LES (YALES2) on adapted meshes of a jet, a pipe and a swirl burner | [Barbera et al. (2026)](/sources/barbera-2026.md), §3 |
 | 3.0, entering only through the ratio $(C_\sigma/C_s)^2$ with $C_s=0.1$ | enhancing factor of the SATES-σ hybrid RANS/LES model (WCNS, PHengLEI); not a stand-alone LES | [Wu et al. (2024)](/sources/wu-2024.md), §2.2, Table 1 |
 
 Wu & Lele (2026, §5.1) choose it as their baseline because its "coefficient
@@ -123,6 +124,27 @@ $\nu_t$ to zero at the wall (§II.D).
   paper studies the thermal wall condition (heat-loss resistances against
   conjugate heat transfer) and the predicted thermoacoustic stability; no
   result is attributed to the subgrid model, which is not varied.
+- **Closure of LES on adapted meshes.** [Barbera et al. (2026)](/sources/barbera-2026.md)
+  (§3, §2.2) use the Sigma model (cited to Nicoud et al.) for every LES of
+  their [mesh-adaptation](/methods/mesh-adaptation.md) study in the
+  incompressible finite-volume solver YALES2, and on the coarse
+  intermediate meshes of the automatic mesh-convergence loop "for
+  stability" even when DNS is the target, its contribution to the
+  turbulent dissipation being "negligible on final meshes" (§3.1). Its
+  viscosity also enters the mesh criterion: the subgrid kinetic energy on
+  the current mesh is estimated algebraically from it as
+  $k_{\mathrm{sgs}}=\nu_t^2/(c_k^2\Delta^2)$ with $c_k=0.1$ (Eq. 15;
+  $c_k$ the one-equation viscosity coefficient of registry §11, $\Delta$
+  the current mesh size), which sets the target filter size (see
+  [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md)
+  and [LES grid-point requirements](/results/les-grid-point-requirements.md)).
+  The cases are a forced [round jet](/benchmarks/turbulent-round-jet.md), a
+  pipe at $Re_D=5300$ and the non-reacting PRECCINSTA burner, the geometry
+  of Agostinelli et al. above. The paper calls its approach "implicit
+  filtering" in the sense that "the filter scale is related to the local
+  mesh size" (abstract); the subgrid model is the explicit σ model, so this is not
+  [implicit LES](/definitions/implicit-les.md). No constant is printed
+  and no result is attributed to the model, which is not varied.
 - **Reference for learned closures.** Wu & Lele (2026) run Sigma
   ($C_\sigma=1.3$) and static Smagorinsky as references for
   [neural-network SGS models](/methods/neural-network-sgs-model.md) in the
@@ -181,7 +203,7 @@ $\nu_t$ to zero at the wall (§II.D).
   a density factor and print neither $C_\sigma$ nor $\Delta$; the density
   in $\mu_t=\bar\rho\nu_t$ is added here to make it a dynamic viscosity
   *(compiler check, not in the sources)*.
-- Mukha et al. (2025), Wu & Lele (2026) and Agostinelli et al. (2021) print no formula; the form above
+- Mukha et al. (2025), Wu & Lele (2026), Agostinelli et al. (2021) and Barbera et al. (2026) print no formula; the form above
   is that of Moratilla-Vega et al., and whether the constants of the table
   multiply the same expression is not stated. Wu & Lele's 1.3 and Mukha et
   al.'s 1.35 come from different flows, codes and filter widths; none of
@@ -195,3 +217,4 @@ $\nu_t$ to zero at the wall (§II.D).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §II; §VI; App. B.
 - [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.2, Eqs. (8)–(11), Table 1; §3.2, Figs. 8, 11.
+- [Barbera et al. (2026)](/sources/barbera-2026.md) — §1; §2.2, Eq. (15); §3, §3.1.

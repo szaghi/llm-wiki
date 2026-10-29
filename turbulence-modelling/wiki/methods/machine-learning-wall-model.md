@@ -5,7 +5,7 @@ description: "Wall-stress models for wall-modelled LES learned by supervised reg
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
 tags: [wall-model, wmles, data-driven, neural-network, reinforcement-learning]
-timestamp: 2026-10-28T12:26:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Machine-learning wall models
@@ -429,6 +429,20 @@ industrial-scale LES solver for online wall-shear-stress prediction
 (Serhani et al., as cited; §5.2). It adds no result of its own; neither
 cited model is assessed there.
 
+[Gao et al. (2025)](/sources/gao-2025.md) (§I.A), introducing an
+equilibrium-model slip condition (see [slip-wall models](/methods/slip-wall-model.md)),
+survey supervised wall models in passing: convolutional neural networks
+trained on DNS of periodic-hill flows predicting the wall shear stress in
+separated flow (Zhou, He & Yang 2021, the ZHY21 of the table above,
+listed there as a 6 × 20 network, and
+Boxho et al. 2022, as cited), long short-term memory networks for
+boundary-layer separation under wall blowing and suction (Lee et al.
+2023, as cited), and a data-driven non-equilibrium wall model for LES of
+the circular cylinder at $Re_D=3900$ (Wu et al. 2024, as cited), which
+they report as more accurate than equilibrium models in separation and
+shedding. They call these approaches promising for complex
+non-equilibrium flows and use none of them.
+
 ## Position: preserve the law of the wall
 
 Vadrot et al. (2023b, §V) conclude that a learned wall model must preserve the
@@ -570,3 +584,4 @@ mismatch as the published policy in LESGO.
 - [Lv et al. (2021)](/sources/lv-2021.md) — §V.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §3.2 (multi-agent wall models); §5.2 (GNN wall-stress prediction coupled to LES; passing).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I.A (supervised CNN, LSTM and data-driven non-equilibrium wall models, cited; passing).

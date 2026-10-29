@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Law of the wall
@@ -106,6 +106,10 @@ and the choice is part of the model.
 | [De Cosmo et al. (2025)](/sources/decosmo-2025.md), §3.3, Eq. (27), Fig. 9 | not printed | 5.2 (Fig. 9 legend) | defect-law constant 0.2 for $y^+>30$ | reference for an implicit LES of channel flow at $Re_\tau=200$ (below) |
 | [Guo & Wang (2025)](/sources/guo-2025.md), Eq. (18) | not printed | not printed | Spalding's law to the cubic term | OpenFOAM wall function of SST-based DDES (below) |
 | [Wang et al. (2024c)](/sources/wang-2024-j.md), Fig. 1 legend | $1/2.44$ | 5.2 | printed "5.2 + 2.44 log($y^+$)", base not printed | reference for the van Driest velocity of LES and hybrid RANS/LES of a Mach 2 boundary layer |
+| [Alberti et al. (2025b)](/sources/alberti-2025-c.md), captions of Figs. 1, 9, 11 | not printed | 5.5 | "compound law of the wall" $u^+=y^+$ and the log law | reference for entropy-stable DG implicit LES of channel flow at $Re_\tau=180$–590 |
+| [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md), §5.3 | 0.41 | 5 | sublayer $u^+=y^+$; the same letter $k$ is the thermal conductivity in their Eq. (8) and the von Kármán constant in Eqs. (10)–(12) | validation of isogeometric DG Spalart–Allmaras RANS of a flat plate at $M=0.2$, $Re=1.1\times10^7$ (below) |
+| [Gao et al. (2025)](/sources/gao-2025.md), Figs. 5, 8, 14 | 0.41 | 5.2 | $A^+=17$ and $\kappa=0.41$ in the wall-model mixing length (Eq. 10) | reference for slip-velocity WMLES of channel ($Re_\tau=576$–5100) and flat-plate flow |
+| [Gao et al. (2025b)](/sources/gao-2025-b.md), §II C1, Eq. (17); App. A, Table III | not printed | 3.0333909 (see Qualifications) | Allmaras–Johnson–Spalart composite law, eight further constants; Shih et al.'s piecewise $f_1$ with its log branch $\kappa^{-1}\ln y^++C$ above $y^+=140$, $\kappa$ and $C$ not printed | explicitly inverted equilibrium wall model of a flux-reconstruction WMLES (below) |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -375,6 +379,16 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   cited), so that the wall-normal gradient is constant and resolvable on a
   coarse mesh. Formulas of the linearization and of its eddy viscosity are
   on the [RANS wall function](/methods/rans-wall-function.md) page.
+  [Gao et al. (2025b)](/sources/gao-2025-b.md) (§II C1, Eq. 17) print the
+  same law, attributed to Allmaras, Johnson & Spalart (2012) as cited,
+  with the arctangents written $\tan^{-1}(y^++a_k,b_k)$ and the constants
+  to eight digits: $a_1$, $a_2$, $b_1$, $b_2$, $c_1$–$c_4$ agree with
+  Husson et al.'s to the printed digits, while the additive constant is
+  printed $B=3.0333909$ against Husson et al.'s $5.0333908790505579$ (see
+  Qualifications). Gao et al. do not invert the law iteratively: they
+  write $Re_y=y^+u^+=F(y^+)$ and fit the inverse $y^+=F^{-1}(Re_y)$ in five
+  explicit branches (formulas on the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md) page).
 - **Power law with a closed-form inverse** (Ghidoni et al. 2026, §3.3,
   Eqs. 13–15, after Wilhelm et al. as cited): $u^+=y^+$ for
   $y^+\le y_c^+=11.81$ and $u^+=8.3\,(y^+)^{1/7}$ above, which is continuous
@@ -676,6 +690,15 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   experiment and Spalding's law, coinciding across orders, on meshes whose
   first element reaches $y_1^+\simeq25$ without wall function (see
   [RANS wall function](/methods/rans-wall-function.md)).
+  [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) (§5.3, Figs.
+  13–14) find the skin friction and velocity profile of their
+  [isogeometric](/methods/isogeometric-analysis.md) DG Spalart–Allmaras
+  solution of a flat plate ($M=0.2$, $Re=1.1\times10^7$, 8800 elements,
+  $y_1^+<1$, $N=4$) in "perfect" agreement with $u^+=y^+$, the log law with
+  $\kappa=0.41$, $B=5$ and the data of Wieghardt & Tillmann (as cited);
+  with the mesh adapted from $y_1^+=100$ down to about 1 they report about
+  60 % fewer degrees of freedom and computing time than a reference mesh
+  (see [mesh adaptation](/methods/mesh-adaptation.md)).
 - **Pipe flow and transitional plates in RANS.** [Tomboulides et al. (2025)](/sources/tomboulides-2025.md)
   (§3.2, Fig. 5) find their [$k$-$\tau$](/methods/k-tau-model.md) and
   regularized $k$-$\omega$ pipe-flow profiles at $Re_\tau=1142$ in excellent
@@ -827,6 +850,15 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   *(compiler check, not in the sources)*. The printed order is therefore
   inconsistent with the printed definition; the exchanged order is the one
   that yields a wall law.
+- **Additive constant of the composite law of Gao et al. (2025b).** With
+  their printed constants and the arctangent as the argument of
+  $(y^++a_k)+ib_k$ (the order that yields a wall law above), their
+  $B=3.0333909$ gives $u^+(0)=-2.000$ and $u^+(1)=-1.000$, while
+  $B=5.0333909$ gives 0.000 and 1.000. Their own fitted inverse returns
+  $y^+=65.1$ at $Re_y=1000$; the law gives $Re_y=y^+u^+=996$ at that height
+  with $B=5.0333909$ (the additive constant of Husson et al. 2024 to the
+  printed digits) and 865 with the printed 3.0333909 *(compiler check, not
+  in the sources)*.
 - **Printed truncations of Spalding's law.** Ghidoni et al. (2026, Eq. 12)
   print the series up to the quadratic term, Nuca et al. (2025, Eq. 2) up to
   the cubic term; both call it Spalding's law. The difference is recorded
@@ -970,3 +1002,7 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Guo & Wang (2025)](/sources/guo-2025.md) — Eq. (18) (Spalding's law in the OpenFOAM wall function).
 - [Fang et al. (2025)](/sources/fang-2025.md) — §3.4, Figs. 12–13 (log layer lifted by a wall-normal magnetic field).
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — Fig. 1 (reference log law; passing).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — captions of Figs. 1, 9, 11 (compound law of the wall, $B=5.5$; reference only).
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §5.3, Figs. 13–14 (flat-plate RANS against the log law, $\kappa=0.41$, $B=5$).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §II.B, Eq. (10); Figs. 5, 8, 14 (reference log law).
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C1, Eqs. (17)–(18) (Allmaras–Johnson–Spalart composite law); App. A, Table III.

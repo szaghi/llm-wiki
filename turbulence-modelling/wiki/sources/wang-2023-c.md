@@ -145,7 +145,7 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26), cited further in chunk 6. This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunks 6, 15. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Temporally developing mixing layer](/benchmarks/temporal-mixing-layer.md)
@@ -154,6 +154,7 @@ Chunk 5 (2026-10-26), cited further in chunk 6. This source is cited on:
 - [Energy backscatter and the subgrid energy flux](/definitions/energy-backscatter.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Ensemble Kalman filter calibration of turbulence closures](/methods/ensemble-kalman-closure-calibration.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)

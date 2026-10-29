@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, a-priori-a-posteriori, sgs-model, les, rans]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-29T05:18:00Z
 ---
 
 # A priori and a posteriori testing
@@ -233,7 +233,27 @@ and the invariant analysis are taken (§III.A, §III.D). They evaluate the
 hybrid length scales on the stored fields of their three wall-resolved
 LES (§III.F, Figs. 15–16), an out-of-solver evaluation on reference fields,
 without calling it a priori (below).
-The words carry nine further meanings that must be kept apart:
+Two reviews of 2025 use the pair.
+[Posch et al. (2025)](/sources/posch-2025.md) (§6.1, Fig. 17), on
+combustion models for engine CFD, adapt a validation pyramid from engine
+measurements down to DNS of unit problems and state that "moving from the
+top to the bottom and back again — combining a priori and a posteriori
+model evaluations — facilitates the validation and continuous
+improvement of turbulent combustion models"; among their examples, they cite
+Proch et al. as validating the subfilter wrinkling factor of the
+[thickened flame model](/methods/thickened-flame-model.md) by comparing
+the a priori PDF from DNS of a premixed burner with the PDF modelled a
+posteriori by LES. Their assessment of learned combustion closures is on
+[neural-network SGS models](/methods/neural-network-sgs-model.md).
+[Cuadra et al. (2025)](/sources/cuadra-2025.md) (§III A 3, §IV), on the
+shock–turbulence interaction, report that the subgrid viscous stress and
+the analogous molecular-diffusivity closures of compressible LES are
+"generally neglected on the basis of a priori analysis" (their ref. 116)
+and scale-separation arguments, and that new DNS databases at high
+Reynolds and Mach numbers "can facilitate" the development and
+evaluation of subgrid models for high-enthalpy flows "via a priori
+analysis" (see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+The words carry ten further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
   Sanderse (2025, §4.3) speak of *a priori training* (the loss compares the
@@ -316,6 +336,16 @@ The words carry nine further meanings that must be kept apart:
   under-resolved regions (a patch with about 40% modelled energy at
   $Re_D=7.2\times10^5$); no closure is tested against reference data in
   either sense (see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **Short in-solver rollouts.** [Bezgin et al. (2025)](/sources/bezgin-2025.md)
+  (§5.1, Table 2) call "a priori evaluation" a test in which their
+  learned [implicit-LES](/definitions/implicit-les.md) schemes are run in
+  the solver for 1, 2, 5, 10 and 20 coarse time steps from unseen
+  filtered-DNS states and scored by the cell-wise error of the primitive
+  variables; the model therefore feeds back on its own solution over that
+  horizon. "A posteriori" is the full decay compared with filtered-DNS
+  statistics and spectra (§5.2). They state that the short-horizon results
+  "are meant to demonstrate the training fit … rather than indicate their
+  potential to comprehensively reproduce turbulence dynamics" (§5.1).
 - **Filtering before or after solving.** [Svärd (2022)](/sources/svard-2022.md)
   (§1, §6) uses "a priori" for a filter applied to the equations and "a
   posteriori filtering" for local averages of a computed weak entropy
@@ -785,6 +815,37 @@ can disagree).
   vorticity is strongest. The review adds that training on DNS Reynolds
   stresses cannot guarantee an accurate RANS mean flow (§3.1, citing Wu et
   al. 2019 and Brener et al. 2021).
+
+**A short-horizon fit that ranks the models in the reverse order of the
+long-run statistics.** Bezgin et al. (2025, §5.1–5.2, Tables 2–3) train
+three learned implicit-LES schemes of compressible decaying isotropic
+turbulence by unrolling the differentiable solver for $N_T=1$, 2 and 5
+coarse steps ($N_T$ page-local; see
+[model-consistent training](/methods/model-consistent-training.md)) and
+compare them on $32^3$ cells at turbulent Mach numbers 0.4, 0.6 and 0.8:
+
+| Metric | $N_T=1$ | $N_T=2$ | $N_T=5$ | ALDM | TENO6-A |
+|---|---|---|---|---|---|
+| cell-wise error summed over the three Mach numbers, 1 step | 8.821e-02 (lowest) | — | — | 9.250e-02 | 1.015e-01 |
+| the same, 20 steps | 5.302e-01 | — | 4.571e-01 (lowest) | 5.156e-01 | 5.318e-01 |
+| full-decay spectral error (mean absolute), $M_t=0.4$ / 0.6 / 0.8 | 0.8849 / 0.7923 / 0.6178 | — | 1.480 / 1.562 / 1.428 | 1.099 / 1.252 / 1.428 | 1.110 / 1.153 / 1.173 |
+
+(entries marked — are not quoted here; ALDM is the compressible adaptive
+local deconvolution method; $M_t$ the turbulent Mach number of registry §9).
+Each model is best at the horizon it was trained for, the
+$N_T=5$ model at 5, 10 and 20 steps, yet over the full decay the $N_T=1$
+model has the lowest spectral error at every Mach number and the $N_T=5$
+model the highest. The authors: "the cell-wise error computed in the
+previous section does not necessarily correspond to good spectral
+properties during the decay" (§5.2). Per Table 2 the cell-wise lead is
+not uniform: at $M_t=0.4$ and 5 steps ALDM (7.327e-02) is below the
+$N_T=1$ model (7.452e-02), and at $M_t=0.8$ and one step ALDM (3.301e-02)
+is below the $N_T=5$ model (3.490e-02). The reference is a $512^3$
+TENO6-A and HLLC simulation with $k_{\max}\eta\approx2.3$, below the
+authors' own full-resolution criterion $k_{\max}\eta\ge\pi$, for which
+they state that TENO6-A "acts as an ILES model" (§4.1); it is box-filtered
+by a factor 16 in space and time. Details are on
+[implicit LES](/definitions/implicit-les.md).
 
 **An a priori criterion chosen for its a posteriori consequence.** Jakhar
 et al. (2026, pp. 2–4, Figs. 1–3) select a closure from a 930-term
@@ -1274,6 +1335,10 @@ calls the run "our modification"). No error norms are printed (see
    a priori-successful convolutional closures diverge a posteriori, and
    Salehi et al. (2024, §2.8.3) expect a conservation error invisible on
    one DNS snapshot to accumulate in a running simulation (above).
+   Bezgin et al. (2025, §1, §4.2) state that offline-trained models "do
+   not learn to account for their own prediction errors", and that
+   end-to-end training through the solver lets the model observe its own
+   error accumulation.
 3. **Balance between model terms.** Exact inputs do not repair a model
    whose other terms were tuned to its own variables. Duraisamy (2021,
    §IV.A) cites results in which using exact DNS or LES $k$ and
@@ -1517,11 +1582,7 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   perfect model has C.C. $=1$; as printed, a perfect model would give 9,
   so an averaging factor is missing, as the text's "mean correlation
   coefficient" implies *(compiler check, not in the sources)*.
-- The structural-accuracy explanation of Prakash et al. (2022) and the
-  gauge argument of Vela-Martín (2022) answer different questions: the
-  first holds dissipation fixed and varies correlation, the second shows
-  that correlation with one gauge of $\tau_{ij}$ is not a unique measure.
-  Neither paper tests the other's claim; no contradiction is recorded.
+- Prakash et al. (2022) hold the dissipation fixed and vary the correlation; Vela-Martín (2022) show that correlation with one gauge of $\tau_{ij}$ is not a unique measure.
 - In Abe's (2021) test the a priori metric is $\nu_{\mathrm{eq}}$, a
   dissipation measure; the author notes that good $\nu_{\mathrm{eq}}$
   agreement of the similarity models does not imply their a posteriori
@@ -1718,3 +1779,6 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §2.1, Fig. 1, Table 2 (first-moment closure 41% against CMC hypothesis 7%); §2.8.3 (conservation error not visible on one snapshot); §2.9.5, Fig. 18 (16 cells a priori, 27 in LES); §3.1.1, Fig. 21; §3.2.1, Fig. 34; §4.1 (PDF closure the largest a priori error).
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — §1 (implicit-filter mismatch on coarse grids, a posteriori assessment, model-consistent training needs many LES runs).
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — abstract, §III.A, §III.D ("a priori study" = their ref. 18); §III.B, Table I, Figs. 2–3 (coarse "a posteriori test"); §III.F, Figs. 15–16 (length scales evaluated on three LES fields).
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1, §4.1–4.2 (reference resolution, end-to-end training); §5.1, Table 2 ("a priori evaluation" as short rollouts); §5.2, Table 3 (full-decay spectral errors).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §6.1, Fig. 17 (validation pyramid combining a priori and a posteriori evaluation; Proch et al. cited). Review, citation only.
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 3 (subgrid viscous closures neglected on a priori grounds, cited); §IV (DNS databases for a priori development of high-enthalpy subgrid models).

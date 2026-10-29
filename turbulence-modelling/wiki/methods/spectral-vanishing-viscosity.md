@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-28T12:24:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -418,6 +418,21 @@ simulation of turbulent and supersonic flows", citing the group's work.
 
 ## Related constructions
 
+- **A modal entropy correction contrasted with SVV.**
+  [Alberti et al. (2025b)](/sources/alberti-2025-c.md), §II A 1,
+  Eqs. (23)–(25), make a modal DG entropy conserving or entropy stable by
+  a parameter-free element-wise correction (direct enforcement of the
+  entropy balance, after Abgrall; on
+  [entropy conservation](/properties/entropy-conservation.md)) whose
+  amplitude is fixed by the entropy defect of the element and which is
+  spread over all modal coefficients except the mean. They contrast it
+  with SVV (Karamanos & Karniadakis, cited): SVV acts only at high
+  wavenumbers, whereas their correction is "passive only at the first
+  mode", and restricting it to the higher modes reduced the robustness of
+  the solver in their experience (no data shown). The correction costs
+  below 1% of the CPU time for $N\ge2$ (App. A, Table VI), and the
+  authors state that it is "not designed to have shock-capturing
+  capabilities" (§II A 1).
 - [Flad & Gassner (2017)](/sources/flad-2017.md) (App. C) build a modal
   cusp eddy viscosity in DG polynomial space, acting through a high-pass
   filter on the gradients: like SVV it is concentrated at the highest
@@ -541,3 +556,4 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Yan et al. (2024)](/sources/yan-2024.md) — App. A1, B1, Eqs. (A3), (B1)–(B8) (compact second derivative, SVV kernel, closed-form coefficients); App. B2; §III A, Table II, Fig. 5 (iSVV against second-order Smagorinsky, cost, spectra); §III (values of $\nu_0/\nu$).
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §1 (semi-discrete spatial eigenanalyses of Moura et al. and Mengaldo et al., extended to fully discrete; passing).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (entropy-stable SVV of Mateo-Gabín et al. cited as a filtered form of artificial viscosity for LES; passing).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §II A 1, Eqs. (23)–(25) (entropy correction on all non-mean modes contrasted with SVV); App. A, Table VI.

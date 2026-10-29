@@ -5,7 +5,7 @@ description: "Turbulent flow over a sudden expansion with fixed separation at th
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, A3C step, curved backward-facing step, CBFS]
 tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg, lattice-boltzmann, spectral-element]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Backward-facing step
@@ -276,6 +276,22 @@ upstream to $20H$ downstream, and name the experiment of Adams (1984);
 four values (table above) and name the experiment of Vogel & Eaton. No
 reattachment length is printed.
 
+**Steady high-order RANS at the same Reynolds number.**
+[Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §7.1, also name the
+Vogel & Eaton experiment at $Re_H=28{,}000$ (step height and inlet bulk
+velocity), at $M=0.128$, and use it to verify a $p$-multigrid modal DG
+solver for steady RANS with the log-$\omega$
+[$k$-$\omega$ model](/methods/k-omega-model.md): a quasi-3D channel from
+$x=-130H$ to $50H$, height $8H$ at the inlet and $9H$ at the outlet, a
+symmetry condition on $-130H\le x\le-110H$, 20,540 linear hexahedra with
+one element across the span, $N=1$–3 with $N=0$ as the coarsest multigrid
+level. At $N=3$ the skin friction and the velocity profiles at
+$x/H=2.2$–6.5 agree with the experiment and with Spalart–Allmaras and SST
+references, "without an underestimation of the skin friction coefficient
+in the attached turbulent boundary layer" (Fig. 5); the multigrid saves
+81.22%, 80.42% and 71.03% of the wall-clock time of single-order implicit
+time stepping (Table 6). No reattachment length is printed.
+
 **Out-of-geometry test of a learned RANS closure.**
 [Tang et al. (2023)](/sources/tang-2023.md) (read in arXiv v1), §III A
 and D, use a step at $Re_H=5000$ on the step height, with the geometry and
@@ -478,14 +494,21 @@ steps at a cost "up to 1/16" of conventional CFD, both as cited works.
   $H=1$ m) against $x/H=4.65$
   ([Oulghelou et al. (2025)](/sources/oulghelou-2025.md), Table 6), at the
   same $Re_H$ and against the same LES. Neither paper states the origin of
-  $x$ in a way that lets the two be compared, so the difference is recorded
-  here, not as a contradiction. Wu et al. call the SST separation
+  $x$ in a way that lets the two be compared. Wu et al. call the SST separation
   overpredicted; Oulghelou et al. find SST nearly exact in bubble length.
 - The configurations of [Abe (2021)](/sources/abe-2021.md) and
   [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) differ in expansion ratio (1.5 against 1.25),
   Reynolds number ($Re_H\approx5700$ against 28,000), inflow and modelling
   level (wall-resolved LES against IDDES), so their reattachment errors are
   not comparable with each other.
+- Three sources at $Re_H=28{,}000$ print different channel geometries:
+  [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) and Alberti et
+  al. (2025) an expansion ratio of 5/4 and a domain from $-4H$ to $20H$,
+  [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) heights of $8H$
+  and $9H$ before and after the step, an expansion ratio of 9/8 *(compiler
+  check, not in the sources)*, and a domain from $-130H$ to $50H$. Mozaffari
+  et al. and Bulgarini et al. name Vogel & Eaton, Alberti et al. Adams
+  (1984).
 - [Abe (2021)](/sources/abe-2021.md), §III, defines the velocity in $Re_H$
   as "the mean velocity at the center of the driver channel" while calling
   it the bulk velocity.
@@ -575,3 +598,4 @@ steps at a cost "up to 1/16" of conventional CFD, both as cited works.
 - [An et al. (2025)](/sources/an-2025.md) — §3.1, Table 1, Figs. 3–14; §3.3.
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §3.2, Figs. 15–22.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.2 (cited PINN works, review).
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §7.1, Fig. 5, Table 6.

@@ -3,9 +3,9 @@ type: Method
 title: "Flamelet-based tabulated chemistry"
 description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives manifold construction and coupling, premixed against counterflow tables, extensions for curvature, stretch, ignition and wall quenching, subgrid variance, neural-network and principal-component reduction, assessments, and non-tabulated closures."
 status: established
-aliases: [eddy dissipation concept, EDC, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model, neural-network tabulation, stretch factor, extended Takeno flame index, principal-component transport, PC transport, counterflow flamelet database, partially premixed flamelet tabulation]
+aliases: [eddy dissipation concept, EDC, representative interactive flamelet, RIF, combustion regime diagram, Borghi–Peters diagram, Karlovitz number, coherent flame model, CFM, G-equation, direct chemistry integration, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model, neural-network tabulation, stretch factor, extended Takeno flame index, principal-component transport, PC transport, counterflow flamelet database, partially premixed flamelet tabulation]
 tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction, hybrid-rans-les]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:12:00Z
 ---
 
 # Flamelet-based tabulated chemistry
@@ -214,6 +214,68 @@ consumption rate is made proportional to the transported mass fraction,
 $\overline{(\dot\omega_{k,\mathrm c}/Y_k^{\mathrm{tab}})}\,\tilde Y_k$ with
 $Y_k^{\mathrm{tab}}$ the tabulated value (page-local symbols), so that only
 consumption adapts locally.
+
+## Flamelet validity and combustion regimes
+
+Whether a flame can be represented by laminar flamelets is judged on
+regime diagrams, which the review of combustion models for
+internal-combustion engines by [Posch et al. (2025)](/sources/posch-2025.md),
+§3.3, states after Peters and Borghi, with unity Schmidt and Lewis
+numbers. Page-local symbols: $u'$ the rms velocity fluctuation, $L$ the
+integral length (registry §8), $Re_L=u'L/\nu$, the Damköhler number
+$Da=\tau_L/\tau_{\mathrm{ch}}$ of the integral and chemical times
+($\tau_{\mathrm{ch}}$ as in registry §11), the Karlovitz number
+$Ka=\tau_{\mathrm{ch}}/\tau_\eta=(l_{\mathrm F}/\eta)^2$ and the
+reaction-zone Karlovitz number $Ka_\delta=(l_{\mathrm r}/\eta)^2=(l_{\mathrm r}/l_{\mathrm F})^2Ka$,
+$l_{\mathrm r}$ the reaction-zone thickness (Eqs. 13–17), with
+$Re_L=Da^2Ka^2$ (Eq. 16). The premixed regimes (Fig. 2) are bounded by
+$Re_L=1$, $Ka=1$, $u'/s_{\mathrm L}=1$ and $Ka_\delta=1$: wrinkled
+flamelets ($Ka<1$, $u'/s_{\mathrm L}<1$), corrugated flamelets ($Ka<1$,
+$u'/s_{\mathrm L}>1$), thin reaction zones ($Ka>1$, $Ka_\delta<1$) and
+broken reaction zones ($Ka_\delta>1$); $l_{\mathrm r}/l_{\mathrm F}$ lies
+between about 0.1 at atmospheric pressure and 0.03 at higher pressure, and
+$Ka_\delta=1$ corresponds to $Ka=100$ for $l_{\mathrm r}/l_{\mathrm F}=0.1$
+(Fig. 2). The non-premixed diagram (Fig. 3, Eqs. 18–23) compares the
+stoichiometric mixture-fraction fluctuation with the diffusion and
+reaction-zone thicknesses in mixture-fraction space and the stoichiometric
+scalar dissipation rate with its extinction value, separating extinction,
+connected reaction zones, connected flame zones and separated flamelets.
+The premixed flamelet assumption holds at high $Da$ and needs $Ka<1$ for a
+coherent front, "although it seems to stay valid while $Ka_\delta<1$"
+(§4.1); Posch et al. cite DNS at several Karlovitz numbers by Lipatnikov et
+al. concluding that the domain of flamelet validity is wider than first
+assumed, and a revised diagram of Kheirkhah & Gülder (§4.1). Two limits are
+stated (§3.3.2, §6.2.1): the diagrams assume homogeneous isotropic
+turbulence, from which engine flow is "far", so they give only a "fairly
+rough distinction"; and for thermodiffusively unstable flames the
+classical premixed diagrams are inadequate, Aspden et al. and Howarth et
+al. rescaling them with the speed and thickness of the freely propagating
+flame, while Berger et al. found the consumption speed, and hence the
+turbulent flame speed, raised by a factor of three by thermodiffusive
+instabilities (as cited; the flame of
+[Berger et al. (2022)](/sources/berger-2022.md) is in the assessment
+below). The review excludes low-Damköhler cases, chemical times in most
+technical applications being shorter than transport times (§3.3).
+
+**The non-premixed flamelet and its mapping** (Posch et al., §4.8). With
+unity Lewis number and a conserved $Z$, each species obeys
+$\partial_tY_k=(\chi_Z/2)\,\partial^2Y_k/\partial Z^2+\dot\omega_k$ (Eq. 54;
+$\dot\omega_k$ the production rate, page-local), in which the scalar
+dissipation rate is the only link to the flow; the mean is mapped with a
+$\beta$-PDF of $Z$ and a log-normal PDF of $\chi_Z$ (Eq. 55),
+$$\tilde Y_k=\int_0^1\!\!\int_0^\infty P_Z(Z;\boldsymbol x,t)\,P_\chi(\chi_Z;\boldsymbol x,t)\,Y_k(Z,\chi_Z,p,T)\,\mathrm d\chi_Z\,\mathrm dZ .$$
+Tabulated reductions (ILDM, FGM, flamelet/progress variable, unsteady and
+tabulated FPV) store such solutions; FGM, the authors state, "provides a
+good balance between computational efficiency and the ability to
+accurately capture TCI". The **representative interactive flamelet** (RIF)
+instead solves one-dimensional flamelets during the run with the history
+of the scalar dissipation rate, costlier than tabulation because flamelet
+time steps are much smaller than CFD steps, with multiple flamelets
+introduced sequentially; the choice of progress variable matters, and
+partially premixed flamelets or blended premixed and diffusion tables
+serve multi-mode combustion (§4.8, §6.3.2–6.3.3, as cited). The same
+equations bear on [conditional moment closure](/methods/conditional-moment-closure.md),
+whose relation to flamelets the review prints in two readings.
 
 ## Assessment
 
@@ -525,6 +587,17 @@ the measurements apart from a near-nozzle discrepancy, which the authors
 attribute to "the lack of consideration for the heat-transfer effect in
 the employed flamelet model formulation". No error norm is given.
 
+**In engine CFD** (Posch et al. 2025, §5.2.5, §5.3). The
+review reports, as the cited studies claim them: a five-dimensional FGM
+matched an optical partially premixed engine where a four-dimensional FGM
+predicted very late ignition, and FGM beat the partially stirred reactor
+with roughly 90% less computational time (Xu et al.); lean and diluted
+spark-ignition and jet-ignition engines raise the Karlovitz number and
+move combustion out of the flamelet regimes, where tuning model constants
+"often compromises the fundamental accuracy and predictive capability"
+(§5.3, §6.3.2). The review's engine evidence is in-cylinder pressure and
+heat release, emissions not allowing "any useful validation" (§5).
+
 ## Stretch beyond the unstretched flamelet
 
 [Coulon et al. (2023)](/sources/coulon-2023.md) test the assumption that
@@ -637,6 +710,17 @@ network tabulation of chemistry as competing accelerations (§1).
 The review's general caution, that learned closures are mostly tested
 a priori, is on
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
+Posch et al. (2025), §6.4, list the network uses in engine combustion
+they cite: networks for representative species with PCA-based
+classification, clustered networks for source terms, a network replacing
+flamelet tables with a memory reduction by a factor of 5000 (Ihme et al.),
+RCCE combined with networks, network flamelet libraries in engine LES,
+and a physics-informed network for reaction-kinetics equations; they
+state that learned closures "have been mostly developed and tested on
+benchmark flame simulation cases" and that data-driven models need
+training data covering the engine's temperature and pressure range
+(§6.4.1–6.4.2).
 
 ## Contrast: closures that do not tabulate
 
@@ -768,6 +852,45 @@ models are needed (§IV C). The subgrid closure is the
 [one-equation subgrid kinetic-energy model](/methods/subgrid-kinetic-energy-equation-model.md);
 the turbulent transport of heat and species is on
 [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md).
+
+**Flame-surface, level-set, PDF and direct-chemistry closures in engine
+CFD.** Posch et al. (2025), §4.3–4.6 and §5.1.5, state the other
+non-tabulating families as cited; page-local symbols $\Sigma_{\mathrm f}$
+the flame surface density, $\bar s_{\mathrm f}$ the mean consumption
+speed, $\alpha_\Sigma$, $\beta_\Sigma$ the strain and consumption
+constants, $\tilde c$ the Favre progress variable, $G$ a level-set
+function and $\boldsymbol n=-\nabla G/|\nabla G|$:
+
+- **Coherent flame model** (Marble & Broadwell, Candel & Poinsot): the
+  mean rate $\rho_u\bar s_{\mathrm f}\Sigma_{\mathrm f}$ ($\rho_u$ the
+  unburnt density; Eq. 32) with
+  $\partial_t\Sigma_{\mathrm f}+\partial_i(\tilde u_i\Sigma_{\mathrm f})=\partial_i\big((\nu_t/Sc_t)\partial_i\Sigma_{\mathrm f}\big)+\alpha_\Sigma(\varepsilon/k)\Sigma_{\mathrm f}-\beta_\Sigma\bar s_{\mathrm f}\Sigma_{\mathrm f}^2/(1-\tilde c)$
+  (Eq. 34), $\beta_\Sigma$ generally 1 and $\alpha_\Sigma$ of order one,
+  settings far from unity "may significantly deteriorate the predictions"
+  (§4.3); the review also states the engine extensions ECFM and ECFM3Z
+  (§4.3, Fig. 5). Models that assume unity Lewis number a priori, such
+  as this one, "are not able to account for differential diffusion
+  effects" (§6.2.1).
+- **G-equation** (Peters): the front $G=G_0$ moves as
+  $\partial_tG+\boldsymbol u\cdot\nabla G=s_{\mathrm L}|\nabla G|$ (Eqs.
+  36–40), valid for $Ka<1$, with an iso-temperature form for the thin
+  reaction zones (Eq. 42) and turbulent flame-speed closures that allow
+  calibration against experiment (§4.4, §5.1.3, Table 5).
+- **PDF methods**: the presumed $\beta$-PDF (Eqs. 47–49) cannot represent
+  the burnt-mixture probability of a premixed flame and is "not
+  suitable" there (§4.6); the transported PDF (Eq. 50) needs a mixing
+  model and constant ($C_\Phi=2.0$ in the cited engine studies) and its
+  cost makes it "impractical for industrial applications" even in RANS
+  (§5.2.2).
+- **Direct chemistry integration**, finite-rate chemistry from the cell
+  state with multi-zone grouping and adaptive mesh refinement, is "a
+  clear trend" in RANS engine simulation, but computing sources from
+  averaged values neglects the turbulence–chemistry interaction
+  "completely" (§5.1.5, §5.3); for compression-ignition engines the review
+  prints the disagreement between Kokjohn & Reitz (small-scale interaction
+  not dominant in low-temperature diesel combustion) and Kung & Haworth
+  (interaction relevant), and concludes that "a general justification to
+  neglect TCI in CI engines cannot be derived" (§5.2.4).
 
 ## Tables inside conditional closures
 
@@ -920,6 +1043,14 @@ perceptrons (§3.3, Table 5).
   diffusion after Liang et al. while citing Grcar et al. for its growing
   importance in very lean hydrogen flames; their leanest case is
   $\phi_{\mathrm{eq}}=0.7$.
+- **Posch et al. (2025).** §5.2.5 says that flamelet-model examples
+  "for SI engines are listed in Table 12", whose title is "Flamelet-based
+  models CI engine application examples"; §4.4 calls $s_{\mathrm L}$ "the
+  turbulent flame speed", the laminar flame speed elsewhere; §3.3.2 writes
+  the mixture-fraction thicknesses as $(\nabla Z)_{\mathrm F}$,
+  $(\nabla Z)_{\mathrm R}$ in the text and $(\Delta Z)_{\mathrm F}$,
+  $(\Delta Z)_{\mathrm R}$ in Eq. (22); §3.3 writes $Le=a_m/D$ with $a_m$
+  undefined. Their evidence is cited from the reviewed studies.
 - **Berger et al. (2022)** print the Karlovitz number $(l_{\mathrm F}/\eta)^2$
   as 20 and 16 for the unstable and stable flames (Table 1), while the
   $l_{\mathrm F}$ and $\eta$ of the same table give about 15.7 and 17.3
@@ -956,3 +1087,4 @@ perceptrons (§3.3, Table 5).
 - [Wei et al. (2023)](/sources/wei-2023.md) — §II B (quasi-laminar closure chosen over flamelet, PDF and linear-eddy closures); §IV C, Conclusions (finite-rate burning).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §2.8.1–2.8.3, Eqs. (32)–(38), Fig. 12 (TGLDM, FPI/FGM, laminar flamelet decomposition, detailed chemistry in CSE); §3.1.2, Fig. 25 (flamelet-library dependence, cost reduction); §4.1–4.2 (tabulation cost, recommendations).
 - [Le et al. (2024)](/sources/le-2024.md) — §3, §3.2 (FGM and ISAT tabulation, chemistry cost); §3.3, Eq. (19), Table 5 (flamelet closures for supersonic combustion, learned joint density and tables; review, cited works).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §3.3, Eqs. (13)–(23), Figs. 2–3 (premixed and non-premixed regime diagrams); §4.1 (flamelet validity); §4.3–4.6, Eqs. (32)–(50) (coherent flame model, G-equation, presumed and transported PDF); §4.8, Eqs. (54)–(55) (flamelet equation, mapping, FGM, RIF); §5.1.5, §5.2.2, §5.2.4–5.2.5, §5.3 (engine assessments, direct chemistry, TCI); §6.2.1, §6.3.2–6.3.3, §6.4 (thermodiffusive flames, multi-mode, neural networks; review).

@@ -148,7 +148,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 9 (2026-10-27). This source is cited on:
+Chunk 9 (2026-10-27), cited further in chunk 15. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
@@ -156,6 +156,7 @@ Chunk 9 (2026-10-27). This source is cited on:
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Gradient (Clark) model and the clipping of structural SGS models](/methods/gradient-model.md)
 - [High-order gas-kinetic schemes for turbulence simulation](/methods/high-order-gas-kinetic-scheme.md)

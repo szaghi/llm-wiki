@@ -5,7 +5,7 @@ description: "The bulk (volume) viscosity multiplies the velocity divergence in 
 status: established
 aliases: [volume viscosity, dilatational viscosity, second viscosity, bulk viscous Reynolds number, viscous Prandtl number, Stokes hypothesis]
 tags: [compressible, dns, implicit-les, numerical-dissipation, mhd]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-29T05:10:00Z
 ---
 
 # Bulk viscosity
@@ -29,7 +29,13 @@ $\nu_{\rm shear}$". The name is not used uniformly:
 the stress as $\lambda_b(\nabla\cdot\boldsymbol u)\delta_{ij}+2\mu S_{ij}$
 and call the coefficient $\lambda_b$ of the divergence (the second
 viscosity $\lambda_{\mathrm v}$ of this page) the "bulk viscosity" (see
-Qualifications for the value they print). The sources use it in three ways: as a physical property
+Qualifications for the value they print). The same group's
+[Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) write the
+stress as $\lambda_{\mathrm v}(\nabla\cdot\boldsymbol u)\delta_{ij}+\mu[\partial_ju_i+\partial_iu_j]$
+with $\lambda_{\mathrm v}=-2\mu/3$, the "second viscosity coefficient given
+by the Stokes hypothesis" (§II A, Eq. 5), and in §III F call the same
+coefficient the "bulk viscosity ... i.e., $\lambda=-2\mu/3$" (see
+Qualifications). The sources use it in three ways: as a physical property
 of molecular gases, as an inherent property of a kinetic discretization, and
 as an artificial dissipation for shocks.
 
@@ -301,6 +307,15 @@ shock-capturing dissipation (see
   against the other terms and dominated by its flux part; its sink part is
   negative by construction and much smaller (§4.1, Eq. 4.13, Fig. 18).
 
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md), §III A 1, in their
+  review of numerical frameworks for the canonical shock–turbulence
+  interaction, list artificial viscosity (von Neumann–Richtmyer, Jameson et
+  al., and the LES variants of Cook 2007 and Mani et al. 2009) as one class
+  of shock capturing, "less invasive" than nonlinear reconstruction, with
+  similar stabilization and "sometimes more dissipation"; the artificial
+  bulk viscosity of Mani et al. is only cited there (see
+  [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+
 These are numerical devices with coefficients tied to the grid, unlike the
 physical $\nu_b$ of Beattie et al., which is constant in space and time.
 
@@ -332,6 +347,16 @@ tested in the paper; it is left to future work (§6). A preliminary LES of a
 similar configuration with a spectral-element dynamic model gave
 "promising results", as the authors report from their own earlier work
 (§5).
+
+The review of [Cuadra et al. (2025)](/sources/cuadra-2025.md), §III A 3,
+points at the same trace from the shock–turbulence side: in LES of the
+canonical interaction the isotropic part $\tau_{kk}$ of the subgrid stress
+(twice the subgrid kinetic energy, registry convention) "becomes
+important" as the turbulent Mach number grows, and is needed in both the
+momentum and the energy equations (citing Garnier et al. and others);
+the eddy-viscosity closures they review model only the deviatoric part,
+$\tau^d_{ij}=-2\nu_t\tilde S^d_{ij}$ in registry sign (their Eq. 39 and
+the text below it). They propose no closure for the trace.
 
 ## Qualifications
 
@@ -383,6 +408,12 @@ similar configuration with a spectral-element dynamic model gave
   requires $\lambda_b=-\tfrac23\mu$, and the printed value corresponds to
   $\mu_b=-\tfrac23\mu$ *(compiler check, not in the sources)*. The paper
   does not say which value the CNS3D code uses.
+  [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md), whose
+  paper does not name its solver, print $\lambda_{\mathrm v}=-2\mu/3$ as
+  the "second viscosity coefficient given by the Stokes hypothesis" (§II A,
+  Eq. 5); their §III F calls this coefficient the "bulk viscosity", while
+  the relation $\mu_b=\lambda_{\mathrm v}+\tfrac23\mu$ of Beattie et al.
+  (2025) gives $\mu_b=0$ for it *(compiler check, not in the sources)*.
 - **Inconsistent description in Chapelier et al. (2024).** §III.B.h calls
   the SD3DvisP operator "a Laplacian operator impacting all conservative
   variables", which disagrees with the bulk-viscosity-and-thermal-diffusivity
@@ -403,3 +434,5 @@ similar configuration with a spectral-element dynamic model gave
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2, Eqs. (2.6)–(2.10), App. B, Fig. 12 (artificial bulk viscosity with a Ducros-modified modal sensor); §4.1, Eq. (4.13), Fig. 18 (its budget term); §5, Eqs. (5.1)–(5.5), Figs. 27–29; §6 (bulk viscosity proposed for the subgrid-stress trace).
 - [Svärd (2022)](/sources/svard-2022.md) — §1, Eq. (1); §5.3 (bulk viscosity set to zero).
 - [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §III A, Eq. (2) and the stress definition below it (second viscosity named "bulk viscosity", printed Stokes value).
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §II A, Eq. (5) (second viscosity $-2\mu/3$, Stokes hypothesis); §III F (the same coefficient named "bulk viscosity").
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1 (artificial viscosity as a shock-capturing class, Mani et al. cited); §III A 3, Eq. (39) (isotropic subgrid stress at high turbulent Mach number).

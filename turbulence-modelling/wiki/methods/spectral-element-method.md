@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Continuous-Galerkin spectral-element method"
-description: "The continuous-Galerkin spectral-element method expands the solution in tensor-product Lagrange polynomials on LGL nodes, continuous across elements by direct stiffness summation; this page covers its formulation, the derivative jumps and weak wall-stress imposition that shape LES on it, nodal subgrid coefficients and filter widths, and implicit RANS source terms."
+description: "The continuous-Galerkin spectral-element method expands the solution in tensor-product Lagrange polynomials on LGL nodes, continuous across elements by direct stiffness summation; this page covers its formulation, the derivative jumps and weak wall-stress imposition that shape LES on it, nodal subgrid coefficients and filter widths, implicit RANS source terms and delayed detached-eddy simulation."
 status: established
 aliases: [SEM, CG-SEM, continuous Galerkin spectral element method, spectral/hp continuous Galerkin, direct stiffness summation, SEM TLES]
 tags: [spectral-element, les, wmles, sgs-model, numerical-dissipation]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-29T05:18:00Z
 ---
 
 # Continuous-Galerkin spectral-element method
@@ -263,14 +263,69 @@ persistent oscillations of the standard $k$-$\omega$ model with a large
 prescribed wall $\omega$ to the negligible numerical diffusion of high-order
 codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
 
+## Delayed detached-eddy simulation on spectral elements
+
+[Kumar et al. (2025)](/sources/kumar-2025.md) build on the $k$-$\tau$ SST
+model of Tomboulides et al. what they call, to their knowledge, the first
+DDES in a spectral-element code based on the
+[$k$-$\tau$ model](/methods/k-tau-model.md), in Nek5000 (§1, §2.2;
+formulation on [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+The spectral-element choices:
+
+- **Grid scale.** The LES length is $C_{\mathrm{DES}}h_{\max}$ with
+  $h_{\max}$ the largest edge of a spectral element divided by $N$
+  (page-local; Eq. 22), and the first wall spacing is reported as the
+  first element height over $N$, an average that exceeds the first LGL
+  spacing (Eq. 29).
+- **Time and meshes.** Semi-implicit BDF3/EXT3 with characteristics-based
+  (OIFS) stepping at CFL 3.0, limited by the closed trailing edge; GMRES
+  with $p$-multigrid for pressure; airfoil O-grids from Construct2D with
+  the GLL points placed by a cubic spline through the element vertices to
+  follow the profile (§2.2, §3.2.1, §5).
+- **RANS verification** on the NASA zero-pressure-gradient flat plate
+  ($Re_L=5\times10^6$): skin friction and drag differ by less than 0.5%
+  between $N=4$ and $N=16$ on $34\times24$ elements; under wall-normal
+  stretching at $N=6$ the drag oscillates for first spacings
+  $y^+_n>1.5$ and the $k$-$\tau$ SST model converges less smoothly than a
+  regularized $k$-$\omega$ SST, within 1% of other models (§3.1,
+  Figs. 3–4; see [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+  On the [NACA 0012](/benchmarks/naca-0012-airfoil.md) at
+  $Re_c=6\times10^6$ ($N=9$ and 11) lift and drag lie within 5% of CFL3D
+  (§3.2, Table 3).
+- **Grid convergence of DDES.** At $Re_c=2\times10^6$ and incidences up to
+  $90^\circ$ ($N=7$, 0.8, 2.6 and 6.5 million degrees of freedom), Coarse,
+  Medium and Fine differ minimally, so the DDES is grid-converged on the
+  Coarse mesh, whereas the second-order finite-volume IDDES of Bidadi et
+  al. converged on their Medium one; the authors credit the high-order
+  convergence of the method (§4.3.2, §5, Fig. 11).
+- **Interface artefacts.** $Q$-criterion isosurfaces fluctuate at element
+  interfaces because derivatives are discontinuous under $C^0$
+  continuity; a gradient-jump penalty removes them without changing the
+  forces (§4.3.1; see [jump-penalty stabilization](/methods/jump-penalty-stabilization.md)).
+- **Sampling.** On a NACA 0021 at $60^\circ$ and $Re=2.7\times10^5$ the
+  running mean of the lift reaches 0.2% of its final value after about
+  600 convective time units, "about one-third" of the time quoted for a
+  fully implicit lower-order code, and $\pm2\%$ after 100–150; with a mean
+  step of about $7\times10^{-5}$ the run collects about 8.5 million
+  samples against about 75,000 for the cited code with $\Delta t=0.02$,
+  which they offer as the reason their drag (1.48 against 1.38 there,
+  1.51 measured) captures the skewed extreme events of the drag histogram
+  (§4.2, Fig. 7).
+
 ## Qualifications
 
+- **Printed counts (Kumar et al. 2025).** §3.1.3 states that the final
+  stretched plate mesh keeps the $257\times97$ points of the NASA
+  references; $37\times16$ elements at $N=6$ give $(37\cdot6+1)(16\cdot6+1)=223\times97=21{,}631$,
+  the $N_{\mathrm{dof}}$ of their Table 1 *(compiler check, not in the
+  sources)*. The caption of Fig. 2 lists an $N=24$ line absent from
+  Table 1, and the span of the NACA 0021 experiment is printed as $7.2c$
+  and $0.72c$ (§4.2).
 - **Absence of numerical dissipation.** Reddy et al.'s statement is not
   tested in their paper, which measures no numerical dissipation separately;
   Saini et al. (2023) measure numerical and model dissipation together, and
   Mukha et al. (2025) and Gillyns et al. (2022) report derivative jumps and
-  instabilities on coarse meshes. The sources address different quantities,
-  so no contradiction is recorded.
+  instabilities on coarse meshes.
 - **Version and framing (Reddy et al. 2026).** The version read is a
   preprint dated 4 March 2021; its title names the Navier–Stokes equations
   while §2 solves the compressible Euler equations with no molecular
@@ -332,3 +387,4 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1 (oscillations of high-order $k$-$\omega$); §2.2, Eqs. (32)–(38) (implicit source terms in the Helmholtz operator); §3.1, Figs. 1–2; §3.4–3.5 ($N$-convergence, CFL on the T-junction).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I; §II A, Eqs. (15)–(16) (spectral/hp elements in Nektar++, velocity-correction splitting); §II C, Eq. (20) (Neumann wall-stress condition, interpolation by the elemental expansion); §III A–B, Table I, Figs. 3–6 (cost, near-interface error); §III E, Figs. 3, 9 (fewer high-degree against more low-degree elements); §IV.
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.3 (Patera's spectral elements in the history of DNS discretizations; passing).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §1, §2.2, Eqs. (20)–(29) ($k$-$\tau$ SST DDES in Nek5000, $h_{\max}$, BDF3/EXT3 with OIFS, wall spacing); §3.1–§3.2, Tables 1–3, Figs. 2–6 (flat-plate $p$- and $r$-convergence, NACA 0012 RANS); §4.2, Fig. 7 (sampling); §4.3.1–§4.3.2, Fig. 11 (interface artefacts, grid convergence); §5.

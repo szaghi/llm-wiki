@@ -6,6 +6,137 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 15 — 2025–2026 papers: p-adaptive DG load balancing, ML-ILES, DG stabilizations, isogeometric and p-multigrid DG, ADDA, spectral-element DDES, entropy-aware DG, wall functions for WMLES, low-dissipation and low-Mach schemes, adaptive DG, compressible jets, half-explicit RK VMS, RHEA-X, DNS/LES mesh adaptation, STI and engine-combustion reviews (2026-10-29)
+
+Sources (20): valvo-2025, bezgin-2025, bilocq-2025, bulgarini-2025-b,
+bulgarini-2025, tsoutsanis-2025, kumar-2025, alberti-2025-c, cuadra-2025,
+gao-2025, gao-2025-b, kokkinakis-2025, kokkinakis-2025-b, lv-2025,
+rahatgaonkar-2025, zou-2025-b, posch-2025, sun-2026, monteiro-2026,
+barbera-2026. 300 of 307 ingested, 189 concept pages plus the registry,
+14078 bibliography entries. Deep lint A1–A8 over the chunk-15 content done.
+
+### Decisions for the human
+
+1. **NACA 0012 lift at $10^\circ$ (opened, *Open*):** Kumar et al. (2025,
+   Table 3) print 1.05 and Tomboulides et al. (2025, Tables 3–4) print
+   1.075 from Ladson (1988), both as the experimental reference at
+   $Re_c=6\times10^6$. Kumar's Table 3 caption cites their ref. [52], a
+   Ladson et al. 1985 report on a Boeing BAC I airfoil, while the text
+   cites [52, 53]. Close by fiat as a citation slip, or keep open?
+2. **Bibliography calls left by the resolver:**
+   - `wang-2021` used every suffix through `-z`; posch-2025's ref. [381]
+     is keyed `wang-2021-aa`. Lint accepts it; `bib_merge`'s suspect
+     heuristic does not parse a two-letter suffix. Accept, or choose a
+     convention?
+   - posch-2025's ref. [328] prints the author string "J. CH, P. G, J. PW,
+     K. WC" (n-heptane mechanism, LLNL URL, no year); the key
+     `curran-2025` is a reader's reading of the initials, unverified.
+   - bulgarini-2025's ref. [23] prints "51st AIAA Aerospace Sciences
+     Meeting … 2013, AIAA 2013-1002, AIAA, 2007"; keyed `ghidoni-2007` by
+     the printed year. Re-key to 2013?
+   - Judgement folds: moore-1953 (NACA, Vol. 1165, as cuadra-2025 prints
+     it) into `moore-1954`; the hillewaert-2013 thesis and the Presses
+     Universitaires de Louvain book as one document; further report forms
+     of reed-1973 (precedent of chunks 6–7). Keep folded?
+3. **Candidate pages** (not created, inline):
+   - low-Mach velocity correction (kokkinakis-2025-b's hyposonic
+     correction, tsoutsanis-2025's low-Mach blend; reported by three
+     drafters) — two sources;
+   - p-multigrid (bulgarini-2025; reported twice) — one source;
+   - turbulent pipe flow (barbera-2026) — one;
+   - wall-pressure spectrum models (gao-2025, Goody and Viazzo as cited);
+   - HLLC Riemann solver (three passing uses), half-explicit Runge–Kutta
+     (sun-2026), interior-penalty DG (zou-2025-b, zhao-2023-b as cited),
+     direct DG (lv-2025), selective entropy-stable DG (bilocq-2025),
+     entropy-stable walls (alberti-2025-c), ADDA (tsoutsanis-2025),
+     dynamic load balancing (valvo-2025), canonical shock–turbulence
+     interaction as a benchmark (cuadra-2025, bilocq-2025), turbulent
+     combustion regimes and partially stirred reactors (posch-2025,
+     fureby-2023), PRECCINSTA burner, DrivAer car and NASA Trap Wing
+     (single-source), RHEA-X and JAX-Fluids software pages.
+   Earlier candidates still open: entropy filtering, swept SBLI, a
+   grid-length page, neural-network surrogate RANS, TKE budget,
+   machine-learned ILES (bezgin-2025 now a second source), ALDM.
+4. **Deferred to the whole-bundle deep lint of chunk 16:** bare $\chi$
+   for the volume-penalization mask (immersed-boundary-method, DGSEM, flux
+   reconstruction, ferrer-2023, llorente-2024, wu-2026, monteiro-2026)
+   clashes with the registry's Spalart–Allmaras $\chi=\tilde\nu/\nu$; a
+   registry row and a rename across the pages are needed.
+
+### Contradictions
+
+- **Opened (2, both *Open*):** the NACA 0012 lift above
+  ([NACA 0012](/benchmarks/naca-0012-airfoil.md) page); the DNS cost
+  exponent attributed to Choi & Moin, $Re^{9/4}$ in Gao et al. (2025,
+  §I) against $Re^{37/14}$ in Rickard & Kasbaoui (2026), Maeyama & Kawai
+  (2023) and Bose & Park (2018), each used as the cost argument
+  ([grid-point requirements](/results/les-grid-point-requirements.md)).
+  Twelve open in the bundle.
+- **Kept side by side (each source's printed value and set-up):**
+  - SD7003 reference values of a DGSEM run (Tsoutsanis & Nogueira
+    "Frank et al." 0.923/0.045, no degree or Mach printed; Vermeire 2024
+    0.932/0.050 at $N=7$, Mach 0.1) and of Galbraith & Visbal (the two
+    sources cite the 2008 and 2010 papers);
+  - Rodi workshop ranges on the square cylinder (guo-2025 and valvo-2025
+    cite different 1997 works);
+  - the CNS3D viscous coefficient ($-4\mu/3$ in kokkinakis-2023, already
+    a printed slip of that paper; $-2\mu/3$ in kokkinakis-2025-b);
+  - adaptation-indicator rankings (bulgarini-2025-b against ims-2023);
+    isothermal entropy-stable walls (potluri-2023, citing others, against
+    alberti-2025-c); the cylinder $C_D$ at Re 40; the backward-facing
+    step expansion ratio; Wieghardt–Tillmann conditions; STREAmS back
+    ends (monteiro-2026 against Cogo et al.); $r_{\max}$, negative-SA
+    diffusion, free-stream limiter and $\sigma_k$ in the spectral-element
+    RANS papers.
+  - The composite-law intercept of gao-2025-b ($B=3.0333909$ against
+    husson-2024's 5.0334) is a printed slip of gao-2025-b (with 3.03 the
+    law gives $u^+(0)=-2$; compiler check).
+
+### Printed slips (recorded on the Source pages)
+
+- valvo-2025: Table 2's 7523 s gives 267.5 core hours, not the printed
+  281; the 281 and −39.5 % fit about 7903 s.
+- bezgin-2025: Eq. 12 gives $i+2/3$ on linear data; Eq. 34 gives a
+  Taylor time of about 3.9 against Table 1's 0.42.
+- tsoutsanis-2025: $h_0$ printed as the square root of a volume.
+- kumar-2025: "matches NASA's 257×97" while $37\times16$ elements at
+  $N=6$ give $223\times97$.
+- alberti-2025-c: DNS degrees of freedom differ by a factor 1.5 between
+  Tables I and IV; signs of Eqs. 9 and 26; Hamzehloo's $Re_\tau$ printed
+  as 215 and 222.
+- cuadra-2025: Eq. 17 gives $\mathcal R(1)=2\gamma/(\gamma+1)$; Eq. 5
+  lacks $(2\pi)^{-3}$ and the imaginary unit.
+- gao-2025: Eq. 25 gives 11.50 Pa against the printed 10.29 Pa; Eq. 22 is
+  not divergence-free; Table III sample height; text $y^+$ 55–220 against
+  Table II 110.9–441.7.
+- gao-2025-b: intercept $B$; Eq. 19 dimensions; Eq. 31 missing factor;
+  fit-branch jumps; "128×48×60" against $128\times48\times64$.
+- kokkinakis-2025: WENO-MZ weight in two inequivalent forms (Eq. 12, Eq.
+  A18). kokkinakis-2025-b: mapping-function sign; "21 flow-throughs"
+  against 47.7 from the printed box and time.
+- lv-2025: "slight increase" in cost against Table II's 26.03 and 8.37
+  min. posch-2025: Eqs. 53 and 54 differ by a factor 2 under its own
+  $\chi$. bulgarini-2025-b: Table 5 degree 1–2 against $\mathbb P^3$ in
+  the captions.
+
+### Bibliography
+
+13050 → 14078 entries: 355 aliases, 50 verified silences, 5 printed
+duplicates and about 35 form variants folded, 31 printed keys naming
+other works re-keyed (self-key `kokkinakis-2025-c`), `FLAGS: 0`,
+`--dupes` unchanged (22 groups, 0 cross-stem), pending 0 of 300. Crossref
+settled misprints in schaal-2015, eivazi-2020, leung-1991, shu-2005 and
+carpenter-2014 (bilocq-2025's printed DOI does not resolve). Kept
+distinct: wen Part II from Part I, ribner-1954 (NACA Report 1164),
+tsoutsanis-2023-b (the JCP reissue of tsoutsanis-2019).
+
+### Bundle fit (D17 candidates, no copy made)
+
+posch-2025 (engine-combustion review: cited on the combustion pages only),
+zou-2025-b (laminar vortex-induced vibration with moving-mesh DG: numerics
+pages only; its "DNS" are 2-D laminar runs), valvo-2025 and monteiro-2026
+(solver infrastructure). All twenty are versions of record.
+
 ## Chunk 14 — 2024–2026 papers: interpolation-based WENO, smooth-cutoff WCNS/SATES, SA-based SAS, wall-modelled immersed boundaries, hybrid RANS/LES in OpenFOAM and DG, Bayesian SA calibration, low-dissipation Roe ILES, PyFR/CaLES/Xcompact3d/GESTS, panel FSI under SBLI, vortex-flow CFD survey, CSE review, AI reviews (2026-10-28)
 
 Sources (20): wang-2024-i, wang-2024-j, wang-2024-k, wu-2024-b, yan-2024,

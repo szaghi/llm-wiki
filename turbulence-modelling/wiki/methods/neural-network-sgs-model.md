@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-28T12:26:00Z
+timestamp: 2026-10-28T17:42:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -182,6 +182,20 @@ variables (ref. [224]) and for the conditional scalar dissipation of spray
 flames (ref. [225]). [Fang et al. (2026)](/sources/fang-2026.md) (§2.2)
 cite an extrapolation study of convolutional combustion closures across
 Reynolds number, filter kernel and filter size (their ref. [56]).
+[Posch et al. (2025)](/sources/posch-2025.md) (§6.4.2), on engine
+combustion, state that "a majority of the published studies have focused
+on LES subgrid term reconstruction" and cite a CNN for the subgrid flame
+surface density from the progress variable (Lapeyre et al., their
+ref. [477]), which agreed with its baseline data and was presented as a
+proof of concept, and a deep network for the filtered progress-variable
+source and unresolved scalar transport that takes the filtered progress
+variable as its only input, so that it "should also perform well for any
+turbulent premixed flames characterized by combustion regions near the
+conditions used for training" (Seltz et al., ref. [478]). Their
+assessment is that these closures "have been mostly developed and tested
+on benchmark flame simulation cases" and that the transfer to engine
+combustion "is not straight forward"; the GAN closures they review are
+on [super-resolution SGS models](/methods/super-resolution-sgs-model.md).
 
 Two non-learned closures of compressible LES position themselves against
 learned ones: [Zhang et al. (2022d)](/sources/zhang-2022-h.md) (§I) state
@@ -639,6 +653,34 @@ Smagorinsky-closed filtered equations. Neither models $\tau_{ij}$; both
 compare with dynamic or static Smagorinsky LES on the same grid. See
 [neural-operator surrogates of LES](/methods/neural-operator-les-surrogate.md).
 
+## Networks inside the discretization instead of an explicit closure
+
+[Bezgin et al. (2025)](/sources/bezgin-2025.md) (§1, §3.1) take the
+opposite route to the explicit closures above: no subgrid term is added,
+and three small networks (one each for density, velocity and pressure;
+3 hidden layers of 20 units, 1044 parameters each) output the convex
+weights of the four candidate polynomials of a TENO6-A reconstruction
+inside an HLLC finite-volume scheme, so that the truncation error of the
+learned scheme acts as the subgrid model of an
+[implicit LES](/definitions/implicit-les.md) of compressible decaying
+isotropic turbulence. They motivate the choice against offline-trained
+explicit networks: the network of Beck et al. (their ref. [11]) "had to be
+recast into a data-driven eddy-viscosity formulation to yield stable a
+posteriori results", and offline-trained models "do not learn to account
+for their own prediction errors"; they argue that learned discretizations
+"may provide better extrapolation capabilities to unseen meshes and flow
+configurations" than explicit closures (§1, stated, not tested against an
+explicit network). Training is end-to-end through the differentiable
+solver (see [model-consistent training](/methods/model-consistent-training.md));
+the a priori and a posteriori rankings of the resulting models disagree
+(see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)),
+and the construction and results are on
+[implicit LES](/definitions/implicit-les.md) and
+[WENO schemes](/methods/weno-scheme.md). Per cell and time step the
+learned scheme costs 2.7 to 4.4 times the analytical TENO6-A scheme on a
+GPU (Table 5; ratios of the printed timings, *compiler check, not in the
+sources*; the text says "roughly three-times" and "roughly 4.5 times").
+
 ## Stabilization that a priori networks need
 
 [Fang et al. (2026)](/sources/fang-2026.md) (§4.2.4), a review, state
@@ -828,3 +870,5 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Nista et al. (2023)](/sources/nista-2023.md) — §1 (network closures of reacting LES, a priori successes cited); §4.1–4.2, §4.4 ($\Delta/\eta$ generalization criterion, a priori only).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.3, p. 20 (premixed V-flame stress network, scalar-dissipation networks, cited). Review, citation only.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §2.2 (CNN closures and combustion extrapolation, cited); §4.2.4 (a posteriori instability, Guan et al. cited); §5.1 (atmospheric-boundary-layer network, cited). Review, citation only.
+- [Posch et al. (2025)](/sources/posch-2025.md) — §6.4.2 (CNN closures of subgrid flame-surface density and progress-variable terms, cited; transfer to engines). Review, citation only.
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1 (explicit network closures against learned discretizations); §3.1, Eqs. (19)–(20) (weight networks); §5.4, Table 5 (cost).

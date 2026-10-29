@@ -5,7 +5,7 @@ description: "The streamwise-periodic channel with a hill constriction, a smooth
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic, wmles, wall-model]
-timestamp: 2026-10-28T12:26:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Periodic hill
@@ -608,6 +608,40 @@ model captures $C_f$ between $x/H\approx0$ and 2, but Hill-R gives
 "considerable more accurate" $C_f$ than Hill-Equil on the leeside and near
 the hill crest (Fig. 17).
 
+[Gao et al. (2025b)](/sources/gao-2025-b.md), §III B, run wall-modelled
+LES with a high-order [flux reconstruction](/methods/flux-reconstruction.md)
+solver and the [Vreman model](/methods/vreman-model.md) on the Rapp &
+Manhart geometry ($9.0h\times3.035h\times4.5h$, constant mass flow by a body
+force), with the generalized wall function of Shih, Povinelli & Liu, which
+adds a tangential-pressure-gradient part to the wall law and is applied in
+a non-iterative two-step correction of the friction velocity (see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) and
+[adverse-pressure-gradient wall law](/definitions/adverse-pressure-gradient-wall-law.md)).
+The wall-model input is the first solution point inside the wall-adjacent
+element, a no-slip condition is kept, and the inviscid wall flux blends a
+weakly prescribed flux with a weak Riemann (HLLC) flux at weight
+$C_2\in[1/12,1/5]$ on the latter (see
+[wall-modelled LES](/methods/wall-modelled-les.md)). Two body-fitted
+curvilinear meshes of second-order hexahedra are used, Mesh 1 with
+$32\times12\times16$ elements ($\Delta x/h=0.106$, $\Delta y/h=0.170$,
+$\Delta z/h=0.281$ at the crest) and Mesh 2 with $48\times24\times24$
+($0.102$, $0.032$, $0.188$), with $N=2$, 3, 4 (Table I), which the authors
+call "significantly coarser than those employed by other researchers".
+At $Re_h=10{,}595$ the mean streamwise velocity on the hill top improves from
+a minor discrepancy at $N=2$ to excellent agreement with the PIV at $N=4$,
+the over-predicted $\langle u'u'\rangle$ in the upper-wall boundary layer
+improves with $N$, the wall-stress coefficient approaches the DNS $C_f$ of
+Krank et al. as $N$ rises, with separation and reattachment in agreement,
+and the $L_2$ errors of mean velocity and Reynolds stress at ten stations
+against the PIV fall with $N$ and from Mesh 1 to Mesh 2 (Figs. 8–13). At
+$Re_h=37{,}000$, $N=3$ on Mesh 1, the mean velocity agrees with the
+experiment and with the LES of Gloerfelt & Cinnella on $512\times256\times256$
+points except a slight deviation of $\langle v\rangle$ in the recirculation,
+and the shear-layer turbulence intensities are over-estimated as in that
+LES (Figs. 14–15). On one core, 100 steps on Mesh 1 (6144 elements, 1024 at
+the wall) cost 135.6 s without wall model, 143.8 s (+6%) with the
+equilibrium law and 152.7 s (+12.5%) with the generalized law.
+
 **Dynamic Reynolds-stress IDDES at $Re_h=10{,}595$.**
 [Li et al. (2022)](/sources/li-2022-k.md), §III B, Table I, Figs. 4–12,
 run the RSM-DynIDDES, an IDDES built on the SSG/LRR-$\omega$
@@ -820,8 +854,7 @@ or, with the budget terms, depend on the grid and the scheme
   nowhere else in the text. The ingested sources do not decide whether
   $9.5h$ is a printed slip or a different domain (the papers that define
   the case, Fröhlich et al. 2005 and Breuer et al. 2009, are not
-  ingested); neither paper makes a claim about the other's domain, so this
-  is a qualification, not a contradiction.
+  ingested).
 - The parametrized hills of [Yan et al. (2022)](/sources/yan-2022.md)
   ($Re=5600$ on crest height and crest bulk velocity, variable hill width)
   are a family distinct from the $Re_h\approx10{,}600$ configuration of
@@ -862,9 +895,7 @@ or, with the budget terms, depend on the grid and the scheme
   ([Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.3) and as
   "excellent" a posteriori predictions with some unstable, non-realizable
   individuals ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md),
-  §4.1). Both are second-hand accounts of cited work of the same group,
-  so the two are recorded side by side, not as a contradiction between the
-  sources.
+  §4.1). Both are second-hand accounts of cited work of the same group.
 - [Brenner et al. (2022)](/sources/brenner-2022.md) conclude that the
   method "is able to produce accurate cost function gradients" (§4) while
   their own check gives 84% correct signs and significant deviations in
@@ -919,6 +950,11 @@ or, with the budget terms, depend on the grid and the scheme
   evaluates to 10,566 *(compiler check, not in the sources)*; they call
   the case "period hills" and "COFTAC/IAHR", and refer to Fig. 24 for
   second-order statistics shown in Fig. 25.
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) print the $Re_h=37{,}000$
+  run on Mesh 1 at $N=3$ as "128 × 48 × 60 points"; Mesh 1 has
+  $32\times12\times16$ elements, and $N+1=4$ solution points per direction
+  give $128\times48\times64$ *(compiler check, not in the sources)*. They
+  print no averaging time and no polynomial degree for the timing runs.
 
 # Citations
 
@@ -946,3 +982,4 @@ or, with the budget terms, depend on the grid and the scheme
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1, Fig. 1; §3.1; §3.4; §4.1 (cited results).
 - [Li et al. (2022)](/sources/li-2022-k.md) — §III B, Table I, Figs. 4–12; App. 1, Fig. 23.
 - [Guo & Wang (2025)](/sources/guo-2025.md) — §2.1; §2.2.2, Eqs. 21–24; §3.2, Figs. 21–25.
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C–D; §III B, Table I, Figs. 8–15 (and the timing paragraph of §III B).

@@ -5,7 +5,7 @@ description: "Immersed boundary methods impose walls on non-conforming grids by 
 status: established
 aliases: [IBM, moving Cartesian grid, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, VMIB, variational multiscale immersed boundary, weak Dirichlet immersed boundary, single ghost cell, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-28T17:49:00Z
 ---
 
 # Immersed boundary methods
@@ -295,6 +295,36 @@ penalization of Kou et al. (2022), which they cite. Citing Mittal & Iaccarino,
 the authors call continuous IBMs such as penalization "usually restricted
 to first-order accuracy near the boundary" (§1); they report no
 order-of-accuracy study.
+
+**Volume penalization with a time-step-tied coefficient (GPU finite
+difference).** [Monteiro et al. (2026)](/sources/monteiro-2026.md),
+§2.4.1, Eqs. (31)–(32), implement a penalty IBM in the GPU-resident DNS
+code RHEA-X (second-order central split-form finite differences on
+Cartesian grids), after the framework of Angot et al. and Verzicco that
+they cite: the solid is a porous region of vanishing permeability. With
+the mask $\chi\in[0,1]$ ($\chi=1$ in the solid, intermediate values at the
+interface) and the body values $\boldsymbol u_b$, $T_b$ (page-local), the
+targets are $\boldsymbol u_{\mathrm{IB}}=\chi\boldsymbol u_b+(1-\chi)\boldsymbol u$
+and $T_{\mathrm{IB}}=\chi T_b+(1-\chi)T$, and the momentum and energy
+sources are
+$$\boldsymbol f_{\rho u}=\frac{\rho}{K_{\mathrm{IB}}}\big(\boldsymbol u-\boldsymbol u_{\mathrm{IB}}\big),\qquad f_{\rho E}=\frac{\rho}{K_{\mathrm{IB}}}\big(E-E_{\mathrm{IB}}\big),\qquad K_{\mathrm{IB}}=-\alpha_{\mathrm{IB}}\Delta t,$$
+with $E_{\mathrm{IB}}$ the total energy at $T_{\mathrm{IB}}$ and
+$\boldsymbol u_{\mathrm{IB}}$ (printed per unit mass), $\alpha_{\mathrm{IB}}\in(0,1]$
+and $\alpha_{\mathrm{IB}}=0.5$ in the paper ($K_{\mathrm{IB}}$,
+$\alpha_{\mathrm{IB}}$ page-local; the coefficient plays the role of the
+permeability $\eta_p$ above, here tied to the time step). The mask is
+recomputed every step, so bodies may move, by binary tagging or by Monte
+Carlo integration for sub-cell resolution, and STL geometries are tagged
+by ray tracing (§2.4.1, §4.4). On the NACA 0012 at $12^\circ$,
+$Re_c=50\,000$, $M=0.1$, on $1086\times1037\times128$ points with $y^+\lesssim1$
+next to the airfoil, $C_p$ and $C_f$ are "in close agreement" with the DNS
+of Rodríguez et al., including the leading-edge suction peak, the pressure
+plateau and the separation-induced reversal of skin friction (§4.4,
+Figs. 5–6; see [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)). The
+IBM and Lagrangian-particle modules cost "on the order of 10%" of the
+scaled runtime (§5.1, Fig. 10). The paper calls the method
+"sharp-interface" in §1 and "penalty-based", with a smoothed sub-cell
+indicator, in §2.4.1.
 
 **Direct forcing for zero-thickness flexible blades (staggered finite
 volume).** [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md), §2.3, couple
@@ -723,6 +753,19 @@ near-unity aspect ratios are needed near maximum lift, at the price of a
 larger wall-normal spacing, and point to the off-body vortices that
 isotropic grids suit; they reach no conclusion on isotropic against
 anisotropic grids (§VI; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+
+The slip-wall WMLES paper of [Gao et al. (2025)](/sources/gao-2025.md),
+§I.A–B, cites two immersed-boundary wall treatments in its survey: the
+immersed boundary–lattice Boltzmann WMLES of Wang et al., "demonstrating
+that diffusive-interface modeling works best for the external bluff-body
+flows while sharp-interface performs better for internal flows" (the
+ingested [Wang et al. 2024d](/sources/wang-2024-k.md), recorded above),
+and a slip velocity obtained by integrating the thin-boundary-layer
+equations with the pressure gradient retained, implemented "through an
+immersed boundary method with volume forcing", which improved wall shear
+stress and velocity on channel and backward-facing-step flows (Shi et
+al., as cited). Gao et al.'s own slip condition is on a body-fitted grid
+(see [slip-wall models](/methods/slip-wall-model.md)).
 
 ## Wall functions inside the immersed-boundary reconstruction
 
@@ -1445,3 +1488,5 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 - [Wang et al. (2024d)](/sources/wang-2024-k.md) — §I; §II C–D, Eqs. (15)–(22), Fig. 1 (diffusive and sharp interfaces, equilibrium wall model); §III A–D, Tables I–II, Figs. 2–15 (channel, SUBOFF hull, Ahmed body, cylinder and drag crisis); §IV; App. C, Fig. 16 (channel grid study).
 - [Yan et al. (2024)](/sources/yan-2024.md) — §I, Table I (classification of wall-modelled diffused-interface methods); §II B, Eqs. (8)–(18) (direct forcing, explicit correction); §II C, Eqs. (19)–(32), Fig. 2 (slip target velocity, pressure-gradient thin-layer equation, Werner–Wengle and adverse-pressure-gradient laws, separation test, limiters); §III A–C, Tables II–V, Figs. 4–17 (cylinders, square cylinder, roof, costs).
 - [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A (embedded boundaries with cut cells in PeleC).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §1; §2.4.1, Eqs. (31)–(32) (penalty IBM with time-step-tied coefficient, Monte Carlo sub-cell tagging); §4.4, Figs. 5–6 (NACA 0012 at $12^\circ$ against DNS); §5.1, Fig. 10 (module cost).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I.A–B (immersed-boundary WMLES treatments in the survey; passing mention).

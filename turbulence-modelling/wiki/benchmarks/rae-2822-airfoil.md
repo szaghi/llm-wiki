@@ -5,7 +5,7 @@ description: "The supercritical RAE 2822 airfoil in transonic flow, case 9 of Co
 status: established
 aliases: [RAE2822, RAE 2822, RAE-2822, RAE 2822 case 9, ADIGMA MTC5]
 tags: [benchmark, rans, compressible, dg, mesh-adaptation, boundary-layer]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # RAE 2822 airfoil
@@ -19,8 +19,8 @@ interacts with the attached turbulent boundary layer, so that lift,
 drag and the shock position depend on the boundary-layer displacement and
 on the shock treatment of the discretization. The quantities compared are
 the lift and drag coefficients $C_L$, $C_D$ and the surface pressure
-coefficient $C_p$. All three ingested sources run it with high-order
-discontinuous Galerkin RANS, so in this bundle it tests the step from
+coefficient $C_p$. Every ingested source that computes it runs
+high-order discontinuous Galerkin RANS, so in this bundle it tests the step from
 second-order to high-order RANS on a flow with a shock: convergence of
 forces under refinement, robustness of the turbulence-model equations at
 the shock, and [mesh adaptation](/methods/mesh-adaptation.md).
@@ -105,6 +105,29 @@ degrees of freedom; the finite-volume results are not mesh-converged on
 the finest grid. The details of the metric are on
 [mesh adaptation](/methods/mesh-adaptation.md).
 
+**Convergence acceleration of a high-order RANS solver.**
+[Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §7.2, use the
+airfoil as one of two verification cases of a $p$-multigrid solver for a
+modal DG discretization ($N\le3$, exact Riemann flux, BR2 viscous flux)
+of RANS with the log-$\omega$ Wilcox [$k$-$\omega$ model](/methods/k-omega-model.md),
+and they print conditions that differ from the corrected case-9 set:
+$M=0.725$, $\alpha=2.92^\circ$, $Re=6.5\times10^6$, on a quasi-3D mesh
+of 8096 quadratic hexahedra refined at the shock ($x/c=0.52$) and in the
+wake, inside a circular far field of radius $20c$. The shock is handled by
+a sensor-free [artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+active in every element, scaled by the inviscid-flux jump and the
+internal divergence residual of the logarithmic pressure, which the
+authors state acts only where nonphysical oscillations occur. The $C_p$
+and $C_f$ distributions are compared with Cook et al. and with the NPARC
+$k$-$\omega$ solution. The full-multigrid V-cycle reduces the wall-clock
+time against single-order implicit time stepping by 75% to 68% for
+$N=1$–3 ("up to ∼77%" in the text), the reduction falling only slightly
+with $N$, and the authors find that "the $p$-MG algorithm does not show
+any robustness issue with the shock" or with the stretched elements
+(§7.2, Table 7). No force values are printed; the multigrid itself is on
+the [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)
+page.
+
 **Coefficient uncertainty and learned surrogates, as cited.** The review
 of [Le et al. (2024)](/sources/le-2024.md), §3.1.1 and §3.1.3, cites the
 airfoil twice in its account of machine learning for RANS: Schaefer et al.
@@ -150,6 +173,12 @@ sources)*.
   degrees of freedom and work units of Fig. 23. Their statement on smooth
   turbulence models is worded as a belief ("believe"), with no
   demonstration in the paper.
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) print the case
+  at $M=0.725$, $\alpha=2.92^\circ$ (§7.2), against the corrected
+  $M=0.734$, $\alpha=2.79^\circ$ of the workshop definition and of the two
+  other DG sources, and their own §7 introduction prints "Mach number
+  M = 0.8" for the same airfoil. They print no force coefficients, so
+  their run cannot be set against the force tables above.
 
 # Citations
 
@@ -157,3 +186,4 @@ sources)*.
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1; §4.2, Figs. 6–7.
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — §4.3, Table 4, Figs. 15–16.
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.1; §3.1.3, Fig. 13 (cited works, review).
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §7 (introduction); §7.2, Table 7.

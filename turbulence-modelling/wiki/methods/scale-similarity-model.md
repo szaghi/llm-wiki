@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model, dynamic iterative approximate deconvolution, DIAD_W]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:47:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -609,6 +609,50 @@ reported statistics (§6.2). Results:
   orders 8 and 10) and lower, which they attribute to the stronger filter
   on linear tetrahedra (§6.2, Figs. 11–12).
 
+**Single-step filtering in compressible jet LES.**
+[Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md) (§II B,
+Eqs. 6–9, Fig. 1) use the same Mathew et al. form (cited, with Stolz) as
+the only closure of LES of round jets, with no eddy viscosity. From the
+filtered conservation law
+$\partial_t\bar u+G*\partial_xf(u^*)=0$, $u^*=Q\bar u$, $Q$ the van Cittert
+series with $N_{\mathrm{AD}}=6$, the update is done in three steps
+(deconvolve, integrate, filter); since step 1 follows step 3, the pair
+collapses to $u^*\leftarrow Q*G*u^*$. Instead of the relaxation term
+$\chi_f(I-Q*G)*\bar u$ of ADM, the regularization is obtained by a second
+filtering with $Q*G$, so deconvolution and regularization combine into
+one filtering with $(Q*G)^2$ at every time step. In the periodic
+(azimuthal) direction $G$ is the one-parameter Padé filter
+
+$$\hat G(\varkappa)=\Big(\alpha_{\mathrm{cf}}+\frac12\Big)\frac{1+\cos\varkappa}{1+2\alpha_{\mathrm{cf}}\cos\varkappa},\qquad \alpha_{\mathrm{cf}}=0.2,$$
+
+with $\varkappa\in[0,\pi]$ the scaled wavenumber (page-local) and
+$\alpha_{\mathrm{cf}}$ the compact-filter coefficient of registry §11; in
+the non-periodic directions an explicit physical-space filter with
+similar spectral behaviour is used. The transfer functions of $Q*G$ and
+$(Q*G)^2$ decay smoothly to zero at the highest wavenumber (Fig. 1). The
+solver uses sixth-order [compact differences](/methods/compact-finite-difference-scheme.md)
+in cylindrical coordinates on $512\times128\times120$ points. Evidence
+for the closure in three isothermal, perfectly expanded
+[round jets](/benchmarks/turbulent-round-jet.md) at $Re_D=5\times10^5$
+and jet Mach numbers 0.45, 0.9 and 1.8 (§II D, §III A, Figs. 3–8):
+
+- azimuthal spectra of the axial velocity at $r/r_0=1$ ($r_0$ the jet
+  radius, page-local) and $x/r_0=30$, 40, 50 decay at the highest
+  resolved wavenumbers, with the Nyquist wavenumber in the inertial range
+  and a short segment following $k^{-5/3}$ for all three jets;
+- at Mach 0.9, centreline decay, half-width and self-similar intensity
+  and shear-stress profiles agree with earlier LES and experiments, the
+  reference profiles being shifted axially to match the potential-core
+  length, and the near-field overall sound pressure level at $r=15r_0$
+  lies within 1.5 dB of the experiment of Bogey et al. (cited), slightly
+  above it, which the authors attribute partly to the inflow momentum
+  thickness, of order $10^{-2}r_0$ in the LES against $10^{-3}r_0$ in
+  experiments.
+
+The scheme had been used by the same group for compressible pipe,
+nozzle, diffuser, round-jet and impinging-jet flows (as cited, §II B).
+No comparison with an eddy-viscosity model is made.
+
 ## Deconvolution models under explicit filtering: an a priori ranking
 
 [Valencia et al. (2026)](/sources/valencia-2026.md) compare four
@@ -907,3 +951,4 @@ does not improve.
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §2, Eqs. (3)–(6), Algorithm 1; §6.1, Fig. 6; §6.2, Figs. 10–13.
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1, Eq. (1); §3.1, Figs. 4–5, 7–11; §3.3, Fig. 17.
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.2; §3.1.
+- [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md) — §II B, Eqs. (6)–(9), Fig. 1 (single-step filtering form of ADM, Padé filter); §II D, Fig. 3 (spectra); §III A, Figs. 4–8 (validation of the Mach 0.9 jet).

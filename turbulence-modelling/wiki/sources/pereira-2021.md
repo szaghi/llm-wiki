@@ -159,7 +159,7 @@ this source. The garbled author lists of refs. [60] and [64] and the year
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 15. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md)
@@ -170,5 +170,6 @@ Chunk 2 (2026-10-25). This source is cited on:
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

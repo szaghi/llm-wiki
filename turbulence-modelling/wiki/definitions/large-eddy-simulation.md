@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -368,6 +368,37 @@ scalar fluxes:
   dependent reference density, buoyancy, Coriolis and geostrophic forcing,
   turbine body forces and a Smagorinsky stress (see
   [actuator line model](/methods/actuator-line-model.md)).
+- [Posch et al. (2025)](/sources/posch-2025.md) (§3.2.3, Eqs. 11–12), on
+  engine combustion, write the Favre-filtered equations with the subgrid
+  stress handled by a Smagorinsky or a dynamic one-equation structure
+  model (see [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md)),
+  and the subgrid species and enthalpy fluxes left to the turbulent
+  combustion models they review (see
+  [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)
+  and the [thickened flame model](/methods/thickened-flame-model.md)).
+
+**High-enthalpy shock–turbulence interaction.** [Cuadra et al. (2025)](/sources/cuadra-2025.md)
+(§III A 3, Eq. 39), reviewing LES of isotropic turbulence through a normal
+shock, write the Favre-filtered momentum equation with two unclosed terms:
+the subgrid stress and a **subgrid viscous stress**, the difference
+between the filtered viscous stress and the viscous stress computed from
+the resolved primitive variables. The latter and the analogous
+molecular-diffusivity terms are "generally neglected on the basis of a
+priori analysis" (cited) and scale-separation arguments; the energy
+equation is either a filtered internal-energy equation or a total-energy
+equation built from the filtered primitive variables (both cited). As the
+turbulent Mach number rises the isotropic part of the subgrid stress, the
+subgrid kinetic energy, becomes increasingly important and must be closed
+in both the momentum and the energy equations; at high Mach number the
+filtered vibrational-energy and species equations add subgrid closures of
+their own, for transport and for the thermochemical relaxation sources,
+studied only in two cited works (§III A 3). They conclude that LES of the
+interaction "in the hypersonic regime remain[s] essentially absent from
+the literature, even for calorically perfect gases" (§IV A 3). The
+subgrid-model results they review are on the
+[dynamic procedure](/methods/dynamic-procedure.md) and the
+[Smagorinsky model](/methods/smagorinsky-model.md), the physics on
+[shock-generated turbulence](/results/shock-generated-turbulence.md).
 
 **Subgrid kinetic-energy budget.** [Cao et al. (2022b)](/sources/cao-2022-c.md)
 (§IV B, Eq. 17) write the Favre transport equation of
@@ -490,6 +521,24 @@ Further sources split the same way.
   [Ihme et al. (2022)](/sources/ihme-2022.md) (Eq. 74) print the Favre form
   and write the subgrid kinetic energy as $\tau_{kk}$, without the factor
   $\tfrac12$.
+- **Compressible, negative, with a subgrid viscous stress.** Cuadra et al.
+  (2025, §III A 3, Eq. 39) define $\bar\rho(\tilde u_i\tilde u_j-\widetilde{u_iu_j})$,
+  minus the registry's, placed on the right-hand side with
+  $+\partial_j$, beside the subgrid viscous stress; they close its
+  deviatoric part with $+2\mu_t\tilde S^d_{ij}$, the same sign as the
+  registry's model of the positive stress once the sign of the stress is
+  undone *(compiler check, not in the sources)*.
+- **Compressible, positive, with other symbols.** Posch et al. (2025,
+  §3.2.3, Eqs. 11–12) write the spatial filter with a hat and the Favre
+  filter with angle brackets, $\langle z\rangle=\widehat{\rho z}/\hat\rho$,
+  and the subgrid stress as
+  $\hat\rho(\langle u_iu_j\rangle-\langle u_i\rangle\langle u_j\rangle)$,
+  the registry's $\bar\rho(\widetilde{u_iu_j}-\tilde u_i\tilde u_j)$; the
+  hat is not a test filter and the brackets are not an average there.
+  [Valvo & Abbà (2025)](/sources/valvo-2025.md) (§2.1, Eq. 2) print the
+  subgrid flux vector of their DG solver (subgrid stress, heat flux and
+  turbulent diffusion flux) without stating the sign or trace convention
+  of the stress, which they take from an earlier paper of the group.
 - **Compressible, negative.** [Tonicello et al. (2022)](/sources/tonicello-2022.md)
   (§4, Eq. 4.4) define $\bar\rho\tilde u_i\tilde u_j-\overline{\rho u_iu_j}$,
   minus the registry's, entering with $+\partial_j$, so its trace is
@@ -515,7 +564,7 @@ $\Delta$ the filter scale (the author's $\ell$). Vicente Cruz & Lamballais
 $\exp(-k^2\Delta^2/24)$ and introduce a super-Gaussian
 $\exp(-k^6\Delta^6/256)$; the two Gaussian forms are the same kernel with
 widths related by $\Delta^2_{(24)}=12\Delta^2_{(2\pi^2)}/\pi^2$ *(compiler
-check, not in the sources)*, a convention difference only. For a priori
+check, not in the sources)*. For a priori
 filtering of channel DNS, Agrawal et al. (2022, §V) use a discretely
 commutative filter with three vanishing moments applied recursively to a
 width of three grid sizes. [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -710,6 +759,27 @@ In implicitly filtered LES the filter width and the grid spacing $h$
 coincide approximately, $h\approx\Delta$, whereas in explicitly filtered LES
 they are chosen independently (Beck & Kurz 2023, §I).
 
+**"Implicit filtering" with and without an explicit model.** Three sources
+of 2025–2026 use the phrase for this grid-tied filter: Barbera et al. and
+Posch et al. with an explicit subgrid model, Bezgin et al. with none, in a
+learned [implicit LES](/definitions/implicit-les.md).
+[Barbera et al. (2026)](/sources/barbera-2026.md) (abstract) state that "most
+LES approaches rely on implicit filtering (i.e., the filter scale is
+related to the local mesh size)", run the [Sigma model](/methods/sigma-model.md),
+and attribute weak high-frequency ripples in a jet spectrum on their
+coarsest DNS-criterion mesh to under-resolved dissipative scales
+"combined with the implicit filtering" of the finite-volume method
+(§3.1). [Posch et al. (2025)](/sources/posch-2025.md) (§3.2.3) report that
+engine LES "typically" uses implicit filtering through finite-volume
+averaging and "usually requires at least second order central schemes to
+avoid artificial dissipation". [Bezgin et al. (2025)](/sources/bezgin-2025.md)
+(§4.1) build their reference by box-filtering a $512^3$ DNS by a factor 16
+in space and in time onto $32^3$ cells, "a simple box filter which
+corresponds to implicit filtering commonly used in finite-volume methods
+(the LES grid itself acts as a filter)"; their LES has no explicit
+subgrid term, the reconstruction being learned (see
+[implicit LES](/definitions/implicit-les.md)).
+
 ### Explicitly filtered LES and the filter-to-grid ratio
 
 Volpiani (2024, §1) lists the trade-off as reported in the works cited there:
@@ -856,6 +926,21 @@ which vanish as the mesh approaches DNS resolution and which they use as a
 reference-free mesh-quality indicator. Their subgrid model is Nek5000's
 approximate deconvolution model (see
 [scale-similarity models](/methods/scale-similarity-model.md)).
+[Kumar et al. (2025)](/sources/kumar-2025.md) (App. A.3–A.4) define the
+filtered stress for the same code and describe its high-pass-filter
+relaxation term, built from a modal low-pass filter on the Legendre
+coefficients of each element, with relaxation weight 5 (see
+[explicit modal filtering](/methods/explicit-modal-filtering.md) and
+[Nek5000](/software/nek5000.md)); the paper does not say that its
+hybrid runs use it.
+In the $p$-adaptive local DG solver of [Valvo & Abbà (2025)](/sources/valvo-2025.md)
+(§2.1) the LES filter is implicit, "the projector from the exact solution
+onto the polynomial space", the variables are Favre-filtered, and setting
+the subgrid flux to zero gives DNS or implicit LES "according to the
+adopted level of resolution"; a structure-function indicator of
+under-resolved turbulence changes the local degree in time (see
+[mesh adaptation](/methods/mesh-adaptation.md)), so the filter of each
+element changes with it.
 
 ## Commutation and discretization terms
 
@@ -907,6 +992,14 @@ commutation property, even in one dimension, because the filter width
 varies in space; the commutation error vanishes only for a constant
 width, so the filter commutes only in its continuous form on uniform
 grids.
+For the time direction, [Posch et al. (2025)](/sources/posch-2025.md)
+(§3.2.3) note that the moving mesh of engine LES makes the filter width
+time-dependent, so that "non-uniform filter widths lead to time
+commutation errors" that constrain the filter kernel (Leonard et al.,
+cited); Moureau et al. (cited) conclude that the time commutation error
+"can be ignored if the flow field and the mesh generation are induced by
+the same boundary movement", but such errors "can occur with adaptive
+mesh refinement approaches".
 
 **Filters induced by derivatives and interpolation.** Caban et al. (2026,
 §3.2, Eqs. 24–35, Fig. 3) write the discrete $r$-th derivative as a filter
@@ -977,6 +1070,31 @@ expected to stay below about 0.1 over the entire domain "for the model to
 perform well", and report that their hybrid model keeps a correct mean in
 channel flow "well past this threshold", with the fraction as low as 0.4
 at the channel centre on their finest grid (§V A 1).
+[Barbera et al. (2026)](/sources/barbera-2026.md) (§2.2–2.3, Eqs. 10–20,
+Fig. 1) turn the resolved fraction into a mesh-size rule. Assuming a
+Kolmogorov spectrum between the filter and Kolmogorov scales, they write
+the subgrid-to-total ratios of kinetic energy and dissipation as
+functions of $k_cL$ and $k_\eta L$ ($k_\eta=2\pi/\eta$, page-local;
+$L=k_{\mathrm{tot}}^{3/2}/\langle\varepsilon\rangle$ with the time-averaged total turbulent kinetic energy), estimate both
+ratios on the current mesh, and size the filter so that a prescribed
+range of scales $L/\Delta$ is resolved. LES is then "a local relaxation"
+of the DNS constraint where an inertial range exists: the local size is
+$\Delta=\min\{\Delta_{\langle u\rangle};\max\{\Delta_{\mathrm{DNS}};\Delta_c\}\}$,
+with $\Delta_{\mathrm{DNS}}$ from a cell Reynolds number of the estimated
+subgrid velocity, $\Delta_c$ from the scale-separation target and
+$\Delta_{\langle u\rangle}$ a mean-flow bound (page-local), so that LES is
+"a compromise" between a RANS-like and a DNS-like mesh (Eq. 20). Where
+$\Delta_c<\Delta_{\mathrm{DNS}}$ no scale separation is achievable and the
+mesh is a DNS mesh: in their jet and pipe the transition regions, the
+turbulent/non-turbulent interface and the near-wall region are meshed by
+the DNS criterion whatever the target. They state that $L/\Delta=10$ with
+$\eta\to0$ gives a subgrid energy fraction of about 0.2, Pope's 80%
+criterion, so that the method is "an extension of Pope's criterion to
+finite Reynolds numbers" (§2.2); the Kolmogorov constant of their
+spectrum is not printed. The prescribed ratio spans very-large-eddy
+simulation to quasi-DNS ($L/\Delta$ from 2 to 25 in their cases); details
+are on [LES grid-point requirements](/results/les-grid-point-requirements.md)
+and [mesh adaptation](/methods/mesh-adaptation.md).
 [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md)
 (§III.1, p. 13) use the same figure descriptively to separate LES from
 very-large-eddy simulation (VLES): "almost all of the LES studies are
@@ -1281,6 +1399,25 @@ fins, ducts, fenced ramps) beside RANS and experiments; see
 In the hybrid model SATES of [Wu et al. (2024)](/sources/wu-2024.md)
 (§2.1) LES is one of three self-selected modes, between URANS and DNS (see
 [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)).
+For engines, [Posch et al. (2025)](/sources/posch-2025.md) (§3.2.3) set
+the two apart by what they return: RANS gives an ensemble-averaged cycle
+that "does not need to correlate with a real single engine cycle", LES
+single cycles, so LES is the tool for cycle-to-cycle variation and needs
+many cycles for statistics; they also state that RANS will keep "a
+considerable role" for many-run design studies, while calling LES
+"standard in industrial application as well" (§6.3.1).
+In the jet LES of [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md)
+(§II B, §II D) the closure is explicit filtering alone (a single-step
+approximate deconvolution, see the
+[scale-similarity model](/methods/scale-similarity-model.md)), and all
+statistics, Reynolds-stress budgets included, are of the resolved scales
+only (see [turbulent round jet](/benchmarks/turbulent-round-jet.md)).
+In the variational multiscale LES of [Sun et al. (2026)](/sources/sun-2026.md)
+the time integrator shapes the closure (see
+[variational multiscale method](/methods/variational-multiscale-method.md));
+citing Kolmogorov-unit estimates, they state that at high Reynolds number
+the convective time-step limit, not the diffusive one, controls an
+explicit LES (§5.3, Remark 4).
 
 ## Other uses of the filter idea
 
@@ -1699,8 +1836,7 @@ grid ratio (§4). See
 - Wu & Lele (2026, §2.1) rule out the sharp spectral cutoff for general
   subgrid modelling, while several sources above use it for a priori
   filtering (Vela-Martín 2022; Kim et al. 2022; Inagaki & Kobayashi 2023;
-  Li et al. 2024). Wu & Lele state a modelling preference, not a result
-  about those studies, so no contradiction is recorded.
+  Li et al. 2024).
 - Rickard & Kasbaoui (2026) print the wall-stress relation (Eq. 2.25) with
   the density used inconsistently between its acceleration and stress
   terms *(compiler check, not in the sources)*; the slip models of §4 do
@@ -1842,3 +1978,11 @@ grid ratio (§4). See
 - [Le et al. (2024)](/sources/le-2024.md) — §3, p. 9 (LES classed as too costly for engineering). Review, citation only.
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §1 (filter removes extinction-relevant scales).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §1, Eqs. 2–3; §4.1 (filtered equations, data volumes). Review, citation only.
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 3, Eq. (39) (compressible filtered momentum equation, subgrid viscous stress, isotropic part, thermochemical closures); §IV A 3. Review, citation only.
+- [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.3, Eqs. (11)–(12) (Favre filtering, implicit filtering, time commutation errors, LES against RANS for engine cycles); §6.3.1. Review, citation only.
+- [Barbera et al. (2026)](/sources/barbera-2026.md) — abstract ("implicit filtering"); §2.2–2.3, Eqs. (10)–(20), Fig. 1 (scale-separation mesh rule); §3.1.
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §4.1 (box filter in space and time as implicit filtering of the reference data).
+- [Valvo & Abbà (2025)](/sources/valvo-2025.md) — §2.1, Eq. (2) (implicit DG projection filter, subgrid flux, DNS/ILES by resolution).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — App. A.3–A.4 (filtered stress and the Nek5000 high-pass-filter relaxation term).
+- [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md) — §II B, §II D (explicit-filtering closure, resolved-scale statistics).
+- [Sun et al. (2026)](/sources/sun-2026.md) — §1; §5.3, Remark 4 (time-step limits in Kolmogorov units).

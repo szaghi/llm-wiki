@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "The k-τ model"
-description: "Two-equation RANS eddy-viscosity model transporting the turbulent kinetic energy and the turbulence time scale 1/ω, whose wall value is zero and whose sources stay bounded; the spectral-element implementation of Tomboulides et al. with its source limiters, low-Reynolds variant, implicit source treatment and validation."
+description: "Two-equation RANS eddy-viscosity model transporting the turbulent kinetic energy and the turbulence time scale 1/ω, whose wall value is zero and whose sources stay bounded; the spectral-element implementation of Tomboulides et al. with its limiters, low-Reynolds variant and implicit sources, the SST form and its DDES, and validation."
 status: established
-aliases: [k-tau, k-τ RANS model, k–τ, Speziale k-τ, Kalitzin k-τ, Kok–Spekreijse k-τ]
-tags: [rans, eddy-viscosity, spectral-element, boundary-layer]
-timestamp: 2026-10-28T07:03:00Z
+aliases: [k-tau, k-τ RANS model, k–τ, Speziale k-τ, Kalitzin k-τ, Kok–Spekreijse k-τ, k-τ SST, k-tau SST]
+tags: [rans, eddy-viscosity, spectral-element, boundary-layer, des]
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # The k-τ model
@@ -26,9 +26,13 @@ distance $d\to0$, whereas $\tau_t$ vanishes there and the source terms of
 its equation stay bounded, so the model needs neither an arbitrarily large
 wall value nor the regularization of the
 [Wilcox $k$-$\omega$ model](/methods/k-omega-model.md). The page rests on
-one source, Tomboulides et al. (2025), whose named contribution is a robust
-implementation in the spectral-element codes [Nek5000](/software/nek5000.md)
-and NekRS ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §1–§2).
+two sources from the same code: Tomboulides et al. (2025), whose named
+contribution is a robust implementation in the spectral-element codes
+[Nek5000](/software/nek5000.md) and NekRS
+([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §1–§2), and
+Kumar et al. (2025), who use its SST form, attributed to Tomboulides et
+al., as the host of a [delayed detached-eddy simulation](/methods/detached-eddy-simulation.md)
+in Nek5000 ([Kumar et al. (2025)](/sources/kumar-2025.md), §1–§2).
 
 ## Lineage
 
@@ -45,6 +49,16 @@ citing earlier work:
   itself they stay bounded near the wall (§1);
 - the cross-diffusion term and the rewriting of the gradient-squared term
   below are Kok & Spekreijse's (§2).
+
+Kumar et al. (2025, §1) state the same wall argument: $\omega$ scales as
+$d^{-2}$, the arbitrarily large wall value of "standard CFD practice" can cause
+persistent oscillations in high-order codes because of their negligible
+numerical diffusion, the regularized $k$-$\omega$ model of Tomboulides et al.
+(2018) needs the wall distance and its gradients in extra sources, and
+$\tau_t$ needs neither regularization nor wall distance for its boundary
+condition. They attribute the variable $\sqrt{\tau_t}$ to Benton et al. and
+cite Kok & Spekreijse for its unbounded sources, where Tomboulides et al.
+attribute that variable to Kalitzin et al. (above).
 
 The authors motivate the model by the defects of its neighbours: the
 [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) needs wall damping
@@ -156,9 +170,106 @@ with $R_k=6$, $R_\beta=8$, $R_\tau=2.95$, $\beta^*_\infty=0.09$,
 $\gamma_{\omega,\infty}=0.52$, $\alpha^*_0=\beta_\omega/3$
 ($R_k$, $R_\beta$, $R_\tau$ page-local constants).
 
+## The SST form
+
+Kumar et al. (2025, §2.1, Eqs. 3–18) print the $k$-$\tau$ model of
+Tomboulides et al. with Menter's SST blending. The $k$ equation is that of
+the base model; the $\tau_t$ equation gains the SST cross-diffusion,
+
+$$\begin{aligned}
+\partial_t(\rho\tau_t)+\nabla\cdot(\rho\tau_t\boldsymbol u)={}&\nabla\cdot(\Gamma_\omega\nabla\tau_t)-\gamma_\omega\frac{\rho\tau_t^2}{\mu_t}\,\rho P_k+\rho\beta_\omega-\frac{2\Gamma_\omega}{\tau_t}\nabla\tau_t\cdot\nabla\tau_t\\
+&+C_{D\tau}+2(1-F_1)\rho\sigma_{\omega2}\tau_t\nabla k\cdot\nabla\tau_t,
+\end{aligned}$$
+
+with the Kok–Spekreijse $C_{D\tau}$ ($\sigma_d=1/8$) of the base model kept
+beside the SST term, the gradient-squared term implemented through
+$8\Gamma_\omega S_\tau$ as above (Eq. 5), the eddy viscosity
+
+$$\mu_t=\frac{\rho a_1k}{\max(a_1/\tau_t,\;F_2\lvert S\rvert)},\qquad a_1=0.31,$$
+
+and the SST functions written in $\tau_t$:
+$F_1=\tanh(\arg_1^4)$, $\arg_1=\min\big[\max\big(\tau_t\sqrt k/(\beta^*d),\,500\nu\tau_t/d^2\big),\,4\sigma_{\omega2}k/(CD_{k\omega}d^2)\big]$,
+$CD_{k\omega}=\max\big(-2\sigma_{\omega2}\nabla k\cdot\nabla\tau_t/\tau_t,\,10^{-10}\big)$,
+$F_2=\tanh(\arg_2^2)$, $\arg_2=\max\big(2\tau_t\sqrt k/(\beta^*d),\,500\nu\tau_t/d^2\big)$
+($\arg_1$, $\arg_2$, $CD_{k\omega}$, $a_1$ page-local; Eqs. 12–17).
+The constants are blended as $\phi=\phi_1F_1+\phi_2(1-F_1)$ from
+$\gamma_{\omega1}=5/9$, $\beta_{\omega1}=0.075$, $\sigma_{k1}=0.85$,
+$\sigma_{\omega1}=0.5$ and $\gamma_{\omega2}=0.44$, $\beta_{\omega2}=0.0828$,
+$\sigma_{k2}=1$, $\sigma_{\omega2}=0.856$ (Eq. 18), with the diffusivities
+$\Gamma_k=\mu+\mu_t/\sigma_k$, $\Gamma_\omega=\mu+\mu_t/\sigma_\omega$ (Eqs. 7–8),
+and $\rho P_k=\min(\mu_t\lvert S\rvert^2,10\rho\beta^*k/\tau_t)$ (Eq. 9). No value
+of $\beta^*$ is printed; the appendix writes the $k$-$\omega$ limiter with
+$C_\mu=0.09$ in its place (App. A.5).
+
+Two checks *(compiler check, not in the sources)*: with $\mu_t=\rho k\tau_t$
+the production term equals $-\gamma_\omega(\tau_t/k)\rho P_k$ of the base
+form that Kumar et al. print as Eq. 4; and with $\omega=1/\tau_t$, $\nabla\omega/\omega=-\nabla\tau_t/\tau_t$, so
+the $\omega$-equation SST cross-diffusion that Kumar et al. print in App. A.5,
+$2(1-F_1)\rho\sigma_{\omega2}\nabla k\cdot\nabla\omega/\omega$, multiplied by
+$-\tau_t^2$, gives the last term above, and the sign inside $CD_{k\omega}$
+matches.
+
+**Free-stream limiter, as printed by Kumar et al.** The production,
+dissipation and transport terms of the $\tau_t$ equation are multiplied by
+$\mu_t/R$ with $R=\max(0.01\mu,\mu_t)$, after Benton et al., so that the model
+"turns off" in the free stream and $k_\infty=0$ can be prescribed (§2.1.1,
+Eq. 19). Tomboulides et al. instead print $R_{\mathrm{fs}}$ above, after
+Kalitzin et al., multiplying all sources of both equations where
+$d>y_{\lim}$. Since $\mu_t/\max(0.01\mu,\mu_t)=\min\big(1,\mu_t/(0.01\mu)\big)$, the
+factor is the $R_{\mathrm{fs}}$ of Tomboulides et al. with $r=0.01$ outside
+$y_{\lim}$ *(compiler check, not in the sources)*; the two descriptions differ
+in the terms multiplied, in the wall-distance switch and in the
+attribution.
+
+**Wall distance in the SST form.** The $\tau_t$ wall condition remains
+$\tau_t=0$ (no-slip for $k$ and $\tau_t$, §2.1.1), but $F_1$, $F_2$ and the
+DDES length need $d$ (Eqs. 13–17, 26).
+
+**The DDES.** Only the $k$ destruction changes, to $\rho k^{3/2}/l_{\mathrm{DDES}}$
+with $l_{\mathrm{RANS}}=\sqrt k\,\tau_t/C_\mu$ and $l_{\mathrm{LES}}$ built on the
+longest element edge divided by $N$; the formulation, the constants and the
+results are on the [detached-eddy simulation](/methods/detached-eddy-simulation.md)
+page (Kumar et al. 2025, §2.2, §4).
+
 ## Evidence
 
-All results are from Tomboulides et al. (2025, §3), against the regularized
+**SST form** (Kumar et al. 2025, §3; NASA Turbulence Modeling Resource
+cases, run as 2-D RANS in Nek5000):
+
+- **Flat plate** at $Re_L=5\times10^6$
+  ([turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+  $p$-convergence on $34\times24$ elements, $N=2$, 4, 8, 16: mean velocity and
+  eddy viscosity at $x/L=0.97$ converge at $N=16$ and agree with the CFL3D
+  $k$-$\omega$ SST data; $C_f$ and drag change by less than 0.5% between
+  $N=4$ and 16, as the SA results of CFL3D and FUN3D do (§3.1.2, Figs. 2–3).
+  $r$-convergence on $37\times16$ elements, $N=6$, average first-node $y^+$ from
+  0.09 to 2.9: both Nek5000 models give oscillatory $C_D$ for $y^+>1.5$;
+  the regularized $k$-$\omega$ SST converges like SA in CFL3D as the wall
+  is refined, while the $k$-$\tau$ SST keeps an oscillatory convergence,
+  which the authors read as a greater sensitivity to the element aspect
+  ratio; all values lie within 1% of the other models (§3.1.3, Fig. 4).
+- **[NACA 0012](/benchmarks/naca-0012-airfoil.md)** at $Re_c=6\times10^6$,
+  $64\times32$ elements, $N=9$ at $0^\circ$ and $N=11$ at $10^\circ$ and
+  $15^\circ$: $C_p$ and $C_f$ agree with the CFL3D SA data, with a slight
+  under-prediction of the suction peak at $15^\circ$ that the authors
+  attribute to compressibility in CFL3D (§3.2.2, Fig. 6). Table 3:
+
+| $\alpha$ | $C_L$ $k$-$\tau$ SST | $C_L$ exp. | $C_L$ CFL3D SA | $C_D$ $k$-$\tau$ SST | $C_D$ exp. | $C_D$ CFL3D SA |
+|---|---|---|---|---|---|---|
+| $0^\circ$ | $\approx10^{-5}$ | $-0.00724$ | $\approx0$ | 0.008 | 0.008 | 0.008 |
+| $10^\circ$ | 1.05 | 1.05 | 1.08 | 0.013 | 0.012 | 0.013 |
+| $15^\circ$ | 1.45 | 1.49 | 1.51 | 0.023 | 0.018 | 0.022 |
+
+  The values lie within 5% of CFL3D; the 20% drag difference against the
+  measurement at $15^\circ$ is shared by CFL3D and attributed possibly to
+  RANS limits in a strong adverse pressure gradient (§3.2.2). At
+  $10^\circ$ the base model of Tomboulides et al. (below) gives
+  $C_L=1.0618$, $C_D=0.01381$ on a different mesh ($M=0.15$, 5974 elements,
+  $N=7$); the measured lift printed at $10^\circ$ is 1.05 in Kumar et al.
+  (Table 3) and 1.075 in Tomboulides et al. (Table 4), both citing Ladson
+(the [NACA 0012](/benchmarks/naca-0012-airfoil.md) page holds the record).
+
+**Base model.** Results of Tomboulides et al. (2025, §3), against the regularized
 $k$-$\omega$ model in Nek5000 and the SST model of
 [OpenFOAM](/software/openfoam.md) (version 12, simpleFoam); polynomial
 degrees $N=2$–9 (the source's $p$).
@@ -208,7 +319,7 @@ $k$-$\tau$ [wall functions](/methods/rans-wall-function.md) (reported in
 earlier reports by Shaver et al., 2022 and 2023), steady solvers, and an SST
 version of $k$-$\tau$ as the basis of a
 [delayed detached-eddy simulation](/methods/detached-eddy-simulation.md)
-(§4).
+(§4), the step Kumar et al. (2025) take (above).
 
 ## Qualifications
 
@@ -218,6 +329,18 @@ version of $k$-$\tau$ as the basis of a
   hydraulic diameter, which an external flow such as the airfoil lacks.
   The authors' mitigation is that $R_{\mathrm{fs}}$ may be dropped for
   internal flows and that solutions are insensitive to $y_{\lim}$ (§2).
+  In the SST form of Kumar et al. the blending functions and the DDES use
+  $d$ while the $\tau_t$ boundary condition does not (Eqs. 13–17, 26).
+- **Printed slips in Kumar et al. (2025).** Eq. 2 writes the kinematic
+  Reynolds stress with $\tfrac23\rho k\delta_{ij}$; Eq. 12 is introduced as "the
+  kinematic eddy viscosity" but carries $\rho$; the gradient-squared term of
+  Eq. 11 carries a factor $\rho$ that the same term of Eq. 4 lacks, with
+  $\Gamma_\omega$ already dynamic; Eq. 5 prints "$\Gamma\omega$" for
+  $\Gamma_\omega$. §3.1.3 states that the final $r$-convergence mesh keeps the
+  NASA $257\times97$ degrees of freedom, while $37\times16$ elements at $N=6$ give
+  $(37\cdot6+1)(16\cdot6+1)=223\times97=21\,631$, the value of Table 1
+  *(compiler check, not in the sources)*; Fig. 2 shows an $N=24$ curve that
+  Table 1 does not list.
 - **Airfoil drag at $10^\circ$.** The text calls the drag a slight
   overprediction; the printed values give $+15\%$ against the measurement,
   while the largest NASA-code value, 0.01297, is $+8\%$
@@ -234,3 +357,4 @@ version of $k$-$\tau$ as the basis of a
 # Citations
 
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1, §2 Eqs. 7, 12–24, §2.1 Eqs. 25–31, §2.2 Eqs. 32–38, §3.1–3.5 Tables 1–4, Figs. 6, 18–22, §4.
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (wall argument, $\sqrt{\tau_t}$, first $k$-$\tau$ DDES); §2.1, Eqs. (3)–(18) ($k$-$\tau$ SST); §2.1.1, Eq. (19) (free-stream limiter); §2.2, Eqs. (20)–(28) (DDES); §3.1.2–§3.1.3, Table 1, Figs. 2–4 (flat plate); §3.2.2, Table 3, Fig. 6 (NACA 0012); App. A.5.

@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Shock-generated turbulence and turbulent shock jump relations"
-description: "A strong shock crossing a medium with order-one density fluctuations generates turbulence whose velocity dispersion scales with shock speed times a pre-shock Atwood number and whose Reynolds stress lowers post-shock pressure and density; conversely, shocks form inside supersonic turbulence and the supersonic Taylor–Green vortex, where they test shock capturing."
+description: "A strong shock crossing order-one density fluctuations generates turbulence scaling with shock speed times a pre-shock Atwood number, with Reynolds-stress-modified jump relations; weak isotropic turbulence crossing a normal shock is amplified as linear theory and DNS compare; shocks forming inside supersonic turbulence test shock capturing."
 status: established
-aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale, detonation–turbulence interaction]
-tags: [compressible, implicit-les, plasma, astrophysics, dg, numerical-dissipation, combustion]
-timestamp: 2026-10-28T07:07:00Z
+aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale, detonation–turbulence interaction, canonical shock–turbulence interaction, STI, wrinkled and broken shocks]
+tags: [compressible, hypersonic, implicit-les, les, dg, numerical-dissipation, plasma, astrophysics, combustion, shock-turbulence-interaction]
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Shock-generated turbulence and turbulent shock jump relations
@@ -32,6 +32,10 @@ by three further sources as tests of shock-capturing discretizations. A
 detonation running into isotropic turbulence and a boundary layer
 amplified through a ramp interaction are added there as reacting and
 wall-bounded counterparts.
+The small-perturbation limit, isotropic turbulence through a normal
+shock, has its own section: the canonical shock–turbulence interaction,
+its DNS and LES record and its
+[linear interaction analysis](/methods/linear-interaction-analysis.md).
 
 **Page notation** (page-local unless in the registry): $x$ is the
 shock-normal direction (the shock moves toward $-x$), $y$, $z$ the
@@ -177,6 +181,125 @@ relations can be closed from pre-shock quantities alone (§III). Moving the
 window downstream lowers the anisotropy toward isotropy, as in wind-tunnel
 shock–turbulence experiments (not shown).
 
+## The canonical shock–turbulence interaction
+
+The small-perturbation counterpart of the shock-tube problem is the
+canonical shock–turbulence interaction: homogeneous isotropic turbulence
+convected through a stationary normal shock, which
+[Cuadra et al. (2025)](/sources/cuadra-2025.md) call "the simplest
+representation of turbulence interacting with a shock wave", isolating the
+physics from the walls, cross-flows and pressure waves of
+[shock/boundary-layer interactions](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+(§I, Fig. 1). With solenoidal upstream turbulence it is set by the
+pre-shock Mach number $M_1$ (page-local, relative to the shock), the
+turbulent Mach number $M_t=\sqrt{R_{kk}}/\tilde c=\sqrt3\,u_{\mathrm{rms}}/\tilde c$
+on the Favre-averaged sound speed, $Re_\lambda$ and the spectrum shape;
+upstream entropic and acoustic content and a temperature-dependent
+$\gamma$ add parameters (§I, Eqs. 1–3; §II B). Its linear theory is
+[linear interaction analysis](/methods/linear-interaction-analysis.md),
+which predicts the amplification factors $\mathrm{AF}_{11}$,
+$\mathrm{AF}_{22}$ and $\mathrm{AF}_k$ (registry §11) of the streamwise and
+transverse Reynolds stresses and of the turbulent kinetic energy.
+
+**The DNS record.** Cuadra et al. compile the DNS of the case (Table I):
+Lee et al. (1993, 1997; $M_1=1.2$–3, $Re_\lambda=14.9$–19.7), Mahesh et
+al. (1997), Larsson et al. (2009, 2013; $M_1=1.28$–6, $M_t=0.05$–0.56,
+$Re_\lambda=39$–74), Ryu & Livescu (2014), Tian et al. (2017), Boukharfane
+et al. (2018), Chen & Donzis (2019, 2022), Gao et al. (2020), Grube &
+Martín (2023; $M_t$ up to 0.691) and the authors' own runs at $M_1=5$,
+$M_t=0.2$ and 0.4, $Re_\lambda=40$, with $\gamma=1.4$ and $\gamma(T)$;
+the ranges are $M_1\in[1.1,6]$, $M_t\in[0.02,0.691]$,
+$Re_\lambda\in[9,74]$, and the hypersonic regime ($M_1\ge5$) is "nearly
+unexplored" (§III B, §IV). They state, citing two studies, that fully
+developed turbulence needs $Re_\lambda>100$, above the compiled range
+(§III B, p. 18). The findings they review (§III A 2):
+
+- the shock amplifies the turbulent kinetic energy and reduces the
+  turbulence length scales by preferentially amplifying small scales,
+  linear mechanisms dominating (Lee et al.); the post-shock Kolmogorov
+  scale grows for $M_1<1.65$ and shrinks above, in LIA and DNS alike;
+- upstream entropy fluctuations negatively correlated with the velocity
+  raise the amplification and positively correlated ones lower it,
+  through baroclinic torque (Mahesh et al.); upstream dilatational energy
+  raises it at high Mach numbers;
+- the shock is **wrinkled**, **broken** (Larsson) or **vanished** (Chen &
+  Donzis): broken for $M_t/(M_1-1)>0.6$, vanished correlated with a ratio
+  of laminar shock thickness to Kolmogorov length of about 7.69; both
+  measures fall with $M_1$, which makes broken and vanished shocks
+  unlikely in hypersonic flow;
+- the post-shock anisotropy, $\mathrm{AF}_{11}>\mathrm{AF}_{22}$ in DNS, is
+  the reverse of LIA's, while the total $\mathrm{AF}_k$ of DNS is close to
+  LIA and approaches it as $M_t\to0$ and $Re_\lambda\to\infty$ (§III B,
+  Figs. 11–12; detail on
+  [linear interaction analysis](/methods/linear-interaction-analysis.md)).
+
+**Resolution and cost.** Resolving the shock structure itself, with the
+ratio of Kolmogorov length to laminar shock thickness
+$0.13\sqrt{Re_\lambda}(M_1-1)/M_t$ (Eq. 38, from Moin & Mahesh, as the
+authors cite them) of order one, is unfeasible beyond $M_1\approx1.5$;
+beyond it the shock is captured, by ENO/WENO/TENO schemes hybridized with
+central or energy-preserving schemes through a
+[shock sensor](/definitions/shock-sensor.md), whose choice largely sets the
+overall dissipation, by
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md),
+or it is fitted as a discontinuity, costlier but free of added
+dissipation and used only at low Reynolds number (§III A 1). The
+Kolmogorov scale across the shock scales as
+$\eta_2/\eta_1\sim\mathcal P\mathcal T^{11/8}$ ($\mathcal P$, $\mathcal T$
+the pressure and temperature jumps, page-local; Eq. 40, from Larsson et
+al.), making the hypersonic border near $M_1=5$ the costliest for DNS, and a
+small $M_t/M_1$ needs many flow-through times per eddy turnover (§IV A 2).
+See [direct numerical simulation](/definitions/direct-numerical-simulation.md).
+
+**LES of the case** (§III A 3, Eq. 39). The authors write the filtered
+momentum equation with a subgrid stress and a subgrid viscous stress,
+the latter usually neglected, and an eddy-viscosity closure of the
+deviatoric subgrid stress (in the registry's sign convention
+$\tau^d_{ij}=-2\mu_t\tilde S^d_{ij}$ with the density-weighted $\tau_{ij}$). From the studies they review:
+
+- the result depends sensitively on the subgrid closure: Garnier et al.
+  (2002) found the [dynamic Smagorinsky model](/methods/dynamic-procedure.md)
+  better than coarsened DNS (under-dissipative) and the static
+  [Smagorinsky model](/methods/smagorinsky-model.md) (over-dissipative);
+  when the shock corrugations become subgrid the LES deteriorates because
+  the shock is under-resolved, "not because the SGS model fails";
+- switching the subgrid fluxes off where the shock-capturing scheme is
+  active improves the LES (Bermejo-Moreno et al. 2010), and adaptive mesh
+  refinement with a hybrid stretched-vortex model gives Reynolds-stress
+  profiles largely independent of post-shock resolution (Braun et al.
+  2019);
+- the isotropic subgrid part $\tau_{kk}$ becomes important as $M_t$
+  grows, in the momentum and the energy equations, and high-enthalpy flows
+  add filtered vibrational-energy and species equations with closures
+  studied in only two works; LES of the case has been developed almost
+  entirely for supersonic flows (§III A 3).
+
+The authors' three elements of a predictive LES of the supersonic case
+are dynamic modelling, a grid resolving the shock corrugations, and
+subgrid fluxes only where the hybrid scheme is central (§IV A 3). See
+[large-eddy simulation](/definitions/large-eddy-simulation.md).
+
+**A discretization test.** [Bilocq et al. (2025)](/sources/bilocq-2025.md),
+§4.4, run the case of Larsson & Lele ($M_1=1.28$, $M_t=0.22$,
+$Re_\lambda=40$; box $4\pi\times2\pi\times2\pi$, shock at $x=\pi$, inflow
+from a decaying isotropic precursor convected by Taylor's hypothesis,
+sponge from $x=3\pi$) with a
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) on
+uniform Cartesian meshes of $368\times64^2$ and $736\times128^2$ degrees
+of freedom with no shock clustering, comparing Laplacian
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+(DG-AV), fully [entropy-stable](/properties/entropy-conservation.md) DG on
+Gauss and Gauss–Lobatto nodes, and their selective variant DG-ES,
+entropy-stable only in cells flagged by a modal sensor. On the coarse mesh
+the entropy-stable methods capture the post-shock amplification of $R_{11}$
+and $R_{22}$ better than DG-AV, without spurious oscillations (§4.4.3,
+Fig. 15); the authors conclude that even the modest dissipation DG-AV adds
+near the shock degrades the post-shock turbulence, although no
+stabilization acts there (§5). The maximum stable CFL numbers are 0.53
+(DG-AV, DG-ES, Gauss-node entropy-stable DG) and 0.69 (Gauss–Lobatto),
+nearly constant with refinement because the shock is weak (Table 11), and
+DG-ES costs 1.21 times DG-AV on the fine mesh (Table 12).
+
 ## Shock-driven mixing in one-dimensional turbulence
 
 The stochastic [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)
@@ -292,6 +415,19 @@ subcell blending at the same maximum blending factor on all grids and $N=7$,
 GALÆXI and [FLEXI](/software/flexi.md) give identical $\varepsilon_s(t)$,
 "almost identical" to the Chapelier et al. reference at $512^3$ degrees of
 freedom (§5.2, Fig. 11).
+
+[Bilocq et al. (2025)](/sources/bilocq-2025.md), §4.2, run the case at
+$N=3$ on $64^3$ to $512^3$ degrees of freedom against the TENO reference of
+Chapelier et al.: vanilla DGSEM is unstable up to $128^3$ and every
+stabilized variant is stable at all resolutions (Table 6); artificial
+viscosity underpredicts $\varepsilon_d$ at all resolutions because it
+weakens the shocks, while the entropy-stable variants overpredict it,
+most of all those with an entropy projection, which the authors ascribe to
+the entropy variables perturbing surface quantities and so the velocity
+divergence (Fig. 9); artificial viscosity gives the thicker,
+oscillation-free shocks (Fig. 10). Detail on
+[entropy conservation](/properties/entropy-conservation.md) and
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md).
 
 **Shocklets in decaying compressible turbulence.** In decaying isotropic
 turbulence at turbulent Mach numbers 0.8 to 1.6,
@@ -513,6 +649,16 @@ judge discretizations by how they resolve or smear them.
   kinetic term and $Re=\rho_0U_0/\mu_0$ without a length (§II.A–B); the
   Fig. 8 legend names a "TENO6 512" reference where the text uses the
   $2048^3$ run.
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) run the
+  shock–turbulence case at "CFL = 0.535" (§4.4.1), while their Table 11
+  gives 0.53 as the largest stable CFL of DG-AV, DG-ES and the Gauss-node
+  entropy-stable DG; §4.4.3 says "Both methods reproduce" of the four
+  stabilized methods of Fig. 15.
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) attribute the
+  wrinkled-to-broken criterion to Larsson and Donzis (p. 16), to Donzis
+  (Fig. 10 caption) and to Larsson et al. (p. 17); they write the highest
+  pre-shock Mach numbers of DNS as "in the neighborhood of" 5 (p. 16)
+  while Table I lists Larsson et al. up to 6.
 - Kumar & Ghosh (2022) give the periodic channel as centreline Mach
   1.49 and $Re_\tau=240$ (Table 4, §3.2.2) and the inflow channel of the
   shock train, on the same domain and grid, as Mach 1.5 and
@@ -534,3 +680,5 @@ judge discretizations by how they resolve or smear them.
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §IV.C, Table IV, Figs. 23–32 (turbulence amplification through a ramp interaction).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.3, Table 2, Eqs. 12–17; §3.2, Figs. 9, 12; §4.2; §6 (shock–turbulence and Richtmyer–Meshkov terms of one-dimensional turbulence; review).
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §IV.A, Table IV; §IV.C, Figs. 19–24; §IV.D (shocklets and a secondary shock over a ramp interaction).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §I, Eqs. (1)–(3), Fig. 1; §III A 1–3, Eqs. (38)–(39); §III B, Table I, Figs. 10–12; §IV A 2–3, Eq. (40) (canonical shock–turbulence interaction: DNS record, shock regimes, LES, cost; review).
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §4.2, Table 6, Figs. 9–10 (supersonic Taylor–Green vortex); §4.4, Tables 11–12, Fig. 15; §5 (canonical shock–turbulence interaction with stabilized DGSEM).

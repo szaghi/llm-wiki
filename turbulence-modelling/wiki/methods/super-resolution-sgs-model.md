@@ -5,7 +5,7 @@ description: "An LES closure that reconstructs a fine-grid field from the coarse
 status: established
 aliases: [super-resolution SGS model, super-resolution-based subgrid scale model, unsupervised-supervised pipeline, CycleGAN SGS model, GAN super-resolution closure, vLES]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-28T12:26:00Z
+timestamp: 2026-10-28T17:41:00Z
 ---
 
 # Super-resolution subgrid-scale models
@@ -70,6 +70,26 @@ generalization study of [Nista et al. (2023)](/sources/nista-2023.md)
 (their ref. [108]; below); the review's Fig. 5 (§2.2) sketches a convolutional
 network that outputs both an enhanced-resolution field and a predicted
 subgrid stress. The review prints no result of these models.
+
+[Posch et al. (2025)](/sources/posch-2025.md) (§6.4.2), a review of
+turbulent combustion models for engine CFD, report the same three works
+as evidence for machine-learned subgrid closures in reacting flow. Bode
+et al. reconstructed the subgrid mixture-fraction flux and subgrid
+Reynolds stresses with a GAN, with physics-informed losses based on the
+continuity equation, and achieved "good results" in a benchmark spray
+case; the review records their caution that reactive scalars are harder
+because fast-chemistry source terms depend on the smallest scales, and
+their later reproduction of DNS data of an engine-like flame kernel on a
+much coarser grid. Of Nista et al. (the review's ref. [481], the work on
+this page's next section) it reports good extrapolation across benchmark
+flames in Reynolds and Karlovitz numbers and OH mass fraction, with the
+authors' warning not to change the filter-to-Kolmogorov ratio between
+training and testing. The review's assessment of the whole class is that
+these models "have been mostly developed and tested on benchmark flame
+simulation cases" and that their transfer to engine combustion "is not
+straight forward", data-driven models lacking extrapolation so that the
+training data must cover the engine's temperature and pressure range
+(§6.4.1–6.4.2). It prints no number of its own.
 
 ## Generalization of a super-resolution GAN in premixed flames (Nista et al. 2023)
 
@@ -373,5 +393,6 @@ no net local backscatter, beats the conventional model.
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §III (physics-informed GAN of Bode et al. cited, in passing).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Fig. 32 (PIESRGAN reviewed: adversarial, accuracy and continuity losses, RRDB blocks, a priori and a posteriori spray-flame LES; generative against supervised findings); §5.4 (generalizability of generative methods).
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1 (fDNS against vLES, supervised super-resolution, Bode et al. cited); §2.1–2.2, Eqs. 2.1–2.22 (equations, cGAN, CycleGAN); §3, Eqs. 3.1–3.2, Figs. 3–4 (pipeline, stress extraction, clipping); §4, Tables 1–4, Eq. 4.1 (channel set-up, networks, data); §5, Figs. 6–21 (a priori); §6, Eqs. 6.1–6.15, Figs. 22–27 (a posteriori, budgets, mechanism); §7, Figs. 28–29 ($Re_\tau\approx2000$, CNN limits, pointwise inputs); §8; App. A–C, Figs. 30–37.
+- [Posch et al. (2025)](/sources/posch-2025.md) — §6.4.1–6.4.2 (GAN super-resolution closures of Bode et al. and Nista et al., refs. [479]–[481], reviewed; transfer to engines).
 - [Nista et al. (2023)](/sources/nista-2023.md) — §1, Eqs. 1–3, 5 (subfilter stress and temperature flux from the reconstruction); §3.1–3.2, Eq. 4, Fig. 1 (generator, loss, training); §4–4.3, Table 1, Figs. 2–8 (a priori generalization across Reynolds and Karlovitz numbers, fuel, OH); §4.4, §5 ($\Delta/\eta$ criterion, a posteriori deferred).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §2.2, Fig. 5; §2.4 (GAN super-resolution SGS models cited). Review, citation only.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Mesh adaptation for turbulent-flow simulation"
-description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in a turbulent-flow computation: Hessian and metric criteria for RANS, Hessians scaled by DG error estimators, time-averaged criteria for hybrid RANS/LES, LES modelling-residual, small-scale-energy, residual and truncation-error estimators, error transport equations, output-based estimates for chaotic flows, and refinement as a dissipation control."
+description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in turbulent-flow computation: Hessian and metric criteria for RANS, DG error estimators, time-averaged hybrid RANS/LES criteria, LES residual, small-scale-energy and truncation-error estimators, error transport equations, output-based estimates, cell-Reynolds-number DNS/LES criteria, vortex indicators, CAD-exact refinement and load balancing."
 status: established
-aliases: [unsteady residual indicator, smoothness indicator, adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
-tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-28T17:05:00Z
+aliases: [unsteady residual indicator, smoothness indicator, adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE, automatic mesh convergence, AMC, cell-Reynolds-number criterion, spectral decay indicator, knot-insertion refinement, dynamic load balancing, vortex indicator]
+tags: [mesh-adaptation, hybrid-rans-les, rans, les, dg, numerical-dissipation, wmles]
+timestamp: 2026-10-29T05:10:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -607,6 +607,141 @@ relevant vortex physics and propose comparisons among AMR methods on
 targeted vortex topics (§4.1.1, §5.3.2.1). The cases are on
 [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md).
 
+**Adaptation in engine combustion CFD.** The review of combustion
+models for internal-combustion engines by
+[Posch et al. (2025)](/sources/posch-2025.md) records three uses of
+adaptive refinement: in RANS with direct chemistry integration, adaptive
+mesh refinement on velocity and temperature is part of "a clear trend",
+one cited study noting that in the laminar regime detailed chemistry needs
+cells of the order of the laminar flame thickness (§5.1.5); a thickened
+flame model has been combined with AMR (§5.1.4, Table 6; see
+[thickened flame model](/methods/thickened-flame-model.md)); and, citing
+Moureau et al., the commutation error of a time-varying LES filter width
+can be ignored when flow and mesh motion come from the same boundary
+movement, "but such errors can occur with adaptive mesh refinement"
+(§3.2.3).
+
+## Cell-Reynolds-number criteria for DNS and LES meshes (Barbera et al. 2026)
+
+[Barbera et al. (2026)](/sources/barbera-2026.md) define a DNS or LES mesh
+a priori and automatically inside the automatic mesh convergence (AMC)
+loop of the incompressible finite-volume code YALES2 (remeshing with
+MMG3D, $\sigma$-model LES). They argue (§1) that the check
+$\Delta/\eta=\mathcal O(1)$ of DNS practice is a posteriori and not
+constructive, and, citing their own conference paper, that the group's
+earlier LES criteria, a mean-flow Hessian combined with a resolved-to-subgrid
+energy ratio, fail when embedded in an anisotropic framework: in
+transitional regions the turbulence criterion is inactive and the
+mean-flow Hessian alone allows overlong cells along directions of weak
+mean variation, under-resolving Kelvin–Helmholtz rollers and early
+transition; "the straightforward transposition of RANS-oriented
+anisotropic metrics to LES is generally not valid", as they cite.
+Page-local: $\mathbb H$ the Hessian operator, $\mathbb D$ the second-order
+moment of the control volume, $\mathbb M$ a metric tensor, $\Delta$ the
+radius of the equivalent sphere of a cell (not the cube root of its
+volume), $C_{\mathrm K}$ the Kolmogorov constant, $T_0$ the averaging window.
+
+**DNS criterion (§2.1, Eqs. 1–7; contribution).** A box filter of the
+second-order Taylor expansion of the instantaneous velocity gives a
+subgrid velocity $u^<\approx\tfrac12\lVert\mathbb H(\boldsymbol u):\mathbb D\rVert_2$,
+and for a sphere of radius $\Delta$, $\mathbb D=c_1\Delta^2\mathbb I$ with
+$c_1=1/5$ in 3D ($1/4$ in 2D), so $u^<\approx\tfrac12c_1\Delta^2\lVert\nabla^2\boldsymbol u\rVert_2$
+($c_1$ page-local). A cell Reynolds number $Re^u_\Delta=\Delta u^{<}/\nu$
+(page-local) is targeted, by analogy with the order-one Reynolds number
+of the Kolmogorov scale, which gives
+$$\Delta^{\mathrm{inst}}_{\mathrm{DNS}}=\left(\frac{2\nu Re^u_\Delta}{c_1\lVert\nabla^2\boldsymbol u\rVert_2}\right)^{1/3},\qquad \Delta_{\mathrm{DNS}}=\left(\frac1{T_0}\int_{T_0}\big(\Delta^{\mathrm{inst}}_{\mathrm{DNS}}\big)^{-2}\,\mathrm dt\right)^{-1/2}.$$
+It extends to the instantaneous velocity the mean-velocity criterion of
+Lam et al. that they cite, $Re^{\langle u\rangle}_\Delta=\Delta\langle u\rangle^{<}/(\nu+\nu_t)$,
+which yields the mean-flow size $\Delta_{\langle u\rangle}$ (Eqs. 8–9).
+
+**Scale-separation criterion (§2.2, Eqs. 10–19; contribution).** With a
+Kolmogorov spectrum between the cutoff $k_c=2\pi/\Delta_c$ and
+$k_\eta=2\pi/\eta$ and $L=\langle K\rangle^{3/2}/\langle\varepsilon\rangle$
+($K$ the turbulent kinetic energy in this spectral form), the subgrid
+fractions of energy and dissipation are
+$$R_k=\tfrac32C_{\mathrm K}\big((k_cL)^{-2/3}-(k_\eta L)^{-2/3}\big),\qquad R_\varepsilon=1-\frac{(k_cL)^{4/3}}{(k_\eta L)^{4/3}}$$
+($R_k$, $R_\varepsilon$ page-local). Estimating both on the current mesh
+of size $\Delta_I$, from the eddy viscosity through
+$K_{\mathrm{sgs}}=\nu_t^2/(c_k^2\Delta_I^2)$, $c_k=0.1$, and
+$\varepsilon_{\mathrm{sgs}}=c_\varepsilon K_{\mathrm{sgs}}^{3/2}/\Delta_I$,
+$c_\varepsilon=0.85$ ("Deardoff's model", as printed), gives $k_\eta L$;
+a user target $L/\Delta_c$ then gives a target $R_k$ and, assuming
+$\nu_t\propto\Delta^{4/3}$, the filter size $\Delta_c=(R^{\mathrm T}_k/R^{\mathrm I}_k)^{3/2}\Delta_I$
+(Eq. 19). The authors state that $L/\Delta=10$ with $\eta\to0$ gives
+$R_k\approx0.2$, Pope's 80% resolved-energy criterion at infinite Reynolds
+number (see [grid-point requirements](/results/les-grid-point-requirements.md));
+the value of $C_{\mathrm K}$ behind this number is not printed.
+
+**Combined size and metric (§2.3, §4; contribution).** The LES size is
+$$\Delta=\min\{\Delta_{\langle u\rangle};\max\{\Delta_{\mathrm{DNS}};\Delta_c\}\}\qquad\text{(Eq. 20)},$$
+LES being a local relaxation of DNS where an inertial range exists
+($\Delta_c>\Delta_{\mathrm{DNS}}$) and DNS elsewhere, bounded by the mean-flow
+resolution. In the anisotropic version only the magnitude of $\mathbb D$
+is fixed by the target subgrid velocity, its shape being taken as
+$(\sum_i|\mathbb H(u_i)|)^{-1}$ to minimize the element count (Eq. 23);
+instantaneous DNS metrics are averaged in time in the log-Euclidean sense,
+$\mathbb M_{\mathrm{DNS}}=\exp\big(T_0^{-1}\int_{T_0}\log\mathbb M^{\mathrm{inst}}_{\mathrm{DNS}}\,\mathrm dt\big)$
+(Eq. 24), the filter metric stays isotropic, $\mathbb M_c=\Delta_c^{-2}\mathbb I$,
+and $\mathbb M_{\mathrm{LES}}=\mathbb M_{\langle u\rangle}\cap(\mathbb M_{\mathrm{DNS}}\cup\mathbb M_c)$
+(Eq. 26). The loop stops when the cell count changes by less than 10%,
+typically after two or three adaptations (§3, App. A).
+
+**Results (§3, §5–6, App. A–B).**
+
+| Case | Parameters | Outcome |
+|---|---|---|
+| forced round jet in co-flow, $Re=4000$ on the radius, DNS | $Re^u_\Delta=0.05$–0.5 | 75,093,339 to 920,442,715 elements; mean and rms axial velocity at $x/D=1$, 5, 10 agree for all values; $Re^u_\Delta=0.125$ gives $\Delta/\eta\approx1.5$ in the turbulent region and less than 5% subgrid dissipation (Figs. 2–5) |
+| same jet, LES, isotropic and anisotropic | $Re^u_\Delta=Re^{\langle u\rangle}_\Delta=0.125$, $L/\Delta_c=5$–25 | transition region and turbulent/non-turbulent interface meshed by the DNS criterion whatever $L/\Delta_c$; spectra close to DNS for $L/\Delta_c>20$; anisotropic meshes 2 to 3 times fewer elements at similar statistics (Figs. 7–11) |
+| pipe, $Re_D=5300$, against Wu & Moin DNS, anisotropic LES | $L/\Delta_c=2$–16 | wall region meshed by the DNS criterion with aspect ratios up to about 25; 5,083,181 to 18,645,837 elements; mean velocity in very close agreement for all meshes (Figs. 12–13) |
+| PRECCINSTA swirl burner, non-reacting, against Meier et al. | $Re^u_\Delta=Re^{\langle u\rangle}_\Delta=0.5$, $L/\Delta_c=10$ | isotropic and anisotropic statistics "essentially identical"; 143,961,671 against 276,472,835 elements and 99,332 against 231,961 CPU hours for the whole loop (§6, Figs. 14–15) |
+
+In the pipe parametric study ($0.125\le Re^u_\Delta\le2$), lowering
+$Re^u_\Delta$ reduces the mean and rms errors monotonically, the mean flow
+being weakly sensitive up to about 0.5, and the rms errors plateau with the
+element count once quasi-DNS is reached; the authors name 0.125 "the target
+value to achieve rigorous DNS" (App. B). The forced jet and the pipe are
+on [turbulent round jet](/benchmarks/turbulent-round-jet.md) and the code
+uses the [σ model](/methods/sigma-model.md). The paper calls its LES
+"implicit filtering" in the sense of a filter tied to the mesh with an
+explicit σ model; it is not an [implicit LES](/definitions/implicit-les.md)
+without a model.
+
+## Load balancing of p-adaptive LES (Valvo & Abbà 2025)
+
+[Valvo & Abbà (2025)](/sources/valvo-2025.md) add dynamic load balancing
+to the p-adaptive local DG solver dg-comp (tetrahedra, $N=2$–4), whose
+adaptation indicator is the anisotropic part of the second-order velocity
+structure function inside an element,
+$\mathrm{Ind}_{\mathrm{SF}}(K)=\big(\sum_{ij}[D^{\mathrm{sf}}_{ij}(K)-D^{\mathrm{sf,iso}}_{ij}]^2\big)^{1/2}$
+($D^{\mathrm{sf}}_{ij}$ page-local, not the registry's differentiation
+matrix; Eqs. 4–5, after earlier work they cite), the isotropic part being
+subtracted because LES and implicit LES "usually predict the isotropic
+part of the unresolved turbulence at an acceptable level of accuracy";
+$N$ is raised or lowered by one when the time-averaged indicator crosses
+thresholds chosen from a short coarse run (§2.2). The mesh is a graph,
+elements weighted by their number of volume Gauss points (14, 24, 43 for
+$N=2$, 3, 4) and faces by the face Gauss points of the higher degree,
+partitioned with Zoltan (geometric RCB, RIB, Hilbert curve, or graph),
+optionally hierarchically by node then within the node (§3–4). The
+polynomial degree as weight "completely misses the load peaks", the
+degree-of-freedom count overshoots them, and the Gauss-point count captures
+them up to twice the mean load (§4.4, Figs. 5–7). Results (Tables 2, 5, 10,
+11):
+
+- convected viscous vortex (implicit LES, $Re=22\,000$, $M=0.3$, 16,132
+  tetrahedra, 128 tasks): load balancing cuts the elapsed time by about
+  71% against adaptation without balancing and by 82.3%–82.7% against
+  uniform $N=4$; "more than half of the computational gain obtainable with
+  adaptation is wasted" without balancing (§4.5);
+- [square cylinder](/benchmarks/square-cylinder-flow.md) (Smagorinsky
+  LES, $Re=22\,000$, 23,816 tetrahedra, 336 tasks on three nodes):
+  adaptation without balancing saves 9.2% of the time although the
+  degrees of freedom fall by about 45%; with balancing the saving is
+  40.9%–44.6% against uniform $N=4$, "near to the theoretical optimum";
+  hierarchical partitioning cuts inter-node communication volume by a
+  factor of about 4 to 10 but not the elapsed time, the problem being "not
+  communication-bounded on this hardware" (§5.2).
+
 ## Adaptation for steady RANS (Alauzet et al. 2022)
 
 **Loop (§3, Algorithms 1–2).** At fixed complexity the solver, adjoint,
@@ -742,6 +877,68 @@ aircraft configuration" (§1); the configuration run is the wing–body.
 Their perspective is $hp$-adaptation, keeping $N=1$ at shocks, and curved
 boundary elements, without which $N=3$ meshes could not be coarsened to
 equal DOF (§4.2, §5).
+
+## CAD-exact anisotropic h-adaptation of isogeometric DG RANS (Bulgarini et al. 2025b)
+
+[Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) adapt a
+two-dimensional [isogeometric](/methods/isogeometric-analysis.md) DG
+solver of the compressible RANS equations with the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) (negative-$\tilde\nu$
+modification, Roe flux, BR2, the pressure-gradient-directed
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md) of
+Bassi et al.). Elements are rational Bézier patches extracted from the CAD
+NURBS, and refinement is knot insertion at the parametric mid-point of an
+element, in one or both directions, managed in a quad-tree with one
+hanging level per face, so that the CAD boundary stays exact at every
+level and the solution is transferred exactly; coarsening uses a
+conservative least-squares projection (§2.3, §4.1, Eqs. 36–38).
+Adaptation runs only on converged steady solutions, the top
+$n_{\mathrm{adp}}$ percent of elements (page-local) being refined (§4.2).
+
+**Indicators compared (§4.3, Eqs. 39–43, Figs. 9–10).** On the laminar
+cylinder at $Re=40$ ($N=3$) four indicators, each on the momentum $\rho\boldsymbol u$,
+are compared: the small-scale energy density (the $L^2$ norm of
+$(\rho\boldsymbol u)_N-(\rho\boldsymbol u)_{N-1}$ per element size, as in Basile et
+al. above), the **spectral decay** (the same difference divided by the norm
+of $(\rho\boldsymbol u)_N$), and local (maximum) and global (summed)
+non-conformity of the interface jumps. All give a speed-up of about 2
+against the uniformly fine reference ($C_D=1.41764$); the small-scale
+energy over-refines the detachment region, it and the global
+non-conformity refine areas outside the regions of interest, and spectral
+decay is "the most effective overall", local non-conformity performing
+similarly and suited to lower degrees. **Anisotropy (contribution, Eqs.
+44–45, Algorithm 1):** the element-averaged solution gradient mapped to
+parametric space decides the split, along $\xi$ if its $\xi$ component
+exceeds three times the $\eta$ component, along $\eta$ in the reverse case,
+isotropic otherwise; anisotropic refinement is the more efficient.
+
+**RANS results (§6, Tables 1–4).**
+
+| Case | Meshes (patches) | Result |
+|---|---|---|
+| turbulent flat plate | 1152 at $y_1^+=100$ adapted to 1834 at $y_1^+\approx1$ | matches the reference data with about 60% fewer degrees of freedom and less time than a 4617-element $y_1^+=1$ mesh; the coarse mesh is badly wrong in the viscous sublayer but only slightly off in $C_f$ (Fig. 15) |
+| transonic [NACA 0012](/benchmarks/naca-0012-airfoil.md), $M_\infty=0.751$, $Re=3.91\times10^6$, $\alpha=1.99^\circ$ | 1680 adapted to 8308; reference 15,360 | spectral decay refines shock, boundary layer, wake and separation bubble; with $n_{\mathrm{adp}}=6\%$ a speed-up of about 5.9 at 0.34% drag deviation ($C_D=1.80805\times10^{-2}$ against $1.80200\times10^{-2}$), with 12% and 20% speed-ups of 2.9 and 2.7 at 1.90% and 1.88% |
+| [T106A cascade](/benchmarks/turbine-cascade.md), $M_2=0.59$, $Re=1.1\times10^6$ | 933 adapted to 5106; reference 6847 | suction-side $C_f$ "in perfect agreement" with the fine mesh; with $n_{\mathrm{adp}}=5\%$ a speed-up of about 2.6 at 0.17% loss-coefficient deviation, with 10% and 15% speed-ups of 1.7 and 1.5 at 1.49% and 0.24% |
+
+On linear-boundary meshes of about equal degrees of freedom, spurious
+near-wall phenomena prevent full convergence of the NACA 0012 case and
+distort $C_p$ and $C_f$ near the leading edge, and the T106A needs a
+lowered CFL-law exponent; the curved NURBS boundaries avoid both
+(§6.2–6.3, Figs. 19, 23).
+
+**Two rankings of the spectral-decay indicator, side by side.** Ims & Wang
+(2023, above) rank the Persson–Peraire smoothness indicator smthE, which
+they note Naddei et al. call a "spectral decay indicator", slowest of
+their three on time-averaged implicit LES of turbine cascades with flux
+reconstruction at fixed $N$ and isotropic refinement, behind the unsteady
+residual and the Toosi–Larsson small-scale energy, and a random marking
+improves T106a "at a pace almost equal to" it (§5). Bulgarini et al.
+(2025b) rank spectral decay "the most effective overall" of their four
+(small-scale energy density, spectral decay, local and global
+non-conformity) on a steady laminar cylinder at $Re=40$, and use it for
+steady RANS with anisotropic refinement (§4.3, §7). The two definitions
+are printed differently: per variable and averaged over density, momentum
+and energy in Ims & Wang, on the momentum vector in Bulgarini et al.
 
 ## Adaptation in the first High-Order CFD Workshop (Wang et al. 2013)
 
@@ -949,6 +1146,68 @@ node-centred finite volume or finite elements (§4.3).
 - **Certification.** Robust, efficient adaptation is one of the
   requirements the authors list for certification by analysis (§5).
 
+## Vortex-driven refinement of laminar DG computations
+
+Two sources adapt high-order DG meshes to vortices in two-dimensional
+laminar flows, with no turbulence model.
+
+**A characteristic-based vortex indicator (Lv et al. 2025).**
+[Lv et al. (2025)](/sources/lv-2025.md) refine and coarsen quadrilateral
+cells with one level of hanging nodes in a $N=2$ Taylor-basis DG solver
+(HLLC, direct DG viscous flux, explicit SSP-RK3) by a fixed threshold,
+$I_{\mathrm{SR}}>0.04$ refine and otherwise coarsen, up to two or three
+levels, with $L^2$ projection of the solution and fine-side quadrature on
+non-conforming faces "to strictly preserve" conservation (§IV B,
+Algorithm 1, Eqs. 32–33). The indicator, found earlier by the same group
+by symbolic regression on the gradients of two characteristic eigenvalues
+$\lambda^{\mathrm c}_1$, $\lambda^{\mathrm c}_2$ (an $x$- and a
+$y$-direction eigenvalue of the Euler flux Jacobian) and the cell size
+$h$, is (Eq. 25; all symbols page-local)
+$$I_{\mathrm{SR}}=\tanh\Big(-\big[(\partial_x\lambda^{\mathrm c}_1-\partial_y\lambda^{\mathrm c}_2)^2+4\,\partial_y\lambda^{\mathrm c}_1\,\partial_x\lambda^{\mathrm c}_2+h^2\big(\partial_x\lambda^{\mathrm c}_1\partial_y\lambda^{\mathrm c}_2-\partial_y\lambda^{\mathrm c}_1\partial_x\lambda^{\mathrm c}_2\big)\big]\Big):$$
+the first, "base" term is negative where the local characteristics
+rotate (a vortex core), and the grid-scaled "activation" term also flags
+their "departure" (a vortex boundary) on coarse grids, which the authors
+credit for catching dissipative, under-resolved vortices (§IV A 1). The
+paper's own contribution is its evaluation on non-conforming grids from
+direction- and area-weighted neighbour averages (Eqs. 26–31). Against an
+Omega-criterion-driven refinement (threshold 0.52; see
+[vortex identification criteria](/definitions/vortex-identification-criterion.md))
+and uniform grids, evidence is visual plus serial CPU time (Tables I–III):
+
+| Case | Coarse uniform | Fine uniform | Omega-driven | $I_{\mathrm{SR}}$-driven |
+|---|---|---|---|---|
+| square cylinder, $M=0.3$, $Re=150$ | 12.05 min | 230.37 min | 40.88 min | 43.58 min |
+| inviscid Kelvin–Helmholtz double shear layer | 2.73 min | 8.37 min | 12.53 min | 26.03 min |
+| NACA 0012, $M=0.3$, $15^\circ$ | 60.83 min | 415.01 min | 62.27 min | 65.40 min |
+
+The authors read the cylinder and airfoil cases as reductions of 81%–85%
+against the fine grid with similar vortex resolution, the
+$I_{\mathrm{SR}}$ refinement reproducing the fine-grid airfoil field more
+closely than the Omega refinement, and call the Kelvin–Helmholtz result
+"extremely high vortex resolution with slight increase in computational
+resources" (§V), while their Table II gives 26.03 against 8.37 minutes for
+the fine uniform grid. No error norm, force coefficient or Strouhal number
+is reported; see [square cylinder](/benchmarks/square-cylinder-flow.md)
+and [NACA 0012](/benchmarks/naca-0012-airfoil.md).
+
+**Vorticity-threshold refinement on a moving mesh (Zou et al. 2025).**
+[Zou et al. (2025)](/sources/zou-2025-b.md) run interior-penalty DG
+(their IP(2)–IP(4), which reach orders of about 2, 3 and 4.3 on a Couette
+test, Table I) on a block-based quad-tree mesh that
+translates rigidly with an elastically mounted circular cylinder, refining
+blocks where the normalized vorticity exceeds a threshold and coarsening
+where it falls below another, up to five levels (refinement where
+$|\omega_z|d/(2|\boldsymbol V_\infty|)>0.25$ in the fixed-cylinder case),
+with a cell-based correction that moves nodes onto the curved wall (§II D,
+§III B). At $Re=150$, $M=0.2$, the fixed cylinder gives mean $C_D$ 1.33,
+1.3503, 1.3547 and $St$ 0.187, 0.1845, 0.1847 for IP(2), IP(3), IP(4), against
+1.348 and 0.184 of the reference they cite (Table II). The authors state
+that the refinement "achieves substantial computational efficiency gains
+while preserving solution accuracy" without printing costs. Their
+vortex-induced-vibration runs, which they call direct numerical
+simulations, are two-dimensional laminar computations at $Re=150$ (§III C;
+see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
+
 ## Qualifications
 
 - **Ims & Wang (2023)** rank their indicators by visual comparison of
@@ -1081,6 +1340,30 @@ node-centred finite volume or finite elements (§4.3).
 - Mozaffari et al. (2022, §3.3) state that, to their knowledge, no
   refinement criterion had been evaluated for hybrid RANS/LES; Basile et
   al. (2023) is later and uses a different (DG-specific) criterion.
+- **Printed forms in Barbera et al. (2026).** The paper defines
+  $\mathbb D=c_1\mathbb M^{-1}$ with the isotropic limit $\mathbb M=\Delta^{-2}\mathbb I$,
+  $\mathbb D=c_1\Delta^2\mathbb I$, and then prints
+  $\mathbb M^{\mathrm{inst}}_{\mathrm{DNS}}=c_1^{-1}\mathbb D^{-1}$ and
+  $\mathbb M_{\langle u\rangle}=c_1^{-1}\mathbb D^{-1}_{\langle u\rangle}$
+  (§4.1, Eq. 25); with its own definitions the isotropic limit of
+  $c_1^{-1}\mathbb D^{-1}$ is $c_1^{-2}\Delta^{-2}\mathbb I$ *(compiler check,
+  not in the sources)*. Eq. (8) defines $Re^{\langle u\rangle}_\Delta$ with
+  $\nu+\nu_t$ in the denominator, while Eq. (9) prints $\nu$ alone in the
+  numerator of $\Delta_{\langle u\rangle}$, and §4.1 uses $\nu+\nu_t$ in the
+  anisotropic target.
+- **Printed forms in Bulgarini et al. (2025b).** Table 3's caption names
+  degrees of freedom where elements are listed, and Table 5 prints $P_1$,
+  $P_2$ against captions in $P_3$; the global non-conformity is called an
+  "$L^2$ norm" while Eq. (43) is a plain sum. Its ref. [19] is the Ims &
+  Wang (2023) paper recorded above.
+- **Printed forms in Lv et al. (2025).** The global time step of Eq. (16)
+  is printed with a maximum over elements; §III B is headed "Implicit
+  temporal discretization" for an explicit SSP-RK3.
+- **Valvo & Abbà (2025)** print in Table 2 an elapsed time of 7523 s for
+  the adaptive run without balancing next to 281 core hours and a
+  reduction of 39.5% from 13,060 s; 281 core hours on 128 tasks is about
+  7903 s, which also gives the printed 39.5% *(compiler check, not in the
+  sources)*.
 
 # Citations
 
@@ -1109,3 +1392,9 @@ node-centred finite volume or finite elements (§4.3).
 - [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A, §III.A, Fig. 3 (block-structured AMR in PeleC: levels, cell counts, tagging, isotropic wall resolution, subcycling).
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.2, Fig. 53; §3.2.3.5, Figs. 97–98; §4.1.1–4.1.2; §5.3.2.1 (AMR as a requirement for concentrated vortex flows, cited examples).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2 (isotropic lattice Boltzmann mesh too expensive to resolve boundary layers; cross-reference only).
+- [Barbera et al. (2026)](/sources/barbera-2026.md) — §1; §2.1–2.3, Eqs. (1)–(20) (DNS cell-Reynolds criterion, scale-separation filter criterion, combined size); §3, §3.1–3.2, Figs. 2–9; §4.1–4.2, Eqs. (23)–(26) (anisotropic metrics); §5.1–5.2, Figs. 10–13; §6, Figs. 14–15; App. A–B.
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §2.3, §4.1–4.3, Eqs. (36)–(45), Algorithm 1, Figs. 9–10 (knot-insertion h-adaptation, four indicators, anisotropy indicator); §6.1–6.3, Tables 1–4, Figs. 15–23 (flat plate, NACA 0012, T106A); §7.
+- [Lv et al. (2025)](/sources/lv-2025.md) — §III B, Eq. (16); §IV A–B, Eqs. (25)–(33), Algorithm 1 (symbolic-regression vortex indicator on non-conforming grids); §V A–C, Tables I–III (cylinder, Kelvin–Helmholtz, NACA 0012).
+- [Valvo & Abbà (2025)](/sources/valvo-2025.md) — §2.2, Eqs. (4)–(5) (structure-function p-adaptation indicator); §3–4, Tables 2–7, Figs. 5–13 (weights, Zoltan partitioners, hierarchical partitioning, vortex); §5.2, Tables 10–11 (square cylinder).
+- [Zou et al. (2025)](/sources/zou-2025-b.md) — §II D, §III B, Table II, Figs. 8–9 (vorticity-threshold refinement on a moving mesh, fixed-cylinder check); §III C (laminar VIV runs called DNS).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.3; §5.1.4, Table 6; §5.1.5 (adaptive refinement in engine combustion CFD, commutation errors; passing mention).

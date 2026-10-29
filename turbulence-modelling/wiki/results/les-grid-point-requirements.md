@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -89,6 +89,16 @@ mesh and time steps together as "approximately" the cube of the Reynolds
 number, "virtually impossible for flight conditions". [Wang et al. (2024d)](/sources/wang-2024-k.md)
 (§I) cite Choi & Moin (2012) as the cost motivation of their wall-modelled
 LES in a lattice Boltzmann solver.
+[Gao et al. (2025)](/sources/gao-2025.md) (§I) quote, "as demonstrated
+by Choi and Moin", grid counts growing as $Re^{9/4}$ for DNS, $Re^{13/7}$
+for wall-resolved and $Re$ for wall-modelled LES; for DNS the same
+reference is quoted with $Re^{37/14}$ by Rickard & Kasbaoui (2026) and
+Maeyama & Kawai (2023) above (see Contradictions). [Gao et al. (2025b)](/sources/gao-2025-b.md)
+(§I) quote $Re^{13/7}$ for LES of high-Reynolds-number wall turbulence and
+$Re$ with wall modelling, "according to Choi and Moin", and
+[Kumar et al. (2025)](/sources/kumar-2025.md) (§1) cite Piomelli (2014)
+and Choi & Moin (2012) for the infeasibility of DNS and wall-resolved LES
+of practical flows before turning to hybrid RANS/LES.
 
 The differential forms behind these exponents are written out by
 [Bose & Park (2018)](/sources/bose-2018.md) (§1, Eqs. 1–2), after Chapman
@@ -149,6 +159,11 @@ immersed boundary), and suggest the recommended one-wall-unit wall-normal spacin
 "may be somewhat over-demanding"; a factor 3 coarser in each direction
 ($\Delta x^+\approx9$, a cost reduction of $3^4=81$) still gives $u_\tau$
 within 1.8 % with implicit LES (§7.2–7.4).
+
+A constructive DNS criterion, which sets the cell size a priori from
+the local velocity Hessian instead of checking $\Delta/\eta$ a posteriori,
+is described under solution-adaptive grids below
+([Barbera et al. 2026](/sources/barbera-2026.md)).
 
 For isotropic turbulence the record is set by
 [Yeung et al. (2025)](/sources/yeung-2025.md): forced homogeneous isotropic
@@ -420,6 +435,32 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   velocity spectrum at $y/\delta=0.5$ shows a $-5/3$ range. Mesh
   independence is not shown.
 
+- **Twenty to thirty points per thickness with a slip-velocity wall
+  model.** Gao et al. (2025, §III.A, Tables II–III, Figs. 5–11) run
+  compressible channel WMLES at Mach 0.3 in a fourth-order DRP
+  finite-difference code on uniform grids of 10, 20, 20 and 40 points per
+  $\delta$ streamwise (C101015 to C404060). The mean velocity agrees with
+  DNS on all four; the outer Reynolds stresses ($y/\delta>0.2$) need
+  $(\delta/\Delta x,\delta/\Delta y,\delta/\Delta z)=(20,20\text{–}30,30)$,
+  which they recommend as the balance of accuracy and cost and which
+  reproduces mean velocity and outer stresses over $Re_\tau=576$–5100 at
+  fixed $N_x=127$, $N_z=95$ ($N_y=41$ or 61); the coarsest grid over-predicts
+  the stresses and gives a premature high-frequency roll-off of the
+  wall-pressure spectrum, and on the recommended grids the spectral error
+  stays within 3–6 dB at low-to-mid frequency (see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Twelve high-order elements per half-height.** Gao et al. (2025b, §III
+  A–B, Table I) run flux-reconstruction WMLES of channel flow at
+  $Re_\tau=2000$, 5200 and $10\,000$ on $48\times24\times24$ elements with
+  $N=2$–4 (for $N=2$, $144\times72\times72$ solution points), 12 elements
+  across the half-height; the mean velocity follows the log law while the
+  near-wall Reynolds stresses deviate from DNS, which they attribute to
+  that resolution. Their periodic-hill meshes ($32\times12\times16$ and
+  $48\times24\times24$ elements; crest spacings $\Delta y/h_{\mathrm{hill}}=0.170$
+  and 0.032, with $h_{\mathrm{hill}}$ the hill height, page-local) are
+  "significantly coarser than those employed by other researchers", and the
+  $Re=37\,000$ case is compared with a reference LES on
+  $512\times256\times256$ points.
 - **Integrated forces at about ten points per boundary layer.** Goc et al.
   (2021) size the [JAXA Standard Model](/benchmarks/jaxa-standard-model.md)
   grids for $\delta_{99}/\Delta\approx10$ at the main-element trailing edge
@@ -815,6 +856,82 @@ airfoil the authors equate it with compute time (§4). The estimator says
 nothing about whether a grid is converged: convergence must be judged on the
 quantities of interest (§2.5).
 
+**A physics-based a priori size for DNS and LES.** [Barbera et al. (2026)](/sources/barbera-2026.md)
+(§2–§6, Apps. A–B) set the cell size from criteria evaluated on the
+current solution inside an automatic mesh-convergence loop of an
+incompressible finite-volume code with the [σ model](/methods/sigma-model.md)
+(details of the loop and of the anisotropic metrics on
+[mesh adaptation](/methods/mesh-adaptation.md)). Their $\Delta$ is the
+radius of the sphere with the cell's second moment, not an edge length or
+the cube root of the volume, and their "implicit filtering" means a filter
+width tied to the local mesh size with an explicit SGS model, not
+[implicit LES](/definitions/implicit-les.md). Page-local symbols: $c_1$ the
+second-moment constant ($1/5$ in 3D, $1/4$ in 2D); $u^<$ the
+characteristic unresolved velocity; $Re^u_\Delta$ and
+$Re^{\langle u\rangle}_\Delta$ instantaneous and mean cell Reynolds
+numbers; $\Delta_{\mathrm{DNS}}$, $\Delta_c$, $\Delta_{\langle u\rangle}$,
+$\Delta_I$ the DNS, filter, mean-flow and current sizes; $K$, $K_{\mathrm{sgs}}$
+the total and subgrid turbulent kinetic energy (the spectral-page $K$ of
+the registry, since $k$ is the wavenumber here); $R_k$, $R_\varepsilon$ the
+subgrid-to-total ratios of energy and dissipation; $C_{\mathrm K}$ the
+Kolmogorov constant.
+
+- **DNS criterion** (§2.1, Eqs. 1–7). The box-filtered second-order Taylor
+  expansion of the instantaneous velocity gives
+  $u^<\approx\tfrac12c_1\Delta^2\lVert\nabla^2\boldsymbol u\rVert_2$, and a
+  target $Re^u_\Delta=\Delta u^{<}/\nu$ gives
+  $\Delta^{\mathrm{inst}}_{\mathrm{DNS}}=\big(2\nu Re^u_\Delta/(c_1\lVert\nabla^2\boldsymbol u\rVert_2)\big)^{1/3}$,
+  averaged in time as an inverse r.m.s. In the DNS of a forced round jet at
+  $Re=4000$ (based on the velocity difference and the jet radius) the final
+  meshes range from 75 093 339 elements at $Re^u_\Delta=0.5$ to
+  920 442 715 at 0.05, with mean and r.m.s. axial velocity agreeing for all
+  values; at $Re^u_\Delta=0.125$ the fully turbulent region has
+  $\Delta/\eta\approx1.5$ with less than 5 % of the dissipation subgrid, and
+  $\Delta/\eta$ is roughly constant there, so the criterion scales the mesh
+  to the Kolmogorov length a priori (§3.1, Figs. 2–5; see
+  [turbulent round jet](/benchmarks/turbulent-round-jet.md)). The authors
+  state that $Re^u_\Delta=0.125$ "is the target value to achieve rigorous
+  DNS" (App. B).
+- **Scale-separation (filter) criterion** (§2.2, Eqs. 10–19). With a
+  Kolmogorov spectrum $E(k)=C_{\mathrm K}\langle\varepsilon\rangle^{2/3}k^{-5/3}$
+  between $k_c=2\pi/\Delta_c$ and $k_\eta=2\pi/\eta$ and $L=K^{3/2}/\langle\varepsilon\rangle$,
+  $$R_k=\tfrac32C_{\mathrm K}\left[(k_cL)^{-2/3}-(k_\eta L)^{-2/3}\right],\qquad R_\varepsilon=1-\frac{(k_cL)^{4/3}}{(k_\eta L)^{4/3}},$$
+  so the ratios measured on the current mesh, with
+  $K_{\mathrm{sgs}}=\nu_t^2/(c_k^2\Delta_I^2)$ and
+  $\varepsilon_{\mathrm{sgs}}=c_\varepsilon K_{\mathrm{sgs}}^{3/2}/\Delta_I$
+  ($c_k=0.1$, $c_\varepsilon=0.85$, after Deardorff as cited), give $k_\eta L$;
+  a user target $L/\Delta_c$ gives a target $R_k$, and
+  $\Delta_c=(R^T_k/R^I_k)^{3/2}\Delta_I$ under $\nu_t\propto\Delta^{4/3}$
+  (superscripts $T$ target, $I$ current). The authors state that $L/\Delta=10$
+  with $\eta\to0$ gives $R^T_k\approx0.2$, the 80 % resolved-energy
+  criterion of Pope cited above, so that the rule is "an extension of
+  Pope's criterion to finite Reynolds numbers"; the value of $C_{\mathrm K}$
+  is not printed. Where $\Delta_c<\Delta_{\mathrm{DNS}}$ no scale separation
+  is possible and DNS is performed there.
+- **Combined size** (§2.3, Eq. 20):
+  $\Delta=\min\{\Delta_{\langle u\rangle};\max\{\Delta_{\mathrm{DNS}};\Delta_c\}\}$,
+  with $\Delta_{\langle u\rangle}$ from a mean cell Reynolds number of Lam
+  et al. (as cited), so that LES is a local relaxation of DNS bounded by a
+  RANS-like mean-flow resolution. The iteration stops when the cell count
+  changes by less than 10 %, typically after 2–3 adaptations (§3).
+- **What the meshes look like.** In jet LES with $L/\Delta_c=5$–25 the
+  transition region and the turbulent/non-turbulent interface are meshed by
+  the DNS criterion whatever $L/\Delta_c$; mean and r.m.s. agree with the
+  DNS even at small $L/\Delta_c$ and the spectra for $L/\Delta_c>20$ (§3.2,
+  Figs. 7–9). In pipe flow at $Re_D=5300$ the near-wall region is meshed by
+  the DNS criterion, insensitive to $L/\Delta_c$, with aspect ratios up to
+  about 25; the element count rises from 5 083 181 ($L/\Delta_c=2$) to
+  18 645 837 ($L/\Delta_c=16$), the mean velocity agrees closely with the DNS
+  of Wu & Moin (as cited) on all meshes, and the r.m.s. errors plateau with
+  the element count once quasi-DNS is reached (§5.2, App. B). In a parametric
+  study over $0.125\le Re^u_\Delta\le2$ the mean flow is only weakly
+  sensitive up to $Re^u_\Delta\approx0.5$ (App. B). Anisotropic metrics
+  divide the element count by 2–3 at similar accuracy: on the non-reacting
+  PRECCINSTA burner ($Re^u_\Delta=0.5$, $L/\Delta_c=10$) the final mesh has
+  143 961 671 anisotropic against 276 472 835 isotropic elements, and the
+  full adaptation costs 99 332 against 231 961 CPU hours (§5.1, §6; hardware
+  not stated).
+
 ## Measured costs
 
 Goc et al. (2021, §4, Tables 1–2) report, for 30 flow passes of the JAXA model
@@ -1026,6 +1143,21 @@ it, without breakdown).
   freedom (Abstract), grid cells (§VI.1a) and points (§IV), which differ
   for the $N=2$ flux-reconstruction and nodal finite-element submissions.
 
+## Contradictions
+
+- **The DNS exponent attributed to Choi & Moin (2012).**
+  [Gao et al. (2025)](/sources/gao-2025.md) (§I) write that "as
+  demonstrated by Choi and Moin" the grid requirements for DNS scale as
+  $N_{\mathrm{DNS}}\sim Re^{9/4}$, and use it, with $Re^{13/7}$ for
+  wall-resolved and $Re$ for wall-modelled LES, to motivate their WMLES.
+  [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) (§1) and
+  [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§1) quote the same
+  reference with $N_{\mathrm{DNS}}\sim Re^{37/14}$ (and the same $Re^{13/7}$
+  and $Re$), and [Bose & Park (2018)](/sources/bose-2018.md) (§1) give
+  $Re_L^{37/14}$ for DNS after Chapman (1979) and Choi & Moin (2012) as
+  cited. The sources disagree on the DNS exponent of the same attributed
+  estimate. *Open.*
+
 # Citations
 
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §2, Eqs. (1)–(6).
@@ -1086,3 +1218,7 @@ it, without breakdown).
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1, §2.4.1.1, Fig. 43; §2.4.1.4, Table 1; §3.1.1.2; §4.1.1.
 - [Wang et al. (2024d)](/sources/wang-2024-k.md) — §I; §III A–D; App. B, Table III; App. C, Fig. 16.
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — §3.2, Figs. 2–4, Table 2; §4.2–4.4, Tables 3–5.
+- [Barbera et al. (2026)](/sources/barbera-2026.md) — §2.1–2.3, Eqs. (1)–(20); §3.1–3.2, Figs. 2–9; §5.1–5.2, Figs. 10–13; §6, Figs. 14–15; App. B (a priori DNS and LES size criteria, element counts, costs).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I (Choi–Moin exponents as quoted); §III.A, Tables II–III, Figs. 5–11 (recommended WMLES resolution).
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I; §III A–B, Table I (element counts of flux-reconstruction WMLES).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 (infeasibility of DNS and resolved LES, cited; passing).

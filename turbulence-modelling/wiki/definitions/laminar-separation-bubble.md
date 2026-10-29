@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-28T17:05:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # Laminar separation bubble
@@ -439,6 +439,36 @@ compressible reference simulations, with $C_L=0.950$, $C_D=0.046$ against
 Garmann et al. and 0.932 and 0.050 of Beck et al. (Table 3). The $N=1$ case
 gives $C_D=0.110$; $N=2$ gives $C_L=1.002$, the largest lift.
 
+Tsoutsanis & Nogueira (2025) run the same $\alpha=8^\circ$ case
+($Re_c=60{,}000$, $M=0.2$, span $0.2c$) by finite-volume implicit LES on
+hybrid hexahedral/prismatic meshes of 5.3 million (mesh A,
+$y^+=0.87$, $x^+=3.1$, $z^+=5.4$) and 12.3 million cells (mesh B), and
+size the bubble by the separation and reattachment points $x_s$, $x_r$
+(page-local, in chord units) of their Table 4
+([Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §5.2,
+Table 4, Fig. 19; see [WENO schemes](/methods/weno-scheme.md) and
+[numerical dissipation](/properties/numerical-dissipation.md)):
+
+| run | $C_L$ | $C_D$ | $x_s$ | $x_r$ |
+|---|---|---|---|---|
+| second-order MUSCL, mesh A | 0.918 | 0.050 | 0.026 | 0.26 |
+| second-order MUSCL, mesh B | 0.933 | 0.041 | 0.023 | 0.23 |
+| fourth-order CWENOZ, mesh A | 0.926 | 0.044 | 0.039 | 0.28 |
+| fourth-order CWENOZ with ADDA, mesh A | 0.927 | 0.045 | 0.041 | 0.27 |
+| DGSEM reference ("Frank et al." in the text) | 0.923 | 0.045 | 0.027 | 0.310 |
+| Galbraith & Visbal reference | 0.917 | 0.044 | 0.031 | 0.303 |
+
+The fourth-order scheme on the coarser mesh agrees better with the
+references in $C_p$ and $C_f$ than the second-order one even on the finer
+mesh, and the authors judge second-order MUSCL "unsuitable for iLES
+simulations at under-resolved grid settings", its skin friction,
+separation and reattachment changing unpredictably from mesh A to B
+(§5.2). Their adaptive dissipation–dispersion adjustment (ADDA) selects
+low dissipation inside the bubble, switches quickly to high dissipation in
+the turbulent region after transition, and back to low dissipation further
+downstream (§5.2, Fig. 18), and improves $C_f$ further (Fig. 19); see the
+[SD7003 airfoil](/benchmarks/sd7003-airfoil.md).
+
 **A bubble in a hybrid model without a transition model.** On the MD-30P30N
 three-element airfoil at $Re_C=9\times10^6$, Wu et al. (2024) read a plunge in
 $C_p$ at $x/c\approx0.15$ at $8^\circ$ as a large recirculation bubble, i.e. as
@@ -507,6 +537,14 @@ surfaces (§5.1, Figs. 9–12); details on
 
 ## Qualifications
 
+- Tsoutsanis & Nogueira (2025) write that "marginal differences are
+  noticed in the separation location and reattachment between all
+  predictions" (§5.2), while their Table 4 gives $x_s=0.039$–0.041 for the
+  fourth-order runs against 0.027 and 0.031 for the references, and
+  $x_r=0.27$–0.28 against 0.303–0.310. Their DGSEM reference, cited in the
+  text as "Frank et al. [12]" (reference [12] has Beck as first author),
+  has $C_L=0.923$, $C_D=0.045$ (Table 4), while Vermeire (2024) lists "Beck
+  et al." for the same airfoil case at $C_L=0.932$, $C_D=0.050$ (Table 3).
 - Vermeire (2024) describes the SD7003 references as "high-order compressible
   simulations" in §4.3 but as "reference DNS data" in §5, and prints the lift
   and drag coefficients as $L/(2\rho_\infty u_\infty^2)$ and
@@ -552,3 +590,4 @@ surfaces (§5.1, Figs. 9–12); details on
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §4.3, Figs. 20–21, Table 3 (SD7003 bubble against polynomial degree in EDAC flux-reconstruction implicit LES); §5; Eqs. (23)–(24).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.2, §3.3, Fig. 23, §4 (bubble on the MD-30P30N at $8^\circ$ in SATES-σ).
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.3.1.2, Figs. 28–29; §3.1.1.2, Figs. 63–65 (bubbles at the origin of blunt-leading-edge vortex separation, as a survey of cited work).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §5.2, Table 4, Figs. 18–19 (SD7003 bubble by finite-volume implicit LES with adaptive dissipation adjustment).

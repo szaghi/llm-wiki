@@ -5,7 +5,7 @@ description: "The bottleneck is a bump of excess energy just ahead of the range 
 status: established
 aliases: [bottleneck, spectral bottleneck, bottleneck bump, compressible-mode bottleneck, soft pile-up]
 tags: [dns, implicit-les, numerical-dissipation, compressible, astrophysics]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Bottleneck effect in the energy spectrum
@@ -194,7 +194,7 @@ or misplaced.
 | symptom | where the excess sits | cause in the sources | examples |
 |---|---|---|---|
 | bottleneck | a bump inside the resolved range, ahead of where dissipation takes over ($k\eta\approx0.1$–$0.2$ in DNS; $k<k_c/2$, top near $k_c/4$, for implicit SVV) | a dissipation that switches on sharply in $k$ (viscous, scale-selective numerical, or shear-only in a compressible flow) | Yeung et al. (2025); Vicente Cruz & Lamballais (2023, §6.4); Cernetic et al. (2024); Beattie et al. (2025) |
-| pile-up at the cutoff | the highest resolved wavenumbers, near $k_c$ | too little dissipation at the cutoff: no-model or under-dissipative LES | Prakash et al. (2022, §III.B.1, Fig. 4); Kurz et al. (2023, §4.2, Fig. 6); Vicente Cruz & Lamballais (2023, §6.2–6.3) |
+| pile-up at the cutoff | the highest resolved wavenumbers, near $k_c$ | too little dissipation at the cutoff: no-model or under-dissipative LES | Prakash et al. (2022, §III.B.1, Fig. 4); Kurz et al. (2023, §4.2, Fig. 6); Vicente Cruz & Lamballais (2023, §6.2–6.3); Tsoutsanis & Nogueira (2025, §1, §4.1) |
 | thermalization | most of the resolved range relaxes to $E(k)\propto k^2$ equipartition | no dissipation at all (truncated Euler, kinetic-energy-conserving no-model LES) | Vicente Cruz & Lamballais (2023, §6.2); Flad & Gassner (2017, §3, Fig. 4) |
 
 The examples in the last two rows, with the cited sections:
@@ -206,6 +206,28 @@ The examples in the last two rows, with the cited sections:
   none for [dynamic Smagorinsky](/methods/dynamic-procedure.md).
   [Kurz et al. (2023)](/sources/kurz-2023.md) (§4.2, Fig. 6) find the same
   build-up in no-model DG LES at $N=5$ and 7.
+- **Build-up in the high modes of implicit LES, detected cell by cell.**
+  [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) (§1) state
+  that across finite-element, finite-difference and finite-volume
+  frameworks a method with very low numerical dissipation "leads to an
+  unphysical 'build-up' of energy in the high modes", which they relate
+  also to dispersive effects on under-resolved grids, more pronounced in DG
+  but present in finite volumes as the order rises; an
+  [implicit LES](/definitions/implicit-les.md) must dissipate at the
+  smallest grid scales the energy that the truncated cascade delivers
+  there. They detect it locally, without a spectrum: an energy ratio of
+  the residual momentum energies of the unlimited central reconstruction
+  polynomial after a weak and after a strong modal filter (§4.1, Eq. 29;
+  thresholds 0.95 and 1.2, Eq. 36). In the under-resolved inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) they read
+  values far above one as "an unphysical 'build-up' of energy in the high
+  modes associated with the high-order polynomial terms", with more such
+  cells on tetrahedral and hybrid than on hexahedral meshes "even at
+  early times" (§4.1, Fig. 6). Their scheme raises the dissipation of a
+  CWENOZ reconstruction in those cells (see
+  [WENO schemes](/methods/weno-scheme.md) and
+  [numerical dissipation](/properties/numerical-dissipation.md)). The paper
+  does not use the word bottleneck.
 - **Cutoff pile-up with Smagorinsky.** Vicente Cruz & Lamballais (2023,
   §6.3) find that Smagorinsky with $h=\Delta$ "cannot control" the pile-up
   near $k_c$, which they attribute to differentiation errors.
@@ -262,3 +284,4 @@ it creates the bump at $k_c/4$ (Vicente Cruz & Lamballais 2023, §6.4).
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §III.B.1, Fig. 4 (cutoff pile-up of no-model and unclipped gradient runs).
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — §4.2, Fig. 6 (no-model DG pile-up).
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §3, Fig. 4 ($k^2$ equipartition from dissipation-free split-form DG).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §1 (build-up of energy in the high modes of low-dissipation implicit LES); §4.1, Eqs. (29), (36), Fig. 6 (energy-ratio detection of the build-up, hexahedral against tetrahedral meshes).

@@ -5,7 +5,7 @@ description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended 
 status: established
 aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # Wilcox k-ω model
@@ -180,7 +180,19 @@ $y^+\sim1$ (§3.1). Three remedies appear in the sources:
   consistent under $p$- and $h$-refinement and equivalent to the standard
   model, but its extra source terms depend on the wall distance and its
   derivatives, it assumes a negligible Laplacian of the wall distance, and
-  those sources cannot be treated implicitly (§1–§2).
+  those sources cannot be treated implicitly (§1–§2). Kumar et al. (2025)
+  print the SST version of it from the same group, with
+  $\omega_w=a\nu/(\beta_0d^2)$ ($a$, $\beta_0$ unprinted page-local constants as
+  named there), the extra sources $\mu\nabla^2\omega_w$,
+  $(\mu_t/\sigma_\omega)\nabla^2\omega_w$, $\nabla\mu_t\cdot\nabla\omega_w/\sigma_\omega$ and
+  $-\rho\boldsymbol u\cdot\nabla\omega_w$ in the $\omega'$ equation, the
+  derivatives of $\omega_w\propto d^{-2}$ written analytically through $\nabla d$
+  and $\nabla^2d$, and $\nabla\mu_t\cdot\nabla\omega_w$ evaluated from an analytical
+  differentiation of $\nu_t$ "to avoid oscillations"; they restate that the
+  model needs the wall distance and its gradients in additional sources
+  ([Kumar et al. (2025)](/sources/kumar-2025.md), §1, App. A.5.1,
+  Eqs. A23–A31). Its flat-plate comparison with the $k$-$\tau$ SST is on
+  the [SST page](/methods/k-omega-sst-model.md).
 - **Change of variable to $\tau_t=1/\omega$.** The
   [$k$-$\tau$ model](/methods/k-tau-model.md) has the wall condition
   $\tau_t=0$ and bounded sources; Tomboulides et al. present it as the
@@ -292,6 +304,46 @@ to an order of magnitude on the cylinder at $Re=3900$, with little or no
 extra cost for some schemes (§4, §6.1, Tables 10–11; see the
 [DG spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 page for the integrators).
+
+**$p$-multigrid with the log-$\omega$ model.** Bulgarini et al. (2025) solve
+the same model (the constants "of the high- and low-Reynolds number model
+of Wilcox", none printed; the cross-diffusion with the $\max(\cdot,0)$ switch;
+$\bar k=\max(0,k)$ and a realizability floor on $\tilde\omega_\ell$ whose value
+is not printed) for steady compressible RANS with a modal DG method
+(orthogonal hierarchical basis, exact Riemann flux, BR2) and a nonlinear
+full-approximation-scheme $p$-multigrid
+([Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §2–§4,
+Eqs. 1–5). Among their six changes to the solver:
+
+- **Logarithmic variables.** The unknowns are
+  $(\ln p,\boldsymbol u,\ln T,k,\tilde\omega_\ell)$, which the authors state
+  guarantees positivity of the thermodynamic state and a smoother solution,
+  "of paramount importance for the robustness of the MG algorithm", and
+  present as the first use of the approach in a $p$-multigrid DG solver
+  (§1, §3; no ablation shown).
+- **Turbulence source on the finest level only.** The residual is split
+  into a flux part and a turbulence-source part; on each coarse level the
+  source is evaluated at the restricted solution and frozen, so that it
+  cancels in the coarse correction and enters only through the restricted
+  residual, and the Jacobian is assembled once on the finest level and
+  restricted with the Galerkin operator. The authors state that this costs
+  no extra memory, does "not have a negative influence on the robustness"
+  and is "proposed for the first time in a high-order framework" (§1,
+  §4.2, Eqs. 15–18, 25; no ablation shown).
+- **Level-dependent pseudo-time and linear-solver settings**, with the
+  wall-clock time 50% to 95% below that of single-order implicit
+  integration across their cases (BTC0 body, VFE-2 delta wing,
+  backward-facing step, RAE 2822, T106A cascade, DrivAer car, NASA
+  Trap-Wing, DLR-F6), "around 75%" on average
+  as the abstract states, and the $\tilde\omega_\ell$ residual the last to
+  converge on the T106A (§6–§8, Tables 3–11, Conclusion).
+
+On the [backward-facing step](/benchmarks/backward-facing-step.md) at
+$Re_h=28\,000$ ($N=3$) their $C_f$ and velocity profiles agree with Vogel &
+Eaton and with the SA and SST references, "without an underestimation of
+the skin friction coefficient in the attached turbulent boundary layer"
+(§7.1, Fig. 5); the DrivAer $N=3$ pressure agrees better with experiment
+than the $k$-$\omega$ RANS of Heft et al. (§8.2).
 
 ## Evidence
 
@@ -413,6 +465,9 @@ page for the integrators).
 
 ## Qualifications
 
+- Bulgarini et al. (2025) attribute the model constants to "Wilcox [30]",
+  whose reference [30] is Bassi, Crivellini, Rebay & Savini (2005); no
+  Wilcox publication is in their list (§2).
 - The two high-order sources disagree on method, not on a fact:
   Elzaabalawy et al. reject the $k$-$\ln\omega$ form for its non-conservative
   term in an implicit DG setting (§1), while Ghidoni et al. use it with an
@@ -455,4 +510,6 @@ page for the integrators).
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.1.1, Eq. 3, Table 1.
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §3.1.1.1 ($k$-$\omega$ RANS of a 65° delta wing, as cited); §3.2.3.4 (X-31, TNT $k$-$\omega$ against SA, as cited).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.1 (Bayesian recalibration of $k$-$\omega$ models, as cited).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §1 ($\omega\sim d^{-2}$ and the regularized model); App. A.5.1, Eqs. (A23)–(A31).
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §1–§3, Eqs. (1)–(7) (log-$\omega$ model, logarithmic primitive variables); §4.2, Eqs. (15)–(18), (25) (turbulence source and Jacobian on the finest level); §6–§8, Tables 3–11, Figs. 5, 12–13 (savings, step, DrivAer).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — §3.2.2 (RANS-CSE of a bluff-body premixed flame with a tuned $k$-$\omega$ model, as cited).

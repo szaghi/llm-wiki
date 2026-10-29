@@ -153,7 +153,7 @@ and [74] print no venue; [54] is software.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 15. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
@@ -162,6 +162,7 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 - [Discretization-consistent closure](/definitions/discretization-consistent-closure.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [Divergence-consistent discretize-first LES](/methods/divergence-consistent-les.md)
 - [Model-consistent (a posteriori) training of learned closures](/methods/model-consistent-training.md)
 - [Neural-network subgrid-scale models](/methods/neural-network-sgs-model.md)

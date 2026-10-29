@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-28T17:40:00Z
 ---
 
 # Log-layer mismatch
@@ -295,6 +295,7 @@ under-resolved first cells of the LES, not to the log law itself.
 | Active forcing of resolved fluctuations at the rate the modelled stress is reduced | [active model split](/methods/active-model-split.md): Haering et al. (2022, §V.A.1) report no LLM in channel flow at $Re_\tau\approx5200$ on four grids with $\Delta x^+\approx700$–$1550$ |
 | Subgrid length that blends the cube root of the cell volume outside the shielded layer with the largest cell dimension inside it ($\Delta_{\mathrm{llm}}$ of Reddy et al.) in place of the IDDES length, with lengths divided by $N+1$ in a DG solver | [Alberti et al. (2025)](/sources/alberti-2025-b.md) (§2.1.2, §2.3, §3.1, Eq. 17, Figs. 6, 9): no mismatch in SA-DDES/IDDES channel flow at $Re_\tau=5200$, where standard IDDES shows one (above); the normalization $N+1$ is preferred to $N$ and to the cube root of the number of modes (Table 1) |
 | RANS/LES interface placed in the buffer layer, $y^+\approx14$, by a von Kármán length constrained with the DDES shielding function | [Wang et al. (2024c)](/sources/wang-2024-j.md) (§III.D–III.F, Eq. 40): proposed from wall-resolved LES of a Mach 2 boundary layer; the a posteriori coarse-grid run raises the inner-layer stresses (Fig. 2b), and the paper does not state explicitly that this run uses Eq. (40) |
+| Sample the wall model at the second grid point off the wall (after Kawai & Larsson, as cited) and impose a slip velocity extrapolated from the equilibrium wall-model gradient there | [Gao et al. (2025)](/sources/gao-2025.md) (§II.B, §III.A.1, Figs. 5, 8): in compressible channel flow at Mach 0.3 the mean velocity follows $u^+=\ln(y^+)/0.41+5.2$ for sample points at $y^+=55$–220 and over $Re_\tau=576$–5100, "effectively circumventing the log-layer mismatch (LLM) phenomenon that typically plagues conventional detached eddy simulation (DES) and WMLES approaches"; the evidence shown is the mean-velocity profiles (see [slip-wall models](/methods/slip-wall-model.md)) |
 | Grid spacing below about $0.4\,h_{\mathrm{wm}}$, the same bound that marks the onset of grid convergence of the wall stress | [Hu et al. (2024)](/sources/hu-2024.md) (§3, §6.1) cite Kawai & Larsson's remedy as avoiding wall-adjacent information, with "$C$ less than one" for $C=\Delta/h_{\mathrm{wm}}$, a couple of LES cells below $h_{\mathrm{wm}}$, $h_{\mathrm{wm}}$ typically about 10% of $\delta$, and $C=0.2\sim0.3$ ("about three LES grid cells in the wall-modeled region") in many reported WMLES; in three attached flows with an algebraic equilibrium model they find wall-stress convergence requires $\Delta/h_{\mathrm{wm}}<0.4$, "comparable to the condition to avoid the log-layer mismatch problem" (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
 
 ## First-point matching without mismatch
@@ -346,6 +347,19 @@ applicable to the iLES due to the fact that there is no possibility of
 modifying the model coefficients"; better near-interface Reynolds stresses,
 by h-refinement or a Dirichlet condition with eddy-viscosity augmentation,
 are left open (§IV; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+
+A fifth case is a flux-reconstruction WMLES.
+[Gao et al. (2025b)](/sources/gao-2025-b.md) (§I, §II C3, §III A, Figs.
+3, 5) take the wall-model input at the first solution point inside the
+wall-adjacent element, closest to each wall flux point, against the
+recommendation of Frère et al. (as cited) to sample at the bottom face of
+the second off-wall cell, arguing that the latter breaks the compact
+stencil on unstructured meshes. In channel flow at $Re_\tau=2000$ and
+$10\,000$ ($48\times24\times24$ elements, polynomial degree $N=2$–4; the
+first solution point at $y^+\approx120$ for $Re_\tau=10\,000$) the mean
+velocity "closely follow[s] the log law", and at $Re_\tau=5200$ the
+first-element oscillations they see in the published profiles of Frère et
+al. and Shi et al. (as cited) are absent; the comparison is by figure.
 
 ## In learned wall models
 
@@ -472,3 +486,5 @@ geometry at lower Reynolds number.
 - [Li et al. (2024b)](/sources/li-2024-f.md) — §II.B.2, Eq. (4) (IDDES chosen to avoid GIS and LLM; passing).
 - [Wang et al. (2024c)](/sources/wang-2024-j.md) — §I; §III.B, Figs. 1–2 (DES/DDES mismatch in a Mach 2 boundary layer); §III.D–III.F, Eq. (40), Fig. 16 (buffer-layer interface).
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1.2, Eqs. (13), (17); §2.3, Table 1; §3.1.1–3.1.2, Figs. 2, 4, 6, 9, 12; §4 (IDDES mismatch in DG at $Re_\tau=5200$).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §II.B (second-grid-point sampling with slip velocity); §III.A.1–III.A.2, Figs. 5, 8 (log law for $y^+=55$–220, no mismatch claimed).
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I; §II C3; §III A, Figs. 3, 5 (first-solution-point input in flux reconstruction).

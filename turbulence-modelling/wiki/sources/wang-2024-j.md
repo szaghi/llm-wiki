@@ -195,7 +195,7 @@ slips in titles are kept. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 14 (2026-10-28). This source is cited on:
+Chunk 14 (2026-10-28), cited further in chunk 15. This source is cited on:
 
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
@@ -204,6 +204,7 @@ Chunk 14 (2026-10-28). This source is cited on:
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Log-layer mismatch](/definitions/log-layer-mismatch.md)
+- [Vortex identification criteria](/definitions/vortex-identification-criterion.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)

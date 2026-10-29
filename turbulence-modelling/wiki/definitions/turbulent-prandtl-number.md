@@ -5,7 +5,7 @@ description: "The turbulent Prandtl and Schmidt numbers close the turbulent heat
 status: established
 aliases: [turbulent Prandtl number, Pr_t, turbulent Schmidt number, Sc_t, gradient-diffusion hypothesis, GDH, generalized gradient-diffusion hypothesis, GGDH, HoGGDH, eddy-diffusivity heat flux, turbulent heat-flux model]
 tags: [rans, eddy-viscosity, compressible, boundary-layer, data-driven, combustion]
-timestamp: 2026-10-28T12:22:00Z
+timestamp: 2026-10-28T17:45:00Z
 ---
 
 # Turbulent Prandtl number and turbulent heat-flux models
@@ -95,7 +95,24 @@ In compressible URANS codes the constant enters the conductivity directly:
 [Ye et al. (2024)](/sources/ye-2024.md) close the heat flux of their
 $k$-$\omega$ SST computation of a Mach 5 swept shock/boundary-layer
 interaction with the effective coefficient $c_p(\mu/Pr+\mu_t/Pr_t)$ (Eq. 6),
-without printing the value of $Pr_t$.
+without printing the value of $Pr_t$. The same coefficient appears inside
+an equilibrium wall model: [Gao et al. (2025)](/sources/gao-2025.md) solve
+the wall-model energy equation
+$\mathrm d_y\big[(\mu+\mu_t)U\,\mathrm d_yU+c_p(\mu/Pr+\mu_t/Pr_{t,\mathrm{wm}})\,\mathrm d_yT\big]=0$
+with $Pr=0.72$ and a wall-model value $Pr_{t,\mathrm{wm}}=0.9$ ($U$, $T$ the
+wall-model velocity and temperature, $Pr_{t,\mathrm{wm}}$ page-local), while
+the turbulent Prandtl number of the subgrid conductivity of their LES is not
+printed (§II.A–B, Eqs. 4–9; see
+[equilibrium wall model](/methods/equilibrium-wall-model.md) and
+[slip-wall models](/methods/slip-wall-model.md)).
+
+In engine combustion CFD the closure is the same for every scalar:
+[Posch et al. (2025)](/sources/posch-2025.md) state that RANS closes the
+species and enthalpy fluxes with turbulent Schmidt numbers (one per
+species) and a turbulent Prandtl number beside the Boussinesq stress, and
+the transport equation of the flame-surface density of the coherent flame
+model diffuses it with $\nu_t/Sc_t$ (§3.2.2, §4.3,
+Eq. 34; see [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)).
 
 ## Misalignment and counter-gradient transport
 
@@ -224,3 +241,5 @@ and turbulence modeling during model development" (§2.4). See
 - [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1 (SGS $Pr_t=Sc_t=0.7$ with the Vreman model; dynamic $Pr_t$, $Sc_t$ of a cited LES).
 - [Salehi et al. (2024)](/sources/salehi-2024.md) — Eq. (20) and text ($Sc_t=0.7$ in RANS; dynamic, 0.4 or 0.7 in LES; insensitivity between 0.4 and 0.7, as cited); Eqs. (26)–(27) (gradient-diffusion progress-variable flux, counter-gradient transport noted).
 - [Ye et al. (2024)](/sources/ye-2024.md) — §II A, Eq. (6) (conductivity $c_p(\mu/Pr+\mu_t/Pr_t)$ in SST URANS, value not printed).
+- [Gao et al. (2025)](/sources/gao-2025.md) — §II.A, Eqs. (4)–(7) (LES conductivity, $Pr=0.72$); §II.B, Eqs. (8)–(10) (wall-model energy equation, $Pr_{t,\mathrm{wm}}=0.9$).
+- [Posch et al. (2025)](/sources/posch-2025.md) — §3.2.2 ($Sc_t$ and $Pr_t$ in engine RANS); §4.3, Eq. (34) (gradient diffusion of the flame-surface density).

@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-28T17:04:00Z
+timestamp: 2026-10-28T17:44:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -256,6 +256,22 @@ $c_{b1}\tilde\nu\lvert\Omega\rvert g_n$ with $g_n=1-1000\chi^2/(1+\chi^2)$, the
 destruction becomes $-c_{w1}(\tilde\nu/d)^2$ (a source), and the diffusion
 coefficient $\sigma^{-1}\nu(1+\chi)$ becomes $\sigma^{-1}\nu(1+\chi+\tfrac12\chi^2)$,
 with $\nu_t=0$ in the momentum equation (§II A, Eqs. 3–4; $g_n$ page-local).
+Bulgarini et al. (2025b) print the Crivellini et al. branch for their
+compressible solver with the same $g_n=1-10^3\chi^2/(1+\chi^2)$, the
+production $c_{b1}S\tilde\nu g_n$ with an unmodified $S$ that they do not
+define (where Cato et al. print $\lvert\Omega\rvert$), the destruction turned
+into the source $+c_{w1}(\tilde\nu/d)^2$, and the diffusion coefficient
+$\tilde\nu(1+\chi)$ for $\chi\ge0$ and $\tilde\nu(1+\chi+\tfrac12\chi^2)$ for
+$\chi\le0$, where Cato et al. print $\nu(1+\chi)$ and
+$\nu(1+\chi+\tfrac12\chi^2)$ ([Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md),
+§3.2, Eqs. 13–15). They clip $r$ to $r_{\max}=10^3$, setting $r=r_{\max}$ also
+when the unclipped value is negative (Eq. 16), where Alberti et al.
+(below) limit $r$ to $r_{\max}=10$ following Crivellini et al., and set the
+free-stream $\tilde\nu_\infty=10^{-3}\nu_\infty$ following Crivellini et al.
+Their constants are those of Alauzet et al. above ($c_{b1}=0.1355$,
+$c_{b2}=0.622$, $c_{v1}=7.1$, $\sigma=2/3$, $c_{w2}=0.3$, $c_{w3}=2$,
+$\kappa=0.41$, $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$), with $\tilde\nu$ itself,
+not $\rho\tilde\nu$, as the conserved variable (Eqs. 12, 17).
 Ferrer et al. (2023) use a negative SA model in the RANS solver of
 [HORSES3D](/software/horses3d.md), citing Oliver's thesis and Joshi et al.,
 without printing it ([Ferrer et al. (2023)](/sources/ferrer-2023.md), §4.1).
@@ -426,6 +442,29 @@ of the eddy-viscosity layer is under-resolved and to reduce the reliance on
 the detector threshold ([An et al. (2025)](/sources/an-2025.md), App.; see
 [shock sensors](/definitions/shock-sensor.md) and
 [WENO schemes](/methods/weno-scheme.md)).
+
+**Negative SA on an isogeometric DG discretization.** Bulgarini et al.
+(2025b) state the same motivation as An et al.: the eddy viscosity drops to
+near zero in a layer that narrows with the Reynolds number, the weak
+solution has a discontinuous $\nabla\tilde\nu$ as $Re\to\infty$, and in
+high-order DG this gives oscillatory or unstable solutions with negative
+$\tilde\nu$ (§3.2). Their answer is the Crivellini et al. negative branch
+(above) on rational Bézier elements extracted from the CAD NURBS patch,
+with Roe and BR2 fluxes, artificial viscosity for shocks and
+pseudo-transient backward Euler (§3; see
+[isogeometric analysis](/methods/isogeometric-analysis.md)). With
+anisotropic $h$-adaptation by knot insertion the turbulent flat plate goes
+from $y_1^+=100$ to about 1 with about 60% fewer degrees of freedom and
+computing time than a $y_1^+=1$ reference mesh; the transonic
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) ($M_\infty=0.751$,
+$Re=3.91\times10^6$, $\alpha=1.99^\circ$) reaches $C_D=1.80805\times10^{-2}$ at a
+speed-up of about 5.9 with a 0.34% deviation from the fine-mesh
+$1.80200\times10^{-2}$; the T106A [cascade](/benchmarks/turbine-cascade.md)
+reaches a loss-coefficient deviation of 0.17% at a speed-up of about 2.6
+(§6.1–§6.3, Tables 2, 4; see [mesh adaptation](/methods/mesh-adaptation.md)).
+Meshes with straight-sided boundary elements at about equal degrees of
+freedom produce spurious near-wall phenomena that prevent full convergence
+of the NACA 0012 case, which curved NURBS boundaries avoid (§6.2, Fig. 19).
 
 **Clipping in an incompressible modal DG solver.** Alberti et al. (2025)
 evaluate the SA source with the positive part of $\tilde\nu$ only, setting
@@ -1137,7 +1176,7 @@ meshes as future work (§9).
 ### High-order RANS of the NASA verification cases
 
 The NASA Turbulence Modeling Resource cases appear in three sources
-computed at high order:
+computed at high order with SA, and as SA reference data in a fourth:
 
 - **NACA 0012, $M=0.15$, $Re=6\times10^6$.** Lodares et al. (2022) run
   their entropy-stable DGSEM with the kinetic-energy-preserving split form
@@ -1152,7 +1191,14 @@ computed at high order:
   §3.4, Tables 3–4; see [$k$-$\tau$ model](/methods/k-tau-model.md)).
   Lodares et al.'s reference values coincide with the CFL3D entries of
   Tomboulides et al. *(compiler check, not in the sources)*; see
-  Qualifications for the label.
+  Qualifications for the label. Kumar et al. (2025) print the CFL3D SA
+  values to two or three digits, $C_L=1.08$, $C_D=0.013$ at $10^\circ$ and
+  $C_L=1.51$, $C_D=0.022$ at $15^\circ$, as the reference of their
+  spectral-element $k$-$\tau$ SST, which agrees within 5%
+  ([Kumar et al. (2025)](/sources/kumar-2025.md), §3.2.2, Table 3); their
+  measured lift at $10^\circ$ is 1.05, against 1.075 in Tomboulides et al.
+  (Table 4), both citing Ladson (the
+  [NACA 0012](/benchmarks/naca-0012-airfoil.md) page holds the record).
 - **NACA 0012 at $15^\circ$, $M=0.15$, $Re=2.88\times10^6$.** With the
   exponential decay procedure, Huang et al.'s fourth-order scheme reaches
   $C_L=1.393$, 1.499 and 1.523 on three C-meshes of 11,880 to 33,150 cells,
@@ -1169,12 +1215,23 @@ computed at high order:
   10 agree with the FUN3D 545×385 skin friction, eddy-viscosity profile
   and law of the wall at $x=0.97$ (§7.3; see
   [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+  Kumar et al. (2025) use the CFL3D and FUN3D SA results as the yardstick
+  of $p$-convergence: their $k$-$\tau$ SST friction and drag change by less
+  than 0.5% between $N=4$ and 16, as SA does in the two codes, and their
+  regularized $k$-$\omega$ SST converges under wall refinement like SA in
+  CFL3D (§3.1.2–§3.1.3, Figs. 3–4).
 - **30P-30N three-element airfoil** at $16^\circ$, $Re=9\times10^6$: Huang
   et al.'s optimized fourth-order scheme on 53,870 cells predicts lift and
   drag closer to the DLR reference than the fourth-order scheme of Pan et
   al. and the second-order scheme, and its skin friction is closer to a
   $p=4$ DG solution of which the finite-volume grid has 4.8% of the degrees
   of freedom (§3.3).
+- **Backward-facing step of Vogel & Eaton**, $Re_h=28\,000$, on the TMR
+  layout: Bulgarini et al. (2025) take the SA solution of Spalart et al.
+  (2006) and the SST solutions of Travin et al. as references for their
+  $N=3$ log-$\omega$ [$k$-$\omega$](/methods/k-omega-model.md) DG results,
+  which agree with them and with the measured $C_f$ and velocity profiles
+  ([Bulgarini et al. (2025)](/sources/bulgarini-2025.md), §7.1, Fig. 5).
 
 ## Qualifications
 
@@ -1339,3 +1396,6 @@ computed at high order:
 - [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4 (DES argument from the SA destruction); §3.2.3.2–§3.2.3.5 (SACCON, CAWAPI, X-31, AVT-316, as cited).
 - [Le et al. (2024)](/sources/le-2024.md) — §3.1.1 (Bayesian UQ of SA, as cited); §3.1.2, Eqs. (17)–(18) (production multiplier); §3.1.3 (SA-trained surrogate, as cited).
 - [Fang et al. (2026)](/sources/fang-2026.md) — §3.4, §4.2.2, Table 4 (SA-augmented PINN, as cited).
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §3.2, Eqs. (9)–(16) (SA with the Crivellini et al. negative branch, $r_{\max}=10^3$, $\tilde\nu_\infty$); §3–§4 (isogeometric DG, adaptation); §6.1–§6.3, Tables 1–4, Fig. 19 (flat plate, NACA 0012, T106A).
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §3.1.2–§3.1.3, Figs. 3–4; §3.2.2, Table 3 (CFL3D and FUN3D SA as reference).
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §7.1, Fig. 5 (SA reference on the backward-facing step).

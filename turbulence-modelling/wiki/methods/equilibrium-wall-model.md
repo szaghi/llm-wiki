@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-28T17:43:00Z
 ---
 
 # Equilibrium wall model
@@ -80,7 +80,11 @@ sharp-interface curvilinear immersed boundary for compressible LES
 ([Akbarzadeh & Borazjani 2025](/sources/akbarzadeh-2025.md)), and the
 Werner–Wengle power law as the equilibrium variant against which
 [Yan et al. (2024)](/sources/yan-2024.md) test their pressure-gradient
-wall function on a diffused interface.
+wall function on a diffused interface. Two more feed high-order codes: the
+compressible ODE model behind the slip velocity of a finite-difference
+aeroacoustics WMLES ([Gao et al. 2025](/sources/gao-2025.md)) and an
+explicitly inverted composite law in a flux-reconstruction WMLES
+([Gao et al. 2025b](/sources/gao-2025-b.md)).
 
 **History.** In the account of [Kim & Leonard (2024)](/sources/kim-2024-b.md)
 (§2.5, §3.1), the first channel LES already replaced no slip by a wall
@@ -193,6 +197,22 @@ resolves the viscous sublayer, and $\tau_w$ and $q_w$ return to the LES as
 flux boundary conditions. They place $h_{\mathrm{wm}}$ at the 10th LES grid
 point "to avoid the large discretization error and the resultant log-layer
 mismatch", following Kawai & Larsson (2012).
+[Gao et al. (2025)](/sources/gao-2025.md) (§II.B.1, Eqs. 8–12, Fig. 1)
+print the same total-energy pair, citing Larsson et al. (2016) for the
+equilibrium hypothesis, with $Pr=0.72$, $Pr_t=0.9$, Sutherland's law for
+the molecular viscosity and the mixing length
+$\mu_t=\kappa\rho y\sqrt{\tau_w/\rho}\,[1-\exp(-y^+/17)]^2$,
+$\kappa=0.41$. The ODEs are solved on a one-dimensional virtual mesh of
+100 points with hyperbolic-tangent stretching factor 2.0 (after a public
+code of Bala, as cited), discretized by first-order backward differences
+in finite-volume form, and the resulting tridiagonal system is iterated
+for the eddy viscosity and velocity at the 100 points; the wall stress is
+$\tau_w=\mu u_1/y_1$ with $u_1$, $y_1$ the velocity and wall distance at
+the centre of the first virtual cell (page-local). The LES velocity is
+sampled at the second grid point off the wall, after Kawai & Larsson (as
+cited). The wall thermal condition of the one-dimensional problem is not
+stated. The stress returns to the LES through a slip velocity rather
+than a flux (see [slip-wall models](/methods/slip-wall-model.md)).
 
 De Vanna et al. (2022, §2.2, Eqs. 6a–b) and van Noordt et al. (2022, §2.5,
 Eqs. 34, 37) print the same pair in the split form
@@ -447,6 +467,29 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   above, inverted branch by branch for $u_\tau$; their "EM" variant uses it
   with the pressure-gradient term of the boundary-layer gradient dropped
   (the full model is on [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+- **Piecewise explicit inverse of the Allmaras–Johnson–Spalart law in
+  flux reconstruction** ([Gao et al. 2025b](/sources/gao-2025-b.md),
+  §II C1, Eqs. 17–19; App. A, Eq. A1, Table II). The composite law of
+  Allmaras, Johnson & Spalart (2012), as cited (formula and coefficients
+  on the [law of the wall](/definitions/law-of-the-wall.md) page), is
+  written as $Re_y=y^+u^+=F(y^+)$ with $Re_y=Uy/\nu$ (registry §11), and
+  its inverse $y^+=F^{-1}(Re_y)$ is fitted in five branches: the constant
+  0.01 on $Re_y\in[0,0.01]$; $\sum_{l=0}^7a_lRe_y^{-4+l}$ on
+  $[0.01,3.99899]$; $\sum_{l=0}^4b_lRe_y^l$ on $[3.99899,34.19136]$;
+  $\sum_{l=0}^4c_lRe_y^{-1+l}$ on $[34.19136,4630]$; and
+  $\sum_{l=0}^3d_lRe_y^l$ above 4630 (open-ended), with the coefficients
+  of Table II (page-local $a_l$, $b_l$, $c_l$, $d_l$; e.g. $b_0=0.9576903$,
+  $c_0=-83.69585$, $d_0=34.269$). The friction velocity then follows
+  without root finding (Eq. 19; see Qualifications for its printed form),
+  and $\tau_w=\rho u_\tau^2$ enters the wall-normal viscous flux of a
+  [flux-reconstruction](/methods/flux-reconstruction.md) scheme with no
+  slip kept, $\boldsymbol n\cdot\hat{\boldsymbol F}^v=-(\boldsymbol U_t/\lvert\boldsymbol U_t\rvert)\rho u_\tau^2$
+  (Eq. 29; $\boldsymbol U_t$ the tangential velocity at the first solution
+  point inside the wall element, page-local). The same fit supplies the
+  first step of their pressure-gradient model (see
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+  Evaluated at $Re_y=1$ and 1000 the printed branches return
+  $y^+=0.997$ and 65.1 *(compiler check, not in the sources)*.
 - **Rough-wall log law in atmospheric LES**
   ([Zhang et al. 2022e](/sources/zhang-2022-i.md), §II A, Eq. 3; the
   source writes $z$ wall-normal, translated here): the wall stress
@@ -494,6 +537,8 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Wang et al. (2024d, §II D, §III, Fig. 1) | GPU lattice Boltzmann, multi-block uniform cubes, diffusive- or sharp-interface immersed boundary | LES point $c$ at $2.5\Delta s$ on the submarine hull ($\Delta s$ the finest spacing); channel with uniform $\Delta x=\delta/20$ ($y^+\approx50$ at $Re_\tau=1000$); forcing point at $(0.1$–$0.25)\Delta x$ (diffusive) or first off-wall node (sharp) | none stated |
 | Akbarzadeh & Borazjani (2025, §2.4, §3.3) | curvilinear finite differences with a sharp-interface immersed boundary, hybrid central/WENO | fluid point $c$ on the normal through each boundary node | none stated |
 | Yan et al. (2024, §II C) | Xcompact3d, sixth-order compact finite differences, diffused-interface immersed boundary | probe markers about three Eulerian spacings along the normal | none stated |
+| Gao et al. (2025, §II.B.1, Tables II–III, V) | in-house computational-aeroacoustics finite differences (seven-point fourth-order DRP, selective filter), uniform grids | second grid point off the wall; $y^+_{\mathrm{wm}}=110.9$–441.7 at nominal $Re_\tau\approx2000$, 58.4–512.6 over $Re_\tau=576$–5100 (channel), 44.1 (flat plate) | none stated |
+| Gao et al. (2025b, §II C3, Fig. 1) | flux reconstruction (CPR) of degree $N=2$–4, hexahedra | first solution point inside the wall-adjacent element, closest to each wall flux point; $y^+\approx120$ at $Re_\tau=10\,000$ | none stated |
 | Zhou & Bae (2024, §2.2–2.3) | unstructured incompressible finite volume (You, Ham & Moin, as cited), isotropic and $4{:}1{:}2$ cells | idealized wall conditions on the bump: first off-wall cell centre; precursor flat-plate LES: equilibrium stress-balance model | running time average of the first-cell velocity with time scale $0.3L/U_\infty$, then $6L/U_\infty$ ($L$ the bump width), to calibrate the wall eddy viscosity |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
@@ -748,7 +793,11 @@ further hardware detail). On GPUs, Xiao et al. (2025, §3.2, Fig. 2) find
 the algebraic log-law model of [CaLES](/software/cales.md) adds a
 negligible cost (WMLES 1.8 against wall-resolved LES 1.8 ns per step and
 grid point on one A100, explicit viscous terms) and no memory beyond the
-wall-resolved LES (Table 2).
+wall-resolved LES (Table 2). In a flux-reconstruction WMLES of the
+periodic hill, Gao et al. (2025b, §III B) time 100 steps on one CPU core
+at 135.6 s without wall model and 143.8 s with the explicitly inverted
+equilibrium law (+6 %), and attribute the small overhead to the absence
+of iterations.
 
 ## Limits shown by the sources
 
@@ -1194,6 +1243,16 @@ profile lies above the DNS).
   the same equation; and the Fig. 1 caption defines the distance of the
   matching point from the forcing point, while Eqs. (20)–(21) integrate it
   from the wall.
+- **Printed items of Gao et al. (2025b).** Eq. (19) and Fig. 1 (steps 3
+  and 6) print $u_\tau=U/yF^{-1}(Re_y)$; with $F^{-1}$ returning $y^+$
+  (their Eq. 18), the dimensionally consistent relation is
+  $u_\tau=\nu F^{-1}(Re_y)/y$ *(compiler check, not in the sources)*.
+  Evaluated at their breakpoints, the printed branches of Eq. (A1) give
+  0.01 against 0.0997 at $Re_y=0.01$, 2.0237 against 2.0121 at 3.99899,
+  5.893 against 5.201 at 34.19136 (a jump of about 13 % in $y^+$) and
+  250.3 against 251.7 at 4630; the last branch sums $d_l$ for $l=0$–3, but
+  only $d_0$, $d_1$, $d_2$ are printed *(compiler check, not in the
+  sources)*.
 - **Other printed items of Nuca et al. (2025).** The Fig. 7 caption puts
   the high-Re models on top and the classical ones below, while the panel
   labels say the reverse; §V calls the global model's regression "10
@@ -1247,3 +1306,5 @@ profile lies above the DNS).
 - [Wang et al. (2024d)](/sources/wang-2024-k.md) — §II D, Eqs. (19)–(22), Fig. 1; §III A–D, Figs. 2, 4, 14–15; §IV.
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.4, Eqs. (19)–(27); §3.3.2, Figs. 12–13; §5.
 - [Yan et al. (2024)](/sources/yan-2024.md) — §II C, Eqs. (26)–(27); §III A, Fig. 7.
+- [Gao et al. (2025)](/sources/gao-2025.md) — §II.B.1, Eqs. (8)–(12), Fig. 1 (compressible ODE model on a 100-point virtual mesh, second-grid-point sampling); Tables II–III, V.
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C1, Eqs. (17)–(19), (29); §II C3, Fig. 1; App. A, Eq. (A1), Table II; §III B (timing).

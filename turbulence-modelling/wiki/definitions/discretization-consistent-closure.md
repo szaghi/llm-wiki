@@ -5,7 +5,7 @@ description: "An LES closure built for the discrete equations actually solved, s
 status: established
 aliases: [filter-consistent closure, discretize-first closure, model-data consistency, computational subgrid stress]
 tags: [les, sgs-model, implicit-les, data-driven, numerical-dissipation]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # Discretization-consistent closure
@@ -32,6 +32,9 @@ van Gastelen et al. (2024) do the same for 1D model equations and show
 that a cell-averaging filter splits the discrete energy exactly.
 [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) generate the
 training data of a wall model with the deployment solver itself.
+[Bezgin et al. (2025)](/sources/bezgin-2025.md) take the in-the-loop
+route with automatic differentiation through the solver, and the trained
+object is the discretization itself, not an explicit closure (below).
 
 ## Decomposition of the closure term (Beck & Kurz 2023, §I)
 
@@ -273,6 +276,64 @@ not optimal in either: the authors trace its over-predicted tails of
 enstrophy production in the compact solver to training on a filter (the
 dealiasing one) that does not apply there.
 
+## A learned discretization as the closure (Bezgin et al. 2025)
+
+Bezgin et al. (2025) build on the premise of
+[implicit LES](/definitions/implicit-les.md) that "the nonlinear
+discretization error of the convective term functions as an SGS model"
+(§1) and learn that error source directly. Their machine-learned implicit
+LES (ML-ILES) keeps every component of an HLLC Godunov-type finite-volume
+scheme with TENO6-A reconstruction and TVD-RK3 time integration, and
+replaces only the TENO weighting: three multilayer perceptrons, one each
+for density, velocity (applied to each component) and pressure, map the
+five first-order differences of the six-point stencil to the convex
+weights of its four fixed Harten-type candidate polynomials through a
+softmax (§3.1, Eqs. 19–20; 3 hidden layers of 20 units, 1044 parameters
+per network, 3132 in all). The trained object is thus the nonlinear
+reconstruction, which the reference-list note of Beck & Kurz (2023, above)
+names as the source of $C_3$ in finite volumes. See
+[WENO schemes](/methods/weno-scheme.md) for the TENO building blocks.
+
+**Training through the solver (§4.2, Eqs. 41–42).** The fully
+differentiable solver JAX-Fluids is unrolled for $N_T\in\{1,2,5\}$ coarse
+steps; the loss is the cell-wise mean absolute error of $\rho$,
+$\boldsymbol u$, $p$ and $T$ against filtered DNS, with gradients from
+automatic differentiation and no adjoint equations derived. The authors
+state that for discretization learning end-to-end optimization "is
+essential since there exists no a priori knowledge on the optimal choice
+of the discretization scheme but rather on the optimal solution
+trajectory" (§4.2). The targets are $512^3$ runs of compressible decaying
+[isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md) at
+$M_t=0.4$, 0.6, 0.8 and $Re_\lambda\approx200$, box-filtered by a factor
+16 in space ($32^3$) and in time; the authors write that the box filter
+"corresponds to implicit filtering commonly used in finite-volume methods
+(the LES grid itself acts as a filter)" (§4.1).
+
+**Results (§5.2–5.4, Tables 3, 5, Figs. 7–9).** Over the full decay at
+$32^3$ the summed spectral mean absolute error of the $N_T=1$ model is
+0.8849, 0.7923 and 0.6178 at the three Mach numbers, against 1.110, 1.153,
+1.173 for TENO6-A and 1.099, 1.252, 1.428 for the compressible adaptive
+local deconvolution method; the $N_T=5$ model, best in the multi-step
+cell-wise error, is worst here (1.480, 1.562, 1.428; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+Trained at $32^3$, the scheme run at $64^3$ "clearly outperforms TENO6-A"
+in kinetic-energy and density spectra (Fig. 9). The pressure network
+discards the downwind polynomial, while the velocity weights "somewhat
+resemble" the spectrally optimized linear weights of TENO6-A (§5.3). One
+step costs 2004.14 ns per cell against 452.70 ns for TENO6-A on an RTX
+A6000 (Table 5), a ratio of 4.43 *(compiler check, not in the sources;
+the text says "roughly 4.5 times")*.
+
+**Stance on transfer.** Bezgin et al. (§1) state that machine-learned ILES
+models, in which "ML surrogates are part of the discretization, may
+provide better extrapolation capabilities to unseen meshes and flow
+configurations" than explicit closures, and that restricting the output
+to weights of consistent polynomials "provides a fallback mechanism …
+while guaranteeing convergence upon mesh refinement" (§5.2). They cite
+the DPM of Sirignano et al. (2020), whose explicit networks "account
+implicitly for the discretization error of the chosen numerical
+discretization scheme" (§1).
+
 ## Closures built this way
 
 - **Element-local Smagorinsky coefficients in DG.** Beck & Kurz (2023, §V)
@@ -444,7 +505,29 @@ solver.
   that exist are those of Kurz et al. (2023) across resolutions and of
   Sirignano & MacArt (2023) across two solvers (above); Wu & Lele state
   the "limited transferability" without a test of their own. No source
-  runs both kinds of closure on one flow, so no contradiction is opened.
+  runs both kinds of closure on one flow.
+- **Mesh transfer of a learned discretization.** Bezgin et al. (2025)
+  assert convergence upon mesh refinement from the polynomial
+  construction (§5.2) and show one refinement, $64^3$ against the
+  training $32^3$ (Fig. 9); no convergence-order test is printed, and the
+  overall scheme is stated, not shown, to be "at least third-order
+  accurate" (§3.1). Different flow configurations are not run.
+- **Box-filtered targets: what each side prints.** Kurz et al. (2023, §1),
+  citing their ref. [8], state that supervised targets from an explicit
+  box filter cause "severe inconsistencies between the training and
+  actual simulations". Bezgin et al. (2025, §4.1–4.2) use box-filtered DNS
+  as the trajectory target of in-the-loop training and call the box
+  filter the implicit filter of finite-volume methods. Kurz et al. state
+  theirs for supervised closure targets with a DG solver; Bezgin et al.
+  use the box filter for trajectory targets of a finite-volume solver
+  unrolled in training.
+- **Reference data from the trained-against scheme.** The $512^3$
+  reference of Bezgin et al. (2025) is itself computed with HLLC +
+  TENO6-A, with Kolmogorov resolution $k_{\max}\eta\approx2.3$ ($k_{\max}$ the largest resolved wavenumber, page-local), while the
+  authors state that $k_{\max}\eta\ge\pi$ "is required to fully resolve all
+  scales" and that TENO6-A "acts as an ILES model" when not all scales
+  are resolved (§4.1, Figs. 2–3). The baseline TENO6-A of the comparison
+  is the scheme that produced the reference.
 - **"Dissipative" in Caban et al. (2026).** The paper calls the effect of
   the first-derivative filter "non-dissipative" (§1, §3.2.1), "dissipative
   … without inducing numerical diffusion" (abstract) and "only dissipative
@@ -473,3 +556,4 @@ solver.
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1 (discretization error in inferred RANS corrections), §4.1, §4.3.2 (lowest grid-converged degree).
 - [Caban et al. (2026)](/sources/caban-2026.md) — §1; §3.2.1, Eqs. 24–30, Fig. 3 (derivative-induced filters); §3.2.2, Eqs. 31–35 (interpolation filter); §4.1 (effective numerical filter); §5.1, Eq. 42, Figs. 10–11 (effective Reynolds number); §5.4.2, Tables 6, 8; §6.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (stance on RL and end-to-end training, overfitting to one filter), §3 (training filters), §5.2.1, §7–8 (three-filter network in two solvers).
+- [Bezgin et al. (2025)](/sources/bezgin-2025.md) — §1 (ILES premise, extrapolation claim, DPM and Beck & Kurz cited); §3.1, Eqs. 19–20 (learned reconstruction weights); §4.1 (box-filtered targets, $k_{\max}\eta$ criterion); §4.2, Eqs. 41–42 (end-to-end training); §5.2–5.4, Tables 3, 5, Figs. 7–9 (spectral errors, mesh transfer, cost).

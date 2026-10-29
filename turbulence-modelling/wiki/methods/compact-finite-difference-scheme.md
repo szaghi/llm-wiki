@@ -5,7 +5,7 @@ description: "Compact (Padé-type) finite differences obtain derivatives, mid-po
 status: established
 aliases: [compact scheme, compact finite differences, Padé scheme, Lele scheme, sixth-order compact scheme, tridiagonal compact scheme, compact filter, compact interpolation]
 tags: [dns, implicit-les, numerical-dissipation, filtering, software]
-timestamp: 2026-10-28T16:58:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Compact finite-difference schemes
@@ -126,6 +126,23 @@ by up to 5% (§III.B.d). Compact filters used as the closure of
 under-resolved LES are on
 [explicit modal filtering](/methods/explicit-modal-filtering.md).
 
+**A one-parameter Padé filter as the LES model.** In the LES of
+compressible round jets of [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md),
+§II B, Fig. 1, the filter of the single-step approximate-deconvolution
+method is, in the periodic azimuthal direction, the Padé filter with
+transfer function
+$$\hat G(\omega)=\Big(\alpha_{\mathrm{cf}}+\tfrac12\Big)\frac{1+\cos\omega}{1+2\alpha_{\mathrm{cf}}\cos\omega},\qquad \alpha_{\mathrm{cf}}=0.2,$$
+on the scaled wavenumber $\omega\in[0,\pi]$ ($\omega$ page-local here,
+not the specific dissipation rate), with an explicit physical-space filter
+of similar spectral behaviour in the non-periodic directions (after Stolz,
+cited). It equals one at $\omega=0$ and zero at $\omega=\pi$ for any
+$\alpha_{\mathrm{cf}}\neq-\tfrac12$ *(compiler check, not in the
+sources)*. The filter is composed with the van Cittert approximate inverse
+($N_{\mathrm{AD}}=6$ terms, registry §11) and applied twice per time step,
+$(Q_N*G)^2$; the authors show that the transfer functions of $Q_N*G$ and
+$(Q_N*G)^2$ decay smoothly to zero at high wavenumber. The method is on
+[scale-similarity model](/methods/scale-similarity-model.md).
+
 ## Use in turbulence simulation
 
 - **Incompressible DNS and implicit LES (Xcompact3d).** Sixth-order
@@ -151,6 +168,26 @@ under-resolved LES are on
   regions (Lele's scheme, as the latter cites) and seventh-order WENO
   in shock regions (see
   [WENO](/methods/weno-scheme.md)).
+- **LES of compressible round jets.** Rahatgaonkar & Ghosh (2025), §II A,
+  compute all spatial derivatives of a characteristic (Sesterhenn) form of
+  the compressible Navier–Stokes equations in cylindrical coordinates with
+  Lele's sixth-order compact central differences, a low-storage
+  third-order Runge–Kutta scheme and the Mohseni–Colonius axis treatment,
+  on $512\times128\times120$ points over $60r_0\times20r_0$ ($r_0$ the
+  inflow jet radius, page-local) at $Re=5\times10^5$; azimuthal spectra
+  at $x/r_0=30$–50 decay at the highest resolved wavenumbers with a short
+  $k^{-5/3}$ segment, which they take as evidence that grid and LES
+  approach are adequate (§II D, Fig. 3). Results are on
+  [turbulent round jet](/benchmarks/turbulent-round-jet.md).
+- **Reference DNS and alternatives in shock-capturing studies.** The
+  Taylor–Green DNS of Dairay et al. used as reference by
+  [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md), §III F
+  ($512^3$), is a sixth-order compact computation, and the authors cite
+  compact schemes (Lele) and hybrid compact–WENO schemes (Pirozzoli) as
+  near-spectral alternatives to WENO (§I). The review of
+  shock–turbulence interaction of [Cuadra et al. (2025)](/sources/cuadra-2025.md),
+  §III A 1, lists compact schemes (Lele 1992) next to skew-symmetric
+  central ones as smooth-region schemes of shock-capturing hybrids.
 - **Compact nonlinear interpolation.** The weighted compact nonlinear
   scheme of [Ma et al. (2022)](/sources/ma-2022.md) makes a seventh-order
   tridiagonal compact interpolation nonlinear, so that the system
@@ -197,3 +234,6 @@ under-resolved LES are on
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §III A (compact/WENO hybrid of the reference DNS).
 - [Ma et al. (2022)](/sources/ma-2022.md) — §2.2 (nonlinear tridiagonal compact interpolation).
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §1 (central and compact schemes stated unstable for high-speed flows).
+- [Rahatgaonkar & Ghosh (2025)](/sources/rahatgaonkar-2025.md) — §II A (sixth-order compact differences in cylindrical coordinates); §II B, Fig. 1 (Padé filter $\alpha_{\mathrm{cf}}=0.2$ inside single-step ADM); §II D, Fig. 3.
+- [Kokkinakis & Drikakis (2025)](/sources/kokkinakis-2025.md) — §I (compact and compact–WENO schemes cited); §III F (compact reference DNS; passing).
+- [Cuadra et al. (2025)](/sources/cuadra-2025.md) — §III A 1 (compact schemes as smooth-region schemes in shock–turbulence simulation; review, passing).

@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES, BSL k-ω, baseline k-ω model]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # k-ω SST model
@@ -418,6 +418,17 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   version of their [$k$-$\tau$ model](/methods/k-tau-model.md) as the
   intended basis of a DDES, after Gritskevich et al.
   ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §4).
+  Kumar et al. (2025) build it in Nek5000: the $k$-$\tau$ SST, with the SST
+  functions $F_1$, $F_2$ and the eddy-viscosity limiter written in
+  $\tau_t=1/\omega$ and the SST constants $\gamma_{\omega1}=5/9$, $\beta_{\omega1}=0.075$,
+  $\sigma_{k1}=0.85$, $\sigma_{\omega1}=0.5$, $\gamma_{\omega2}=0.44$,
+  $\beta_{\omega2}=0.0828$, $\sigma_{k2}=1$, $\sigma_{\omega2}=0.856$, $a_1=0.31$, is
+  the host of their DDES; the appendix prints the $\omega$ form with the
+  production limiter $\min(\mu_t\lvert S\rvert^2,10C_\mu\rho k\omega)$ and the same
+  constants, and its DDES with $l_{\mathrm{RANS}}=\sqrt k/(C_\mu\omega)$
+  ([Kumar et al. (2025)](/sources/kumar-2025.md), §2.1–§2.2, Eqs. 11–28,
+  App. A.5–A.6; see the [$k$-$\tau$ model](/methods/k-tau-model.md) and
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 - **Transitional DDES.** Möller et al. (2024) couple SST-DDES to the
   one-equation $\gamma$ model by multiplying the production of $k$ by
   $\gamma$ and the DDES destruction by $\max(0.1,\gamma)$
@@ -865,7 +876,22 @@ operational role and need not match their DNS counterparts
   for $k$-$\omega$ (§3.3). In the NACA 0012 tables they reproduce, SST in
   CFL3D and FUN3D gives $C_D=0.00809$ and 0.00816 at $0^\circ$, and
   $C_D=0.01236$, $C_L=1.0778$ and 0.01253, 1.0840 at $10^\circ$, against
-  0.0081, 0.012 and 1.075 measured (§3.4, Tables 3–4).
+  0.0081, 0.012 and 1.075 measured (§3.4, Tables 3–4). Kumar et al. (2025,
+  Table 3) print 1.05 for the measured lift at $10^\circ$, both papers citing
+  Ladson (the [NACA 0012](/benchmarks/naca-0012-airfoil.md) page holds the
+  record).
+- **A regularized SST in a spectral-element code.** Kumar et al. (2025)
+  compare the $k$-$\tau$ SST with the regularized $k$-$\omega$ SST of
+  Tomboulides et al. (2018), which splits $\omega=\omega_w+\omega'$ with the
+  wall-asymptotic part $\omega_w$ proportional to $\nu/d^2$ and solves for
+  $\omega'$ with a zero wall value (App. A.5.1, Eqs. A23–A31; see the
+  [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)), on the NASA
+  zero-pressure-gradient flat plate at $Re_L=5\times10^6$: under wall-normal
+  refinement ($N=6$, average first-node $y^+$ 0.09 to 2.9) both give
+  oscillatory drag for $y^+>1.5$, the regularized SST then converging like
+  SA in CFL3D and the $k$-$\tau$ SST oscillating, all within 1% of the
+  CFL3D and FUN3D predictions; the converged $k$-$\tau$ SST profiles agree
+  with the CFL3D SST data (§3.1.2–§3.1.3, Figs. 2–4).
 - **Transitional dynamic stall.** As the base of the Langtry–Menter
   transition model inside delayed DES, SST-2003 gives the earliest
   suction collapse and stall of four RANS closures on a NACA 0012 pitching
@@ -1103,6 +1129,7 @@ version read (arXiv v1):
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — §1, refs. [6]–[8] (HAL submitted manuscript).
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.1 Eqs. 1–20 Table 1, §1.2 Eq. 38, §3.3.1 Eq. 88, §4.1 Figs. 9–10.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.1 Table 1, §3.3, §3.4 Tables 3–4, §4.
+- [Kumar et al. (2025)](/sources/kumar-2025.md) — §2.1–§2.2, Eqs. (11)–(28) ($k$-$\tau$ SST and its DDES); §3.1.2–§3.1.3, Figs. 2–4 (flat plate against the regularized $k$-$\omega$ SST); App. A.5–A.6, Eqs. (A13)–(A40).
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, Fig. 17.
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §II.A–B Eqs. 1, 5–7, §II.F–G, §III.
 - [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §4.2, Fig. 7.

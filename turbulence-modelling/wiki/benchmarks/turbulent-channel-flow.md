@@ -5,7 +5,7 @@ description: "Pressure-driven flow between two parallel walls, periodic in the w
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel, MHD channel, Hartmann flow, curved-wall channel bump]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element, mhd, lattice-boltzmann, gpu]
-timestamp: 2026-10-28T17:07:00Z
+timestamp: 2026-10-29T05:14:00Z
 ---
 
 # Turbulent channel flow
@@ -84,6 +84,11 @@ closures.
 | [Fang et al. (2025)](/sources/fang-2025.md), §3.4, Table 6 | DNS of an MHD channel with a wall-normal field (Xcompact3d, quasi-static solver) | 150 ($Re_b=2305$); Hartmann numbers 0, 4, 6, 8 | $4\pi\delta\times2\delta\times2\pi\delta$ | $256\times129\times192$, stretched in $y$; $\Delta x^+=7.4$, first $\Delta y^+=0.83$, centre $\Delta y^+=6.6$, $\Delta z^+=4.9$ |
 | [Wang et al. (2024d)](/sources/wang-2024-k.md), §III A, App. C | sharp-interface immersed-boundary WMLES in a lattice Boltzmann solver, Smagorinsky $C_s=0.16$ | 1000, 2000, 5200 | $2\pi\delta\times2\delta\times2\pi\delta$ | uniform $\Delta x=\delta/20$ ($y^+\approx50$ at 1000); $\delta/40$ and $\delta/80$ at 2000 |
 | [Xiao et al. (2025)](/sources/xiao-2025.md), §4.2–4.3, Tables 3–4 | GPU LES (CaLES): wall-resolved, and WMLES grid convergence | about 544 ($Re_b=2u_b\delta/\nu=20{,}000$); about 5200 ($Re_b=250{,}000$) | $12.8\delta\times2\delta\times4.8\delta$ | WRLES $192\times128\times128$ ($\Delta x^+=36.2$, $\Delta z^+=20.4$, first $\Delta y^+=0.59$) to $576\times384\times384$ (12.1, 6.8, 0.19); WMLES 13 grids per aspect ratio $\Delta x/\Delta z=1$ and 2, from $128\times32\times48$ to $6144\times1536\times2304$ |
+| [Alberti et al. (2025b)](/sources/alberti-2025-c.md), §III, Tables I–II, IV–V | implicit LES with entropy-conserving or entropy-stable modal DG and an entropy-stable wall condition | 180, 395, 590 ($M_b=0.18$); 222, 500, 1000 ($M_b=1.5$) and 450 ($M_b=3$), isothermal walls | $4\pi\times2\pi\times2$ or $2\pi\times\pi\times2$ (half-heights) | moderate: $16\times16\times8$ to $32\times32\times16$ elements, $N=8$ or 9, first $\Delta y^+$ 2–5.2; severe: $6^3$ to $12^3$ elements, $N=6$ or 8, up to 2100 times fewer degrees of freedom than the DNS |
+| [Gao et al. (2025)](/sources/gao-2025.md), §III A, Tables II–III | slip-wall WMLES in a finite-difference aeroacoustics solver, wall-pressure spectra | about 2000 ($M=0.3$); 576, 1050, 2100, 5100 | $2\pi h\times2h\times\pi h$ | uniform, $63\times21\times49$ to $255\times81\times190$; sample point at $y^+=58$ to 513 |
+| [Gao et al. (2025b)](/sources/gao-2025-b.md), §III A | WMLES in flux reconstruction, wall-model input at the first solution point | 2000, 5200, 10,000 | $2\pi h\times2h\times\pi h$ | $48\times24\times24$ elements, $N=2$, 3, 4; first solution point at $y^+\approx120$ at 10,000 |
+| [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md), §VI–VII, Table II | low-Mach corrections of WENO9 implicit LES in [CNS3D](/software/cns3d.md) | about 395, bulk Mach 0.2 | $6\pi\delta\times2\delta\times\pi\delta$ (text) | $64^3$ (first cell centre at $y^+=1.5$) and $128^3$ |
+| [Monteiro et al. (2026)](/sources/monteiro-2026.md), §4.3 | validation of the GPU DNS solver RHEA-X | 590 | $2\pi\delta\times2\delta\times\pi\delta$ | $384\times257\times384$; $\Delta x^+\approx9.8$, $\Delta z^+\approx5.0$ (as printed), $\Delta y^+\lesssim1$ at the wall and about 5.8 at the centre |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -1388,6 +1393,155 @@ log-law [equilibrium wall model](/methods/equilibrium-wall-model.md)
   wall-model input. The details are on
   [wall-modelled LES](/methods/wall-modelled-les.md).
 
+**Entropy-stable modal DG and the wall condition in implicit LES.**
+[Alberti et al. (2025b)](/sources/alberti-2025-c.md) run implicit LES with
+a modal DG solver carried in conservative variables whose space operators
+are evaluated from the $L^2$ projection onto the entropy variables, plus a
+parameter-free element-wise correction that enforces the discrete entropy
+balance (DEEB); with it the Ismail–Roe flux gives an entropy-conserving
+(EC) and the exact Riemann flux an entropy-stable (ES) convective
+discretization, with BR2 viscous terms of penalty $\eta_F$ (see
+[entropy conservation](/properties/entropy-conservation.md) and
+[implicit LES](/definitions/implicit-les.md)). They prove the isothermal
+no-slip wall with mirrored velocity and the exact-Riemann wall pressure
+entropy stable (ESW) and the one with extrapolated pressure entropy
+conserving (ECW) (§II B).
+
+- *Moderate resolution.* At $N=8$ (or 9) on $16\times16\times8$ to
+  $32\times32\times16$ elements, 9 to 200 times fewer degrees of freedom
+  than the DNS, the incompressible-limit channels ($M_b=0.18$) follow
+  Moser, Kim & Mansour and the compressible ones the DNS of Modesti &
+  Pirozzoli and of Coleman, Kim & Moser in mean velocity, Reynolds stresses
+  and temperature; at $M_b=1.5$ the centreline temperatures are 1.396,
+  1.377 and 1.367 at $Re_\tau=222$, 500 and 1000 (DNS 1.387 or 1.378, 1.372,
+  1.369), and the wall heat-flux coefficient converges in $N$ (Table III:
+  0.0503, 0.0434, 0.039 at $N=8$, against 0.048–0.049, 0.042, 0.038). At
+  $M_b=3$, $Re_\tau=450$, the profiles leave the Modesti–Pirozzoli DNS
+  beyond $y^+\approx45$ in velocity, which the authors attribute to the
+  power-law against Sutherland viscosity of the references (centreline
+  temperature 2.467 against 2.490 with the power law and 2.570 with
+  Sutherland), and are insensitive to the CFL number, to $N=8$ or 9, to the
+  entropy correction and to the domain length (Figs. 1–7). Without the
+  correction the baseline DG in conservative variables "is not able to run"
+  the compressible cases.
+- *Severe under-resolution, near-incompressible.* At $N=6$ on $8\times8\times6$
+  to $12^3$ elements (65 to 261 times fewer degrees of freedom than the
+  DNS), with $\eta_F=1$ inside and 8 at the wall, the EC flux with the ESW
+  wall is much more accurate than the ES flux, which over-shears the
+  near-wall fluctuations, overshoots the mean velocity and underestimates
+  the shear stress (Figs. 9–10); the ECW wall makes the profile
+  "abundantly" undershoot the DNS and the ESW wall almost coincide with it
+  (Fig. 15); raising $\eta_F$ from 1 to 5 shifts the mean velocity upward
+  (Figs. 13–14). The authors summarize that too much dissipation in the
+  first cells shears out the turbulent stresses and the mean flow
+  approaches the DNS from above, too little gives over-predicted buffer-layer
+  fluctuations and an under-predicted mean velocity (§IV).
+- *Severe under-resolution, compressible.* At $N=8$ on $8\times8\times6$ to
+  $12^3$ elements (176 to 1412 times fewer) the ES flux is best and the EC
+  flux underpredicts the velocity; at $M_b=3$ the pure EC flux crashes and
+  an upwind-biased Ismail–Roe flux with relaxation 0.1 to 1 is needed,
+  which also improves the coarsest runs at $Re_\tau=500$ and 1000 (up to
+  2100 times fewer degrees of freedom; Figs. 16–21).
+
+The entropy projection costs 2.5% ($N=1$) to 6.6% ($N=9$) and the
+correction below 1% of the CPU time (App. A, Table VI). The authors state
+that the implicit-LES behaviour of the baseline scheme "should be fully
+understood before isolating any potentially beneficial effect of
+physics-inspired subgrid-scale models" (§I).
+
+**Low-Mach corrections of WENO implicit LES.**
+[Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) run the
+weakly compressible channel at $Re_\tau\simeq395$ ($Re_b\simeq6887$, bulk
+Mach number 0.2, adiabatic walls) in [CNS3D](/software/cns3d.md) as
+implicit LES with ninth-order WENO in primitive variables, the HLLC flux
+and five-stage SSP-RK4, on a $64^3$ grid, the mean Mach number falling
+toward 0.01 at the wall (Fig. 4). They compare corrections that, between
+reconstruction and Riemann solver, blend the left and right reconstructed
+velocities toward their average by a factor set by the local Mach number:
+the original correction (LM) of Thornber et al. on the velocity magnitude
+or on the face-normal Mach number, the normal-velocity-only variant of
+Simmonds et al. (LMn), tangential-only variants (LMt, LMtn), and their
+NEHA, which limits the normal and tangential components each with its own
+Mach number (see [WENO schemes](/methods/weno-scheme.md) and
+[numerical dissipation](/properties/numerical-dissipation.md)). Mean
+friction Reynolds numbers (Table II; RMS in brackets):
+
+| Run | $\overline{Re}_\tau$ |
+|---|---|
+| WENO9, $64^3$ | 372.5 (4) |
+| WENO9 + LM on the velocity magnitude | 367 (2.91) |
+| WENO9 + LM on the normal Mach number | 402.2 (2.9) |
+| WENO9 + LMn | 383 (3.3) |
+| WENO9 + LMt | 372 (3.5) |
+| WENO9 + LMtn | 371.1 (3.2) |
+| WENO9 + NEHA | 392 (2.96) |
+| WENO9, $128^3$ | 391 (2.6) |
+| DNS | 392.24 |
+
+LM produces "fuzzy", dispersed vortices near mid-height, LMn and LMt
+suppress them, and NEHA gives the closest Q-criterion picture to the
+$128^3$ run (Fig. 6); NEHA's mean velocity aligns almost perfectly with the
+DNS, while plain WENO9 departs from $y^+\approx10$ upward and LM
+over-corrects (Fig. 8), and NEHA's skewness and flatness of the streamwise
+velocity are closest to the DNS near the wall (Figs. 9–10). NEHA on $64^3$
+is more accurate than plain WENO9 on $128^3$ for $y^+<40$, the finer mesh
+being slightly better above, and costs less than 10% over WENO9 (LM about
+5%) (§VIII). Tangential limiting alone barely changes $\overline{Re}_\tau$
+but improves on LMn when combined with it in NEHA (§VII).
+
+**Wall-model input and wall fluxes in flux-reconstruction WMLES.**
+[Gao et al. (2025b)](/sources/gao-2025-b.md), §II C–D and §III A, place
+the input of an equilibrium wall model at the first solution point of the
+wall-adjacent element, closest to each wall flux point, instead of the
+face between the first and second off-wall cells recommended by Frère et
+al. and Shi et al., keep a no-slip condition, and blend two inviscid wall
+fluxes, a weakly prescribed one, accurate but unstable on non-trivial
+grids, and a weak Riemann (HLLC) one, stable but giving a too steep mean
+profile, with weight $C_2\in[1/12,1/5]$ on the latter (Fig. 2; see
+[wall-modelled LES](/methods/wall-modelled-les.md)). The wall law of
+Allmaras, Johnson & Spalart is inverted without iteration by a piecewise
+fit in $Re_y$. On $48\times24\times24$ elements with $N=2$, 3, 4, the mean
+velocity follows the log law at $Re_\tau=2000$ and 10,000 (first solution
+point at $y^+\approx120$ at 10,000), and at 5200 it shows none of the
+oscillations in the first element of the Frère et al. and Shi et al.
+results; the Reynolds stresses deviate from the DNS near the wall, which
+the authors attribute to the 12 elements (48 solution points at $N=3$)
+across the half-channel (Figs. 3–5).
+
+**Slip-wall WMLES and wall-pressure spectra.**
+[Gao et al. (2025)](/sources/gao-2025.md), §III A, run a compressible
+channel at $M=0.3$ with a [slip-wall model](/methods/slip-wall-model.md)
+in a high-order aeroacoustics finite-difference code (seven-point DRP
+scheme, Vreman model, selective filter), the equilibrium wall model fed at
+the second off-wall point. At $Re_\tau\approx2000$ on four uniform grids
+from $(\delta/\Delta x,\delta/\Delta y,\delta/\Delta z)=(10,10,15)$ to
+$(40,40,60)$, the mean velocity agrees with the DNS of Hoyas & Jiménez on
+all grids and follows the log law for sample points from $y^+=55$ to 220,
+"effectively circumventing" the
+[log-layer mismatch](/definitions/log-layer-mismatch.md) (Fig. 5); the
+Reynolds stresses deviate for $y/\delta<0.1$ on every grid and agree for
+$y/\delta>0.2$ on the two middle grids (Fig. 6); the wall-pressure spectrum
+on $(20,30,30)$ agrees with Farabee & Casarella over
+$10\le\omega\delta/u_\tau\le300$, the coarsest grid over-predicting with a
+premature roll-off, and the authors recommend $(20,20\text{–}30,30)$ points
+per $\delta$, with spectral errors of 3–6 dB at low to mid frequency (Fig.
+7). The same resolution reproduces the log law and the outer stresses at
+$Re_\tau=576$, 1050, 2100 and 5100, with spectra consistently high at low
+to mid frequency and too steep beyond $\omega\delta/u_\tau=500$, within
+about 4 dB at 576 and 2100 and 5 dB at 1050; at $Re_\tau=1000$ their
+$127\times41\times95$ grid agrees better with the DNS spectra than an
+OpenFOAM WMLES on $127\times101\times127$ (Figs. 8–11). Their boundary
+layer is on [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md).
+
+**A GPU DNS solver.** [Monteiro et al. (2026)](/sources/monteiro-2026.md),
+§4.3, validate RHEA-X, a second-order kinetic-energy-preserving
+finite-difference compressible solver (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)),
+at $Re_\tau=590$ in the low-Mach limit with constant transport properties
+and a body force with feedback control: the mean velocity and the rms
+velocities agree with Moser et al., the streamwise normal stress peaking at
+$y^+\approx14$ (Fig. 4). The averaging time is not printed.
+
 **Cited data-driven uses.** The review of [Fang et al. (2026)](/sources/fang-2026.md),
 §3.4, cites an LSTM trained on channel DNS at "Re = 180" that predicts the
 central shear Reynolds stress within 5% against about 12% for the
@@ -1724,6 +1878,29 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) use $z$
   streamwise and $x$ spanwise (translated in the table) and do not state
   the wall model of their $24^3$ run or the averaging time.
+- [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) give
+  the domain length as $6\pi\delta$ in the text while Fig. 5 labels
+  $2\pi$, and the averaging time as $900\,u_b/\delta$ (printed), "just over
+  21 flow-throughs"; $900/(6\pi)=47.7$ flow-throughs of a $6\pi\delta$ box
+  *(compiler check, not in the sources)*. The noise amplitude of their
+  initial condition is printed as 5% and as $s=10\%$, the wall at $y=0$ in
+  their Eqs. 38 and 41 and at mid-height in Eqs. 43–44, and they print
+  the wall-normal $y^+$ of the first cell but no streamwise or spanwise
+  wall-unit spacing. Their DNS reference is Moser, Kim & Mansour
+  ($Re_\tau=392.24$, "on $256^3$" as printed in Table II).
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) print
+  $\Delta x^+\approx9.8$ and $\Delta z^+\approx5.0$; with $Re_\tau=590$,
+  $2\pi\delta$, $\pi\delta$ and 384 points, $\Delta x^+=9.65$ and
+  $\Delta z^+=4.83$ *(compiler check, not in the sources)*.
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) caption Fig. 3 with
+  a $20\times20\times12$ mesh where Table II gives $20\times20\times10$; write
+  that their $M_b=3$ run uses "approximately 1/1000" of the DNS degrees of
+  freedom while Table V gives $r=1412.3$; quote the case of Hamzehloo et
+  al. as $Re_\tau=215$ (§I) and as $Re=222$ (§III A); and state that
+  $M_b=3$, $Re_\tau=450$ "corresponds to an incompressible simulation at
+  $Re=140$" (§III A) while their Fig. 8 collapses it on the incompressible
+  $Re_\tau=180$ DNS under the Trettel–Larsson transformation (see
+  [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
 
 # Citations
 
@@ -1799,3 +1976,8 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
 - [Xiao et al. (2025)](/sources/xiao-2025.md) — §2.1–2.2; §4.2, Table 3, Figs. 6–8; §4.3, Table 4, Figs. 9–12.
 - [Fang et al. (2026)](/sources/fang-2026.md) — §3.4, Table 4 (cited works, review).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §4 (application list).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I; §II A–B, Eqs. 22–31; §III A 1–3, Tables I–V, Figs. 1–21; §IV; App. A, Table VI; App. C.
+- [Gao et al. (2025)](/sources/gao-2025.md) — §II B; §III A, Tables II–III, Figs. 5–11.
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §II C–D, Eqs. 33–37; §III A, Figs. 2–5.
+- [Kokkinakis & Drikakis (2025b)](/sources/kokkinakis-2025-b.md) — §IV–V, Eqs. 24, 34–36; §VI–VIII, Table II, Figs. 4–10.
+- [Monteiro et al. (2026)](/sources/monteiro-2026.md) — §4.3, Figs. 3–4.

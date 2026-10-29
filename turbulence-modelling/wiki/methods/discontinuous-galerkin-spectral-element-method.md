@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin spectral element method"
-description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its forms, SBP property, de-aliasing, modal filtering, cost and GPU implementation, how dissipation and penalties shape LES on it, and its modal, hybridized, mixed and continuous relatives in shock–turbulence, RANS, time-integration and error-estimation work."
+description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its forms, SBP property, de-aliasing, modal filtering, cost and GPU implementation, how dissipation and penalties shape LES on it, and its modal, entropy-projected, isogeometric, adaptive, hybridized and continuous relatives in shock–turbulence, RANS, multigrid and time-integration work."
 status: established
-aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG]
+aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG, DG-ES, selective entropy-stable DG, ESDG, local discontinuous Galerkin, LDG, interior penalty DG, IPDG, direct discontinuous Galerkin, DDG, p-multigrid DG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-28T16:59:00Z
+timestamp: 2026-10-29T05:08:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -1315,6 +1315,194 @@ by $N$ have maxima $(65,2.5,40)$ on the coarse grid and $(35,2,25)$ on the
 fine one (§3). See
 [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+## Entropy projection and selective entropy stability
+
+**Entropy-projected modal DG for implicit LES of channels.**
+[Alberti et al. (2025b)](/sources/alberti-2025-c.md), §II, run a modal DG
+with an orthonormal hierarchical basis of complete polynomials defined in
+physical space, $N_{\mathrm{dof}}=\prod_{m=1}^{d}(N+m)/m$ functions per
+element in $d$ dimensions (identity mass matrix), arbitrary quadrature,
+BR2 viscous fluxes with interior and wall penalties $\eta_F$, $\eta_{F,w}$
+(page-local), and the fourth-order five-stage SSP Runge–Kutta scheme. The
+unknowns are conservative, but every space operator is evaluated from
+their $L^2$ projection onto the entropy variables, and an element-wise,
+parameter-free correction (direct enforcement of the entropy balance, after
+Abgrall) removes the quadrature error from the discrete entropy balance,
+so that the choice of interface flux alone makes the convective
+discretization entropy conserving (Ismail–Roe) or entropy stable (exact
+Riemann solver), "without special quadrature nodes or flux-splitting
+formulas"; the construction and the entropy-stable wall condition are on
+[entropy conservation](/properties/entropy-conservation.md). The authors
+claim robustness "at least comparable to that of recent nodal variants,
+such as DGSEM" without property-preserving operators, for any element
+type (§I, §IV). Projection and correction together cost at most 7% of the
+CPU time (App. A, Table VI). In [implicit LES](/definitions/implicit-les.md)
+of [channels](/benchmarks/turbulent-channel-flow.md) at $N=8$ and DNS-to-DG
+degree-of-freedom ratios of about 9 to 200 the profiles collapse on the
+DNS; on grids of $8\times8\times6$ to $12\times12\times12$ elements, down to
+about 1/2000 of the DNS degrees of freedom, the entropy-conserving flux
+with the entropy-stable wall is the more accurate near the incompressible
+limit, the entropy-stable flux at bulk Mach 1.5 and 3, where the pure
+entropy-conserving flux crashes (§III A 3; results on
+[numerical dissipation](/properties/numerical-dissipation.md)). They count
+about half the degrees of freedom of the KEP-DGSEM LES of Flad et al. at
+$Re_\tau=590$ and about one sixth of those of the split-form DGSEM of
+Bergmann et al. ($N=7$, $8^3$ elements) at $Re_\tau=395$, and call their
+results there "much more accurate" (§III A 3; comparisons with the cited
+figures, not rerun). On a manufactured solution the entropy-conserving
+flux converges at order $N$, the entropy-stable one at $N+1$ (App. B).
+
+**Selective entropy stability on the DGSEM.**
+[Bilocq et al. (2025)](/sources/bilocq-2025.md), §3, compare five
+stabilizations in one Cartesian code for under-resolved compressible
+turbulence with shocklets. The baseline is the DGSEM collocated on
+Gauss–Legendre points with a local Lax–Friedrichs flux and the
+incomplete interior penalty method for viscous terms (penalty above a
+bound $\propto(N+1)^2$; the symmetric variant "gave no improvement").
+The others are Laplacian
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+switched by the modal-energy [sensor](/definitions/shock-sensor.md) (DG-AV);
+the fully entropy-stable DG on Gauss–Legendre nodes with Chan's
+hybridized SBP operator, flux differencing with the Chandrashekar flux and
+the entropy projection (ESDG-GL); its Gauss–Lobatto counterpart without
+projection (ESDG-GLL); and their contribution, **DG-ES**, which uses the
+ESDG-GL discretization only in cells flagged by the sensor and the
+baseline elsewhere. Findings (§4, Tables 1–12):
+
+- the baseline is stable in decaying isotropic turbulence at
+  $M_{t,0}=0.6$ on $11^3$ elements at $N=5$ ($66^3$ degrees of freedom)
+  but diverges on every coarser mesh, and on the supersonic Taylor–Green
+  vortex below $256^3$; every stabilization is stable on all of them, so
+  "it appears sufficient to satisfy the second law of thermodynamics only
+  in the troubled cells";
+- global entropy stability damps vortical structures, through the error of
+  projecting the non-polynomial entropy variables (ESDG-GL) or the
+  under-integration of Gauss–Lobatto quadrature (ESDG-GLL), and degrades
+  the pressure dilatation, which the authors attribute to the
+  ill-conditioning of the entropy-to-conservative map near strong
+  gradients; over-integration would reduce the projection error but
+  "significantly degrades computational performance" (§4.1.2, §4.2.3);
+- costs relative to the baseline (isotropic turbulence, Taylor–Green) or
+  to DG-AV (shock cases): DG-AV 1.07–1.08, DG-ES 1.21–1.28, ESDG-GL
+  1.58–2.27, ESDG-GLL 1.01–1.53, the SBP operator needing $O(N^4)$
+  two-point flux evaluations against $O(N^3)$ single-point ones;
+- the projection makes DG-ES and ESDG-GL the most time-step restricted,
+  quadratically in the mesh size with a strong stationary shock (CFL 0.16
+  and 0.08 on two meshes, against 0.8 for DG-AV);
+- DG-AV is "clearly" sensitive to the node choice, collocated
+  Gauss–Legendre beating Gauss–Lobatto interpolation with Gauss–Legendre
+  quadrature, while DG-ES barely is (§4.1.5, Fig. 5).
+
+They recommend DG-AV where robust, efficient shock capturing is the main
+concern and DG-ES where under-resolved turbulent structures must be
+accurate (§5); the comparisons by test case are on
+[shock-generated turbulence](/results/shock-generated-turbulence.md),
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and
+[isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
+Both groups project onto entropy variables: Alberti et al. measure its
+cost (at most 7%) and run all their channels with it; Bilocq et al.
+measure its effect on vorticity, pressure dilatation and the stable time
+step.
+
+## Modal DG for steady RANS: $p$-multigrid and isogeometric elements
+
+**$p$-multigrid.** [Bulgarini et al. (2025)](/sources/bulgarini-2025.md),
+§2–§5, accelerate the steady modal DG RANS solver of the Brescia group
+(orthogonal hierarchical basis in physical space, $(N+1)(N+2)(N+3)/6$
+functions per element, exact-Riemann inviscid flux, BR2, the
+sensor-free artificial viscosity of Bassi et al.; Wilcox
+$k$-$\tilde\omega_\ell$ model with $\tilde\omega_\ell=\ln\omega$, constants
+not printed) by a nonlinear full-approximation-scheme $p$-multigrid in a
+full-multigrid V-cycle, the levels being the degrees $N=0,1,\dots$. With
+an orthogonal hierarchical basis the $L^2$ restriction and prolongation
+reduce to selecting or zero-padding modes, and the residual restriction to
+the transpose of the prolongation (§4.3, Eqs. 19–24). Their modifications:
+logarithmic pressure, temperature and $\omega$ as unknowns, for positivity
+and a smoother solution; smoothing counts set automatically by a residual
+test modified from Rueda-Ramírez et al., with a skip of inaccurate coarse
+corrections; a level-dependent CFL law and GMRES settings; and the
+turbulence source and Jacobian computed on the finest level only and frozen
+or Galerkin-restricted on the coarser ones, "proposed for the first time in
+a high-order framework" (§1, §4.2, §4.4). Smoothers: block- and
+line-implicit Runge–Kutta, which need $N=1$ as coarsest level and save
+84–86% of memory, and linearized backward Euler, which starts from free
+stream ($N=0$ coarsest) at no time penalty and is best at $N>3$ (§6).
+Against single-order implicit time integration the wall time falls by
+50–95% on all cases (ADIGMA BTC0 body, VFE-2 delta wing,
+[backward-facing step](/benchmarks/backward-facing-step.md),
+[RAE 2822](/benchmarks/rae-2822-airfoil.md), T106A
+[cascade](/benchmarks/turbine-cascade.md), DrivAer car, NASA trap wing,
+DLR-F6), "around 75%" on average (Abstract, Conclusion); transonic
+cases are nearly $p$-independent, subsonic ones lose efficiency with $N$,
+and the iteration count is not asymptotically independent of $N$
+(Conclusion (i)). See [Wilcox $k$-$\omega$ model](/methods/k-omega-model.md).
+
+**Isogeometric DG.** [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md)
+run the same lineage (Roe flux, BR2, Bassi et al.'s artificial viscosity)
+on rational Bézier elements extracted from a CAD NURBS patch, the same
+basis carrying geometry and solution, with anisotropic $h$-adaptation by
+knot insertion; formulation and results are on
+[isogeometric analysis](/methods/isogeometric-analysis.md).
+
+## DG on adaptive and moving meshes
+
+**Taylor-basis DG with vortex-driven refinement.**
+[Lv et al. (2025)](/sources/lv-2025.md), §III–§IV, run a two-dimensional
+modal DG with the quadratic Taylor basis of Luo et al. ($N=2$), the HLLC
+flux and the direct DG (DDG) viscous flux of Cheng et al., without any
+turbulence model, on quadrilaterals refined by a symbolic-regression
+vortex indicator (see [mesh adaptation](/methods/mesh-adaptation.md) and
+[vortex identification criteria](/definitions/vortex-identification-criterion.md)).
+
+**LDG on tetrahedra with $p$-adaptation and load balancing.**
+[Valvo & Abbà (2025)](/sources/valvo-2025.md), §2–§3, add dynamic load
+balancing to the $p$-adaptive local DG solver dg-comp (FEMilaro library):
+orthonormal modal basis on tetrahedra built by Gram–Schmidt, Rusanov
+convective flux, LDG of Bassi & Rebay for viscous and subgrid terms, the
+five-stage fourth-order SSP Runge–Kutta scheme, and the degree in each
+element between 2 and 4 set from a second-order structure-function
+indicator of under-resolved turbulence; with no subgrid flux the code runs
+DNS or implicit LES "according to the adopted level of resolution", the
+LES filter being the projection onto the polynomial space. The mesh is
+partitioned as a graph with the number of volume Gauss points as element
+weight (14, 24, 43 for $N=2$, 3, 4) and the face Gauss points at the higher
+neighbouring degree as edge weight, through Zoltan, optionally in
+hardware-aware hierarchical steps. On an advected vortex (128 MPI tasks)
+balancing cuts the elapsed time by about 71% against adaptation without
+balancing and by about 82.5% against uniform $N=4$, so that "more than
+half of the computational gain obtainable with adaptation is wasted" without it;
+on a [square-cylinder](/benchmarks/square-cylinder-flow.md) Smagorinsky
+LES at $Re=22{,}000$ (336 tasks) the saving against uniform $N=4$ rises
+from 9.2% to 40.9–44.6% (§4–§5, Tables 2, 5, 10–11); details on
+[mesh adaptation](/methods/mesh-adaptation.md).
+
+**Moving-mesh interior-penalty DG.** [Zou et al. (2025)](/sources/zou-2025-b.md),
+§II, write the compressible Navier–Stokes equations on a rigidly
+translating mesh with the convective flux shifted by the mesh velocity,
+$F^c-\boldsymbol V_{\mathrm{mesh}}U$, and a Lax–Friedrichs flux whose wave
+speed is $|\boldsymbol u\cdot\boldsymbol n-\boldsymbol V_{\mathrm{mesh}}\cdot\boldsymbol n|+c$
+(Eqs. 8–18; $\boldsymbol V_{\mathrm{mesh}}$ page-local), in a modal
+Runge–Kutta DG on quadrilaterals with complete $P^N$ bases, an interior
+penalty viscous flux $\{\!\{F^v\}\!\}\cdot\boldsymbol n-C_{\mathrm{ip}}\mu(N^2/h)(U^--U^+)$
+with $C_{\mathrm{ip}}=4$ (page-local; Eq. 19), positivity-preserving and
+WENO limiters, block-based adaptive refinement driven by vorticity, and the
+fluid and structure advanced together by the third-order TVD Runge–Kutta
+scheme. They choose IPDG among
+BR1, BR2, LDG, CDG and DDG for its "superior computational efficiency and
+implementation simplicity" (stated, §I). Couette flow gives orders about
+2, 3 and 4.27–4.29 for their second- to fourth-order schemes (Table I); a
+fixed cylinder at $Re=150$ gives $St=0.1847$ at fourth order against
+0.184 and 0.183 in the references (Table II; see
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)). The
+flows are two-dimensional and laminar, which the authors call
+"direct numerical simulations".
+
+**Finite-volume relatives.** [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md),
+§4.2, §6, state that their adaptive dissipation–dispersion adjustment for
+high-order unstructured finite volumes extends to DG and hybrid DG–finite
+volume schemes, and use a DGSEM computation (cited as Frank et al.) among
+their [SD7003](/benchmarks/sd7003-airfoil.md) references (§5.2).
+
 ## Qualifications
 
 - **Printed forms (Lv & Ekaterinaris 2023).** The review prints the
@@ -1444,6 +1632,29 @@ fine one (§3). See
   "proposed to overcome the order reduction" of traditional Rosenbrock
   schemes at high stiffness; the paper does not discuss the observed
   order.
+- **Printed slips and counts (DG sources of 2025).** Bilocq et al.
+  (2025) run the shock–turbulence case at CFL 0.535 (§4.4.1) while their
+  Table 11 gives 0.53 as the largest stable CFL of DG-AV, DG-ES and
+  ESDG-GL, and their Fig. 10 caption and text name different extraction
+  lines ($x=y=0$ against $x=z=0$). Alberti et al. (2025b) define the jump
+  as $\circ^+-\circ^-$ with the normal from $-$ to $+$, while their Eqs.
+  (9), (22) and (26) are mutually consistent with the opposite jump
+  *(compiler check, not in the sources)*; for $Re_\tau=180$ the DNS
+  degrees of freedom implied by their Table I ($r=9.4$ at
+  $16\times16\times8$ elements, $N=8$) and Table IV ($r=65.5$ at 32,256
+  degrees of freedom) differ by a factor of about 1.5, while the other
+  cases agree within 1% *(compiler check, not in the sources)*.
+  Bulgarini et al. (2025) print the backward-Euler smoother (Algorithm 5)
+  with $+R$ on the right-hand side, Eq. (11) with $-R$; they write that
+  the worst T106A reduction guarantees "about 49%" while Table 8's
+  smallest is 53.09%, and several reductions of Tables 3–11 do not follow
+  from the printed times (e.g. Table 3, fine mesh, $N=6$: $-61.53\%$
+  printed, $1-5.16\times10^3/7.91\times10^4=93.5\%$) *(compiler check, not
+  in the sources)*; the $k$-$\omega$ constants are attributed to a
+  reference that is a DG paper of Bassi et al. Valvo & Abbà (2025, Table 2) print 7523 s and 281 core hours
+  for the adaptive run without balancing on 128 tasks; $7523\times128/3600=267.5$
+  core hours, while 281 core hours and the printed $-39.5\%$ both
+  correspond to about 7900 s ($281\times3600/128=7903$; $1-7903/13\,060=39.5\%$ against the printed 13 060 s of uniform $N=4$) *(compiler check, not in the sources)*.
 - Fidkowski (2022, §4, Eq. 18) assumes that the correlation between
   adjoint and residual fluctuations is negligible for chaotic flows; no
   regularized unsteady adjoint is computed to check it. The "DES" of the
@@ -1511,3 +1722,11 @@ fine one (§3). See
 - [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1, Eq. (6) (positive-part SA source, $r$ limit); §2.2, Eqs. (19)–(22) (incompressible modal DG, artificial-compressibility Godunov flux, BR2, ROS3Pw); §2.3, Eq. (23), Table 1 (length-scale normalization, equivalent hexahedron); §3.1.2–§3.1.3, Tables 4–5, Figs. 12–14; §4.
 - [An et al. (2025)](/sources/an-2025.md) — §2.2.1–§2.2.2, Eq. (14) (CFL3D and third-order DG RANS–SA); §3.1–§3.2, Figs. 6, 16 (step and bump, DG against finite volumes); Appendix, Eqs. (A.1)–(A.2) (HWENO and positivity limiting of $\tilde\nu$).
 - [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (CODA and FLEXI against entropy-filtered PyFR on the supersonic Taylor–Green vortex).
+- [Alberti et al. (2025b)](/sources/alberti-2025-c.md) — §I, §IV (modal DG against nodal DGSEM); §II, Eqs. (6)–(26) (orthonormal physical-space basis, entropy projection, direct enforcement of the entropy balance, BR2, SSP-RK); §III A 2–3, Tables I–V (channel implicit LES at moderate and severe under-resolution, degree-of-freedom comparisons); App. A, Table VI (cost); App. B (orders); sign conventions and Tables I/IV.
+- [Bilocq et al. (2025)](/sources/bilocq-2025.md) — §3, Eqs. (13)–(31) (collocated GL DGSEM with LLF and IIPM, DG-AV, ESDG-GL with hybridized SBP and entropy projection, ESDG-GLL, DG-ES); §4.1–§4.4, Tables 1–12, Figs. 1–15 (stability, accuracy, CFL limits, cost, node sensitivity); §5; §4.4.1, Table 11, Fig. 10 caption.
+- [Bulgarini et al. (2025)](/sources/bulgarini-2025.md) — §1–§3, Eqs. (1)–(12) (modal DG RANS, logarithmic variables, level-dependent CFL and GMRES); §4, Eqs. (13)–(27), Algorithm 1 (FAS-FMG $p$-multigrid, frozen turbulence source, modal restriction and prolongation, automatic smoothing, skip condition); §5, Algorithms 2–5 (smoothers); §6–§8, Tables 1–11 (performance); Conclusion; slips in Algorithm 5, §8.1, Tables 3–11.
+- [Bulgarini et al. (2025b)](/sources/bulgarini-2025-b.md) — §3 (isogeometric DG on rational Bézier elements, passing here).
+- [Lv et al. (2025)](/sources/lv-2025.md) — §III–§IV (two-dimensional Taylor-basis DG with HLLC and DDG fluxes, vortex-driven refinement; passing here).
+- [Valvo & Abbà (2025)](/sources/valvo-2025.md) — §2.1–§2.2, Eqs. (1)–(5) (dg-comp LDG, Rusanov, SSPRK54, structure-function $p$-adaptation); §3–§4.6, Tables 2–7 (graph partitioning, Gauss-point weights, vortex case); §5, Tables 9–11 (square-cylinder LES); Table 2.
+- [Zou et al. (2025)](/sources/zou-2025-b.md) — §I (choice of IPDG); §II A–F, Eqs. (8)–(30) (moving-mesh RKDG, shifted Lax–Friedrichs flux, IPDG, limiters, block AMR, coupled TVD Runge–Kutta); §III A–B, Tables I–II (Couette, fixed cylinder); §III C (laminar runs called DNS).
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §4.2, §6 (dissipation adjustment extendable to DG); §5.2 (DGSEM among SD7003 references).

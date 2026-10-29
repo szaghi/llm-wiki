@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-28T17:02:00Z
+timestamp: 2026-10-29T05:11:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -148,6 +148,16 @@ requires the stress formulation of the momentum equations. Bae & Koumoutsakos (2
 no slip and impose the stress through a wall eddy viscosity chosen so that the
 resolved wall gradient gives the modelled stress, a choice they call better
 against [log-layer mismatch](/definitions/log-layer-mismatch.md).
+[Gao et al. (2025)](/sources/gao-2025.md) (§I.B, §II.B) divide WMLES into
+wall-stress and slip-velocity strategies and take the second: the
+tangential velocity imposed at the wall is the LES velocity at the second
+grid point extrapolated linearly with the gradient of an
+[equilibrium wall model](/methods/equilibrium-wall-model.md), with zero
+wall-normal velocity (formula on the
+[slip-wall models](/methods/slip-wall-model.md) page). In a
+flux-reconstruction solver, [Gao et al. (2025b)](/sources/gao-2025-b.md)
+(§II D) keep no slip and pass the modelled stress through the wall
+viscous flux (below, under the SGS-model interaction).
 
 **Unified wall-resolved and wall-modelled LES.** [De Vanna et al. (2022)](/sources/devanna-2022.md)
 (§2.2, §3.2, Eqs. 7, 9) assess, in a compressible shock/boundary-layer
@@ -831,6 +841,34 @@ streamwise fluctuations, at $y/\delta\sim Re_\tau^{-1/2}$, is unclear; with
 the resolution of Choi & Moin ($\delta/\Delta x_i\sim10$) it is, they
 write, likely unresolved (§4.1).
 
+The wall pressure of a slip-velocity WMLES is the subject of
+[Gao et al. (2025)](/sources/gao-2025.md) (§III.A–III.B, Figs. 7, 10–11,
+17–19), who run the condition in a computational-aeroacoustics
+finite-difference code (seven-point fourth-order DRP of Tam & Webb,
+four-step Adams–Bashforth, Bogey–Bailly selective filter, Vreman model).
+In channel flow at Mach 0.3 the wall-pressure spectra, plotted against
+$\omega\delta/u_\tau$ with one-sided spectra rescaled by $4\pi$ for the
+two-sided reference (Welch, 50 % overlap), agree with the measurements
+of Farabee & Casarella (as cited) over $10\le\omega\delta/u_\tau\le300$
+on the grid C203030, with errors within 3–6 dB at low-to-mid frequency on
+the two recommended grids. Over $Re_\tau=576$–5100 the predicted spectra
+are "consistently elevated" at low-to-mid frequency and decay sharply
+beyond $\omega\delta/u_\tau=500$, with discrepancies within about 4 dB at
+$Re_\tau=576$ and 2100 and up to 5 dB at 1050. In a flat-plate boundary
+layer at Mach 0.15 ($Re_\tau=674$, $Re_\theta=1924$ at the station
+$35\delta_0$) the spectrum lies 8.6 dB above Goody's empirical model (a
+vertical shift of 8.6 dB aligns them up to $\omega\delta/u_\tau=600$),
+with a mid-frequency decay of $\omega^{-0.7}$, and the rms wall pressure,
+39.58 Pa, is about 3.8 times the value the authors take from Viazzo's
+correlation $p_{\mathrm{rms}}^2/\tau_w^2=3+2\ln(Re_\tau/250)$ (Eq. 25;
+see Qualifications). The authors attribute the low-frequency excess to
+velocity fluctuations at the sample point transmitted to the wall through
+the wall function and the high-frequency deficit to grid coarseness
+(§III.A.2, §III.B.2). Against an OpenFOAM WMLES of Fan et al. (as cited)
+at $Re_\tau=1000$ on $127\times101\times127$ points, their spectrum on
+$127\times41\times95$ agrees better with DNS, which they read as a
+limitation of low-order schemes.
+
 ## Near-wall structures below the matching height
 
 [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) ask what the LES
@@ -1109,6 +1147,44 @@ same under-resolved first cells.
   in the discontinuous flux-reconstruction solution the interface carries two
   values, and Duan & Wang choose the outer one *(compiler check, not in the
   sources)*.
+- **First-solution-point input and a hybrid inviscid wall flux in flux
+  reconstruction.** Gao et al. (2025b, §I, §II C3–D, Eqs. 33–37, Fig. 2)
+  depart from the discontinuous-Galerkin and flux-reconstruction WMLES of
+  Frère et al., Shi et al. and Wang (as cited) in three choices. (i) The
+  wall-model input is the first solution point inside the wall-adjacent
+  element, closest to each wall flux point, not the bottom face of the
+  second off-wall cell that Frère et al. recommend and Shi et al.
+  corroborate; taking data from the second cell breaks the compact stencil
+  of the scheme on unstructured meshes and degrades parallel efficiency,
+  and the first-cell oscillations of the earlier velocity profiles are
+  called harmful for wall-pressure and aeroacoustic applications. (ii) No
+  slip is imposed, although "previous wall-model studies all stressed the
+  importance of the slip boundary condition" and Shi et al. found the slip
+  wall better (see [slip-wall models](/methods/slip-wall-model.md)). (iii)
+  The inviscid wall flux is a convex combination
+  $F^c=C_1F^c_{\mathrm{PRE}}+C_2F^c_{\mathrm{RM}}$, $C_1+C_2=1$ (Eq. 37;
+  page-local), of a weak-prescribed flux, $F^c$ evaluated at the no-slip
+  boundary state, and a weak-Riemann flux between the interpolated
+  interior state and the boundary (or mirrored) state with the HLLC solver.
+  In channel flow at $Re_\tau=10\,000$ the weak-prescribed flux alone gives
+  a good mean velocity but "tends to destabilize the computation,
+  producing grid-level oscillations at the wall", stable in the authors'
+  experience only for channel flow, because on the coarse wall element the
+  interpolated tangential velocity at the wall flux point is far from
+  zero; the weak-Riemann flux alone is stable but gives an excessively
+  steep mean velocity profile with the wall-model viscous flux (Fig. 2).
+  $C_2$ is set to the smallest stable value, smaller on regular and larger
+  on poor-quality grids, with "a range of $\frac1{12}\sim\frac15$"
+  effective; a highly dissipative Riemann solver (Rusanov) is called
+  unsuitable at the wall because the extrapolated tangential velocity at
+  the wall flux point does not vanish (§II D3). The SGS model is
+  [Vreman's](/methods/vreman-model.md) with the constant 0.07 multiplying $\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ (the form of Agrawal et al. there) and an isotropic
+  filter width whose definition per element is not printed. Shi et al.'s
+  finding, as Gao et al. cite it, that an even polynomial degree in the
+  wall element is preferable ("quadratic polynomials in the first off-wall
+  element yields noticeably better results than cubic polynomials") stands
+  beside their own periodic-hill errors, which fall monotonically from
+  $N=2$ to $N=4$ (Figs. 8–13).
 
 Low numerical dissipation is a precondition: Goc et al. (2021, §2.3) call
 [numerical dissipation](/properties/numerical-dissipation.md) "extremely
@@ -1501,6 +1577,45 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   cycle against about 1058 and 676 inferred for two wall-resolved LES (as
   they cite them; Table V). Results are on the
   [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) page.
+- **Channel and flat plate in an aeroacoustics code** (Gao et al. 2025,
+  §III, Tables II–VI, Figs. 5–19): compressible channel at Mach 0.3 on
+  $2\pi h\times2h\times\pi h$ uniform grids named by points per $\delta$,
+  C101015 ($63\times21\times49$), C202030 ($127\times41\times95$), C203030
+  ($127\times61\times95$) and C404060 ($255\times81\times190$) at nominal
+  $Re_\tau\approx2000$, sample point at $y^+=441.7$, 218.6, 145.8 and
+  110.9. The mean velocity agrees with the DNS of Hoyas & Jiménez (as
+  cited) on every grid; the Reynolds stresses deviate below $y/\delta=0.1$
+  on all grids, agree above $0.2$ on C202030 and C203030 and are
+  over-predicted above $0.2$ on C101015. The recommended resolution
+  $(\delta/\Delta x,\delta/\Delta y,\delta/\Delta z)=(20,20\text{–}30,30)$
+  then reproduces the log law and the outer stresses at $Re_\tau=576$,
+  1050, 2100 and 5100. A steady, divergence-free, spanwise-periodic inflow
+  injected through a nonreflecting radiation condition (see
+  [inflow turbulence generation](/methods/inflow-turbulence-generation.md))
+  feeds a Mach 0.15 flat plate ($967\times76\times91$ points,
+  $\Delta x=0.05\delta_0$, sample point at $y^+=44.1$) that becomes fully
+  turbulent after $20\delta_0$; at $35\delta_0$ the mean velocity and
+  stresses agree with Spalart's DNS (as cited) for $y>0.2\delta$, with a
+  slight near-wall under-prediction of the mean. Wall-pressure results are
+  under Near-wall fluctuations above. Stated limits: up to 8.6 dB of
+  spectral error, extra low-frequency acoustic content from the boundary
+  condition, and no account of natural transition (§III.B.2).
+- **Channel and periodic hill in flux reconstruction** (Gao et al. 2025b,
+  §III, Table I, Figs. 3–15): channel flow at $Re_\tau=2000$, 5200 and
+  $10\,000$ on $48\times24\times24$ uniform hexahedra with $N=2$, 3, 4
+  (CFL 0.4, 0.35, 0.35) and the explicitly inverted equilibrium law: the
+  mean velocity follows the log law (first solution point at $y^+\approx120$
+  at $Re_\tau=10\,000$), the Reynolds stresses at $N=3$ deviate from DNS
+  near the wall, attributed to 12 elements (48 solution points) across the
+  half-width, and at $Re_\tau=5200$ the first-element oscillations of the
+  published profiles of Frère et al. and Shi et al. are absent. The
+  [periodic hill](/benchmarks/periodic-hill.md) at $Re=10\,595$ and
+  $37\,000$, on meshes the authors call "significantly coarser than those
+  employed by other researchers", uses their pressure-gradient wall
+  function (results on the
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
+  page). On one CPU core the equilibrium law adds 6 % and the
+  pressure-gradient law 12.5 % (as printed) to a step without wall model.
 - **Where WMLES is not used.** In turbomachinery, [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md)
   (§2.2.1) present WMLES, after Bose & Park, as the answer to the cost of LES
   for wall-driven flows, but add that LES "might still require quasi-DNS
@@ -1642,6 +1757,22 @@ implicit-LES coupling.
   print the free-air high angle as 21.4° and 21.47° and the in-tunnel
   angles as 17.9°, 18.9°, 19.9° and 17.98°, 19.98°, 19.99°. W-020's finest
   grid appears as "1.2B" in the text and "1100M" in the Fig. 3 legend.
+- **Printed items of Gao et al. (2025).** With their Table VI values
+  ($Re_\tau=674$, $\tau_w=5.15$ Pa), the printed Eq. (25) gives
+  $p_{\mathrm{rms}}=5.15\sqrt{3+2\ln(674/250)}=11.50$ Pa, while the paper
+  states 10.29 Pa, the value of $5.15\sqrt{3+\ln(674/250)}$; the printed
+  ratio "approximately 3.8" matches $39.58/10.29=3.85$, against 3.44 with
+  11.50 Pa *(compiler check, not in the sources)*. With $\Delta y=2h/(N_y-1)$
+  and the sample point at $2\Delta y$, the printed sample heights of Table
+  III are reproduced to within a few percent for $Re_\tau=576$, 1050 and
+  2100 (57.6, 105, 140 against 58.4, 111.2, 145.8) and for the flat plate
+  (44.9 against 44.1), but for $Re_\tau=5100$ with the printed $N_y=61$
+  the same rule gives 340 against the printed 512.6, which $N_y=41$ would
+  give (510) *(compiler check, not in the sources)*. §III.B cites "Eq.
+  (18)" for the radiation condition with sources, which is their Eq. (21).
+- Gao et al. (2025b) call the hill references "DNS or LES" in the
+  abstract and conclusions; only $C_f$ is compared with DNS (Krank et al.,
+  as cited), the profiles with PIV and LES.
 
 # Citations
 
@@ -1706,3 +1837,5 @@ implicit-LES coupling.
 - [Wang et al. (2024d)](/sources/wang-2024-k.md) — §I; §II C–D, Fig. 1; §III A–D, Table I, Figs. 2–15; §IV; App. B–C.
 - [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §1; §2.3–2.4; §3.2–3.4, Figs. 5, 12–13; §4; §5.
 - [Yan et al. (2024)](/sources/yan-2024.md) — §II C; §III A–C, Table V.
+- [Gao et al. (2025)](/sources/gao-2025.md) — §I.B; §II.B (slip-velocity coupling); §III.A–III.B, Tables II–VI, Figs. 5–19 (channel and flat plate, wall-pressure spectra), Eq. (25); §IV.
+- [Gao et al. (2025b)](/sources/gao-2025-b.md) — §I; §II C3–D, Eqs. (33)–(37), Fig. 2 (input location, no slip, hybrid wall flux); §III A–B, Table I, Figs. 3–15.

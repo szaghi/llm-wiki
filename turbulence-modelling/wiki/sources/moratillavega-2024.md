@@ -142,8 +142,9 @@ and recorded as printed. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26), cited further in chunks 6–7. This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunks 6, 7, 15. This source is cited on:
 
+- [Turbulent round jets](/benchmarks/turbulent-round-jet.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)

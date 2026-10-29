@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Variational multiscale method"
-description: "The variational multiscale method splits the finite-element solution into resolved and fine scales and models the fine scales from the residual of the resolved ones; the sources read it as an implicit LES, budget each fine-scale term, flip an anti-dissipative one, carry it to immersed boundaries, and replace the residual model by off-line fine-scale DNS."
+description: "The variational multiscale method splits the finite-element solution into resolved and fine scales and models the fine scales from the residual of the resolved ones; sources read it as implicit LES, budget each fine-scale term, flip an anti-dissipative one, derive it after a half-explicit time discretization, carry it to immersed boundaries, and replace the residual model by off-line DNS."
 status: established
 aliases: [VMS, residual-based VMS, residual-based variational multiscale method, RB-VMS, VMS-LES, residual-based LES, modified VMS, multiscale Smagorinsky model, CG-VMSD]
 tags: [les, implicit-les, sgs-model, numerical-dissipation, immersed-boundary]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-29T05:13:00Z
 ---
 
 # Variational multiscale method
@@ -146,6 +146,145 @@ Chen et al. (§1) cite Ahmed and John as having reported that
 residual-based VMS shows no advantage over SUPG, with "no physical
 elaboration", and present their term budget as that elaboration.
 
+## Time first, then the scale split: VMS on half-explicit Runge–Kutta stages
+
+[Sun et al. (2026)](/sources/sun-2026.md) start from the remark that in
+VMS "the numerical method is not just a vehicle for solving the
+equations, but in fact defines the model" (§1), and that VMS LES has been
+integrated in time almost only with second-order implicit schemes,
+generalized-$\alpha$ being the most common. They reverse the usual order
+(the Rothe method, or horizontal method of lines, as they cite it): the
+incompressible Navier–Stokes equations, an index-2 differential–algebraic
+system, are first discretized in time with a half-explicit Runge–Kutta
+(HERK) scheme of Brasey & Hairer (cited), with convection and viscous
+terms explicit and the divergence constraint enforced, with the pressure
+as Lagrange multiplier, at every stage (§3). Because the constraint is
+linear and the pressure enters linearly, the extra order conditions of
+the algebraic system reduce to the classical Butcher conditions up to
+fourth order (cited), so forward Euler, Heun, SSP-RK3 and classical RK4
+give HERK($s,p$) schemes of orders 1–4 (§3.1–3.2, App. A).
+
+Each stage $i$ is then a linear, steady problem of Darcy type: the
+operator $\boldsymbol u_i/\Delta t_n+\alpha_{ii}\nabla p_i$,
+$\alpha_{ii}\nabla\cdot\boldsymbol u_i$ (kinematic pressure; $\alpha_{ii}$
+the diagonal entry of the shifted Runge–Kutta matrix and $\Delta t_n$ the
+step, page-local), the explicit stage terms going to the right-hand side
+(§4, Eq. 4.4). The scale split of that linear operator needs no
+linearization: with no fine-scale pressure and fine scales vanishing on
+Dirichlet boundaries, the fine-scale velocity is exactly
+$\boldsymbol u^{<}_i=-\Delta t_n\,\mathcal P'(\boldsymbol r_{\mathrm M,i})$,
+the $L^2$ projection onto the fine-scale space of the stage momentum
+residual $\boldsymbol r_{\mathrm M,i}$ (the paper's residual divided by the
+constant density), which the authors call "an exact formulation for the
+coarse-scale problem" (§4.1, Eqs. 4.8–4.11). With element bubble functions
+$b_e$ and the residual replaced by its element average this becomes the
+algebraic model
+
+$$\boldsymbol u^{<}_i=-\tau_{\mathrm H}\,\Delta t_n\,\boldsymbol r_{\mathrm M,i},\qquad \tau_{\mathrm H}=\frac{(b_e,1)^2_{\Omega_e}}{\lvert\Omega_e\rvert\,(b_e,b_e)_{\Omega_e}}=\frac{1}{1+s_b^2/m_b^2}\in(0,1),$$
+
+with $\tau_{\mathrm H}$ (page-local) a dimensionless parameter and
+$m_b$, $s_b^2$ the mean and variance of the bubble over the element
+(page-local; the registry's $\mu_b$ is the bulk viscosity and $\sigma_b$ an upwind fraction), so that
+the fine scales "do not depend on any spatial discretization parameter";
+the default is $\tau_{\mathrm H}=1/2$, after the Darcy stabilization
+constant of Masud & Hughes (cited) (§4.2, Eq. 4.12). The coarse problem
+keeps the two cross-stress terms and the fine-scale Reynolds-stress term
+of the table above, accumulated over the previous stages (Eq. 4.16), and
+is stable in the norm
+
+$$\lvert\lvert\lvert\boldsymbol w\rvert\rvert\rvert_i^2=(1-\tau_{\mathrm H})\frac{1}{\Delta t_n}\lVert\boldsymbol w\rVert^2+\tau_{\mathrm H}\,\Delta t_n\,\alpha_{ii}^2\lVert\nabla q\rVert^2$$
+
+for "any continuous velocity–pressure interpolation", $\tau_{\mathrm H}=1/2$
+balancing the two parts (§4.2, Eq. 4.18; written here for unit density).
+The model differs from the residual-based form above, whose
+$\tau_{\mathrm M}$ depends on the element metric, the velocity and the
+viscosity: for the reference method the paper prints, in one dimension,
+$\tau_{\mathrm M}=\big((2/\Delta t)^2+(2a/h)^2+9(4\kappa/h^2)^2\big)^{-1/2}$
+($a$ the advection speed and $\kappa$ the diffusivity, page-local; §5,
+Eq. 5.5), while $\tau_{\mathrm H}\Delta t_n$ depends on the time step only.
+
+**Fourier analysis.** For one-dimensional advection–diffusion with $C^1$
+quadratic B-splines (§5, App. B; see
+[eigensolution analysis](/methods/eigensolution-analysis.md)), the
+time-first scheme and the classical space-first VMS-RK both have temporal
+order $p$; the time-first scheme has leading spatial errors of order
+$h^4$ in dissipation and $h^6$ in dispersion, while VMS-RK carries mixed
+terms in $\tau_{\mathrm M}$ that lower its spatial order to three and four
+when $h\ll\Delta t$ in advection-dominated conditions (Tables 2–3). The
+time-first scheme has the larger stability region along the Courant-number
+axis and lower dissipation and dispersion errors at high wavenumbers in
+convection-dominated regimes; VMS-RK is "more amenable to
+diffusion-dominated regimes", and the Le–Moin IMEX scheme with implicit
+viscous terms is more stable at large diffusion numbers but only second
+order (§5.2–5.3, Figs. 1–5). The authors cite Kolmogorov-unit
+time-step limits to argue that at high Reynolds number the convective
+limit controls, so implicit viscous terms do not enlarge the time step
+significantly (Remark 4).
+
+**Results** (isogeometric discretization with NURBS of degree 2–4, see
+[isogeometric analysis](/methods/isogeometric-analysis.md); reference
+method: residual-based VMS with generalized-$\alpha$, spectral radius 0.5,
+"VMS-Gen-$\alpha$(0.5)"):
+
+- **Manufactured solution** (§7.1, Figs. 6–7): $L^2$ order $k+1$ and $H^1$
+  order $k$ for velocity and pressure with $C^1$ quadratic and $C^2$
+  cubic NURBS ($k$ the spline degree, page-local), and the design orders
+  1–4 in time for HERK(1,1) to HERK(4,4).
+- **[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
+  $Re=1600$** on $64^3$, $96^3$ and $128^3$ quadratic-NURBS elements
+  against a $512^3$ pseudo-spectral DNS (§7.2, Table 6, Figs. 10–16).
+  VMS-Gen-$\alpha$(0.5) shows "an anomalous double-peaked structure in the
+  dissipation rate, with the secondary peak occurring at $t\approx11$" on
+  all meshes; HERK(3,3)-VMS does not, and on $128^3$ its total
+  dissipation closely matches the DNS. Splitting the total dissipation
+  $-\mathrm dE/\mathrm dt$ into its enstrophy-based (resolved) part and the
+  remainder (model and numerical; see
+  [numerical dissipation](/properties/numerical-dissipation.md)), the
+  resolved part of VMS-Gen-$\alpha$(0.5) is only a fraction of the total,
+  its secondary peak comes from the model part, and the resolved part does
+  not approach the DNS as $\Delta t$ decreases; for HERK(3,3)-VMS the
+  resolved part follows the DNS and the model part is small, mainly near
+  the peak (Fig. 12). At $t=9$ the finest-mesh HERK spectrum agrees with
+  the DNS "up to nearly 80% of the resolved wavenumbers", the coarsest
+  shows energy accumulation between wavenumbers 20 and 40, and
+  VMS-Gen-$\alpha$ is over-damped at high wavenumbers (Fig. 13).
+- **Time-step sensitivity** (Figs. 11, 14). For VMS-Gen-$\alpha$(0.5),
+  reducing $\Delta t$ from $5\times10^{-2}$ to $10^{-2}$ improves the
+  dissipation, but $10^{-3}$ makes it deviate, which the authors attribute
+  to small-time-step instabilities (cited); HERK(3,3)-VMS spectra at three
+  time steps nearly overlap. HERK is explicit and stability-limited: no
+  result above $\Delta t=10^{-2}$ is shown. These observations sit beside
+  those above: Prieto Saavedra et al. report that a smaller $\Delta t$
+  lowers the dissipation of their SUPG/PSPG stabilization and degrades the
+  Reynolds stresses, and Kang & Masud argue that keeping the fine-scale
+  inertia keeps the stabilization from vanishing as $\Delta t\to0$.
+- **Parameters** (§7.2, Fig. 16). $\tau_{\mathrm H}=0.2$, 0.5 and 0.8 give
+  nearly indistinguishable spectra ($96^3$, $\Delta t=10^{-2}$), while 0.1
+  and 0.9 "failed to converge"; an added fine-scale pressure (grad-div
+  term) with coefficients 0, 0.2 and 2 changes nothing visible and with 20
+  gives excessive high-wavenumber dissipation, so none is used.
+- **Open cavity** (§7.3, Tables 7–8, Fig. 20; laminar). At $Re=5000$ the
+  limit cycle of HERK(2,2)- and HERK(3,3)-VMS matches a refined-mesh
+  reference ($St=1.692$ for HERK(3,3) and the reference, 1.695 for
+  HERK(2,2)); VMS-Gen-$\alpha$(0.5) is non-monotone in $\Delta t$ and at
+  its smallest step over-estimates the fluctuation amplitude by about 3%
+  at two probes. The Hopf onset regressed from three supercritical
+  Reynolds numbers is $Re_c=4128$ with HERK(3,3)-VMS and 4110 with
+  VMS-Gen-$\alpha$(0.5), against 4130 from theory (cited).
+- **Cost** (§6, §7.1, Table 5, Figs. 8–9). The stage matrix factors into
+  one constant symmetric block matrix, assembled once, and diagonal
+  scalings in $\alpha_{ii}$ and $\Delta t_n$, so "the same constant matrix
+  problem is solved at every time step and every RK stage". HERK(3,3)-VMS
+  solves three linear systems per step against two Newton iterations of
+  VMS-Gen-$\alpha$(0.5), yet spends significantly less time in linear
+  solves, with matrix storage about 20% lower (45% with the Kronecker
+  structure); GMRES iterations stay at 108–110 for $Re=2500$ to 10 000
+  because the matrix does not depend on $Re$ (Table 8).
+
+The authors name the explicit treatment of convection and viscosity, more
+restrictive in stability than fully implicit or IMEX schemes, as the
+method's limitation (§8).
+
 ## Bubble-function VMS with fine-scale memory
 
 [Kang & Masud (2022)](/sources/kang-2022.md) (§3.4, Eqs. 49–59) use the
@@ -264,6 +403,14 @@ scales from residuals:
   requires $\tau_{\mathrm C}$ in $\mathrm{m^2/s}$, while the printed
   $\tau_{\mathrm C}=\boldsymbol u\cdot\boldsymbol G\boldsymbol u/\mathrm{tr}\,\boldsymbol G$
   has units $\mathrm{m^2/s^2}$ *(compiler check, not in the sources)*.
+- **Sun et al. (2026): test cases and printed slips.** The turbulent test
+  case is the Taylor–Green vortex at $Re=1600$; the cavity is laminar
+  (§7.3). The abstract's improved dissipation and dispersion and
+  larger stability region hold for convection-dominated regimes, as §5.2.1
+  and §5.3 qualify. Eq. (3.5) sums over $i$ with stage arguments indexed
+  $j$; the same family is named "RK($s,p$)-VMS" (§5), "HERK($s,p$)-VMS"
+  (§7) and once "RK-VMS(3, 3)" (p. 17). The supplementary material
+  (stencils, further spectra) is not in the file read.
 - **Classical comparison.** No near-wall damping is mentioned for the
   Smagorinsky run of Chen et al. (§4.1), whose "very high dissipation in the
   viscous sublayer ($y^+<5$)" the authors give as the explanation of its
@@ -282,3 +429,4 @@ scales from residuals:
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4, Fig. 4.
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §5.3.1, Fig. 15.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §1 and reference list.
+- [Sun et al. (2026)](/sources/sun-2026.md) — §1; §3.1–3.2, App. A (HERK schemes); §4, Eqs. (4.4)–(4.18) (stage operator, exact fine-scale projection, bubble model, stability norm); §5, Eq. (5.5), Tables 2–3, Figs. 1–5 (Fourier analysis); §6, §7.1, Table 5, Figs. 6–9; §7.2, Table 6, Figs. 10–16; §7.3, Tables 7–8, Fig. 20; §8.

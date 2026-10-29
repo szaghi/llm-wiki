@@ -5,7 +5,7 @@ description: "PyFR is the open-source Python framework for high-order flux recon
 status: established
 aliases: [PyFR v2.0.3, PyFR v0.1.0]
 tags: [software, flux-reconstruction, gpu, implicit-les, numerical-dissipation]
-timestamp: 2026-10-28T17:00:00Z
+timestamp: 2026-10-28T17:51:00Z
 ---
 
 # PyFR
@@ -212,6 +212,12 @@ cited).
   capsules, wind-turbine wakes with an actuator line (as a cited title; see
   [actuator line models](/methods/actuator-line-model.md)) and
   [channel flow](/benchmarks/turbulent-channel-flow.md).
+- **An SD7003 reference, as cited** by
+  [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md), §5.2: the
+  PyFR implicit LES of Vermeire et al. is one of the four references
+  ($C_p$, $C_f$, velocity profiles) against which they judge their
+  unstructured CWENOZ implicit LES of the
+  [SD7003 airfoil](/benchmarks/sd7003-airfoil.md) at $Re_c=60{,}000$.
 - **Cost against finite volumes**, as relayed by
   [Saini et al. (2023)](/sources/saini-2023.md), §1, from Vermeire et al.
   (2017): fifth-order PyFR more accurate than a commercial finite-volume
@@ -251,3 +257,4 @@ cited).
 - [Saini et al. (2023)](/sources/saini-2023.md) — §1 (fifth-order PyFR against a commercial finite-volume code, as cited).
 - [Wang (2024)](/sources/wang-2024-b.md) — arXiv v2: §4.4.3 (entropy filter not completely parameter-free); comparison with a switched modal filter in its FR code.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — reference data of the supersonic Taylor–Green comparison, as used by Witherden et al.
+- [Tsoutsanis & Nogueira (2025)](/sources/tsoutsanis-2025.md) — §5.2, ref. [111] (PyFR SD7003 implicit LES of Vermeire et al. as a reference, cited).
