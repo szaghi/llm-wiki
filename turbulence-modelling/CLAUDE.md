@@ -113,7 +113,7 @@ bundle's notation.
 
 ## Status
 
-**Chunk 16 staged 2026-10-29 — archive complete:** the last 7 papers;
+**Chunk 16 committed 2026-10-29 (318af05) — archive complete:** the last 7 papers;
 307 of 307 ingested, 191 concept pages plus the registry, 14270
 bibliography entries after the closing sweeps, the fourth whole-bundle deep
 lint done, one contradiction opened (thirteen open). Open human decisions
