@@ -104,7 +104,7 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 12 completed 2026-10-30 (night protocol, commit pending):** ten
+**Chunk 12 committed 2026-10-30 (d2d189f; rulings 089037e):** ten
 founding papers added by the human (van Leer 1979, Harten 1983, Harten et
 al. 1987, Shu & Osher 1988, Liu et al. 1994, Jiang & Shu 1996, Borges et
 al. 2008, Shu 2009, Zhang & Shu 2010, Fu et al. 2016); 214 of 217 ingested
