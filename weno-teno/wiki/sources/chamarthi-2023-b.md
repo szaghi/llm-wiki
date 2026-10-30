@@ -156,6 +156,7 @@ Chunk 5 (2026-10-22), cited further in chunks 6–12 (2026-10-23/30). This sourc
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
 * [Conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 * [Double Mach reflection](/benchmarks/double-mach-reflection.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Gradient-based reconstruction (MEG/MIG schemes)](/methods/gradient-based-reconstruction.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)
 * [Hybrid central-WENO schemes](/methods/hybrid-weno.md)

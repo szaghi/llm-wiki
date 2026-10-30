@@ -5,7 +5,7 @@ description: "ADER schemes advance a DG or finite-volume solution in one step: a
 status: established
 aliases: [ADER, ADER-DG, ADER-FV, ADER predictor–corrector, local space–time predictor, one-step ADER]
 tags: [dg, finite-volume, limiting, immersed-boundary, multiphase]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:44:00Z
 ---
 
 # ADER schemes
@@ -140,7 +140,7 @@ step, polynomials of degree $n_{\mathrm d}$ in each cell (page-local), and the s
 [generalized Riemann problem](/methods/generalized-riemann-problem.md) $\mathrm{GRP}_{n_{\mathrm d}}$
 at each interface. With the Toro–Titarev solver the interface state is a Taylor polynomial in
 time whose coefficients come from a classical Riemann problem and from linearized Riemann problems
-for the spatial derivatives, converted to time derivatives by the Cauchy–Kovalevskaya
+for the spatial derivatives, converted to time derivatives by the [Cauchy–Kovalevskaya](/methods/cauchy-kowalewski-procedure.md)
 procedure; the flux is its Gauss quadrature in time,
 $\hat f_{i+1/2}=\sum_q\mathsf w^t_qf\big(u_{\mathrm{GRP}}(t_q)\big)$ (Eqs. (16)–(17); $u_{\mathrm{GRP}}$
 page-local). The source average uses a cell-local space–time Taylor expansion of the

@@ -9,7 +9,7 @@ year: 2022
 venue: "Commun. Comput. Phys. 32:878-898"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2022_Crossref_Communications_in_Computational_Physics_Kanbar_Well-Balanced_Central_Scheme_for_the_System_of_MHD_Equations.pdf"
 tags: [mhd, well-balanced, central-scheme, finite-volume, tvd]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -76,7 +76,7 @@ $\theta_{\mathrm{MC}}$ the MC limiter parameter, $\Omega=-v_1B_2+v_2B_1$.
 
 # Printed slips
 
-- §2, $\Pi_{ij}=-\frac12B_iB_j$ for $i\ne j$ *(compiler check, not in the sources)*. The ideal-MHD momentum flux ($\mu_0=1$) is $\rho vv^\top+(p+\frac12\lvert B\rvert^2)I-BB^\top$, so the off-diagonal stress is $-B_iB_j$. The printed diagonal $\Pi_{ii}=p+\frac12(B_j^2+B_k^2-B_i^2)=p+\frac12\lvert B\rvert^2-B_i^2$ is correct. With $\Pi_{ij}=-B_iB_j$, the printed energy flux $Ev_1+v_1\Pi_{11}+v_2\Pi_{12}+v_3\Pi_{13}$ is the standard $(E+p+\frac12\lvert B\rvert^2)v_1-B_1(v\cdot B)$.
+- §2, $\Pi_{ij}=-\frac12B_iB_j$ for $i\ne j$ *(compiler check, not in the sources)*. The ideal-MHD momentum flux ($\mu_0=1$) is $\rho vv^\top+(p+\frac12\lvert B\rvert^2)I-BB^\top$, so the off-diagonal stress is $-B_iB_j$. The printed diagonal $\Pi_{ii}=p+\frac12(B_j^2+B_k^2-B_i^2)=p+\frac12\lvert B\rvert^2-B_i^2$ agrees with this flux. With $\Pi_{ij}=-B_iB_j$, the printed energy flux $Ev_1+v_1\Pi_{11}+v_2\Pi_{12}+v_3\Pi_{13}$ is the standard $(E+p+\frac12\lvert B\rvert^2)v_1-B_1(v\cdot B)$.
 - Eq. (1), last three entries of $F$ printed as $(0,\Lambda_2,-\Lambda_3)$ with $\Lambda=v\times B$ *(compiler check, not in the sources)*. The $x$-flux of $B_k$ in the induction equation is $v_1B_k-B_1v_k$, which gives $(0,\Lambda_3,-\Lambda_2)$. The printed $G$ entries $(-\Lambda_3,0,\Lambda_1)$ agree with the same derivation, and so does the 2D induction equation of §4 with $\Omega=-\Lambda_3$.
 - §5.3, MHD vortex *(compiler check, not in the sources)*. The printed field $B_1=-m_pe^{(1-r^2)/2}y$, $B_2=-m_pe^{(1-r^2)/2}x$ has $\nabla\cdot B=2m_pxye^{(1-r^2)/2}\ne0$. The printed pressure $p=1+\frac{m_p^2}2(1-r^2)-\frac{\kappa_p^2}2$ has no factor $e^{1-r^2}$: with $m_p=\kappa_p=1$ it is $1-r^2/2$, negative for $r>\sqrt2$, that is on most of $[-5,5]^2$. For $\rho=1$, $v=\kappa_pe^{(1-r^2)/2}(-y,x)$ and $B=m_pe^{(1-r^2)/2}(-y,x)$, the steady momentum balance $(v\cdot\nabla)v+\nabla(p+\frac12\lvert B\rvert^2)-(B\cdot\nabla)B=0$ gives $\nabla(p+\frac12\lvert B\rvert^2)=(\kappa_p^2-m_p^2)e^{1-r^2}(x,y)$. Hence $p=1+e^{1-r^2}\big(\frac{m_p^2}2(1-r^2)-\frac{\kappa_p^2}2\big)$, and the state is an equilibrium (with $v\times B=0$, so $B$ is also steady). The printed data are not.
 - §5.3: "$t=100\frac{2\pi}{\sqrt e\kappa_p}\approx100\frac{3.14}{\kappa_p}$", but $2\pi/\sqrt e\approx3.81$. The vortex is said to be "advected … with a velocity $(u_0,v_0)$", but $u_0=v_0=0$.

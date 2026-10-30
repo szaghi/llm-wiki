@@ -9,7 +9,7 @@ year: 2024
 venue: "Commun. Appl. Math. Comput. 6:963-991"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Communications_on_Applied_Mathematics_and_Computation_Abgrall_An_Arbitrarily_High_Order_and_Asymptotic_Preserving_Kinetic.pdf"
 tags: [asymptotic-preserving, finite-difference, limiting, stiff-source, positivity]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -94,7 +94,7 @@ weight regularization $\epsilon$).
 
 *(compiler check, not in the sources: every computation in the items below was redone symbolically or numerically from the printed formulas.)*
 
-- §4, symbol maxima: "$g^{(1)}(\vartheta)=1-e^{i\vartheta}$" with "$\max\lvert g^{(1)}\rvert=4$", and "$\max\lvert g^{(2)}\rvert=2$". For $\delta^x_1\mathsf f=\mathsf f_i-\mathsf f_{i-1}$ the symbol is $1-e^{-i\vartheta}$ with maximum 2, while $\lvert g^{(2)}(\pi)\rvert=4$: the two maxima are swapped. The printed $\max\lvert g^{(3)}\rvert=\frac32$, $\max\lvert g^{(4)}\rvert=\frac83$ and the three real-part formulas are correct.
+- §4, symbol maxima: "$g^{(1)}(\vartheta)=1-e^{i\vartheta}$" with "$\max\lvert g^{(1)}\rvert=4$", and "$\max\lvert g^{(2)}\rvert=2$". For $\delta^x_1\mathsf f=\mathsf f_i-\mathsf f_{i-1}$ the symbol is $1-e^{-i\vartheta}$ with maximum 2, while $\lvert g^{(2)}(\pi)\rvert=4$: the two maxima are swapped. The printed $\max\lvert g^{(3)}\rvert=\frac32$, $\max\lvert g^{(4)}\rvert=\frac83$ and the three real-part formulas agree with the symbols.
 - §4: "we only consider the case $r=1$, $s=2$", while the symbol and §3.1 use $r=1$, $s=3$; "$g^{(4)}(\theta-1)$" and "$g_1=g^{(4)}(\theta)$" should read $g^{(4)}(\vartheta)$ and $g^{(4)}(\vartheta_1)$.
 - §4 (iii): $G_4(g)=\frac1{2\theta}(24-g^2,\ 24-12g+2g^2)^\top$, $\theta=24+12g+2g^2$. Solving the printed $2\times2$ system gives $\frac1\theta(\dots)$; the printed factor gives $G_4(0)=(\frac12,\frac12)$ instead of $(1,1)$.
 - §4: "$\lvert g\rvert\le\big(\frac{337+\sqrt{104353}}{1152}\big)^{-1}\approx1.745356304$". The bracket is the largest eigenvalue of $M^\top M$, $\approx0.572949$, so $\lVert M\rVert_2\approx0.756934$ and the condition $\lvert g\rvert\lVert M\rVert_2<1$ is $\lvert g\rvert<(\dots)^{-1/2}\approx1.321119$; the printed bound is $1/\lVert M\rVert_2^2$. (The spectral radius of $M$ is $1/(2\sqrt3)$, so the norm condition is only sufficient.)

@@ -5,7 +5,7 @@ description: "The liquid–vapour Riemann problem with phase change has four wav
 status: established
 aliases: [two-phase Riemann problem with phase change, four-wave HLL-type phase-change solver, phase-transition Riemann solver, Hertz–Knudsen closure, evaporation and condensation Riemann problem]
 tags: [riemann-solver, multiphase, interface-capturing, numerical-flux, phase-change]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Riemann solvers with phase change
@@ -89,8 +89,8 @@ and Udaykumar: once the cut-cell input states approach the exact adjacent states
 problem between them reproduces them, so a star-based $\dot m$ stays consistent, whereas
 $f_{\mathrm{HK}}(u^0_{\mathrm L},u^0_{\mathrm R})\neq f_{\mathrm{HK}}(u^*_{\mathrm{liq}},u^*_{\mathrm{vap}})$; the
 argument is claimed for any phase-change model, and the authors state that this has not been
-reported before. On an n-dodecane evaporation tube the left–right choice converges to an
-incorrect solution (Fig. 4).
+reported before. On an n-dodecane evaporation tube they show the left–right choice converging to
+a solution away from the exact one, and the star-based choice to the exact solution (Fig. 4).
 
 ## Interfacial flux and conservation
 

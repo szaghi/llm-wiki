@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS, WENO-LF-5, WENO-RF-5, WENO-Roe-5, weighted ENO]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:44:00Z
 ---
 
 # WENO-JS reconstruction
@@ -165,7 +165,7 @@ Shu (2009a, §2.1, Eqs. (2.1)–(2.5)) prints them with the candidates
 $\tfrac38u_{i-2}-\tfrac54u_{i-1}+\tfrac{15}8u_i$, $-\tfrac18u_{i-1}+\tfrac34u_i+\tfrac38u_{i+1}$,
 $\tfrac38u_i+\tfrac34u_{i+1}-\tfrac18u_{i+2}$ and the five-point interpolant
 $\tfrac1{128}(3,-20,90,60,-5)$, together with the point-value form of the indicators (Eq. (2.9)). The
-same review prints sixth-order WENO *integration* weights $(-\tfrac{17}{240},\tfrac{137}{120},-\tfrac{17}{240})$,
+same review prints sixth-order WENO *integration* weights $(-\tfrac{17}{240},\tfrac{137}{120},-\tfrac{17}{240})$ ([negative linear weights](/methods/negative-linear-weights.md)),
 an example of negative linear weights, which make the combination non-convex and need the
 splitting technique of Shi, Hu & Shu or a lower target order (§2.3.3–2.3.4).
 

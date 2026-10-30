@@ -9,7 +9,7 @@ year: 1979
 venue: "J. Comput. Phys. 32:101-136"
 local_file: "/home/stefano/papers/mosaic/weno-teno/1979_Crossref_Journal_of_Computational_Physics_van_Towards_the_ultimate_conservative_difference_scheme_V_A_seco.pdf"
 tags: [finite-volume, reconstruction, limiting, muscl, riemann-solver, euler-equations]
-timestamp: 2026-10-30T07:55:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -69,7 +69,7 @@ bibliography also holds the 1997 J. Comput. Phys. 135 reprint of this paper
 Registry notation: cell $I_i$ with average $\bar u_i$ (source slab
 $(\xi_i,\xi_{i+1})$, index $i+1/2$); velocity $v$ (source $u$). Page-local:
 mass coordinate $\zeta$ (source $\xi$), specific volume $V=1/\rho$, stored
-undivided slope $\mathsf s_i$ of cell $I_i$ (source $\bar\Delta_{i+1/2}Q$),
+undivided slope $\Delta_i$ of cell $I_i$ (source $\bar\Delta_{i+1/2}Q$),
 Lagrangean sound speed $C_{\mathrm L}=\rho c$ (source $C$), Lagrangean wave speed
 $W_{\mathrm L}$ (source $W$).
 
@@ -80,7 +80,7 @@ $W_{\mathrm L}$ (source $W$).
 5. In MUSCL the pressure iteration is invoked only if $p^{*(1)}$ differs by more than 1% from the adjacent interface pressures, and continued until successive iterates differ by less than 1.5%; in the Sod run the extra iterations took 2–3% of the Lagrangean step's computing time (§2.3, p. 110). **Shown**
 6. Eqs. (57), (58), (64), (65) separate signals from left and right; the slab averages of the Riemann invariants are then updated by a second-order upstream-centred formula "resembling Fromm's [11] scheme" (§2.3, p. 111). **Stated**
 7. The Lagrangean time step obeys $\Delta t\le\Delta x/\bar c$ (67), or $\gamma(\gamma-1)\Delta t^2\le\Delta x^2/\bar e$ (68γ), which avoids a square root (§2.4). **Stated**
-8. The composite (Lagrange plus remap) scheme needs $\Delta t\le\min(\Delta x/\lvert\bar v\rvert,\Delta x/\bar c)+O(\Delta\zeta^2,\Delta\zeta\Delta t)$ (99), less stringent than the Eulerian $\Delta t\le\Delta x/(\lvert\bar v\rvert+\bar c)$ (100), plus the anti-tangling condition $-\mathsf s_i[v]\,\Delta t\le\Delta x+O(\Delta\zeta\Delta t^2)$ (100.5), which the monotonicity algorithms can enforce by limiting the velocity slope (§3.2, p. 117). **Stated**
+8. The composite (Lagrange plus remap) scheme needs $\Delta t\le\min(\Delta x/\lvert\bar v\rvert,\Delta x/\bar c)+O(\Delta\zeta^2,\Delta\zeta\Delta t)$ (99), less stringent than the Eulerian $\Delta t\le\Delta x/(\lvert\bar v\rvert+\bar c)$ (100), plus the anti-tangling condition $-\Delta_i[v]\,\Delta t\le\Delta x+O(\Delta\zeta\Delta t^2)$ (100.5), which the monotonicity algorithms can enforce by limiting the velocity slope (§3.2, p. 117). **Stated**
 9. The remap costs about 0.55 of the Lagrangean step in the 1D shock tube and up to 0.75 in 2D (§3.2, p. 117). **Shown**
 10. Limiter (101) prevents the onset of oscillations in a monotone sequence of slab averages and guarantees positivity of the distributions; it cannot fully guarantee monotonicity for systems, "especially for the largest allowed time steps" (§3.3, pp. 117–118). **Stated**
 11. The factors 2 in (101) may be reduced, "however, not beyond $1+O(\Delta Q)$, lest the scheme lose its second-order accuracy" ($\Delta Q$ the variation of the limited quantity); they may be made a decreasing function of the local Lagrangean Courant number; with factors 0 the scheme reduces to Godunov's (§3.3, p. 118). **Stated**
@@ -102,9 +102,9 @@ $W_{\mathrm L}$ (source $W$).
 The limiters as printed, in registry indexing (difference of averages
 $\bar u_i-\bar u_{i-1}$ for the source's $\Delta_i\bar Q$):
 
-- (101): $\mathsf s_i^{\mathrm{mono}}=\min\big(2\lvert\bar u_i-\bar u_{i-1}\rvert,\lvert\mathsf s_i\rvert,2\lvert\bar u_{i+1}-\bar u_i\rvert\big)\,\mathrm{sgn}\,\mathsf s_i$ if $\bar u_i-\bar u_{i-1}$, $\bar u_{i+1}-\bar u_i$ and $\mathsf s_i$ have one sign, $0$ otherwise. It bounds a stored slope, not a central difference.
-- (102): the same with the factors $2/\varphi$ and $2/(1-\varphi)$, $\varphi$ the mass fraction of the Lagrangean slab that crossed the Eulerian boundary (103).
-- (B2): $\mathsf s_i=2ab/(a+b)$ if $a=\bar u_i-\bar u_{i-1}$ and $b=\bar u_{i+1}-\bar u_i$ have one sign, $0$ otherwise, credited to paper IV Eq. (67) and given no name. *(Compiler check, not in the sources: for $r=a/b>0$, $2ab/(a+b)=b\cdot2r/(1+r)=b\,\psi(r)$ with $\psi(r)=(r+\lvert r\rvert)/(1+\lvert r\rvert)$.)*
+- (101): $\Delta_i^{\mathrm{mono}}=\min\big(2\lvert\bar u_i-\bar u_{i-1}\rvert,\lvert\Delta_i\rvert,2\lvert\bar u_{i+1}-\bar u_i\rvert\big)\,\mathrm{sgn}\,\Delta_i$ if $\bar u_i-\bar u_{i-1}$, $\bar u_{i+1}-\bar u_i$ and $\Delta_i$ have one sign, $0$ otherwise. It bounds a stored slope, not a central difference.
+- (102): the same with the factors $2/\varphi_{\mathrm{vL}}$ and $2/(1-\varphi_{\mathrm{vL}})$, $\varphi_{\mathrm{vL}}$ the mass fraction of the Lagrangean slab that crossed the Eulerian boundary (103).
+- (B2): $\Delta_i=2ab/(a+b)$ if $a=\bar u_i-\bar u_{i-1}$ and $b=\bar u_{i+1}-\bar u_i$ have one sign, $0$ otherwise, credited to paper IV Eq. (67) and given no name. *(Compiler check, not in the sources: for $r=a/b>0$, $2ab/(a+b)=b\cdot2r/(1+r)=b\,\psi(r)$ with $\psi(r)=(r+\lvert r\rvert)/(1+\lvert r\rvert)$.)*
 
 Test setups as printed. Sod: $[0,1]$, 100 cells, $\gamma=1.4$, $(\rho,p)=(1,1)$
 left and $(0.125,0.1)$ right, $v=0$, Courant number 0.9, output after 34 steps at
@@ -145,8 +145,8 @@ step starts $12$ cells $=0.6H$ from the inlet and the tunnel is $60$ cells $=3H$
 | $Q^*$ | $u^*$ (local) | resolved state at an interface |
 | $\langle Q\rangle_i$ | time average over the step (local) | |
 | $\Delta_i\bar Q=\bar Q_{i+1/2}-\bar Q_{i-1/2}$ | $\bar u_i-\bar u_{i-1}$ | |
-| $\bar\Delta_{i+1/2}Q$ | $\mathsf s_i$ (local) | stored undivided slope |
-| $\varphi_{i+1}$, $f_{i+1}$ | $\varphi$, $f_{\mathrm v}$ (local) | mass and volume fraction crossing an Eulerian boundary; **collision** of $f$ with the flux |
+| $\bar\Delta_{i+1/2}Q$ | $\Delta_i$ (local) | stored undivided slope, as on the [TVD](/definitions/total-variation-diminishing.md) and [MUSCL–Hancock](/methods/muscl-hancock.md) pages; the source's own $\Delta_i\bar Q$ (row above) is the difference of averages |
+| $\varphi_{i+1}$, $f_{i+1}$ | $\varphi_{\mathrm{vL}}$, $f_{\mathrm v}$ (local) | mass and volume fraction crossing an Eulerian boundary; **collision** of $\varphi$ with the GQL $\varphi_i$ and of $f$ with the flux |
 | $\sigma$ | $\nu$ | local Lagrangean Courant number |
 | $J^\pm$ | Riemann invariants (local) | |
 | $F$, $G$ | components of $S(u)$ | momentum and internal-energy sources |
@@ -171,7 +171,9 @@ unparseable.
 Chunk 12 (2026-10-30). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
+* [Cauchy–Kowalewski procedure](/methods/cauchy-kowalewski-procedure.md)
 * [Conservative remapping for ALE schemes](/methods/conservative-remapping.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Generalized Riemann problem (GRP) solvers](/methods/generalized-riemann-problem.md)
 * [Godunov scheme](/methods/godunov-scheme.md)
 * [Gradient-based reconstruction (MEG/MIG schemes)](/methods/gradient-based-reconstruction.md)

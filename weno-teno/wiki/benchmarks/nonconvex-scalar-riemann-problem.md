@@ -5,7 +5,7 @@ description: "Scalar Riemann problems for the quartic flux (u²−1)(u²−4)/4,
 status: established
 aliases: [nonconvex Riemann problem, nonconvex flux test, quartic-flux Riemann problem, nonconvex scalar Riemann problems]
 tags: [benchmark, riemann-solver, numerical-flux, weno]
-timestamp: 2026-10-30T08:12:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Riemann problems with nonconvex scalar fluxes
@@ -57,11 +57,11 @@ the outer edges of the fans *(compiler check, not in the sources)*.
 
 | Source | Scheme | Grid | Time | Reference |
 |---|---|---|---|---|
-| [Harten et al. (1987a)](/sources/harten-1987.md) §7 A2, Eqs. (7.7)–(7.9) | [ENO](/methods/eno-reconstruction.md) with reconstruction by deconvolution (RD), $r=1,2,4$, CFL 0.8; exact Riemann flux, or Roe flux with the crude entropy correction $\epsilon_{\mathrm H}=0.1\,\Delta x/\Delta t$ (Eq. (7.8b)) | $J=40$ cells on $[-1,1]$ (Eq. (7.4)); case (i) also $J=80$ | case (i) 80 steps (160 on $J=80$); case (ii) 20 steps | exact solution (7.9) |
+| [Harten et al. (1987a)](/sources/harten-1987.md) §7 A2, Eqs. (7.7)–(7.9) | [ENO](/methods/eno-reconstruction.md) with reconstruction by deconvolution (RD), $r=1,2,4$, CFL 0.8; exact Riemann flux, or Roe flux with the crude entropy correction $\epsilon_{\mathrm R}=0.1\,\Delta x/\Delta t$ (Eq. (7.8b)) | $J=40$ cells on $[-1,1]$ (Eq. (7.4)); case (i) also $J=80$ | case (i) 80 steps (160 on $J=80$); case (ii) 20 steps | exact solution (7.9) |
 | [Shu & Osher (1988)](/sources/shu-1988.md) Ex. 4, Eq. (4.4) | finite-difference ENO, 3-3-LF-ENO and 4-4-LF-ENO (third- and fourth-order Runge–Kutta and space, [Lax–Friedrichs](/methods/lax-friedrichs-flux.md) building block) | $\Delta x=1/10,1/20,1/40$ | not printed | exact solution; data "See [6]" (Harten et al.) |
 | [Liu et al. (1994)](/sources/liu-1994.md) Example 3(a) | cell-average WENO, $r=3$ | $h=0.025$ (80 cells) on $[-1,1]$ | case (i) $t=1$, $\Delta t/\Delta x=0.3$; case (ii) $t=0.04$, $\Delta t/\Delta x=0.04$ | Lax–Friedrichs on a very fine grid |
 
-Here $\epsilon_{\mathrm H}$ is page-local (Harten et al.'s $\epsilon$, the
+Here $\epsilon_{\mathrm R}$ is page-local (Harten et al.'s $\epsilon$, as on the [Roe solver](/methods/roe-riemann-solver.md) page; the
 width of the viscous fan added to the Roe flux), printed $0.1/\lambda$
 with their mesh ratio $\lambda=\Delta t/\Delta x$. Shu & Osher's figures span
 $x\in[-1,1]$; the report prints neither final times nor boundary
@@ -77,7 +77,7 @@ first-order run showing the "dog-leg" typical of Godunov's scheme
 (Fig. 7).
 
 **A crude entropy correction and the order.** With the Roe flux and
-the correction $\epsilon_{\mathrm H}=0.1\,\Delta x/\Delta t$, a fan much narrower
+the correction $\epsilon_{\mathrm R}=0.1\,\Delta x/\Delta t$, a fan much narrower
 than the exact initial fan, the case (i) solution develops the correct
 structure "but not at the correct rate": the computed shocks lag the exact positions by 8,
 3 and 1 cells for $r=1$, 2 and 4. On the twice finer mesh the lag in

@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 473:111718"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Chertock_Local_characteristic_decomposition_based_central-upwind_sche.pdf"
 tags: [central-scheme, characteristic, numerical-dissipation, finite-volume, euler-equations]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -97,7 +97,7 @@ concept pages.
 
 # Printed slips
 
-- Proof of Lemma 3.1, (3.10)–(3.11), p. 7 *(compiler check, not in the sources)*: by (3.8), in the linear case $\mathcal M_l=-\lambda_l^-/(\lambda_l^+-\lambda_l^-)$ is $0$ for $\lambda_l>0$ and $1$ for $\lambda_l<0$, so $\mathcal M=\mathrm{diag}\big(-\min\{\mathrm{sign}\,\lambda_l,0\}\big)$. (3.10) prints $\mathrm{diag}\big(\min\{\mathrm{sign}\,\lambda_l,0\}\big)$, the opposite sign, and (3.11) compensates with a leading minus. Then the printed identity "$\Lambda^-=M\Lambda=\mathrm{diag}(\min\{\lambda_l,0\})$" is false: $\min\{\mathrm{sign}\,\lambda,0\}\,\lambda=-\min\{\lambda,0\}$, so the printed $M$ gives $M\Lambda=-\Lambda^-$. The final result (3.12) is correct.
+- Proof of Lemma 3.1, (3.10)–(3.11), p. 7 *(compiler check, not in the sources)*: by (3.8), in the linear case $\mathcal M_l=-\lambda_l^-/(\lambda_l^+-\lambda_l^-)$ is $0$ for $\lambda_l>0$ and $1$ for $\lambda_l<0$, so $\mathcal M=\mathrm{diag}\big(-\min\{\mathrm{sign}\,\lambda_l,0\}\big)$. (3.10) prints $\mathrm{diag}\big(\min\{\mathrm{sign}\,\lambda_l,0\}\big)$, the opposite sign, and (3.11) compensates with a leading minus. Then the printed identity "$\Lambda^-=M\Lambda=\mathrm{diag}(\min\{\lambda_l,0\})$" is false: $\min\{\mathrm{sign}\,\lambda,0\}\,\lambda=-\min\{\lambda,0\}$, so the printed $M$ gives $M\Lambda=-\Lambda^-$. The final result (3.12) agrees with this.
 - §4, p. 8: the $y$-direction diffusion $D^{\rm LCD}_{j,k+1/2}$ is printed with $-RM^{\rm LCD}R^{-1}[\dots]$, while (3.7) and the $x$-direction term have $+$. $M^{\rm LCD}$ is defined in the same way in both directions, so the sign should be $+$.
 - Appendix B, last formula, p. 22: "$U^{\rm E,W}_{j+1/2}=R_{j+1/2,k}\Gamma^{\rm E,W}_{j+1/2,k}$" has mismatched indices; it should read $U^{\rm E}_{j,k}=R_{j+1/2,k}\Gamma^{\rm E}_{j,k}$ and $U^{\rm W}_{j+1,k}=R_{j+1/2,k}\Gamma^{\rm W}_{j+1,k}$.
 - Appendix A, p. 19: the $(3,1)$ entry of the exact Jacobian $A(U)$ carries a hat, "$-\gamma u\hat E/\rho+(\gamma-1)u^3$", although no averaged quantity belongs in it.

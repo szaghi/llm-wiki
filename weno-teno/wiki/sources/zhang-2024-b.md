@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 502:112793"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Zhang_A_finite_difference_scale-adaptive_TENO_scheme_for_turbulenc.pdf"
 tags: [teno, low-dissipation, spectral-analysis, finite-difference, turbulence]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -91,7 +91,7 @@ $c^{\mathrm s}_1$ (page-local).
 # Printed slips
 
 - §3.2: "The 6th-order dispersion scheme should be satisfied that $G_1=0$, $G_2=0$, and $G_3=0$" (likewise for the fourth and second order); §3.1 states $G_1=1$. *(Compiler check, not in the sources: the printed coefficients satisfy $G_1=1$, $2\cdot\frac34-4\cdot\frac3{20}+6\cdot\frac1{60}=1$.)*
-- Eq. (21): the dissipation coefficient of $\Delta x\,f''$ is printed $\mathcal G_1=b_1+4b_2+6b_3$. *(Compiler check, not in the sources: $\sum_kb_k[f(x+k\Delta x)+f(x-k\Delta x)]$ contributes $\sum_kk^2b_k=b_1+4b_2+9b_3$; the printed $\mathcal G_2$ and $\mathcal G_3$ follow the same pattern, $\frac2{4!}\sum k^4b_k$ and $\frac2{6!}\sum k^6b_k$, and are correct.)*
+- Eq. (21): the dissipation coefficient of $\Delta x\,f''$ is printed $\mathcal G_1=b_1+4b_2+6b_3$. *(Compiler check, not in the sources: $\sum_kb_k[f(x+k\Delta x)+f(x-k\Delta x)]$ contributes $\sum_kk^2b_k=b_1+4b_2+9b_3$; the printed $\mathcal G_2$ and $\mathcal G_3$ follow the same pattern, $\frac2{4!}\sum k^4b_k$ and $\frac2{6!}\sum k^6b_k$, and agree with this sum.)*
 - Eq. (2): $\frac{du_i}{dt}=-\frac{\partial f}{\partial x}\big|_{x_i}=\frac{h_{i+1/2}-h_{i-1/2}}{\Delta x}$, the right-hand side lacking the minus sign of Eq. (4); §2.1 says "Equation (4) can be expressed in the following approximate form" to introduce Eq. (4) itself.
 - Eq. (11): the six-point indicator switches its index from $i$ to $j$, and two lines end "$+1325006f_{j+2}$" and "$-2792660f_{j+2}$" inside brackets that already contain $f_{j+2}$ *(compiler check, not in the sources: the pattern of the other lines requires $f_{j+3}$ there)*; §2.4 refers to "Eq. (13)" for the indicators, which are Eq. (11).
 - Eq. (23): $f^{(2)}$ and $f^{(4)}$ of $A\sin(\omega x+\theta)$ are printed with $\cos$. *(Compiler check, not in the sources: both are multiples of $\sin(\omega x+\theta)$; the ratio $\omega$ is unaffected.)*

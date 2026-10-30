@@ -5,7 +5,7 @@ description: "ENO schemes build, in each cell or at each interface, one interpol
 status: established
 aliases: [ENO, ENO scheme, essentially non-oscillatory scheme, adaptive-stencil reconstruction, Harten–Engquist–Osher–Chakravarthy ENO, flux ENO, Shu–Osher ENO]
 tags: [reconstruction, finite-volume, finite-difference, characteristic, limiting]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:44:00Z
 ---
 
 # ENO reconstruction (essentially non-oscillatory schemes)
@@ -72,9 +72,9 @@ region of smoothness" (Harten et al. 1987a, §2, p. 240).
 
 ## Cell-average reconstructions RP and RD
 
-- **Primitive function (RP).** With the primitive $W(x)=\int^xu\,dx$ (page-local), known exactly at the
-  interfaces as partial sums $W(x_{i+1/2})=\sum_{l\le i}\Delta x\,\bar u_l$, the reconstruction is
-  $R=\frac{d}{dx}H_r(x;W)$, the stencil chosen by the rule above on the point values of $W$
+- **Primitive function (RP).** With the primitive $\mathfrak W(x)=\int^xu\,dx$ (page-local; the sources' $W$, renamed to keep the Lorentz factor $W$ free), known exactly at the
+  interfaces as partial sums $\mathfrak W(x_{i+1/2})=\sum_{l\le i}\Delta x\,\bar u_l$, the reconstruction is
+  $R=\frac{d}{dx}H_r(x;\mathfrak W)$, the stencil chosen by the rule above on the point values of $\mathfrak W$
   (Harten et al. 1987a, Eqs. (3.6)–(3.10)). Conservation is exact and the mesh need not be uniform;
   $\frac{d^l}{dx^l}R=\frac{d^l}{dx^l}u+O(\Delta x^{r-l})$ (Eq. (3.9)). The same primitive-function
   candidates are the building blocks of finite-volume WENO (Liu et al. 1994, §3.2; Shu 2009a, §2.2).
@@ -100,7 +100,7 @@ the error is $O(\Delta x^{r-1})$ (§7 C3).
 
 Harten et al. (1987a, §4, Eqs. (4.11)–(4.14)) do not solve the generalized Riemann problem exactly:
 each side's polynomial is extended to a local space–time Taylor series whose time derivatives come
-from repeated differentiation of the PDE (a Cauchy–Kowalewski procedure, the predictor idea that
+from repeated differentiation of the PDE (a [Cauchy–Kowalewski procedure](/methods/cauchy-kowalewski-procedure.md), the predictor idea that
 [ADER schemes](/methods/ader-scheme.md) also use), and the interface flux is a Gaussian-type
 quadrature in time of a Riemann flux evaluated on the two expansions. They argue that the Riemann
 solver acts only as a "pointer" to the side whose expansion is valid, so the exact flux can be

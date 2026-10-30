@@ -197,6 +197,7 @@ Chunk 12 (2026-10-30). This source is cited on:
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Mach 3 forward-facing step](/benchmarks/forward-facing-step.md)
 * [Monotone schemes and monotone numerical fluxes](/definitions/monotone-scheme.md)
+* [Quasi-one-dimensional nozzle flow](/benchmarks/quasi-one-dimensional-nozzle-flow.md)
 * [Roe approximate Riemann solver](/methods/roe-riemann-solver.md)
 * [Shock–vortex interaction](/benchmarks/shock-vortex-interaction.md)
 * [Shu–Osher shock–entropy-wave problem](/benchmarks/shu-osher-problem.md)

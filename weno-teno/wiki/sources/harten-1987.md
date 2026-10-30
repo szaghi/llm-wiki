@@ -9,7 +9,7 @@ year: 1987
 venue: "J. Comput. Phys. 71:231-303"
 local_file: "/home/stefano/papers/mosaic/weno-teno/1987_Crossref_Journal_of_Computational_Physics_Harten_Uniformly_high_order_accurate_essentially_non-oscillatory_sc.pdf"
 tags: [finite-volume, reconstruction, eno-property, characteristic, riemann-solver, very-high-order]
-timestamp: 2026-10-30T07:58:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -167,7 +167,7 @@ reflecting walls by ghost states (7.12), output $t=0.010$–$0.038$.
 | $R(x;\bar w)$, $\mathbf R$ | $\mathcal R(x;\bar u)$ (local) | **collision** with the right-eigenvector matrix $R$ |
 | $H_m(x;w)$, $q_{m,j+1/2}$, $i_m(j)$ | $\mathcal H_m$ (local), interpolant, stencil left index | **collision** with the enthalpy $H$ |
 | $w[x_i,\dots,x_{i+k}]$ | divided difference (local) | not undivided ($\Delta^mf_i$ of §10) |
-| $W(x)$ | primitive function (local) | **collision** with the Lorentz factor $W$ |
+| $W(x)$ | $\mathfrak W(x)$, primitive function (local) | renamed because of the **collision** with the Lorentz factor $W$ |
 | $\alpha_k$ (§3); $\alpha_k$, $\beta_k$ (§4) | deconvolution coefficients; quadrature weights and nodes (local) | **collision** with the weights $\alpha_k$ and the indicators $\beta_k$ |
 | $C$, $D_{k,j}$, $\bar D_{k,j}$ | deconvolution matrix, scaled derivatives (local) | |
 | $M(x,y)$ | $\operatorname{minmod}(x,y)$ | **collision** with the mass matrix $M$ |
@@ -207,10 +207,12 @@ Chunk 12 (2026-10-30). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)
+* [Cauchy–Kowalewski procedure](/methods/cauchy-kowalewski-procedure.md)
 * [Cell-average to point-value conversion](/operators/cell-average-point-value-conversion.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
 * [ENO property](/definitions/eno-property.md)
 * [ENO reconstruction (essentially non-oscillatory schemes)](/methods/eno-reconstruction.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Generalized Riemann problem (GRP) solvers](/methods/generalized-riemann-problem.md)
 * [Godunov scheme](/methods/godunov-scheme.md)
 * [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)

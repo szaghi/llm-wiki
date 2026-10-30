@@ -5,7 +5,7 @@ description: "Smooth exact equilibrium vortices of ideal and relativistic MHD, i
 status: established
 aliases: [MHD vortex, magnetized vortex, iso-density vortex, iso-enthalpy vortex, near-vacuum magnetized vortex, Balsara vortex]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Magnetized (MHD) vortex
@@ -62,7 +62,7 @@ defined. *(Compiler check, not in the sources.)* With $k_{\mathrm v}=\mu$ and $\
 the velocity equals the field, so the state is stationary iff
 $p+\tfrac12\lvert B\rvert^2$ is constant; this holds when the last term is
 $-\tfrac12k_{\mathrm v}^2e^{(1-R^2)}$ and fails with the printed exponent
-$e^{\frac12(1-R^2)}$; the magnetic term is correct as printed. The run
+$e^{\frac12(1-R^2)}$, the magnetic term kept as printed. The run
 ends at $t=1$ with a fixed $\Delta t=0.01$, error in $L_2$ against the
 initial state (Eq. (65)). In §4.1.3 the same vortex, centred at the
 origin on the periodic $[-10,10]^2$ with $200^2$ cells, is run to

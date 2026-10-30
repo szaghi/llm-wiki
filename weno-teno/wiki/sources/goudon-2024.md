@@ -9,7 +9,7 @@ year: 2024
 venue: "ESAIM Math. Model. Numer. Anal. 58:1263-1299"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_ESAIM_Mathematical_Modelling_and_Numerical_Analysis_Goudon_An_explicit_well-balanced_scheme_on_staggered_grids_for_baro.pdf"
 tags: [well-balanced, finite-volume, positivity, entropy-stable, shallow-water]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -107,7 +107,7 @@ half-integer indices are density cells, integer indices velocity nodes.
 
 # Printed slips
 
-- p. 1269, shallow-water equilibrium relations: printed $\rho^r_j=\rho_{j+1/2}-[\delta z_j]_-$. From (14)–(15) with $\mathcal E(\rho)=\rho$: if $\delta z_j\le0$ then $z_j=z_{j-1/2}$ and $\rho^r_j=\rho_{j+1/2}+\delta z_j=\rho_{j+1/2}+[\delta z_j]_-$; if $\delta z_j\ge0$ then $\rho^r_j=\rho_{j+1/2}$. The companion $\rho^\ell_j=\rho_{j-1/2}-[\delta z_j]_+$ is correct, and (19) holds in both sign cases with the corrected $\rho^r_j$ *(compiler check, not in the sources)*.
+- p. 1269, shallow-water equilibrium relations: printed $\rho^r_j=\rho_{j+1/2}-[\delta z_j]_-$. From (14)–(15) with $\mathcal E(\rho)=\rho$: if $\delta z_j\le0$ then $z_j=z_{j-1/2}$ and $\rho^r_j=\rho_{j+1/2}+\delta z_j=\rho_{j+1/2}+[\delta z_j]_-$; if $\delta z_j\ge0$ then $\rho^r_j=\rho_{j+1/2}$. The companion $\rho^\ell_j=\rho_{j-1/2}-[\delta z_j]_+$ agrees with (14)–(15), and (19) holds in both sign cases with the corrected $\rho^r_j$ *(compiler check, not in the sources)*.
 - p. 1269, before (20): the condition is printed "$\mathcal E(\rho_{j+1/2})\ge\delta z_j$", which should read $\ge\lvert\delta z_j\rvert$ (the preceding sentence has $\ge-\delta z_j$).
 - p. 1267: the kinetic fluxes are printed as $\mathcal F^\pm(\rho,v)=\int_{\pm\xi>0}M_{\rho,v}(\xi)\,d\xi$ with $M_{\rho,v}=\frac1{2c}\mathbf 1_{\lvert\xi-v\rvert\le c}$. This integral is a dimensionless fraction. Recovering (6), $\frac{\rho}{4c}(v+c)^2$ for $\lvert v\rvert\le c$, needs the integrand $\rho\,\xi\,M_{\rho,v}(\xi)$ *(compiler check, not in the sources)*.
 - p. 1271: "the positive part in the definiton (14) of $\rho^r_j$ and $\rho^\ell_j$". The positive part is in (15)–(16); (14) defines $z_j$.

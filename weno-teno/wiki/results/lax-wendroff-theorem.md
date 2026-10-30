@@ -5,7 +5,7 @@ description: "The Lax–Wendroff theorem makes conservation in flux form with co
 status: established
 aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
 tags: [finite-volume, finite-difference, dg]
-timestamp: 2026-10-30T08:12:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Lax–Wendroff theorem
@@ -145,7 +145,7 @@ Four sources show the consequence the theorem warns of, a wrong shock speed:
   differences it gives the wrong shock location on a Burgers Riemann problem
   ($u=\tfrac12$ left, $u=-1$ right, fifth-order versions); with the cap it becomes, in their
   word, "essentially conservative", a conservative scheme plus $O(\Delta x^2)$, which keeps
-  the conclusion of the theorem, and the location is correct but the shock "severely
+  the conclusion of the theorem, and "the shock location becomes correct" but the shock "severely
   smeared"; the variant was abandoned (no figure printed; see
   [Burgers-equation tests](/benchmarks/burgers-equation-tests.md)).
 

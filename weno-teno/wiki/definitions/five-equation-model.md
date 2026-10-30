@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -707,7 +707,7 @@ fluid and ghost-fluid states in cut cells
   compression; Wakimura et al. (2024, §1) and Zhang et al. (2024a, §2.3) avoid Wood's speed
   because it is non-monotone in the volume fraction and can make computations fail. The
   first two speak of the model's physics, the last two of the speed used in the numerical
-  method, so the page records a difference of priorities, not a contradiction.
+  method.
 - Wakimura et al.'s reason for staying at second order (spurious oscillations from
   primitive-variable reconstruction above third order) is stated without evidence and
   hedged ("may"); in the bundle, fifth-order WENO and gradient-based reconstructions of

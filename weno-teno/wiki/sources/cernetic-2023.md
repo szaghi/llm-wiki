@@ -162,6 +162,7 @@ Chunk 7 (2026-10-23), cited further in chunks 8–12 (2026-10-23/30). This sourc
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
 * [Material-interface advection tests](/benchmarks/material-interface-advection.md)

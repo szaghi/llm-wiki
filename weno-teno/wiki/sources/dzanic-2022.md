@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Fluids 247:105652"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2022_Crossref_Computers_amp_Fluids_Dzanic_Utilizing_time-reversibility_for_shock_capturing_in_nonlinea.pdf"
 tags: [artificial-viscosity, troubled-cell, dg, limiting, mhd]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -93,7 +93,7 @@ $\nu=a\Delta t/\Delta x$.
 
 # Printed slips
 
-- Eq. (18), second line of $\mathcal D(u_2)$: "$+c\frac{\Delta t}{\Delta x}(u^{n+1}_3-u^{n+1}_2)$" uses an undefined $c$ in place of $\lambda$ (twice); the result is correct.
+- Eq. (18), second line of $\mathcal D(u_2)$: "$+c\frac{\Delta t}{\Delta x}(u^{n+1}_3-u^{n+1}_2)$" uses an undefined $c$ in place of $\lambda$ (twice); the result follows with $\lambda$.
 - Eq. (23), first line: "$u_0^{n+1}=u_0^{n+1}$"; by analogy with Eq. (15) it should read $u_0^{n+1}=u_0^n$.
 - Eq. (27) prints $\mathcal D(u_1)=\big\lvert k\big(\zeta-2ku_2^n\zeta+k^2\zeta^2\big)\big\rvert$ with $k=\Delta t/(2\Delta x)$ and $\zeta=u_L^2-u_R^2$; the last term should carry a minus sign. Eq. (29) moreover replaces $k$ by $\Delta t/\Delta x$ inside the bars. Neither affects the limit of Eq. (30). *(compiler check, not in the sources: $u_2^{n+1}=u_R+k\zeta$, $u_1^{n+1}=u_L$ and the downwind flux give $u_1^*-u_L=k\big((u_2^{n+1})^2-u_L^2\big)=k(-\zeta+2ku_R\zeta+k^2\zeta^2)$, so $\mathcal D(u_1)=k\lvert\zeta-2ku_R\zeta-k^2\zeta^2\rvert$.)*
 - Eq. (30): the middle expression prints "$c\,\lvert\ldots\rvert$" without the subscript $\mu$.

@@ -157,6 +157,7 @@ Chunk 2 (2026-10-22), cited further in chunks 3–12 (2026-10-22/30). This sourc
 * [Conservative semi-Lagrangian finite-volume WENO](/methods/semi-lagrangian-finite-volume.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
 * [Local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md)
+* [Negative linear weights](/methods/negative-linear-weights.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)
 * [WENO-JS reconstruction](/methods/weno-js-reconstruction.md)
 * [WENO-Z weights](/methods/weno-z.md)

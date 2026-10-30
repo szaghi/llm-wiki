@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Phys. Commun. 282:108527"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computer_Physics_Communications_Bezgin_JAX-Fluids_A_fully-differentiable_high-order_computational_f.pdf"
 tags: [software, machine-learning, finite-volume, multiphase, level-set, gpu]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -97,7 +97,7 @@ interface states $u^\mp_{i+1/2}$ (see the notation map).
 14. The Sod ($t=0.2$) and Lax ($t=0.14$) tubes on 100 cells: the HLLC and Roe setups agree "very well" with the exact solution (§5.1.2, Figs. 9–10). **Shown**
 15. The lid-driven cavity at $\mathrm{Re}=5000$ on $500\times500$ with HLLC gives centre-line velocities that agree with Ghia et al. (§5.1.3, Fig. 11). **Shown**
 16. For decaying compressible isotropic turbulence (Spyropoulos & Blaisdell cases 1–3, $M_t=0.2,0.4,0.6$), HLLC on $128^3$ recovers the DNS $\rho_{\mathrm{rms}}(t)$. On $32^3$ ALDM agrees with the DNS and plain HLLC does not (§5.1.4, Fig. 12). **Shown**
-17. In the two-phase air ($\gamma=1.4$)–helium ($\gamma=1.667$) shock tube (200 cells, $t=0.15$), the interface position, shock speed and strength are correct. Slight density oscillations at the interface are consistent with Hu et al., since no isobaric fix is used (§5.2.1, Fig. 13). **Shown**
+17. In the two-phase air ($\gamma=1.4$)–helium ($\gamma=1.667$) shock tube (200 cells, $t=0.15$), the authors find the interface position, shock speed and strength correct. Slight density oscillations at the interface are consistent with Hu et al., since no isobaric fix is used (§5.2.1, Fig. 13). **Shown**
 18. The bow shock on an immersed cylinder at Mach 3 and 20 ($480\times1280$, HLLC) reaches a steady state that compares well with the literature (§5.2.2, Fig. 14). **Shown** (qualitative)
 19. For the oscillating drop the computed period is $T=1.16336$ against the analytical $T_{\mathrm{ref}}=1.16943$ (Rayleigh, Eq. 35) (§5.2.3, Fig. 15). **Shown**. The printed $T_{\mathrm{ref}}$ is consistent with $R=\sqrt{0.2\cdot0.15}$, $\sigma=0.05$ and unit densities. *(compiler check, not in the sources)*
 20. The shear-drop deformation $D(Ca)$ agrees well with Taylor's small-deformation relation, Eq. (37) (§5.2.4, Fig. 16). **Shown**
@@ -117,7 +117,7 @@ interface states $u^\mp_{i+1/2}$ (see the notation map).
 # Printed slips
 
 - Eq. (13): the interpolation "to the cell face $x_{i+1/2,j,k}$" is printed as $\tfrac12(\cdot_{i-1}+\cdot_{i+1})$ and $\tfrac1{16}(-\cdot_{i-2}+9\cdot_{i-1}+9\cdot_{i+1}-\cdot_{i+2})$. These stencils are symmetric about $x_i$, not $x_{i+1/2}$; the midpoint interpolants are $\tfrac12(\cdot_i+\cdot_{i+1})$ and $\tfrac1{16}(-\cdot_{i-1}+9\cdot_i+9\cdot_{i+1}-\cdot_{i+2})$. *(compiler check, not in the sources)*
-- Eq. (12), second-order formula: $\partial_y\psi\vert_{i,j,k}=(-\psi_{j-1}+\psi_{j+1})/\Delta y$. The centred difference needs $2\Delta y$ in the denominator; the fourth-order formula with $12\Delta y$ is correct. *(compiler check, not in the sources)*
+- Eq. (12), second-order formula: $\partial_y\psi\vert_{i,j,k}=(-\psi_{j-1}+\psi_{j+1})/\Delta y$. The centred difference needs $2\Delta y$ in the denominator; the fourth-order formula with $12\Delta y$ agrees with the centred fourth-order difference. *(compiler check, not in the sources)*
 - Eq. (23): $\Delta\Gamma=[(\Delta A_x)^2\Delta y\Delta z+(\Delta A_y)^2\Delta x\Delta z+(\Delta A_z)^2\Delta x\Delta y]^{1/2}$ is a length, while in Eq. (24) $\Delta\Gamma\,\phi_{i,j,k}$ must be a volume like the other terms. The consistent form is $[(\Delta A_x\Delta y\Delta z)^2+\dots]^{1/2}$. *(compiler check, not in the sources: dimensional analysis)*
 - Sign of the dissipative fluxes: Eq. (9) adds $+\frac1{\Delta x}(F^d_{i+1/2}-F^d_{i-1/2})$, while Eq. (17) puts $F+F^d$ in one bracket with a minus sign.
 - Flux-splitting step 3: "$V_j=R^{-1}_{i+1/2}U_i$, $G_j=R^{-1}_{i+1/2}F_i$", with subscript $j$ on the left and $i$ on the right.

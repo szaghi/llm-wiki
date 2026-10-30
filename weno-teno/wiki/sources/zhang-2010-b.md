@@ -9,7 +9,7 @@ year: 2010
 venue: "J. Comput. Phys. 229(23):8918-8934"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2010_Crossref_Journal_of_Computational_Physics_Zhang_On_positivity-preserving_high_order_discontinuous_Galerkin_s.pdf"
 tags: [dg, positivity, bound-preserving, limiting, euler-equations]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -88,7 +88,7 @@ page-local symbol is $\varepsilon$, the positivity floor
 10. Table 2.1: with the Lax–Friedrichs flux, the CFL condition (2.1) is $\frac{\Delta t}{\Delta x}a\le\tfrac16$ for $N=2,3$ (points $\{-\tfrac12,0,\tfrac12\}$) and $\le\tfrac1{12}$ for $N=4,5$ (points $\{-\tfrac12,-\tfrac1{\sqrt{20}},\tfrac1{\sqrt{20}},\tfrac12\}$). These are "comparable with and only slightly more restrictive than" the linear-stability CFL of DG [5] (§2.1). **Derived** *(Compiler check, not in the sources: the three- and four-point Gauss–Lobatto weights on $[-\tfrac12,\tfrac12]$ are $(\tfrac16,\tfrac23,\tfrac16)$ and $(\tfrac1{12},\tfrac5{12},\tfrac5{12},\tfrac1{12})$, so the table is $\varpic_0$ with $c_0=1$.)*
 11. The density step (2.4)–(2.5) keeps the cell average and gives $\hat\rho(x^{\mathrm{GL}}_\alpha)\ge\varepsilon$. Its accuracy "can be proven following the same lines as in [26]" (§2.2). **Stated**
 12. Lemma 2.5: the limited polynomial of (2.10)–(2.11) lies in $G^\varepsilon\subset G$ at every Gauss–Lobatto point (§2.2). **Proved**
-13. If the exact solution $u$ is smooth with $d(u,G^\varepsilon)\ge M_d>0$, where $d(z,G)=\min_{w\in G}\lVert z-w\rVert$ as printed ($M_d$ page-local; source $M$), then $\lvert1-\theta_2\rvert=O(\Delta x^{N+1})$: the pressure limiter does not destroy accuracy (§2.2, after Lemma 2.5). **Derived** (assumes the overshoot at the limited point is $O(\Delta x^{N+1})$)
+13. If the exact solution $u$ is smooth with $d(u,G^\varepsilon)\ge M_{\mathrm d}>0$, where $d(z,G)=\min_{w\in G}\lVert z-w\rVert$ as printed ($M_{\mathrm d}$ page-local; source $M$), then $\lvert1-\theta_2\rvert=O(\Delta x^{N+1})$: the pressure limiter does not destroy accuracy (§2.2, after Lemma 2.5). **Derived** (assumes the overshoot at the limited point is $O(\Delta x^{N+1})$)
 14. $\theta_2$ of (2.11) is "mathematically equivalent to" $\min_\alpha t^\alpha_\varepsilon$, where $t^\alpha_\varepsilon$ is the root of the quadratic $p\big((1-t)\bar u^n_i+t\hat u^\alpha\big)=\varepsilon$ (Eq. (2.12)), or 1 (§2.3). **Stated**
 15. With SSP time stepping the limiter is applied at every Runge–Kutta stage or every multistep step (§2.3, §3.2). **Stated**
 16. For finite-volume WENO the limiter is harder to implement, because WENO gives only nodal values, not polynomials. One may build polynomials from nodal values and cell averages as in [26] (Remark 2.6). **Stated**

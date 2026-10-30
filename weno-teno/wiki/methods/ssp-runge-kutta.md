@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -160,8 +160,8 @@ finite-difference HWENO, as the authors cite (§2.1).
 ## The Shu–Osher form and its CFL factor
 
 [Shu & Osher (1988)](/sources/shu-1988.md) (§II, pp. 7–10) start from a forward-Euler step
-$u+\Delta t\,\mathcal L(u)$ that is TVD (or TVB) under $\Delta t/\Delta x\le\lambda_0$ (page-local
-$\lambda_0$) and rewrite an explicit Runge–Kutta method, stages
+$u+\Delta t\,\mathcal L(u)$ that is TVD (or TVB) under $\Delta t\le\Delta t_{\mathrm{FE}}$ (page-local
+forward-Euler limit $\Delta t_{\mathrm{FE}}$; the source writes $\Delta t/\Delta x\le\lambda_0$) and rewrite an explicit Runge–Kutta method, stages
 $u^{(i)}=u^{(0)}+\Delta t\sum_{k<i}c_{ik}\mathcal L(u^{(k)})$, $u^{(0)}=u^n$, as
 
 $$u^{(i)}=\sum_{k=0}^{i-1}\Big[\alpha_{ik}u^{(k)}+\beta_{ik}\Delta t\,\mathcal L\big(u^{(k)}\big)\Big],\qquad \alpha_{ik}\ge0,\quad\sum_{k}\alpha_{ik}=1,$$
@@ -176,7 +176,7 @@ an approximation that is TVD for the time-reversed problem (for $\partial_tu=\pa
 backward difference where $\mathcal L$ is the forward one, p. 8). **Proposition 2.1:** the scheme
 is TVD under
 
-$$\frac{\Delta t}{\Delta x}\le\lambda_0\min_{i,k}\frac{\alpha_{ik}}{\lvert\beta_{ik}\rvert}$$
+$$\Delta t\le\Delta t_{\mathrm{FE}}\min_{i,k}\frac{\alpha_{ik}}{\lvert\beta_{ik}\rvert}$$
 
 (Eq. (2.13)), the factor the paper calls "CFL#". **Remark 2.1** replaces the total variation by
 any convex functional into the non-negative reals, for which the same argument gives

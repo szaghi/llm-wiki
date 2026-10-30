@@ -152,6 +152,7 @@ Chunk 9 (2026-10-23), cited further in chunks 10–12 (2026-10-23/30). This sour
 * [Entropy projection](/methods/entropy-projection.md)
 * [Entropy stability](/properties/entropy-stability.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
 * [Method of manufactured solutions](/definitions/method-of-manufactured-solutions.md)

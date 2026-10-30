@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 101:20"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Scientific_Computing_Zhang_A_Robustness-Enhanced_Reconstruction_Based_on_Discontinuity.pdf"
 tags: [weno, hybrid-scheme, troubled-cell, finite-volume, positivity]
-timestamp: 2026-10-23T14:54:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -91,7 +91,7 @@ $-\tfrac16\bar\zeta_{i-1}+\tfrac56\bar\zeta_i+\tfrac13\bar\zeta_{i+1}$. The refo
 
 # Printed slips
 
-- Eq. (24), second line: printed $\tfrac12\partial_t\mathbf F^n_{p,m}\Delta t+\tfrac18\partial_t\mathbf F^n_{p,m}\Delta t^2=\mathbb F(W^n,\Delta t/2)$ (checked on the page image of p. 6). *(Compiler check, not in the sources:)* integrating the linear flux (23) over $[0,\Delta t/2]$ gives $\tfrac12\mathbf F^n_{p,m}\Delta t+\tfrac18\partial_t\mathbf F^n_{p,m}\Delta t^2$, and the printed solution (25) solves this corrected system, so (24) carries the typo and (25) is right.
+- Eq. (24), second line: printed $\tfrac12\partial_t\mathbf F^n_{p,m}\Delta t+\tfrac18\partial_t\mathbf F^n_{p,m}\Delta t^2=\mathbb F(W^n,\Delta t/2)$ (checked on the page image of p. 6). *(Compiler check, not in the sources:)* integrating the linear flux (23) over $[0,\Delta t/2]$ gives $\tfrac12\mathbf F^n_{p,m}\Delta t+\tfrac18\partial_t\mathbf F^n_{p,m}\Delta t^2$, and the printed solution (25) solves this corrected system, so (24) differs from this integral and (25) agrees with it.
 - Eq. (14) (checked on the page image of p. 5): the last two terms carry $e^{t/\tau_n}$, with a positive exponent, while the first terms carry $e^{-t/\tau_n}$ and the integral solution (13) has $e^{-t/\tau}$ on the initial-data term.
 - p. 7: "According to Eq. (32), $W^*_i$ can be obtained", and the end of §3.4: "all components in Eq. (32) can be determined"; Eq. (32) is SSP-RK3, the two-stage stage is Eq. (21) and the gas-kinetic distribution Eq. (14).
 - Eq. (28) prints the prefactor $-\frac1{\Omega_{ij}}$ where Eq. (26) has $-\frac1{\lvert\Omega_{ij}\rvert}$. §3.1 mentions coefficients "$c_0,\cdots,c_5$" of a quartic with $c_0,\dots,c_4$.

@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # WENO-Z weights
@@ -63,7 +63,8 @@ order as that of $\beta_k$, WENO-Z falls back to the convergence rate of the $r$
 This happens at critical points ([critical-point accuracy](/properties/critical-point-accuracy.md)):
 their Table 4 shows that WENO7-Z cannot improve the order at a third-order critical point for
 either $q=1$ or $q=2$, confirmed numerically by orders 3.55, 3.39, 3.24 (Table 7). At fifth order,
-WENO5-Z reaches 5.14–5.37 at a first-order critical point but only 2.11–2.32 at a second-order one
+WENO5-Z reaches 5.14–5.37 at a first-order critical point ($q$ and $\epsilon$ of the run are not stated in
+the source; its §3.2 recommends $q=1$ at fifth order) but only 2.11–2.32 at a second-order one
 and 1.16–2.11 at a third-order one (Table 6). Fu (2023, §3.1) contrasts TENO's requirement
 $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_K=O(\Delta x^K)$.
 
@@ -288,8 +289,8 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 
 - **Orders at critical points from different measurements.** Li et al. (2022b, Table 6) measure WENO5-Z at
   5.14–5.37 at a first-order critical point, where Borges et al. (2008, Table 3) measure 3.93–3.99 with $q=1$ and
-  4.80–4.98 with $q=2$; the test functions, $\epsilon$ and (on this page) the exponent of Li et al.'s run differ, so
-  the pair is not recorded as a contradiction. At $n_{\mathrm{cp}}\ge2$ Borges et al.'s analysis gives order 2, Li
+  4.80–4.98 with $q=2$. The test functions differ ($x^ke^x$ against $x^3+\cos x$), and Li et al. state neither
+  $q$ nor $\epsilon$ for the run (§4.1; their §3.2 recommends $q=1$ at fifth order). At $n_{\mathrm{cp}}\ge2$ Borges et al.'s analysis gives order 2, Li
   et al. measure 2.11–2.32 at a second-order point, and their general statement names "the $r$th-order ENO" rate.
 - McQuaid & Brehm's "WENO-Z scheme of Jiang and Shu with smoothness indicators proposed by Liu et al." differs
   from the founding papers' attribution: they print WENO-Z as Borges et al.'s, on Jiang–Shu indicators, and Liu et al.'s

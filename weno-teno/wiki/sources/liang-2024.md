@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 497:112618"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Liang_A_new_type_of_non-polynomial_based_TENO_scheme_for_hyperboli.pdf"
 tags: [teno, rbf, finite-difference, low-dissipation, thinc, spectral-analysis]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -108,7 +108,7 @@ upwind-first order.
 - §3.1 prints the conditions as products, e.g. "$\delta_1\delta_2=0$, $\delta_0=1$". They must mean $\delta_1=\delta_2=0$: read literally they overlap the cases of $\hat f^2$ and $\hat f^3$.
 - §3.1 never maps the combination labels $\hat f^n_{i+1/2}$ to the fluxes $R'_n$ of Eq. (25). By stencil content, $\hat f^2$ ($\delta_1=0$, target $\{i-2,\dots,i+1\}$) is $R'_3$ and $\hat f^3$ ($\delta_2=0$, target $\{i-1,\dots,i+2\}$) is $R'_2$, so the two numberings are swapped for these cases. *(Compiler check, not in the sources: the stencils of $R'_2$ and $R'_3$ read off Eq. (25).)*
 - Eq. (29), $R'_1$: the expansion is closed with "$-12h^{(4)}\Delta x^6\lambda^2+O(\Delta x^7)$", but the $\Delta x^6$ term also holds $\tfrac1{140}h^{(6)}$, i.e. $R'_1=h-\Delta x^5\big(\tfrac12\lambda_{\mathrm s}^2h'''+\tfrac1{60}h^{(5)}\big)+\Delta x^6\big(\tfrac15\lambda_{\mathrm s}^2h^{(4)}+\tfrac1{140}h^{(6)}\big)+O(\Delta x^7)$. The leading order is unaffected. *(Compiler check, not in the sources: Taylor expansion of the cell averages of $h$ about $x_{i+1/2}$.)*
-- Eq. (27) prints the integrated first term as "$h_{i+1/2}\xi$" inside a bracket whose other terms are in $(\xi-x_{i+1/2})$; the result line is correct.
+- Eq. (27) prints the integrated first term as "$h_{i+1/2}\xi$" inside a bracket whose other terms are in $(\xi-x_{i+1/2})$; the result line agrees with the integral.
 - Symbol clashes in print: $\alpha_j$ (RBF coefficients, Eq. 21) and $\alpha_1,\alpha_2$ (shape constants, Eq. 32); $k$ as candidate index and as right extent of the target stencil (Eq. 18); $\varepsilon$ with the values $10^{-40}$ and $10^{-15}$.
 
 # Notation map

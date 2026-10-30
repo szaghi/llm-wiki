@@ -15,6 +15,18 @@ files unchanged). 230 concept pages plus the registry, 5733 bibliography
 entries, eight contradictions open. Done under the night protocol (no
 staging; `.night/` snapshot).
 
+### Owner's rulings (2026-10-30)
+
+- `san-2014`: keep page 256 (the entry already reads 256; Crossref's 254 stays in the note).
+- `harten-1983-e`: keep the year 1983.
+- Shu & Osher (2.23): compare with the JCP version — pending: no copy of the
+  journal version is in any archive (all copies are the ICASE report); the
+  owner adds the PDF.
+- Symbols, registry rows and candidate pages: done (log, 2026-10-30
+  follow-up): four new pages (quasi-1D nozzle flow, exact Riemann solver,
+  Cauchy–Kowalewski procedure, negative linear weights), symbols unified,
+  15 registry rows, older verdict wording rewritten.
+
 ### Versions read (not the version of record)
 
 - `harten-1983`: NYU Courant report DOE/ER/03077-175 (March 1982), 69-page

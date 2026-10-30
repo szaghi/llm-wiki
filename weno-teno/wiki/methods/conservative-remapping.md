@@ -5,7 +5,7 @@ description: "Conservative remapping transfers cell averages from a Lagrangian m
 status: established
 aliases: [remapping, remap, conservative interpolation, ALE remapping, WENO remapping, P-WENO remapping, rezone and remap, Lagrange-plus-remap, Eulerian remap]
 tags: [finite-volume, weno, positivity, bound-preserving, reconstruction]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Conservative remapping for ALE schemes
@@ -46,7 +46,7 @@ Acknowledgments).
   fourth paper of the series is cited for this moment fitting ("scheme III") being "vastly
   superior" to finite-difference slopes (App. B).
 - **Limiting** (§3.3, Eqs. (102)–(103)). The remap slope is limited with factors
-  $2/\varphi$ and $2/(1-\varphi)$, $\varphi$ the mass fraction of the Lagrangean cell that
+  $2/\varphi_{\mathrm{vL}}$ and $2/(1-\varphi_{\mathrm{vL}})$, $\varphi_{\mathrm{vL}}$ (page-local; not the GQL $\varphi_i$) the mass fraction of the Lagrangean cell that
   crosses the Eulerian boundary (page-local), so that the averages of the parts crossing and
   staying lie within the neighbouring averages; positivity is then guaranteed "only for the
   zone averages" ([TVD and slope limiters](/definitions/total-variation-diminishing.md),

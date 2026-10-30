@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -214,19 +214,19 @@ jumps.
 The same reading is the starting point of [Harten (1983a)](/sources/harten-1983.md) (§3,
 Eqs. (3.1), (3.6)–(3.7), (3.15)). Every three-point conservative scheme is written as
 
-$$\hat f_{i+1/2}=\tfrac12\big[f(u_i)+f(u_{i+1})\big]-\frac{\Delta x}{2\Delta t}\,Q(\nu_{i+1/2})\,(u_{i+1}-u_i),$$
+$$\hat f_{i+1/2}=\tfrac12\big[f(u_i)+f(u_{i+1})\big]-\frac{\Delta x}{2\Delta t}\,\mathfrak Q(\nu_{i+1/2})\,(u_{i+1}-u_i),$$
 
-with $\nu_{i+1/2}$ the signed local Courant number and $Q$ "the coefficient of numerical
+with $\nu_{i+1/2}$ the signed local Courant number and $\mathfrak Q$ (page-local, the source's $Q$; not the SBP $Q$) "the coefficient of numerical
 viscosity" (page-local; not the dissipation matrix above). The Lax–Wendroff scheme is
-$Q=\nu^2$; a scheme with $Q$ approximates to second order the modified equation with
-viscosity coefficient $\frac{\Delta x^2}{2\Delta t}\,[Q(\nu)-\nu^2]$, so $Q-\nu^2$ is the
+$\mathfrak Q=\nu^2$; a scheme with $\mathfrak Q$ approximates to second order the modified equation with
+viscosity coefficient $\frac{\Delta x^2}{2\Delta t}\,[\mathfrak Q(\nu)-\nu^2]$, so $\mathfrak Q-\nu^2$ is the
 dissipation relative to the second-order scheme. Total variation nonincreasing three-point
-schemes need $\lvert\nu\rvert\le Q(\nu)\le1$, and $Q=\lvert\nu\rvert$, upwind differencing, is the
+schemes need $\lvert\nu\rvert\le \mathfrak Q(\nu)\le1$, and $\mathfrak Q=\lvert\nu\rvert$, upwind differencing, is the
 least dissipative of them (Lemmas 3.1, 5.1); [monotone schemes](/definitions/monotone-scheme.md)
 always carry a viscosity of this kind that is nonnegative and not identically zero, and are first order (§2, Eq. (2.7)). Two
-consequences that the paper draws: a viscosity that vanishes at $\nu=0$, as $Q=\lvert\nu\rvert$ does,
-leaves stationary jumps, admissible or not, as steady solutions, so the paper smooths $Q$ near zero
-(§5, Eq. (5.3)); and the paper's second-order scheme removes the viscosity $Q-\nu^2$ in smooth regions
+consequences that the paper draws: a viscosity that vanishes at $\nu=0$, as $\mathfrak Q=\lvert\nu\rvert$ does,
+leaves stationary jumps, admissible or not, as steady solutions, so the paper smooths $\mathfrak Q$ near zero
+(§5, Eq. (5.3)); and the paper's second-order scheme removes the viscosity $\mathfrak Q-\nu^2$ in smooth regions
 by a limited anti-diffusive correction of the flux
 ([Harten's TVD scheme](/methods/harten-tvd-scheme.md)). Harten calls added viscosity "an
 irretrievable loss of information" (§1; [artificial viscosity](/methods/artificial-viscosity.md)).

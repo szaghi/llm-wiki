@@ -5,7 +5,7 @@ description: "Central WENO schemes subtract weighted low-order candidates from o
 status: established
 aliases: [CWENO, central WENO, CWENOZ, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit, ALW-MR-WENO, adaptive linear weights]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-30T07:53:00Z
+timestamp: 2026-10-30T08:44:00Z
 ---
 
 # Central WENO (CWENO)
@@ -300,7 +300,7 @@ framework "allows the componentwise WENO reconstruction procedure to be used for
 results for third or even fourth order schemes", while "for very high order central WENO schemes,
 characteristic WENO reconstruction is still necessary to obtain stable results"
 ([characteristic decomposition](/methods/characteristic-decomposition.md)). The link with the
-construction on this page is the treatment of linear weights (§2.3.3): where accuracy fixes them
+construction on this page is the treatment of linear weights (§2.3.3; [negative linear weights](/methods/negative-linear-weights.md)): where accuracy fixes them
 uniquely they may be negative, and "if the usual WENO procedure is used without modification,
 oscillations and instability may appear"; one remedy is the splitting technique of Shi, Hu & Shu,
 used for the central WENO of Qiu & Shu, the other is to lower the accuracy demanded of the linear

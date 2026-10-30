@@ -5,7 +5,7 @@ description: "Artificial compression adds a limited anti-diffusive correction in
 status: established
 aliases: [artificial compression method, ACM, Harten's artificial compression, Yang's artificial compression, contact sharpening, WENO-A]
 tags: [limiting, low-dissipation, interface-capturing, weno, characteristic]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Artificial compression
@@ -49,9 +49,9 @@ As shown in the earlier paper Harten cites, $0\le\theta_{\mathrm{AC}}\le1$,
 $\theta_{\mathrm{AC}}=O(\Delta x)$ in smooth regions and $O(1)$ at discontinuities (Eq. (6.2)), so
 the change alters the flux by $O(\Delta x^2)$ in smooth flow and keeps the second order.
 With the switch the bound on the added Courant number doubles,
-$\lvert\delta\nu\rvert\le\lvert Q(\nu)-\nu^2\rvert$; the CFL bound is unchanged for
-$Q=\lvert x\rvert$ and for the smoothed $Q$ with $\varepsilon_{\mathrm H}<1/3$, and tightens to $3/4$
-for $Q=x^2+\tfrac14$ (Eqs. (6.3a,b), stated without derivation).
+$\lvert\delta\nu\rvert\le\lvert \mathfrak Q(\nu)-\nu^2\rvert$ (page-local $\mathfrak Q$, Harten's viscosity coefficient $Q$, as on the scheme's page); the CFL bound is unchanged for
+$\mathfrak Q=\lvert x\rvert$ and for the smoothed $\mathfrak Q$ with $\varepsilon_{\mathrm H}<1/3$, and tightens to $3/4$
+for $\mathfrak Q=x^2+\tfrac14$ (Eqs. (6.3a,b), stated without derivation).
 
 For the Euler equations Harten applies the switch in the contact field only,
 $\theta^{(1)}_{\mathrm{AC}}=\theta^{(3)}_{\mathrm{AC}}\equiv0$ (§7); using it in the genuinely

@@ -144,9 +144,11 @@ printed. No item is unparseable.
 Chunk 6 (2026-10-23), cited further in chunks 7–12 (2026-10-23/30). This source is cited on:
 
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Flux globalization for balance laws](/methods/flux-globalization.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)
 * [Path-conservative schemes](/methods/path-conservative-scheme.md)
+* [Quasi-one-dimensional nozzle flow](/benchmarks/quasi-one-dimensional-nozzle-flow.md)
 * [Shallow-water equations](/definitions/shallow-water-equations.md)
 * [Shallow-water flow over a bump and lake at rest](/benchmarks/flow-over-a-bump.md)
 * [Well-balancing](/properties/well-balancing.md)

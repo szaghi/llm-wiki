@@ -5,7 +5,7 @@ description: "Implicit shock tracking makes the mesh geometry an unknown and mov
 status: established
 aliases: [MDG-ICE, MDG+ICE, HOIST, space-time HOIST, slab-based HOIST, high-order implicit shock tracking, moving discontinuous Galerkin with interface condition enforcement, moving discontinuous Galerkin with interface conservation enforcement, implicit discontinuity tracking, shock fitting by optimization]
 tags: [shock-tracking, dg, numerical-flux]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:44:00Z
 ---
 
 # Implicit shock tracking and moving DG (MDG-ICE)
@@ -191,7 +191,7 @@ early iterations (Remark 18).
 | 3D linear advection, planar and curved discontinuity | 324 tetrahedra, $N=0$ | 29 SQP iterations, residuals $O(10^{-10})$ and $O(10^{-8})$, no removal (planar); 12 collapses, $O(10^{-8})$ and $O(10^{-4})$ (curved) |
 | space–time [Burgers](/benchmarks/burgers-equation-tests.md), accelerating shock | 72 triangles, $N=q_{\mathrm g}=1,2,3$ | shock tracked in about 20 iterations; refinement study in Table 2 |
 | space–time Burgers, shock formation and merger | 400 triangles, $N=2,3$ | formation and the space–time triple point of the merger tracked from an uninformed mesh |
-| quasi-1D nozzle, shock at $x=7.94$ | 12 elements, $N=2$ | "indistinguishable from the exact solution"; Persson–Peraire [artificial viscosity](/methods/artificial-viscosity.md) needs 50 elements at $N=4$ and smears the shock |
+| [quasi-1D nozzle](/benchmarks/quasi-one-dimensional-nozzle-flow.md), shock at $x=7.94$ | 12 elements, $N=2$ | "indistinguishable from the exact solution"; Persson–Peraire [artificial viscosity](/methods/artificial-viscosity.md) needs 50 elements at $N=4$ and smears the shock |
 | space–time [Sod shock tube](/benchmarks/sod-and-lax-shock-tubes.md), $N=2$, $q_{\mathrm g}=1$ | 108 → 84 | shock, contact, rarefaction head and tail tracked, in that order (iterations about 27, 52, 66, 106) |
 | Mach 2 diamond in a tunnel | 220 → 201 | all shocks and four triple points tracked; the slip line from the trailing-edge triple point is not |
 | Mach 5 scramjet | 1442 → 1299 and 2679 → 2523 | the fine mesh tracks all discontinuities, the slip line included |

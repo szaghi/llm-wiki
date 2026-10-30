@@ -111,12 +111,13 @@ index lists what is in; a whole-bundle deep lint closed the archive. Chunk 12 (a
 [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 (point values, flux reconstruction, and its relation to finite volumes; the
 [cell-average to point-value conversion](/operators/cell-average-point-value-conversion.md)
-bridges the two), the [ENO reconstruction](/methods/eno-reconstruction.md) it grew from, and the
+bridges the two), the [ENO reconstruction](/methods/eno-reconstruction.md) it grew from (with the
+[Cauchy–Kowalewski procedure](/methods/cauchy-kowalewski-procedure.md) for its time evolution), and the
 [WENO-JS reconstruction](/methods/weno-js-reconstruction.md), with its
 [smoothness indicators](/definitions/smoothness-indicator.md), the
 [ENO property](/definitions/eno-property.md) and
 [accuracy at critical points](/properties/critical-point-accuracy.md). The
-weight families follow: [WENO-Z](/methods/weno-z.md),
+weight families follow (with [negative linear weights](/methods/negative-linear-weights.md) where accuracy demands them): [WENO-Z](/methods/weno-z.md),
 [WENO-Z+ and WENO-Z+M](/methods/weno-z-plus.md),
 [WENO-ZN](/methods/weno-zn.md), [mapped WENO](/methods/mapped-weno.md),
 [affine-invariant weights](/methods/affine-invariant-weno.md) (with
@@ -159,7 +160,7 @@ of [Deng (2023)](/sources/deng-2023.md) organises reconstructions on the
 [normalised-variable diagram](/definitions/normalised-variable-diagram.md),
 against [TVD limiters](/definitions/total-variation-diminishing.md) (with
 [Harten's TVD scheme](/methods/harten-tvd-scheme.md), [monotone schemes](/definitions/monotone-scheme.md),
-the [Godunov scheme](/methods/godunov-scheme.md) and [artificial compression](/methods/artificial-compression.md)), and
+the [Godunov scheme](/methods/godunov-scheme.md) with the [exact Riemann solver](/methods/exact-riemann-solver.md), and [artificial compression](/methods/artificial-compression.md)), and
 yields the [ROUND schemes](/methods/round-scheme.md).
 
 **3. Fluxes and characteristic projection.** The
@@ -285,7 +286,8 @@ implicit CWENO stepping of [Quinpi](/methods/quinpi.md).
 
 **9. Benchmarks.** Scalar: [Burgers equation tests](/benchmarks/burgers-equation-tests.md),
 the [Buckley–Leverett problem](/benchmarks/buckley-leverett-problem.md),
-[Riemann problems with nonconvex scalar fluxes](/benchmarks/nonconvex-scalar-riemann-problem.md) and
+[Riemann problems with nonconvex scalar fluxes](/benchmarks/nonconvex-scalar-riemann-problem.md),
+[quasi-one-dimensional nozzle flow](/benchmarks/quasi-one-dimensional-nozzle-flow.md) and
 [solid-body rotation](/benchmarks/solid-body-rotation.md), with the
 [Jiang–Shu composite-wave advection](/benchmarks/jiang-shu-composite-advection.md). One-dimensional:
 [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md), the

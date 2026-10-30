@@ -5,7 +5,7 @@ description: "Roe's solver upwinds every characteristic field of a linearized fl
 status: established
 aliases: [Roe flux, Roe scheme, Roe solver, linearized Riemann solver, Roe–Harten flux]
 tags: [riemann-solver, numerical-flux, characteristic, finite-volume]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Roe approximate Riemann solver
@@ -63,7 +63,7 @@ only acts as a "pointer" to the expansion whose domain of validity contains the 
 exact Godunov flux can be replaced by Roe's without loss of order (§4, pp. 252–253), and the
 Riemann solver matters less as the order grows (§7 A2, p. 274). In
 [Harten (1983a)](/sources/harten-1983.md) (§8, Eq. (8.5)) "ROE" is the first-order scheme, the
-member $Q(x)=\lvert x\rvert$ of the paper's viscosity family, against which the second-order
+member $\mathfrak Q(x)=\lvert x\rvert$ of the paper's viscosity family (page-local $\mathfrak Q$, Harten's $Q$), against which the second-order
 [TVD scheme](/methods/harten-tvd-scheme.md) is compared. [Jiang & Shu (1996)](/sources/jiang-1996.md)
 (§2, §7) use the Roe matrix as one choice of the averaged Jacobian of their
 [characteristic decomposition](/methods/characteristic-decomposition.md), a Roe flux splitting
@@ -108,13 +108,13 @@ among Roe's defects; the sources that use the solver add an entropy fix:
 None of these entries writes its fix out. The founding papers print three different forms:
 
 - **Smoothed numerical viscosity (Harten 1983a).** Harten (Eq. (5.3); NYU report version read)
-  replaces the viscosity $Q(x)=\lvert x\rvert$ of the upwind scheme, a function of the local CFL number
-  $x=\frac{\Delta t}{\Delta x}\bar a$, by $Q(x)=\frac{x^2}{4\varepsilon_{\mathrm H}}+\varepsilon_{\mathrm H}$ for
+  replaces the viscosity $\mathfrak Q(x)=\lvert x\rvert$ of the upwind scheme, a function of the local CFL number
+  $x=\frac{\Delta t}{\Delta x}\bar a$, by $\mathfrak Q(x)=\frac{x^2}{4\varepsilon_{\mathrm H}}+\varepsilon_{\mathrm H}$ for
   $\lvert x\rvert<2\varepsilon_{\mathrm H}$ and $\lvert x\rvert$ otherwise, "with say $\varepsilon_{\mathrm H}=0.05$"
   (page-local $\varepsilon_{\mathrm H}$, a fraction of the CFL number, not a speed), because a scheme with
-  $Q(0)=0$ keeps every stationary jump, admissible or not, as a steady solution. The paper does not
+  $\mathfrak Q(0)=0$ keeps every stationary jump, admissible or not, as a steady solution. The paper does not
   call it an entropy fix and does not attribute it to Hyman. It calls this choice "the best", yet
-  its Euler runs use $Q=\lvert x\rvert$ (ULT1), and on the Mach 3 step ULT1 shows part of the sonic line
+  its Euler runs use $\mathfrak Q=\lvert x\rvert$ (ULT1), and on the Mach 3 step ULT1 shows part of the sonic line
   turning into an expansion shock, like the Godunov results it compares with (§5, §8 III).
 - **Threshold on the speed (Harten et al. 1987a).** $h^{\mathrm{Roe}}=\tfrac12\big(f(u^-)+f(u^+)-\max(\lvert\bar a\rvert,\epsilon_{\mathrm R})(u^+-u^-)\big)$
   with $\epsilon_{\mathrm R}=0.1\,\Delta x/\Delta t$ (page-local, a speed; Eqs. (7.8a,b); $\epsilon_{\mathrm R}=\Delta x/\Delta t$ gives

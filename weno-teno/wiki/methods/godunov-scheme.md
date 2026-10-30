@@ -5,7 +5,7 @@ description: "Godunov's first-order scheme replaces the data by cell averages, s
 status: established
 aliases: [Godunov's method, Godunov's scheme, Godunov flux, first-order Godunov scheme, Godunov-type scheme, reconstruct–evolve–average]
 tags: [finite-volume, riemann-solver, numerical-flux, reconstruction]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:44:00Z
 ---
 
 # Godunov scheme
@@ -80,9 +80,9 @@ decreases with increasing order" (§7 A2, p. 274; argued from their figures).
 
 ## Upwind differencing and the first-order barrier
 
-For a three-point scheme written with Harten's numerical-viscosity function $Q$ of the
+For a three-point scheme written with Harten's numerical-viscosity function $\mathfrak Q$ (page-local, the source's $Q$) of the
 local Courant number (see [Harten's TVD scheme](/methods/harten-tvd-scheme.md)), the
-choice $Q(\nu)=\lvert\nu\rvert$ gives the update
+choice $\mathfrak Q(\nu)=\lvert\nu\rvert$ gives the update
 
 $$u^{n+1}_i=u^n_i-\min(\nu_{i+1/2},0)\,(u^n_{i+1}-u^n_i)-\max(\nu_{i-1/2},0)\,(u^n_i-u^n_{i-1}),$$
 
@@ -115,7 +115,7 @@ mass coordinate (Abstract, §1, §2):
   $O(\Delta\zeta)$, those of the linear distributions $O(\Delta\zeta^2)$, so in the second-order
   scheme the acoustic estimate of the resolved pressure suffices in the smooth part of the
   flow (§2.3, p. 110; $\Delta\zeta$ the mass-coordinate cell size, page-local);
-- the resolved pressure $p^*$ comes from exact wave relations solved iteratively; Godunov's
+- the resolved pressure $p^*$ comes from exact wave relations solved iteratively ([exact Riemann solver](/methods/exact-riemann-solver.md)); Godunov's
   chord iteration gains a factor of the order of the interface jump per cycle, the tangent
   iteration suggested by P. J. Bedijn its square (§2.3, App. A, Eqs. (A1)–(A3)), with a
   pressure floor for cavitation;

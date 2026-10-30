@@ -141,6 +141,7 @@ Chunk 2 (2026-10-22), cited further in chunks 3–12 (2026-10-22/30). This sourc
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Five- and six-equation diffuse-interface models](/definitions/five-equation-model.md)
 * [Gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)

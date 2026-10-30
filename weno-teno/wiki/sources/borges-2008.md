@@ -9,7 +9,7 @@ year: 2008
 venue: "J. Comput. Phys. 227(6):3191-3211"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2008_Crossref_Journal_of_Computational_Physics_Borges_An_improved_weighted_essentially_non-oscillatory_scheme_for.pdf"
 tags: [weno, weno-z, weno-weights, smoothness-indicator, critical-points]
-timestamp: 2026-10-30T08:12:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Summary
@@ -27,8 +27,8 @@ $\epsilon=10^{-40}$.
 Recalling the necessary and sufficient conditions of Henrick, Aslam & Powers for fifth order,
 the authors show that WENO-Z meets the sufficient condition $\omega_k-d_k=O(\Delta x^3)$ away
 from [critical points](/properties/critical-point-accuracy.md), and analyse its order at a
-critical point of order $m$: fifth for $m=0$, fourth for $m=1$ (WENO-JS: third), second for
-$m\ge2$; $q=2$ restores fifth order at $m=1$. The [mapped WENO](/methods/mapped-weno.md) of
+critical point of order $n_{\mathrm{cp}}$: fifth for $n_{\mathrm{cp}}=0$, fourth for $n_{\mathrm{cp}}=1$ (WENO-JS: third), second for
+$n_{\mathrm{cp}}\ge2$; $q=2$ restores fifth order at $n_{\mathrm{cp}}=1$. The [mapped WENO](/methods/mapped-weno.md) of
 Henrick et al. serves as the comparator.
 
 The central interpretive claim is that WENO-M and WENO-Z improve on WENO-JS for shock problems
@@ -60,7 +60,7 @@ Borges et al. (2008).
 # Key claims
 
 Registry notation: weight exponent $q$ (source $p$ for WENO-JS, $q$ for WENO-Z), critical-point
-order $m$ (source $n_{cp}$; $m=0$ a non-critical point), Taylor coefficients $\mathsf a_k$ of the
+order $n_{\mathrm{cp}}$ ($n_{\mathrm{cp}}=0$ a non-critical point), Taylor coefficients $\mathsf a_k$ of the
 candidate errors (source $A_k$, as on the critical-point page), velocity $v$ and pressure $p$
 (source $U$, $u$, $P$), vortex strength $\mathcal E$ (source $\Gamma$). Page-local: $\beta^z_k$ the
 normalised WENO-Z indicators, $s$, $s_1$, $s_2$ the orders of the scheme, of
@@ -80,9 +80,9 @@ at $x_i$.
 11. Near the jump of the piecewise-sine data (30), WENO-JS gives discontinuous stencils weights "around $10^{-8}$", WENO-M a small increase, and WENO-Z "a more substantial increase to $10^{-4}$" ($\epsilon=10^{-6}$ for JS, $10^{-40}$ for M and Z) (§3, Fig. 3). **Shown**
 12. $\tau_5$ is comparable to one of the $\beta_k$ only on stencils containing the discontinuity (§3, Fig. 2(b), $\epsilon=10^{-40}$). **Shown**
 13. The order of WENO-Z is $s=\min(5,s_1+2,s_2+3)$ (§4, Eqs. (32)–(34)). **Derived**
-14. At a critical point of order $m$, $\beta_k=O(\Delta x^{2(m+1)})$, and $\tau_5=O(\Delta x^5)$ if $m\le1$, $O(\Delta x^{2(m+1)})$ otherwise; hence $s_2=3,1,0$ for $m=0,1,\ge2$ (§4, Eqs. (37)–(38)). **Derived**
-15. A symbolic algebra program gives $s_1=6,2,0,0$ for $m=0,1,2,\ge2$, hence $s=5,4,2,2$: WENO-Z is fourth order at a first-order critical point, WENO-JS third (§4, Tables 1–2). **Derived** (symbolic computation, not shown)
-16. With $q=2$ in Eq. (42), fifth order is reached at $m=1$ (§4). **Derived** / **Shown** (Table 3)
+14. At a critical point of order $n_{\mathrm{cp}}$, $\beta_k=O(\Delta x^{2(n_{\mathrm{cp}}+1)})$, and $\tau_5=O(\Delta x^5)$ if $n_{\mathrm{cp}}\le1$, $O(\Delta x^{2(n_{\mathrm{cp}}+1)})$ otherwise; hence $s_2=3,1,0$ for $n_{\mathrm{cp}}=0,1,\ge2$ (§4, Eqs. (37)–(38)). **Derived**
+15. A symbolic algebra program gives $s_1=6,2,0,0$ for $n_{\mathrm{cp}}=0,1,2,\ge2$, hence $s=5,4,2,2$: WENO-Z is fourth order at a first-order critical point, WENO-JS third (§4, Tables 1–2). **Derived** (symbolic computation, not shown)
+16. With $q=2$ in Eq. (42), fifth order is reached at $n_{\mathrm{cp}}=1$ (§4). **Derived** / **Shown** (Table 3)
 17. Table 3 ($L^\infty$ error at $x=0$ of the reconstruction of $f(x)=x^3+\cos x$, $\epsilon=10^{-40}$, 64-digit Matlab variable precision, $\Delta x$ from $10^{-3}$ to $6.25\times10^{-5}$): WENO-JS orders 2.95, 2.97, 2.98, 2.99; WENO-Z $q=1$ 3.93, 3.96, 3.98, 3.99; WENO-Z $q=2$ 4.80, 4.91, 4.96, 4.98; extended precision was "necessary because of the roundoff error in the standard double precision due to the very small values of $\Delta x$" (§4). **Shown**
 18. Increasing $q$ brings the scheme closer to the central scheme in smooth regions but, at discontinuities, lowers the relative weight of the discontinuous substencil, "making the scheme more dissipative" (§4, after Eq. (42)). **Stated** (qualitative argument)
 19. Fourth order at critical points does not keep WENO-Z ($q=1$) from matching WENO-M on shock problems; "the larger weights attributed to discontinuous stencils … is the essential improvement of these schemes with respect to WENO-JS" (§4). **Shown** (Fig. 2, §5)
@@ -157,7 +157,7 @@ Sod tube is placed on $[-5,5]$ with the low-pressure state on the left (Eq. (48)
 | $\beta^z_k$ | local | normalised indicators |
 | $g_k(\omega)$ | $g(\omega)$ | mapping of mapped WENO |
 | $A_k$, $B^\pm$ | $\mathsf a_k$, local | |
-| $n_{cp}$ | $m$ | critical-point order, as on the critical-point page |
+| $n_{cp}$ | $n_{\mathrm{cp}}$ | critical-point order, as on the critical-point page |
 | $s$, $s_1$, $s_2$, $\Omega^\pm$, $N^\pm$, $D^\pm$, $F^\pm_k$ | local | order analysis of §4 |
 | $Q$, $U$, $P$ | $u$, $v$, $p$ | **collision** of $U$/$u$ with the conserved variables |
 | $\Gamma$, $r_0$, $r_1$, $M_s$ | $\mathcal E$, local radii, $M$ | shock–vortex |

@@ -155,6 +155,7 @@ Chunk 5 (2026-10-22), cited further in chunks 6–12 (2026-10-23/30). This sourc
 
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)
 * [Compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)
 * [Hybrid central-WENO schemes](/methods/hybrid-weno.md)

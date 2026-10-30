@@ -108,8 +108,8 @@ here, in this bundle's notation.
 founding papers added by the human (van Leer 1979, Harten 1983, Harten et
 al. 1987, Shu & Osher 1988, Liu et al. 1994, Jiang & Shu 1996, Borges et
 al. 2008, Shu 2009, Zhang & Shu 2010, Fu et al. 2016); 214 of 217 ingested
-(feng-2026, li-2024 and wu-2023 still await a re-download), 230 concept
-pages plus the registry, 5733 bibliography entries, eight contradictions
+(feng-2026, li-2024 and wu-2023 still await a re-download), 234 concept
+pages plus the registry (four added by the follow-up on the owner's rulings), 5733 bibliography entries, eight contradictions
 open (new: order of WENO-JS at critical points).
 
 **Chunk 11 committed 2026-10-24 (3e40199), archive complete at the time:** the last five

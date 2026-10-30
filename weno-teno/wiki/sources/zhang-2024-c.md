@@ -132,6 +132,7 @@ Chunk 8 (2026-10-23), cited further in chunks 9–12 (2026-10-23/30). This sourc
 * [Density-wave advection](/benchmarks/density-wave-advection.md)
 * [Double Mach reflection](/benchmarks/double-mach-reflection.md)
 * [Multi-resolution WENO](/methods/multi-resolution-weno.md)
+* [Negative linear weights](/methods/negative-linear-weights.md)
 * [Sedov blast wave](/benchmarks/sedov-blast-wave.md)
 * [Shock–vortex interaction](/benchmarks/shock-vortex-interaction.md)
 * [Shu–Osher shock–entropy-wave problem](/benchmarks/shu-osher-problem.md)

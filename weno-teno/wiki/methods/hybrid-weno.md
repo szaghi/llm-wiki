@@ -5,7 +5,7 @@ description: "Hybrid schemes use a cheap linear (central, energy-preserving or o
 status: established
 aliases: [hybrid WENO, TENO-S, TENO-E, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -26,14 +26,17 @@ The oldest hybrid printed in the bundle is the comparator of [Harten (1983a)](/s
 not ingested), written in the characteristic fields of the Roe linearization as
 $\hat f_{i+1/2}=\tfrac12\big(f(u_i)+f(u_{i+1})\big)-\frac{\Delta x}{2\Delta t}\sum_l\mathsf b^{(l)}_{i+1/2}R^{(l)}_{i+1/2}$ with
 
-$$\mathsf b^{(l)}_{i+1/2}=\Big[\big(\nu^{(l)}_{i+1/2}\big)^2+\tfrac14\,\theta^{(l)}_{\mathrm H}\Big]\mathsf s^{(l)}_{i+1/2},\qquad
-\theta^{(l)}_{\mathrm H,i}=\frac{\lvert\mathsf s^{(l)}_{i+1/2}-\mathsf s^{(l)}_{i-1/2}\rvert}{\lvert\mathsf s^{(l)}_{i+1/2}\rvert+\lvert\mathsf s^{(l)}_{i-1/2}\rvert}$$
+$$\mathsf b^{(l)}_{i+1/2}=\Big[\big(\nu^{(l)}_{i+1/2}\big)^2+\tfrac14\,\theta^{(l)}_{\mathrm{AC},i+1/2}\Big]\delta^{(l)}_{i+1/2},\qquad
+\theta^{(l)}_{\mathrm{AC},i}=\frac{\lvert\delta^{(l)}_{i+1/2}-\delta^{(l)}_{i-1/2}\rvert}{\lvert\delta^{(l)}_{i+1/2}\rvert+\lvert\delta^{(l)}_{i-1/2}\rvert}$$
 
-(page-local: $\mathsf s^{(l)}_{i+1/2}=L^{(l)}_{i+1/2}(u_{i+1}-u_i)$ the wave strength,
-$\nu^{(l)}=\Delta t\,\lambda_l/\Delta x$ at the average state, $\theta_{\mathrm H}$ the switch of Eq. (6.1b),
-written at the interface as in the source's "appropriate variant"). The flux is Lax–Wendroff where
-$\theta_{\mathrm H}$ vanishes and adds the linear viscosity of the coefficient $x^2+\tfrac14$ where it is
-one; $0\le\theta_{\mathrm H}\le1$, $\theta_{\mathrm H}=O(\Delta x)$ in smooth regions and $O(1)$ at
+(page-local: $\delta^{(l)}_{i+1/2}=L^{(l)}_{i+1/2}(u_{i+1}-u_i)$ the wave strength,
+$\nu^{(l)}=\Delta t\,\lambda_l/\Delta x$ at the average state, $\theta_{\mathrm{AC}}$ Harten's switch, the
+quantity that [artificial compression](/methods/artificial-compression.md) uses, all as on that page).
+Eq. (6.1b) defines the switch per cell, $\theta^k_i$; Eq. (8.9) prints it with an interface index,
+"$\theta^k_{j+1/2}$ is (6.1b) for all $k$" (report p. 48), and the report does not write out the
+interface form. The flux is Lax–Wendroff where
+$\theta_{\mathrm{AC}}$ vanishes and adds the linear viscosity of the coefficient $x^2+\tfrac14$ where it is
+one; $0\le\theta_{\mathrm{AC}}\le1$, $\theta_{\mathrm{AC}}=O(\Delta x)$ in smooth regions and $O(1)$ at
 discontinuities, as shown in ref. [6] (Eq. (6.2)). The same switch is the
 [artificial compression](/methods/artificial-compression.md) of Harten's
 [TVD scheme](/methods/harten-tvd-scheme.md), where it is applied only in the contact field. On the
@@ -41,8 +44,8 @@ discontinuities, as shown in ref. [6] (Eq. (6.2)). The same switch is the
 the hybrid is shown beside the TVD scheme ULT2 (Fig. 7). The "Harten's" detector of Li, Chen & Ren
 (2022a), recorded under MDAD-HY below, has the same form for scalar data. *(Compiler check, not in the
 sources: with the wave strengths replaced by the first differences $f_{i+1}-f_i$ and $f_i-f_{i-1}$,
-$\theta_{\mathrm H,i}=\lvert f_{i+1}-2f_i+f_{i-1}\rvert/(\lvert f_{i+1}-f_i\rvert+\lvert f_i-f_{i-1}\rvert)$, so that
-detector is $1-\theta_{\mathrm H,i}$ with an added $\epsilon$.)* Harten (1983a) prints neither the
+$\theta_{\mathrm{AC},i}=\lvert f_{i+1}-2f_i+f_{i-1}\rvert/(\lvert f_{i+1}-f_i\rvert+\lvert f_i-f_{i-1}\rvert)$, so that
+detector is $1-\theta_{\mathrm{AC},i}$ with an added $\epsilon$.)* Harten (1983a) prints neither the
 threshold 0.3 nor an $\epsilon$.
 
 ## Variants recalled in the sources

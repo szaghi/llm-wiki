@@ -5,7 +5,7 @@ description: "WENO-ZN weights replace the WENO-Z global indicator by the square 
 status: established
 aliases: [WENO-ZN, WENO5-ZN, WENO7-ZN, WENO9-ZN]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # WENO-ZN schemes
@@ -56,8 +56,8 @@ shows $\Theta\sim10^{10}$–$10^{15}$ in smooth parts and $\tau^{\mathrm{ZN}}_7\
 ## Accuracy at critical points
 
 Li et al. (2022b, §3.3, Table 5) count, from the ratio $\tau^{\mathrm{ZN}}_{2r-1}/\beta_k$ alone, the order $n$ in
-$\alpha_k=d_k+O(\Delta x^n)$ at an $m$th-order critical point (where $f'=\dots=f^{(m)}=0$):
-$n=q\,[(4r-4)-(2+2m)]$. For $r=3$: $n=4$ ($q=1$) or 8 ($q=2$) at the first order, 2 or 4 at the second
+$\alpha_k=d_k+O(\Delta x^n)$ at an $n_{\mathrm{cp}}$th-order critical point (where $f'=\dots=f^{(n_{\mathrm{cp}})}=0$; page-local $n_{\mathrm{cp}}$, the source's $m$):
+$n=q\,[(4r-4)-(2+2n_{\mathrm{cp}})]$. For $r=3$: $n=4$ ($q=1$) or 8 ($q=2$) at the first order, 2 or 4 at the second
 and 0 at the third; for $r=4$ it is positive up to the fourth order, for $r=5$ up to the sixth. Hence the
 claim: the $(2r-1)$th-order WENO-ZN improves accuracy at critical points up to order $2r-4$, while
 WENO-Z$\eta$ reaches only order $r-1$.

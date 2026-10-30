@@ -5,7 +5,7 @@ description: "TVD schemes do not increase the total variation; the page gives Ha
 status: established
 aliases: [TVD, TVNI, total variation nonincreasing, TVB, total variation bounded, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod, monotonicity algorithm, TVB limiter]
 tags: [limiting, reconstruction, finite-volume, central-scheme]
-timestamp: 2026-10-30T07:59:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Total variation diminishing (TVD) and slope limiters
@@ -138,9 +138,9 @@ zero at an extremum of the averages, and zero if its sign disagrees with their t
 the scheme lose its second-order accuracy", and may decrease with the local Courant number;
 with factors 0 the scheme is Godunov's (§3.3, p. 118). The limiter guarantees positivity of
 the distributions but "can not fully guarantee monotonicity" for systems at the largest
-time steps (pp. 117–118). The paper adds a remap limiter with factors $2/\varphi$ and
-$2/(1-\varphi)$, $\varphi$ the mass fraction of a cell crossing a fixed boundary (Eqs.
-(102)–(103); page-local $\varphi$), which keeps only the zone averages positive, and a
+time steps (pp. 117–118). The paper adds a remap limiter with factors $2/\varphi_{\mathrm{vL}}$ and
+$2/(1-\varphi_{\mathrm{vL}})$, $\varphi_{\mathrm{vL}}$ the mass fraction of a cell crossing a fixed boundary (Eqs.
+(102)–(103); page-local $\varphi_{\mathrm{vL}}$, not the GQL $\varphi_i$), which keeps only the zone averages positive, and a
 "narrow-base" limiter using stored interface values, weaker near a peak (Eq. (104),
 Fig. 5); both (101) and (102) "clip real peaks to the same degree as a first-order method
 would do" (§3.3). For slopes recomputed from averages on a uniform grid, Appendix B

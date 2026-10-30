@@ -5,7 +5,7 @@ description: "Methods that locate a material interface or rigid wall by the zero
 status: established
 aliases: [level set, level-set function, ghost fluid method, GFM, original ghost fluid method, OGFM, sharp-interface method, conservative sharp-interface scheme, real–ghost mixing, DGCCGF]
 tags: [interface-capturing, level-set, multiphase, finite-difference, weno, dg, immersed-boundary]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Level-set and ghost-fluid interface methods
@@ -139,8 +139,8 @@ motivation is the [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md));
 conservative schemes, conversely, "tend to give oscillatory results if
 no special care is taken" (§1). On a strong shock hitting a gas–gas
 interface ($(\rho,v,p,\gamma)=(0.3856,27.0784,100,5/3)$ against
-$(1,0,1,1.4)$), a finite-difference WENO-based original GFM places the
-shock front and the interface wrongly, while their conservative scheme
+$(1,0,1,1.4)$), in the authors' comparison a finite-difference WENO-based
+original GFM misplaces the shock front and the interface, while their conservative scheme
 does not (§4, Ex. 4, Fig. 8). They also argue against diffuse-interface
 capturing, whose smeared interface carries mixture states
 "inconsistent with what is really happening in physics" (§1).

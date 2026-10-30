@@ -5,7 +5,7 @@ description: "Euler problems with fixed shocks (1D stationary shock, quasi-1D no
 status: established
 aliases: [steady shock tests, stationary shock, steady normal shock, regular shock reflection, oblique shock reflection, steady-state convergence tests, planar steady normal shock, quasi-one-dimensional nozzle flow, quasi-1D nozzle]
 tags: [benchmark, teno, weno, riemann-solver, finite-volume, carbuncle]
-timestamp: 2026-10-30T08:08:00Z
+timestamp: 2026-10-30T08:44:00Z
 ---
 
 # Steady shock problems
@@ -51,6 +51,7 @@ the lowest residual throughout (Fig. 5). In one dimension the stall is therefore
 
 ## Quasi-one-dimensional nozzle flow
 
+The full treatment is on [quasi-one-dimensional nozzle flow](/benchmarks/quasi-one-dimensional-nozzle-flow.md).
 Two founding sources of the bundle compute a standing shock inside a nozzle of variable cross-section
 $A(x)$: the one-dimensional Euler equations with a geometric source term, marched in time to the
 steady state.
@@ -68,7 +69,7 @@ $f(w)$ and $p$ are given in (7.1)" (the Euler variables of the report), and runs
   (Eq. (8.7c)), $A_0$ and $A_E$ the entrance and exit areas, subsonic at both ends: ULT1 (Fig. 6).
 
 ULT1 is the second-order [TVD scheme](/methods/harten-tvd-scheme.md) of the report with the
-numerical-viscosity function $Q(x)=\lvert x\rvert$ (Eq. (8.3a)). The values of $A_0$, $A_E$ and
+numerical-viscosity function $\mathfrak Q(x)=\lvert x\rvert$ (Eq. (8.3a); page-local $\mathfrak Q$, Harten's $Q$). The values of $A_0$, $A_E$ and
 $x_E$, the meshes, $\gamma$ and the residual histories are not printed; the figures are credited to
 H. C. Yee, and the report hopes that "a detailed report of these calculations and the particular
 approach to steady state will be published elsewhere".

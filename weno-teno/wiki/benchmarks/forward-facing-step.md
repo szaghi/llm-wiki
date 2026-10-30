@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel wi
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -206,9 +206,9 @@ Mach stem below is attributed instead to the corner.
 leaving the corner may partly turn into an expansion shock in the
 Godunov results of Woodward & Colella, as Harten cites them, and finds "a
 similar behaviour" with the ULT1 scheme, whose numerical viscosity is
-$Q(x)=\lvert x\rvert$ (Eq. (8.3a)); §5 states that schemes with
-$Q(0)=0$ keep stationary jumps, admissible or not, while ULT2 uses
-$Q(x)=x^2+\tfrac14$. No figure of ULT1 is shown (§8 III). See
+$\mathfrak Q(x)=\lvert x\rvert$ (Eq. (8.3a); page-local $\mathfrak Q$, Harten's $Q$); §5 states that schemes with
+$\mathfrak Q(0)=0$ keep stationary jumps, admissible or not, while ULT2 uses
+$\mathfrak Q(x)=x^2+\tfrac14$. No figure of ULT1 is shown (§8 III). See
 [Harten's TVD scheme](/methods/harten-tvd-scheme.md).
 
 **Reflecting walls and the weights.** Jiang & Shu find all their

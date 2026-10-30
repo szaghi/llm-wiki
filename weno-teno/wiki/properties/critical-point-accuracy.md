@@ -5,14 +5,15 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference, critical-points]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Accuracy at critical points
 
-A point is an **$m$th-order critical point** of $f$ if $f'=\dots=f^{(m)}=0$ there and
-$f^{(m+1)}\ne0$ (Deng 2023, Definition 3; Li et al. 2022b, notation of Tables 4–5);
-[Borges et al. (2008)](/sources/borges-2008.md) (Eq. (35)) define the order $n_{\mathrm{cp}}$ by the vanishing
+A point is an **$n_{\mathrm{cp}}$th-order critical point** of $f$ if $f'=\dots=f^{(n_{\mathrm{cp}})}=0$ there and
+$f^{(n_{\mathrm{cp}}+1)}\ne0$ (Deng 2023, Definition 3; Li et al. 2022b, notation of Tables 4–5; page-local
+order $n_{\mathrm{cp}}$, Li et al.'s $m$);
+[Borges et al. (2008)](/sources/borges-2008.md) (Eq. (35)) define the order by the vanishing
 derivatives alone and write $n_{\mathrm{cp}}=0$ for a non-critical point. A smooth extremum
 is a first-order critical point. A nonlinear reconstruction has the property when its observed order
 at such points equals its design order; the bundle's sources measure it on $f(x)=x^ke^x$ at $x=0$, a
@@ -20,7 +21,7 @@ $(k-1)$th-order critical point (Li et al. 2022b, §4.1).
 
 ## Mechanism
 
-At an $m$th-order critical point the [smoothness indicators](/definitions/smoothness-indicator.md)
+At an $n_{\mathrm{cp}}$th-order critical point the [smoothness indicators](/definitions/smoothness-indicator.md)
 lose their $O(\Delta x^2)$ leading term: for $r=4$ they become $\beta_k\sim\mathsf c_1\Delta x^4$,
 $\mathsf c_2\Delta x^6$, $\mathsf c_{3,k}\Delta x^8$ at the first, second and third order (Li et al. 2022b, Table 4; page-local
 Taylor constants $\mathsf c_1$, $\mathsf c_2$, $\mathsf c_{3,k}$, the source's $A$, $B$, $C_k$). The
@@ -59,7 +60,7 @@ data and report "No such degeneracy" for their WENO.
 | Liu–Osher–Chan WENO ($r=3$) | third order at critical points, by Jiang & Shu's expansion of its indicator | Jiang & Shu 1996, §2, Eqs. (2.23)–(2.25) |
 | [mapped WENO](/methods/mapped-weno.md) | the mapping restores the fifth-order condition at first-order critical points; it fails, second order like WENO-JS, if $f''$ also vanishes | Li et al. 2022b, §2 (recalled); Borges et al. 2008, §2, after Eq. (24); Shu 2009a, §2.3.5 (motivation: "especially at smooth extrema") |
 | [WENO-Z](/methods/weno-z.md) ($r=3$) | order $\min(5,s_1+2,s_2+3)$: 5, 4, 2 for $n_{\mathrm{cp}}=0$, $1$, $\ge2$ with $q=1$; fifth order at $n_{\mathrm{cp}}=1$ with $q=2$; orders 3.93–3.99 ($q=1$) and 4.80–4.98 ($q=2$) on $x^3+\cos x$ | Borges et al. 2008, §4, Eqs. (32)–(42), Tables 1–3 |
-| WENO-Z | falls to the $r$th-order ENO rate when $\tau_{2r-1}$ and $\beta_k$ have leading terms of the same order; WENO5-Z 5.14–5.37 (1st) but 2.11–2.32 (2nd); WENO7-Z cannot improve at a 3rd-order point for $q=1$ or 2 (3.24–3.55) | Li et al. 2022b, §2, Table 4, Tables 6–7 |
+| WENO-Z | falls to the $r$th-order ENO rate when $\tau_{2r-1}$ and $\beta_k$ have leading terms of the same order; WENO5-Z 5.14–5.37 (1st; $q$ and $\epsilon$ not stated in the source, §3.2 recommends $q=1$ at fifth order) but 2.11–2.32 (2nd); WENO7-Z cannot improve at a 3rd-order point for $q=1$ or 2 (3.24–3.55) | Li et al. 2022b, §2, Table 4, Tables 6–7 |
 | fifth-order WENO-ZN | fifth order at 1st and 2nd order with $q=2$; fifth/fourth with $q=1$; no improvement at 3rd order | Li et al. 2022b, §3.1 (recalled from the fifth-order paper), Table 6 |
 | [WENO-ZN](/methods/weno-zn.md), order $2r-1$ | design order up to $(2r-4)$th-order critical points; WENO7-ZN 6.99–7.91 at 2nd–4th, WENO9-ZN 8.99–9.00 at 3rd–5th | Li et al. 2022b, Table 5, Tables 7–8 |
 | WENO-Z$\eta$ (Fan) | up to $(r-1)$th-order points, with an $O(\Delta x^{2r+2})$ global indicator | Li et al. 2022b, §3.3 (derived) |
@@ -365,8 +366,8 @@ that reconciles Jiang & Shu's sufficient condition (2.14) with them.
   Qualifications of [WENO-ZN](/methods/weno-zn.md).
 - Li et al. (2023a, §2.3) argue from the order of $\tau^*$ alone. *(Compiler check, not in the sources:
   $\tau^*$ is $O(\Delta x^{10})$ for any smooth data, critical point or not; what decides the weights is
-  $\tau^*/(\beta_k+\epsilon\mathsf m^2)$, and at an $m$th-order critical point $\beta_k$ also drops to
-  $O(\Delta x^{2m+2})$, which their statement does not examine.)*
+  $\tau^*/(\beta_k+\epsilon\mathsf m^2)$, and at an $n_{\mathrm{cp}}$th-order critical point $\beta_k$ also drops to
+  $O(\Delta x^{2n_{\mathrm{cp}}+2})$, which their statement does not examine.)*
 - Wang & Don (2022) name the property ("Cp-property") but run no critical-point test of their
   affine-invariant weights ([affine-invariant WENO](/methods/affine-invariant-weno.md)).
 - Chen & Deng's Theorem 3.1 concerns the interpolation; the order of the full WCNS derivative at

@@ -5,7 +5,7 @@ description: "Treatments of walls and interfaces off the mesh: ghost-cell immers
 status: established
 aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP, image line, HO-e, discrete forcing, eikonal extrapolation]
 tags: [immersed-boundary, finite-volume, flux-reconstruction, interface-capturing, multiphase]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Immersed-boundary and cut-cell methods
@@ -538,7 +538,7 @@ Figs. 8–9).
   conditions on the same variables, while Ciallella et al. reach about $N$;
   the two treatments differ (image lines through fluid cells in FR, against
   constrained reconstruction inside one DG element) and are tested on
-  different problems, so the difference is not a contradiction.
+  different problems.
 - Ciallella et al. write that "in all cases, the expected convergence of
   $M+1$ is achieved" (§6.1, their $M$ the degree), while their $N=2$ rates
   on conformal meshes are 2.61–2.99 (Table 4) and their embedded rates

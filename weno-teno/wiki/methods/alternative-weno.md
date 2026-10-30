@@ -5,7 +5,7 @@ description: "The alternative formulation of finite-difference WENO evaluates a 
 status: established
 aliases: [A-WENO, AFWENO, alternative formulation of WENO, alternative flux formulation, Jiang–Shu–Zhang scheme]
 tags: [weno, finite-difference, numerical-flux, reconstruction, multiphase]
-timestamp: 2026-10-30T07:53:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Alternative WENO (A-WENO)
@@ -144,8 +144,9 @@ gas–water with a stiffened-gas law) on this formulation:
 Results: fifth order on 1-D and 2-D Burgers-reducible artificial-interface tests ($L_1$ order 5.14 at
 $N=320$, 5.06 at $320^2$; Tables 2, 4), sixth-order convergence of $\varphi$ (Table 3), velocity and
 pressure deviations near $10^{-11}$–$10^{-10}$ on a moving contact against $10^{-4}$–$10^{-3}$ for
-conservative-variable WENO-JS (Fig. 6), correct wave positions where a finite-difference WENO
-ghost-fluid method misplaces them (Fig. 8), and no spurious interface jump on a gas–water Riemann
+conservative-variable WENO-JS (Fig. 6), a strong shock on a gas–gas interface where, in the authors'
+comparison, a finite-difference WENO ghost-fluid method misplaces the shock front and the interface and
+their scheme does not (Fig. 8), and no spurious interface jump on a gas–water Riemann
 problem where WENO-JS produces one (Fig. 11) ([gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md),
 [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)). CFL 0.5, SSP-RK3 assembled so that
 each stage is one conservative update from $u^n$ ([SSP Runge–Kutta](/methods/ssp-runge-kutta.md)).
@@ -297,11 +298,11 @@ in double and quadruple precision (Tables 4–8).
   printed definition, write $u^-_{j+1/2}$ for $\phi^-_{j+1/2}$ in the derivative of the quartic
   interpolant (p. 7), print two vanishing differences in the $y$-path integral $C^{(6)}$ (p. 11), and
   a positive exponent in the bottom of Example 9.
-- Ye et al. (2022) print sign errors in rows of their central-coefficient Tables 3 and 5: the
+- Ye et al. (2022) print rows of their central-coefficient Tables 3 and 5 with inverted signs: the
   six-point second-derivative row of Table 3 reads $(34,-39,5)/48$ for the pairs
   $(c_i,c_{i+1}),(c_{i-1},c_{i+2}),(c_{i-2},c_{i+3})$, the negative of the exact coefficients given
   above. They also print $F'(x_{i+1/2})$ for $\partial_xf$ at $x_i$ in Eq. (11). Their Appendix
-  Eq. (A.25) carries correct signs.
+  Eq. (A.25) prints the ten-point row of Table 3 with the opposite sign to the table.
 
 # Citations
 

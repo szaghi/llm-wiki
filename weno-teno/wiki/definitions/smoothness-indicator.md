@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Smoothness indicators
@@ -362,8 +362,8 @@ is common to all stencils, which is what allows global indicators $\tau$ built f
 $\beta_k$ to be of higher order: $\tau_5=|\beta_0-\beta_2|=O(\Delta x^5)$ for
 [WENO-Z](/methods/weno-z.md), $\tau_6=\big|\beta_6-\tfrac16(\beta_0+\beta_2+4\beta_1)\big|=O(\Delta x^6)$
 for WENO-CU6 and sixth-order TENO (Ye et al. 2022, Eqs. (28), (39), translated here to the Jiang–Shu
-labelling). At an $m$th-order
-critical point the leading term drops to $O(\Delta x^{2m+2})$, and the ratios $\tau/\beta_k$ that
+labelling). At an $n_{\mathrm{cp}}$th-order
+critical point ($f'=\dots=f^{(n_{\mathrm{cp}})}=0$) the leading term drops to $O(\Delta x^{2n_{\mathrm{cp}}+2})$, and the ratios $\tau/\beta_k$ that
 control the weights lose orders ([critical-point accuracy](/properties/critical-point-accuracy.md);
 [WENO-ZN](/methods/weno-zn.md) replaces $\tau$ by an undivided difference for that reason).
 

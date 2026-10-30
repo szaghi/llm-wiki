@@ -164,6 +164,7 @@ Chunk 5 (2026-10-22), cited further in chunks 6–12 (2026-10-23/30). This sourc
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
 * [Conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 * [Double Mach reflection](/benchmarks/double-mach-reflection.md)
+* [Exact Riemann solver](/methods/exact-riemann-solver.md)
 * [Five- and six-equation diffuse-interface models](/definitions/five-equation-model.md)
 * [Gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md)
 * [Gradient-based reconstruction (MEG/MIG schemes)](/methods/gradient-based-reconstruction.md)

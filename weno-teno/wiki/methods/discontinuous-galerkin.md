@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-30T07:53:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -791,7 +791,7 @@ shock tube for $\mathbb P^2$–$\mathbb P^7$ with their shock capturing; at
 fixed degrees of freedom the first finds a marginally lower error at
 higher degree, the second a marginally lower error at lower degree
 (Dzanic et al., Table 1; Dzanic & Witherden, Tables 3–4). The two studies
-use different shock-capturing methods, so this is not a contradiction.
+use different shock-capturing methods.
 Cernetic et al. (2023), with their evolved viscosity, capture a shock
 within one cell with a 20–80 % width proportional to $h/(N+1)$ for
 $N\ge1$ (Figs. 3–4), and find on the Woodward–Colella blast wave that the

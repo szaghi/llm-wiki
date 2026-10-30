@@ -5,7 +5,7 @@ description: "AFTENO places a TENO interpolation of point values inside the alte
 status: established
 aliases: [AFTENO, AFTENO5, alternative formulation of targeted ENO, TENO in the AFWENO framework]
 tags: [teno, finite-difference, numerical-flux, reconstruction]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # AFTENO — alternative-formulation TENO
@@ -106,8 +106,8 @@ TENO to the interpolation-based flux plus derivative terms (§4.2).
 - The text claims the smallest errors on the 2D density wave (§4.1), which its
   own $L_\infty$ table contradicts; the claim holds for $L_1$ only.
 - Printed slips in the coefficient tables: Table 1 rows $K=5$ and $K=7$ have
-  misprinted or swapped entries (Eq. (14) is correct); Table 3 rows "5∼6" and
-  "9∼10" and two rows of Table 5 have inverted signs (Eq. (A.25) is correct).
+  entries that differ from Eq. (14) (misprinted or swapped); Table 3 rows "5∼6" and
+  "9∼10" and two rows of Table 5 carry the opposite sign to Eq. (A.25).
   Eq. (13) and Eq. (A.19) give the arguments of $h$ in opposite orders.
 - Tables 9–10 report observed orders 6.1–7.0 on the finest meshes of the 1D
   density wave for fifth-order schemes, with no time step or CFL stated; the

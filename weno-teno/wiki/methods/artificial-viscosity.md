@@ -5,7 +5,7 @@ description: "Artificial viscosity adds solution-dependent dissipation instead o
 status: established
 aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-30T07:59:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -632,11 +632,11 @@ that the flux and limiter "do not induce excessive numerical viscosity"
   first-order viscosity and cancels it, where the data are smooth, by a limited correction
   of the flux ([Harten's TVD scheme](/methods/harten-tvd-scheme.md)). In that framework every
   three-point conservative scheme is the central flux minus a viscosity term with
-  "coefficient of numerical viscosity" $Q$, a function of the local Courant number
+  "coefficient of numerical viscosity" $\mathfrak Q$ (page-local, the source's $Q$), a function of the local Courant number
   ([numerical dissipation](/definitions/numerical-dissipation.md)); one of the paper's test schemes,
-  ULT2 ($Q=\nu^2+\tfrac14$), is the Lax–Wendroff scheme plus the linear viscosity
+  ULT2 ($\mathfrak Q=\nu^2+\tfrac14$), is the Lax–Wendroff scheme plus the linear viscosity
   $\tfrac18(u_{i+1}-2u_i+u_{i-1})$ (§5), and its comparison hybrid scheme multiplies the same
-  $\tfrac14$ term by an artificial-compression switch, $Q=\nu^2+\tfrac14\theta_{\mathrm{AC}}$ field by
+  $\tfrac14$ term by an artificial-compression switch, $\mathfrak Q=\nu^2+\tfrac14\theta_{\mathrm{AC}}$ field by
   field (§8, Eq. (8.9);
   [artificial compression](/methods/artificial-compression.md)).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) (§1) reject

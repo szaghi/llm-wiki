@@ -156,6 +156,7 @@ Chunk 4 (2026-10-22), cited further in chunks 5–12 (2026-10-22/30). This sourc
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Implicit shock tracking and moving DG (MDG-ICE)](/methods/implicit-shock-tracking.md)
+* [Quasi-one-dimensional nozzle flow](/benchmarks/quasi-one-dimensional-nozzle-flow.md)
 * [Rankine–Hugoniot jump condition](/definitions/rankine-hugoniot-condition.md)
 * [Roe approximate Riemann solver](/methods/roe-riemann-solver.md)
 * [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)

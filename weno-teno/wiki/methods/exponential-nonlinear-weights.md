@@ -5,7 +5,7 @@ description: "Chen and Deng's exponential nonlinear weights d_k exp(-β_k^λ/λ)
 status: established
 aliases: [WCNS-EXP, exponential mapping weights, exponential-mapping nonlinear weights, unconditionally optimal weights, EXP weights]
 tags: [weno, reconstruction, finite-difference, compact-scheme]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Exponential nonlinear weights (WCNS-EXP)
@@ -61,9 +61,9 @@ fifth-order for smooth data". Its justification is the paragraph before it; no p
 ([accuracy at critical points](/properties/critical-point-accuracy.md)).
 
 *(Compiler check, not in the sources.)*
-- With generic Taylor coefficients and an $m$th-order critical point at $x_i$, the printed indicators
-  give $\beta_k=O(\Delta x^{2m+2})$ and $\tau_5=O(\Delta x^{2m+3})$ for $m=1,\dots,4$. Hence
-  $\theta_{\mathrm E}=O(\Delta x^{0.4m+1.4})$. Away from critical points $\beta_k=O(\Delta x^2)$ and
+- With generic Taylor coefficients and an $n_{\mathrm{cp}}$th-order critical point at $x_i$, the printed indicators
+  give $\beta_k=O(\Delta x^{2n_{\mathrm{cp}}+2})$ and $\tau_5=O(\Delta x^{2n_{\mathrm{cp}}+3})$ for $n_{\mathrm{cp}}=1,\dots,4$. Hence
+  $\theta_{\mathrm E}=O(\Delta x^{0.4n_{\mathrm{cp}}+1.4})$. Away from critical points $\beta_k=O(\Delta x^2)$ and
   $\tau_5=O(\Delta x^5)$, so $\theta_{\mathrm E}=O(\Delta x^{3.4})$.
 - The interpolation condition $O(\Delta x^2)$ is weaker than the $O(\Delta x^3)$ sufficient
   condition of finite-difference flux reconstruction. The candidates are third-order values, so

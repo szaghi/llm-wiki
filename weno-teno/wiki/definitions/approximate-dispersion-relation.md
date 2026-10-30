@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a possibly nonlinear s
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-30T07:53:00Z
+timestamp: 2026-10-30T08:43:00Z
 ---
 
 # Approximate dispersion relation
@@ -497,7 +497,7 @@ is meant.
   the MDCD dispersion up to $\vartheta=2.06$, beyond which the WENO part activates; TENO-HY and
   MDCD-HY show irregular dissipation at low wavenumbers, which the authors trace to detector
   misjudgments, and WENO-Z is the most dissipative. The same sine-wave procedure grades the
-  detectors themselves: the TENO-based one of Fu is correct only below $0.64$, the modified
+  detectors themselves: the TENO-based one of Fu flags the sine waves as smooth only below $\vartheta=0.64$, the modified
   Ren detector up to $2.06$ (§3.2, Fig. 9). See [hybrid central–WENO schemes](/methods/hybrid-weno.md).
 - **Resolution that does not degrade with the CFL number.** On the fully discrete curves of
   [Li et al. (2023b)](/sources/li-2023-b.md) (§3.4, Fig. 11), ADADF keeps a resolving efficiency
