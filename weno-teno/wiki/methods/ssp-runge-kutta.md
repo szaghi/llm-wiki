@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-10-30T09:00:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -190,12 +190,12 @@ The schemes printed in the paper (pp. 11–14; orders as labelled there):
 | 3 | (2.18), above | 1 | no |
 | 4 | (2.20): the classical four-stage RK4 rewritten in the form (2.12) | $\tfrac23$ | on $u^{(0)}$, $u^{(1)}$ |
 | 4 | (2.21): (2.20) with a modified third stage | $\tfrac{137}{200}$ | on $u^{(0)}$, $u^{(1)}$ |
-| 4 | (2.22) | 0.87 | on $u^{(0)}$, $u^{(1)}$ |
+| 4 | (2.22), in the ICASE report only (not in the JCP version) | 0.87 | on $u^{(0)}$, $u^{(1)}$ |
 
 For fourth order the accuracy conditions leave nine free parameters, and the authors' search
 "seems to indicate" that negative $\beta_{ik}$ cannot be avoided (p. 12). The paper also rewrites a
 six-stage method from p. 143 of Lambert, labelled fifth order, with CFL# $\tfrac7{30}$ and
-$\tilde{\mathcal L}$ on three stages (Eq. (2.23)). *(Compiler check, not in the sources: in Butcher
+$\tilde{\mathcal L}$ on three stages (Eq. (2.23) of the report, (2.22) of the JCP version, same coefficients). *(Compiler check, not in the sources: in Butcher
 form the coefficients of (2.23) as printed satisfy the order conditions only through order two,
 $b^\top Ac=\tfrac8{45}\ne\tfrac16$, while the printed CFL# $\tfrac7{30}$ is reproduced; and (2.21) prints
 $\Delta t\,\mathcal L(u^{(3)})$ in the formula for $u^{(3)}$, whereas with $\mathcal L(u^{(2)})$ the

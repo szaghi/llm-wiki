@@ -19,9 +19,13 @@ staging; `.night/` snapshot).
 
 - `san-2014`: keep page 256 (the entry already reads 256; Crossref's 254 stays in the note).
 - `harten-1983-e`: keep the year 1983.
-- Shu & Osher (2.23): compare with the JCP version — pending: no copy of the
-  journal version is in any archive (all copies are the ICASE report); the
-  owner adds the PDF.
+- Shu & Osher (2.23): compared with the JCP version (owner-provided PDF,
+  added to the archive 2026-10-30): the JCP prints the same coefficients as
+  its (2.22), so $b^\top Ac=8/45$ holds there too; its (2.21) keeps
+  $\Delta tL(u^{(3)})$; its Table I keeps "5.4-5" with order 4.35. The JCP
+  adds (2.19), an equivalent form of (2.18), and drops the report's
+  fourth-order scheme with CFL 0.87. Recorded on shu-1988 (Version read,
+  Printed slips) and ssp-runge-kutta.
 - Symbols, registry rows and candidate pages: done (log, 2026-10-30
   follow-up): four new pages (quasi-1D nozzle flow, exact Riemann solver,
   Cauchy–Kowalewski procedure, negative linear weights), symbols unified,
