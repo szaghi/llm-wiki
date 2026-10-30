@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a possibly nonlinear s
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T07:53:00Z
 ---
 
 # Approximate dispersion relation
@@ -176,7 +176,10 @@ which both Fu papers call "the approximate dispersion relation":
 $$\zeta=\frac{\big\lvert d\tilde\vartheta_r/d\vartheta-1\big\rvert}{-\tilde\vartheta_i}\approx O(10)$$
 
 ($\zeta$ page-local; Fu 2021 prints the numerator without the absolute value,
-Fu 2023 with it, and plots the regularized form
+[Fu, Hu & Adams (2016)](/sources/fu-2016.md) (§4.1, Eq. (30)) and Fu 2023 with it; Fu et al. (2016)
+take it "for the non-resolved wave-number range", state that its application to nonlinear
+schemes "is fairly straightforward" although it comes from a linear analysis, and plot the same
+regularized form "approximately" in their Fig. 5; Fu 2023 plots the regularized form
 $(\lvert d\tilde\vartheta_r/d\vartheta-1\rvert+10^{-3})/(-\tilde\vartheta_i+10^{-3})$,
 Fig. 3). The design idea is that dissipation should be just large enough to damp
 the modes whose phase is already wrong. [Fu (2021)](/sources/fu-2021.md)
@@ -186,6 +189,33 @@ whereas symmetric stencils let dispersion and dissipation be optimized
 separately once the order constraint is relaxed; this is why its TENO8-AA and
 TENO10-AA linear schemes are of order 6 and 8 rather than 8 and 10 (see
 [adaptive TENO](/methods/adaptive-teno.md)).
+
+**The founding blend of two sub-schemes.** Before this split, the founding TENO paper
+optimized the background differently ([Fu et al. (2016)](/sources/fu-2016.md), §4, Eqs. (31)–(33),
+Tables 3–4): an order-$K$ scheme is replaced by
+$\hat f^{\mathrm{opt}}_{i+1/2}=\eta_{\mathrm b}g^{(1)}_{i+1/2}+(1-\eta_{\mathrm b})g^{(2)}_{i+1/2}$, a blend of two
+order-$(K-1)$ sub-schemes ($\eta_{\mathrm b}$ page-local; the source's $\eta$, here renamed to keep
+the entropy $\eta$), with $\zeta$ as the objective "instead of minimizing the dispersion errors". For
+even $K$ the sub-schemes are upwind- and downwind-biased with the same dispersion error, so only the
+dissipation is tuned; for odd $K$ the dispersion error changes as well, which is "tolerated". On five
+points, $g^{(1)}=\tfrac1{12}(f_{i-2}-5f_{i-1}+13f_i+3f_{i+1})$ (upwind) and
+$g^{(2)}=\tfrac1{12}(-f_{i-1}+7f_i+7f_{i+1}-f_{i+2})$ (central, non-dissipative); $\eta_{\mathrm b}=0.4$
+gives the upwind fifth-order scheme, and lowering $\eta_{\mathrm b}$ from 0.35 to 0.2 raises the extremum
+of $\zeta$ "from approximately 5.5 to 16.5, maintaining order $O(10)$" (§4.2); TENO5-opt takes
+$\eta_{\mathrm b}=0.2$, $d=(0.55,0.4,0.05)$ in TENO labels, and its nonlinear version adds dissipation only
+at high wavenumbers and is "less dissipative than a classical fifth-order linear scheme especially
+for intermediate wave numbers". On six points,
+$g^{(1)}=\tfrac1{60}(2f_{i-2}-13f_{i-1}+47f_i+27f_{i+1}-3f_{i+2})$ and
+$g^{(2)}=\tfrac1{60}(-3f_{i-1}+27f_i+47f_{i+1}-13f_{i+2}+2f_{i+3})$ share the dispersion of the sixth-order
+central scheme ($\eta_{\mathrm b}=0.5$); TENO6-opt takes $\eta_{\mathrm b}=0.54$, $d=(0.462,0.3,0.054,0.184)$,
+"obtained by enforcing the constraint $\zeta=10$ at" $\vartheta=1.302$, and its nonlinear version has
+$\zeta\le35$ everywhere and below 10 at high wavenumbers (§4.3). The blend costs one order: TENO5-opt
+is fourth and TENO6-opt fifth order (§5.1). Fu et al. (§4.1) also state that, because the fifth-order
+upwind background is so dissipative, $\zeta\le5.5$ for all nonlinear five-point schemes, "free from
+spurious waves", whereas $\zeta\approx O(100)$ between the wavenumbers 1.1 and 1.8 for the six-point
+schemes over the non-dissipative central background, and that the WENO-SYMBO and WENO-BO schemes
+produce anti-dissipation at low to intermediate wavenumbers and "apparently fail to satisfy" the
+relation (citing their [22], [29]).
 
 **Printed values for an eight-point background.** [Liang & Fu (2024b)](/sources/liang-2024-b.md)
 (§3.3.1, Eqs. (36)–(46)) give the procedure with numbers. The
@@ -424,7 +454,11 @@ is meant.
   up to intermediate wavenumbers, and the cut-off $C_T$ fixes where it departs
   from it; WENO-JS and WENO-Z depart earlier
   ([Fu (2023)](/sources/fu-2023.md), §2.5, Fig. 2, $C_T\in\{10^{-5},10^{-6},10^{-7}\}$;
-  Fig. 3 for TENO8 and the spectrally optimized TENO8-opt). The same property
+  Fig. 3 for TENO8 and the spectrally optimized TENO8-opt). The founding paper states the
+  wavenumbers: the five-point linear scheme is recovered "up to wave numbers 1.75, 1.85 and 1.95"
+  for $C_T=10^{-5}$, $10^{-6}$ and $10^{-7}$; WENO-CU6 departs from its linear scheme at 1.2 and
+  TENO6 "significantly" later, with WENO-CU6-M the least dispersive and dissipative of the six-point
+  schemes ([Fu et al. (2016)](/sources/fu-2016.md), §§3.2–3.3, Figs. 3–4). The same property
   is stated without a new ADR computation by
   [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.2). See
   [targeted ENO](/methods/targeted-eno.md).
@@ -624,6 +658,7 @@ is meant.
 
 # Citations
 
+- [Fu, Hu & Adams (2016)](/sources/fu-2016.md) — §§3.2–3.3, Figs. 3–4; §4, Eqs. (30)–(33), Tables 3–4, Figs. 5–9: TENO spectra against $C_T$, $\zeta\approx O(10)$, blended optimized backgrounds.
 - [Fu (2021)](/sources/fu-2021.md) — §3.1, §4.1, Eqs. (20)–(24): splitting, error integral, $\zeta\approx O(10)$.
 - [Fu (2023)](/sources/fu-2023.md) — §2.5, Eqs. (12)–(16), Figs. 2–3: sign convention, TENO spectra.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §§3–4, Figs. 1–4: Pirozzoli ADR, negative dissipation of WENO-Z+.

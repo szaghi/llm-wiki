@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WENO-CU6"
-description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that adds a downwind three-point stencil to the fifth-order set, uses a six-point global smoothness indicator of order Δx⁶ and a WENO-Z-type weight with constant C = 20; in the bundle it is the main low-dissipation comparator of the TENO papers."
+description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that adds a downwind three-point stencil to the fifth-order set, uses a six-point global smoothness indicator of order Δx⁶ and a WENO-Z-type weight with C = 20, q = 1 as recalled by Fu et al. (2016); in the bundle it is the main low-dissipation comparator of the TENO papers."
 status: established
-aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M1, EWENO-CU6, EWENO-CU]
+aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M, WENO-CU6-M1, EWENO-CU6, EWENO-CU]
 tags: [weno, reconstruction, low-dissipation, finite-difference, turbulence]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # WENO-CU6
@@ -16,8 +16,13 @@ sixth-order WENO-CU6 scheme with a modified weighting strategy"; Ye et al. (2022
 built "by adding a downwind stencil" to the fifth-order WENO stencils; Li et al. (2022b, §1) that it
 uses an "extra three-points substencil and a corresponding global smoothness indicator to construct
 the sixth-order central-upwind WENO-Z type scheme"; Hiejima (2022, §1) places it "in the weighting
-strategy to reduce the sensitivity of nonlinear adaptation". The global stencil is the six-point
-$\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
+strategy to reduce the sensitivity of nonlinear adaptation". The fullest account in the bundle is the
+background section of the founding TENO paper, [Fu, Hu & Adams (2016)](/sources/fu-2016.md) (§2.3,
+Eqs. (16)–(20)), who credit the scheme to Hu and Adams (their [23], elsewhere "Hu et al.") and describe it as
+admitting "the contribution from the downwind stencil" to reduce the built-in dissipation of the background
+scheme, adapting "between central and upwind schemes smoothly". The global stencil is the six-point
+$\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$, and the added downwind candidate is
+$\hat f^{(3)}_{i+1/2}=\tfrac16(11f_{i+1}-7f_{i+2}+2f_{i+3})$ (Fu et al. 2016, Eq. (16)).
 
 ## Ingredients recalled in the sources
 
@@ -26,21 +31,33 @@ $\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
   &+5653317f_{i-1}^2-20427884f_{i-1}f_i+17905032f_{i-1}f_{i+1}-7727988f_{i-1}f_{i+2}+1325006f_{i-1}f_{i+3}\\
   &+19510972f_i^2-35817664f_if_{i+1}+15929912f_if_{i+2}-2792660f_if_{i+3}\\
   &+17195652f_{i+1}^2-15880404f_{i+1}f_{i+2}+2863984f_{i+1}f_{i+3}+3824847f_{i+2}^2-1429976f_{i+2}f_{i+3}+139633f_{i+3}^2\big)\end{aligned}$$
-  (Ye et al. 2022, Eq. (29), there attributed to Hu et al.; the same form is the $\beta_{3,6}$ of Fu
+  (Fu et al. 2016, Eq. (18), used as $\beta_3$ "rather than" the three-point formula, so that "the
+  contribution of the downwind stencil should vanish as long as the full 6-point stencil contains a
+  discontinuity"; Ye et al. 2022, Eq. (29), there attributed to Hu et al.; the same form is the $\beta_{3,6}$ of Fu
   2021, Eq. (28)). *(Compiler check, not in the sources: this equals the integral definition of the
   [smoothness indicator](/definitions/smoothness-indicator.md) for the degree-5 candidate on the six
   points.)*
 - **Global reference indicator.** In the Jiang–Shu labelling of the three-point stencils ($S_0$ most
   upwind, $S_1$ central, $S_2$ downwind-biased),
   $$\tau_6=\beta_6-\tfrac16\big(\beta_0+\beta_2+4\beta_1\big)=O(\Delta x^6)$$
-  (Ye et al. 2022, Eqs. (28)–(32), written there in the TENO labelling; the absolute value is taken in
+  (Fu et al. 2016, Eqs. (19)–(20), printed without absolute value, with $\tau_6/(\beta_k+\epsilon)=O(\Delta x^4)$
+  and hence $\omega_k-d_k=O(\Delta x^4)$, "the requirement for maintaining overall sixth-order accuracy"; Ye et
+  al. 2022, Eqs. (28)–(32), written there in the TENO labelling; the absolute value is taken in
   the general TENO form, Eq. (39)). *(Compiler check, not in the sources: a Taylor expansion confirms that the $\Delta x^2$
   to $\Delta x^5$ terms cancel.)* Fu (2023, Eq. (18)) recalls the same combination as the sixth-order
   $\tau_K$ used in TENO.
 - **Weight template.** Ye et al. (2022, §2.2) write WENO-Z, WENO-CU6 and TENO as
   $\big(C+\tau/(\beta_k+\epsilon)\big)^q$ with $C=1$ for [WENO-Z](/methods/weno-z.md) and $C=20$ for
-  WENO-CU6; a large $C$ pulls the weights towards the linear ones. The sources do not print the
-  WENO-CU6 linear weights or exponent. Li, Chen & Ren (2022a, §3.1, Eqs. (42)–(45)) evaluate the weights of their MDAD-WENO
+  WENO-CU6; a large $C$ pulls the weights towards the linear ones. Fu et al. (2016, §2.3, Eq. (17))
+  print the weights as recalled from Hu et al.:
+  $$\alpha_k=d_k\Big(C+\frac{\tau_6}{\beta_k+\epsilon}\Big)^q,\quad k=0,\dots,3,\qquad C=20,\ q=1,\qquad
+  d=\big(\tfrac1{20},\tfrac9{20},\tfrac9{20},\tfrac1{20}\big),$$
+  in the Jiang–Shu labelling extended by the downwind $S_3$, the $d_k$ recovering "the standard sixth-order
+  central scheme". The variant **WENO-CU6-M** of Hu and Adams takes $C=1000$, $q=4$, a "physically-motivated
+  scale-separation mechanism" with which the scheme "functions as a physically-consistent implicit SGS
+  model" (Fu et al. 2016, §2.3). Fu et al. (§3.1.2) judge that the exponent $q=1$ of WENO-CU6 is chosen to avoid
+  "excessive nonlinear dissipation at intermediate and high wave numbers" and that the $C=1000$ of WENO-CU6-M
+  "reduces the effectiveness of discontinuity detection", which motivates TENO's $C=1$, $q=6$. Li, Chen & Ren (2022a, §3.1, Eqs. (42)–(45)) evaluate the weights of their MDAD-WENO
   "by the same method as the WENO-CU6 scheme", with
   $\alpha_k=d_k\big(20+\tau_6/(\beta_k+\epsilon)\big)^2$, $\epsilon=10^{-40}$, the downwind three-point indicator
   replaced by $\beta_6$ ("we adopt the approach of the WENO-CU6 scheme", §3.1), and their own dissipation-dependent linear weights
@@ -49,9 +66,9 @@ $\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
   Li, Sun, Zha, Zhu, Ding & Xia (2023b, Eq. (53)) write WENO-CU6 as $\alpha_k=d_k\big(C+\tau_6/(\beta_k+\epsilon)\big)$,
   exponent 1, "$C\gg1$", choose $C=100$ and $\epsilon=10^{-40}$, and use the same dissipation-dependent
   MDCD linear weights; they define neither the indicators nor $\tau_6$. Liang & Fu (2024b, §4) state only $C=20$.
-  The bundle's sources thus use
-  three weight settings under the name WENO-CU6 ($C=20$ in Ye et al.'s template; $C=20$, $q=2$; $C=100$,
-  $q=1$), none of them traced to the original paper.
+  The bundle's sources thus record
+  three weight settings under the name WENO-CU6 ($C=20$, $q=1$ in Fu et al. (2016), with $C=20$ also in Ye et al.'s template; $C=20$, $q=2$; $C=100$,
+  $q=1$); the original paper of Hu et al. is not ingested.
 - **The form recalled by Zhang et al. (2024b).** Zhang, Jiang, Qin, Qu & Yan (2024b, §2.4, Eqs. (10)–(13))
   attribute the scheme to Hu & Adams and write it as $\alpha_k=d_k\big(C+\tau_6/(\beta_k+\epsilon)\big)^q$, with
   "a positive integer exponent $q$" introduced "to enhance robustness" and a larger $C$ inclining the scheme
@@ -77,6 +94,22 @@ sixth-order [TENO](/methods/targeted-eno.md) and [AFTENO](/methods/afteno.md) (Y
 §3.4).
 
 ## Performance reported against TENO
+
+In the founding TENO paper ([Fu et al. (2016)](/sources/fu-2016.md), §§3.3, 4.1, 5; Roe-averaged characteristic
+decomposition, global Lax–Friedrichs splitting, CFL 0.6):
+
+- **Spectral properties.** In the [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
+  WENO-CU6 departs from its linear scheme in dispersion and dissipation at the wavenumber 1.2, TENO6 later, and
+  WENO-CU6-M has the lowest dispersion and dissipation of the six-point schemes (§3.3, Fig. 4). For the six-point
+  schemes the dispersion–dissipation ratio is $\approx O(100)$ between the wavenumbers 1.1 and 1.8, "as the
+  background sixth-order central scheme is non-dissipative" (§4.1); Fu et al. trace the spurious waves of
+  WENO-CU6 at marginally resolved wavenumbers to this (§1).
+- **Tests.** WENO-CU6-M oscillates slightly at the Sod contact and overshoots at the Lax contact (§5.2); on the
+  [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md) ($N_x=400$) WENO-CU6 produces
+  spurious waves near $x=0.75$ and $0.86$ (§5.3); on Shu–Osher both oscillate slightly near the shock (§5.4).
+  WENO-CU6-M "fails" the blast waves and the
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) (§5.3, §5.5, §6), and on the viscous shock
+  tube is "slightly distorted due to the lack of dissipation in high wave-number range" (§5.7).
 
 WENO-CU6 is the main comparator of Fu (2021), all runs FD with Roe-averaged characteristic
 decomposition and SSP-RK3:
@@ -143,14 +176,15 @@ differences with characteristic decomposition and TVD-RK3 at CFL 0.3:
 ## Qualifications
 
 - All comparisons are by the developers of the competing scheme and rest on visual inspection of
-  figures; the bundle has no source by the WENO-CU6 authors.
+  figures. Fu et al. (2016) share two authors (Hu, Adams) with the WENO-CU6 papers they cite, but the bundle
+  holds neither WENO-CU6 paper itself.
 - Zhang et al. (2024b, Eq. (11)) print the six-point indicator with $1790502f_{i-1}f_{i+1}$ and
   $286398f_{i+1}f_{i+3}$, where Ye et al. (2022) print $17905032$ and $2863984$, and with
   $1325006f_{i-1}f_{i+2}$ and $-2792660f_if_{i+2}$ where the pattern of the other rows, and Ye et al., have
   $f_{i+3}$; they also label the indicator both as the downwind three-point one and as the six-point one
   ($IS^3_3=IS^6_3$). The coefficients above follow Ye et al. and the compiler check of the integral.
-- The WENO-CU6 weights are recalled only through the template above; the exact form of the
-  central-upwind weighting is not printed in any ingested source.
+- The WENO-CU6 weights are known in the bundle only as recalled: the full form with $C=20$, $q=1$ by Fu et
+  al. (2016, Eq. (17)), the others through the template above.
 - Hong et al. (2022, §1) quote the earlier TENO paper of Fu et al. (its Table 4) for eight-point TENO
   taking "nearly 70 %" more time than WENO-CU6 on double Mach reflection at $1024\times256$; their own
   Table 4 gives 50–55 % *(compiler check, not in the sources: 2277.26/1489.53 = 1.53, and 1.54, 1.50 on
@@ -162,6 +196,7 @@ differences with characteristic decomposition and TVD-RK3 at CFL 0.3:
 
 # Citations
 
+- [Fu, Hu & Adams (2016)](/sources/fu-2016.md) — §1; §2.3, Eqs. (16)–(20); §3.1.2; §3.3, Fig. 4; §4.1, Fig. 5; §§5.2–5.7; §6: WENO-CU6 and WENO-CU6-M recalled in full, spectra, failures of WENO-CU6-M.
 - [Fu (2021)](/sources/fu-2021.md) — §1; §4.2, Eq. (28); §5.4–5.8, Figs. 4–15.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1; §2.2, Eq. (6); §3.4–3.5, Eqs. (28)–(39).
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §1.

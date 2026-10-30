@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Sod and Lax shock tubes"
-description: "The two most often run one-dimensional Euler Riemann problems with exact solutions, Sod's mild tube and Lax's stronger one, run by most sources as the first check of shock and contact capturing; records each source's placement, grid and final time, the printed variants and the multicomponent, stiffened-gas and relaxation relatives."
+description: "The two most often run one-dimensional Euler Riemann problems with exact solutions, Sod's mild tube and Lax's stronger one, run since van Leer's MUSCL paper and the founding TVD, ENO and WENO papers as the first check of shock and contact capturing; records each source's placement, grid and final time, the printed variants and the multiphase relatives."
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -26,6 +26,13 @@ the right half.
 
 | Source | Grid | Final time | Notes |
 |---|---|---|---|
+| [van Leer (1979)](/sources/vanleer-1979.md) §4, Fig. 6 | 100 cells ($\Delta x=0.01$), Courant number 0.9 | 0.14154 (34 steps) | on $[0,1]$, diaphragm at $0.5$; [MUSCL](/methods/muscl-hancock.md) (Eulerian) against the exact solution |
+| [Harten (1983a)](/sources/harten-1983.md) §8 I | 100 cells, 50 steps, CFL 0.95 | not printed | printed in conserved variables, $w_{\mathrm L}=(1,0,2.5)$, $w_{\mathrm R}=(0.125,0,0.25)$, "presented in" Sod's survey; [Harten's TVD schemes](/methods/harten-tvd-scheme.md) ULT1, ULT2; domain not printed |
+| [Harten et al. (1987a)](/sources/harten-1987.md) §7 B1, Eq. (7.10a) | 100 cells, $h=0.1$, CFL 0.8, 50 steps | not printed | tube of length 10; [ENO](/methods/eno-reconstruction.md) with reconstruction via the primitive function, $r=2$, 4, characteristic and component-wise; Roe flux without entropy correction |
+| [Liu et al. (1994)](/sources/liu-1994.md) Example 4 | 100 points, $\Delta t/\Delta x=0.4$ | 2 | plotted on $[-5,5]$; WENO $r=3$, characteristic, Roe flux with entropy fix |
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.2 Ex. 1 | 101 points, CFL 0.6 (figure headers) | 2.0 (figure headers) | domain not printed in the text; WENO-RF-3, WENO-RF-5, WENO-LF-5-PS, WENO-LF-5-A |
+| [Borges et al. (2008)](/sources/borges-2008.md) §5.2.1, Eq. (48) | 200 | 2 | mirrored, on $[-5,5]$: $(0.125,0,0.1)$ on $[-5,0)$, $(1,0,1)$ on $[0,5)$; [WENO-Z](/methods/weno-z.md) vs mapped WENO, WENO-JS |
+| [Fu et al. (2016)](/sources/fu-2016.md) §5.2 | 100 | 0.2 | on $[0,1]$; [TENO](/methods/targeted-eno.md) TENO5, TENO6 and their optimized versions vs WENO-JS, WENO-Z, WENO-CU6, WENO-CU6-M |
 | [Fu (2021)](/sources/fu-2021.md) §5.3 | 96 points | 0.2 | exact Riemann reference; [TENO-AA](/methods/adaptive-teno.md) |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.3 | 100 | 0.2 | exact reference; [TENO-THINC](/methods/teno-thinc.md) |
 | [Ye et al. (2022)](/sources/ye-2022.md) §4.3, Eq. (43) | 200 | 0.2 | mirrored: $(0.125,0,0.1)$ on the left, $(1,0,1)$ on the right; [AFTENO](/methods/afteno.md) |
@@ -133,6 +140,12 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 
 | Source | Domain | Grid | Final time | Notes |
 |---|---|---|---|---|
+| [Harten (1983a)](/sources/harten-1983.md) §8 I, Eq. (8.6b) | not printed | 140 cells, 100 steps, CFL 0.95 | not printed | conserved variables $w_{\mathrm L}=(0.445,0.3111,8.928)$, $w_{\mathrm R}=(0.5,0,1.4275)$; ULT1 against the Roe and Lax–Wendroff schemes |
+| [Harten et al. (1987a)](/sources/harten-1987.md) §7 B1, Eq. (7.10b) | length 10 (100 cells of $h=0.1$) | 100 cells, CFL 0.8, 85 steps | not printed | "used by Lax"; ENO $r=4$ component-wise, $r=2$ and 4 characteristic |
+| [Liu et al. (1994)](/sources/liu-1994.md) Example 4 | plotted on $[-5,5]$ | 100 points, $\Delta t/\Delta x=0.2$ | 1.5 | WENO $r=3$ |
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.2 Ex. 1 | not printed in the text | 101 points, CFL 0.6 (figure headers) | 1.3 (figure headers) | right pressure printed $0.571$ |
+| [Borges et al. (2008)](/sources/borges-2008.md) §5.2.1, Eq. (49) | $[-5,5]$ | 200 | 1.3 | left pressure printed $0.3528$, right $0.5710$ |
+| [Fu et al. (2016)](/sources/fu-2016.md) §5.2 | $[0,1]$ | 100 | 0.14 | left velocity printed $0.689$, right pressure $0.5710$ |
 | [Fu (2021)](/sources/fu-2021.md) §5.3 | $[0,1]$ | 96 | 0.14 | right pressure printed $0.5710$ |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.3 | $[0,1]$ | 100 | 0.14 | same |
 | [Deng (2023)](/sources/deng-2023.md) App. A.5 | $[0,1]$ | 200 cells | 0.16 | |
@@ -181,13 +194,52 @@ exactly that time, whereas the other $[0,1]$ and $[-\tfrac12,\tfrac12]$
 runs stop later, at $0.14$ to $0.16$, so the families compare slightly
 different wave positions.
 
-Luo et al.'s digits are those of the conserved state
+Harten (1983a) prints the Lax states in conserved variables,
+$(0.445,\ 0.3111,\ 8.928)$ and $(0.5,\ 0,\ 1.4275)$, as Kolluru et al.
+do with $0.311$, and the Sod states as $(1,0,2.5)$ and
+$(0.125,0,0.25)$, whose energies are $p/(\gamma-1)$ for $\gamma=1.4$
+*(compiler check, not in the sources)*. Luo et al.'s digits are those
+of the conserved state
 $(\rho,\rho v,E)=(0.445,\ 0.311,\ 8.928)$ converted with $\gamma=1.4$:
 $0.311/0.445=0.698876$ and $0.4\,(8.928-\tfrac12\cdot0.311\cdot0.698876)=3.52773$;
 the other sources print the same state rounded *(compiler check, not in
 the sources)*.
 
 ## Findings across sources
+
+**The founding runs.** Van Leer finds second-order MUSCL on 100 cells
+"superior to all methods tested by Sod, including Phoenical SHASTA",
+which Sod ran at too high a Courant number to remain monotone; a step
+takes 0.47 s on an IBM 370/158 and 0.17 s on a CDC 6600, without
+plotting (§4, Fig. 6). Harten (1983a)'s second-order TVD scheme ULT1
+captures the Lax shock and contact sharply, without the oscillations of
+Lax–Wendroff and the smearing of Roe's first-order scheme (Fig. 2), and
+on Sod ULT2 is "almost identical" to ULT1, with "almost no dependence on
+the CFL number" (Fig. 3). Harten et al. (1987a) find on Sod some "noise"
+in component-wise reconstruction that characteristic reconstruction
+removes, still "acceptable for practical calculations" (Figs. 10–11);
+on Lax the component-wise run is "much noisier" (Figs. 12, 15). For the
+fourth-order Lax run they measure that "the sum of the jumps in the
+reconstruction is only about 35% of the size of the shock" and about
+65 % is carried by the smooth polynomial part (Fig. 16), and they note
+that the self-similarity of the Riemann solution limits the rate of
+convergence of any scheme to first order, $r=4$ with 35 steps giving
+about the result of $r=2$ with 70 (§7 B1, p. 280); see
+[characteristic decomposition](/methods/characteristic-decomposition.md).
+Liu et al. show their WENO with characteristic reconstruction on both
+tubes without comment beyond the figures (Figs. 9–10). Jiang & Shu find
+that "all schemes give the correct solution with good resolution", WENO-RF-5 better
+than WENO-LF-5-PS and both better than WENO-RF-3, and WENO-LF-5-A with
+[artificial compression](/methods/artificial-compression.md) "much
+better" at the contacts; in their experience the two problems,
+"especially the Lax's problem, are tough test cases for
+non-characteristic based schemes of order at least three" (Fig. 4).
+Borges et al. find WENO-Z and mapped WENO more accurate than WENO-JS
+"due to their lesser dissipativity" (Fig. 6). Fu et al. (2016) find
+WENO-Z, TENO5 and TENO5-opt resolving the Sod contact better than
+WENO-JS, WENO-CU6-M slightly oscillating at it and TENO6 and TENO6-opt
+as good as WENO-CU6 (Fig. 11); on Lax WENO-JS is marginally more
+dissipative and WENO-CU6-M overshoots at the contact (Fig. 12).
 
 **Contact resolution separates the schemes.** On Sod all schemes agree
 with the exact solution, and differences lie at the contact: AFTENO best
@@ -751,10 +803,25 @@ single-gas Euler equations.
   $[0,0.2]\times[0,1]$ for data defined on $0\le x\le1$.
 - Mossier, Beck & Munz state Dirichlet boundaries; Boscarino et al.
   reflective ones; Hong, Ye & Ye zero-gradient ones.
-- Luo & Wu print the left Lax pressure as $0.3528$ (Eq. (16)), where
+- Luo & Wu print the left Lax pressure as $0.3528$ (Eq. (16)), as do
+  Borges et al. (Eq. (49)), where Harten et al. (1987a), Liu et al.,
+  Jiang & Shu, Fu et al. (2016),
   Fu (2021), Takagi et al., Li et al. (2022b), Deng, Huang et al. (2026), Peng et
   al., Li, Shu & Qiu, Fan, Zhang & Qiu, Fan et al. (2025a) and Sciacovelli et al. print $3.528$;
-  the paper's text does not show which value was run.
+  neither paper's text shows which value was run.
+- Fu et al. (2016) print the left Lax velocity as $0.689$, the other
+  sources $0.698$.
+- Names: Harten (1983a) names neither problem; Harten et al. (1987a)
+  call the Lax data those "used by Lax" and attribute Sod's problem to
+  "Sod in [23]", where their [23] is a paper of Osher and Sod's survey is
+  their [28]. The alias "Lax–Harden problem" is Luo et al.'s.
+- Liu et al.'s Fig. 10 caption and panel titles give $t=1.5$ for the
+  Lax tube; Jiang & Shu's figure headers $t=1.3$, the time of the other
+  $[-5,5]$ runs. Jiang & Shu's Sod time, $t=2.0$, is the $t/t_0=2$ of De
+  Vanna et al., who take the data from them.
+- Fan, Zhang & Qiu's earlier finite-volume WENO with the velocity dent
+  is, on their Source page, Liu, Osher & Chan's "Example 4.2"; in Liu
+  et al. (1994) the Lax tube is Example 4 of §4.2 (Fig. 10).
 - Huang et al. (2026) give $t=0.15$ in the text and $t=0.16$ in the caption of
   Fig. 8.
 - Allegrini & Vignal print the left Lax velocity as $1.698$; the other
@@ -813,6 +880,13 @@ single-gas Euler equations.
 
 # Citations
 
+- [van Leer (1979)](/sources/vanleer-1979.md) — §4, Fig. 6.
+- [Harten (1983a)](/sources/harten-1983.md) — §8 I, Eq. (8.6b), Figs. 2–3 (NYU report DOE/ER/03077-175).
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §7 B1, Eqs. (7.10a,b), Figs. 9–16, pp. 277–280.
+- [Liu et al. (1994)](/sources/liu-1994.md) — §4, Example 4, Figs. 9–10.
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.2, Ex. 1, Fig. 4 (author preprint).
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5.2.1, Eqs. (48)–(49), Fig. 6.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §5.2, Figs. 11–12.
 - [Fu (2021)](/sources/fu-2021.md) — §5.3 (arXiv v1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.3, Figs. 4–5.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.3, Eq. (43), Fig. 3.

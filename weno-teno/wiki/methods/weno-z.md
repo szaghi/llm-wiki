@@ -5,14 +5,18 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # WENO-Z weights
 
-WENO-Z (Borges et al., with the higher-order extension of Castro et al., as recalled by Li et al.
-2022b, Luo & Wu 2021 and Fu 2021, who present it with mapped WENO as the fix for the
-critical-point defect of WENO-JS) keeps the candidate stencils and linear weights $d_k$ of
+WENO-Z was introduced by [Borges et al. (2008)](/sources/borges-2008.md) for the fifth-order
+finite-difference scheme; the arbitrary-order extension is Castro et al.'s, as recalled by Li et al.
+(2022b), and Borges et al. (§6) only announce it as "currently underway". Li et al. (2022b), Luo & Wu
+(2021) and Fu (2021) present it with mapped WENO as the fix for the critical-point defect of
+WENO-JS; Borges et al. themselves credit its gains on shock problems to the weight it leaves on
+discontinuous stencils rather than to its order at critical points (Remark 1; see *Properties*). It
+keeps the candidate stencils, linear weights $d_k$ and indicators of
 [WENO-JS](/methods/weno-js-reconstruction.md) and changes only the unnormalized weights:
 
 $$\alpha_k=d_k\Big[1+\Big(\frac{\tau}{\beta_k+\epsilon}\Big)^q\Big],\qquad
@@ -20,7 +24,12 @@ $$\alpha_k=d_k\Big[1+\Big(\frac{\tau}{\beta_k+\epsilon}\Big)^q\Big],\qquad
 
 where $\tau$ is a **global smoothness indicator** on the whole $(2r-1)$-point stencil, built from
 the local [smoothness indicators](/definitions/smoothness-indicator.md) $\beta_k$. For fifth order
-$\tau_5=|\beta_0-\beta_2|$ (Luo & Wu 2021, Eq. (4); Wang & Don 2022, Eqs. (6)–(8)).
+$\tau_5=|\beta_0-\beta_2|$ (Borges et al. 2008, Eq. (25); Luo & Wu 2021, Eq. (4); Wang & Don 2022,
+Eqs. (6)–(8)). Borges et al. first write the weights with $q=1$ through normalized indicators,
+$\alpha_k=d_k(\beta_k+\tau_5+\epsilon)/(\beta_k+\epsilon)$ (Eqs. (27)–(28)), and generalize to the exponent
+$q$ in §4 (Eq. (42)). They list the properties of $\tau_5$: $O(\Delta x^5)\ll\beta_k$ on a smooth five-point
+stencil; $\beta_k\ll\tau_5$ for the smooth candidates when the full stencil contains a discontinuity;
+$\tau_5\le\max_k\beta_k$ (§3).
 
 ## Global indicator and order
 
@@ -31,12 +40,23 @@ $$\tau_{2r-1}=\begin{cases}|\beta_0-\beta_{r-1}|, & r\ \text{odd},\\ |\beta_0-\b
 where the subscript labels the order $2r-1$ of the scheme; it is not always the power of $\Delta x$
 that $\tau$ carries. Because the $\beta_k$ share their leading term, the differences in $\tau$ cancel
 it, the ratio $\tau/\beta_k$ vanishes as $\Delta x\to0$ away from critical points, and
-$\omega_k\to d_k$ faster than with Jiang–Shu weights. *(Compiler check,
-not in the sources: a Taylor expansion of the Jiang–Shu $\beta_k$ for $r=3$ gives
+$\omega_k\to d_k$ faster than with Jiang–Shu weights: with $\epsilon=0$, $\omega_k=d_k+O(\Delta x^3)$ away
+from critical points, the sufficient condition for fifth order (Borges et al. 2008, §3, Eq. (29)).
+*(Compiler check, not in the sources: the expansions of Borges et al. (Eqs. (12), (14)) give
 $\beta_0-\beta_2=\big(f'f^{(4)}-\tfrac{13}{3}f''f'''\big)\Delta x^5+O(\Delta x^6)$ up to sign, so
-$\tau_5=O(\Delta x^5)$.)* For $r=4$, Li et al. (2022b, Eq. (17)) derive
+$\tau_5=O(\Delta x^5)$; their Eq. (26) prints only the $\tfrac{13}3|f''f'''|$ term.)* For $r=4$, Li et al. (2022b, Eq. (17)) derive
 $\tau_7=\big|\tfrac43f'f^{(5)}-\tfrac{13}{3}f''f^{(4)}\big|\Delta x^6+O(\Delta x^8)$, so $\tau_7$ is
 $O(\Delta x^6)$ and $\tau_7/\beta_k=O(\Delta x^4)$.
+
+**Order at critical points (founding analysis).** Borges et al. (2008, §4, Eqs. (32)–(41), Tables 1–2)
+write the order as $\min(5,s_1+2,s_2+3)$, with $\sum_k\mathsf a_k(\omega^+_k-\omega^-_k)=O(\Delta x^{s_1})$ and
+$\omega^\pm_k-d_k=O(\Delta x^{s_2})$ (page-local $\mathsf a_k$, $s_1$, $s_2$), and find with a symbolic algebra
+program order 5, 4 and 2 at critical points of order $0$, $1$ and $\ge2$ for $q=1$; with $q=2$ the order is
+5 at a first-order critical point. Their test on $x^3+\cos x$ at $x=0$, $\epsilon=10^{-40}$, in 64-digit
+arithmetic, gives orders 3.93–3.99 for $q=1$ and 4.80–4.98 for $q=2$, against 2.95–2.99 for WENO-JS
+(Table 3). Raising $q$ brings the scheme closer to the linear one in smooth regions but lowers the
+relative weight of a discontinuous stencil, "making the scheme more dissipative", so all their runs use
+$q=1$ (§4–5).
 
 Li et al. (2022b, §2) state a structural limit: when the leading term of $\tau_{2r-1}$ has the same
 order as that of $\beta_k$, WENO-Z falls back to the convergence rate of the $r$th-order ENO scheme.
@@ -49,12 +69,16 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
 
 ## Parameters
 
-- **Exponent.** Luo & Wu (2021, §2.2) use $q=2$ for fifth order, as do Wang & Don (2022, §2.1);
+- **Exponent.** Borges et al. (2008) use $q=1$ in all experiments and introduce $q=2$ only as the
+  remedy at first-order critical points (§4); Fu et al. (2016, §2.2) recall that $q=1$ was suggested
+  "as a larger value of $q$ results in a too dissipative scheme in non-smooth regions". Luo & Wu (2021, §2.2) use $q=2$ for fifth order, as do Wang & Don (2022, §2.1);
   Li et al. (2022b, §3.2) state instead that $q=1$ is widely used at fifth order (less dissipation)
   and $q=2$ is suggested for higher orders for robustness. These are choices, not a disagreement
   about the scheme.
-- **Regularization.** Deng (2023, §4.3) recalls that Borges et al. suggest $\epsilon=10^{-40}$, so
-  that $\epsilon$ only excludes vanishing denominators; Luo & Wu (2021) use $10^{-40}$; Wang & Don
+- **Regularization.** Borges et al. (2008, Remark 2, §5) reject the $10^{-6}$ "commonly suggested in the
+  literature", which dominates $\beta_k$, and use $\epsilon=10^{-40}$ for WENO-Z and mapped WENO "to force this
+  parameter to play only its original role of not allowing vanishing denominators" ($10^{-6}$ for their
+  WENO-JS runs); Deng (2023, §4.3) recalls the same suggestion; Luo & Wu (2021) use $10^{-40}$; Wang & Don
   (2022) test $10^{-12}$ and $10^{-40}$.
   De Vanna et al. (2023a, §3.1) and De Vanna et al. (2023b, §3.1), in the arbitrary-order WENO-Z of
   Castro et al. at orders 3, 5 and 7, set $\epsilon=10^{-12}$ to limit the dissipation ("to reduce the dissipation", 2023a).
@@ -73,7 +97,16 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
 
 ## Properties
 
-- **Weight of the less-smooth stencil.** Deng (2023, §1, §4.3) states that WENO-Z assigns a larger
+- **Weight of the less-smooth stencil.** Borges et al. (2008, §3, Eq. (31), Fig. 3) show that a
+  discontinuity in one candidate raises that candidate's weight relative to WENO-JS: next to the jump of
+  a piecewise sine, WENO-JS gives the discontinuous stencils weights "around $10^{-8}$", mapped WENO a
+  small increase and WENO-Z about $10^{-4}$. Their Remark 1 credits the shock results of WENO-Z and mapped
+  WENO to this "smaller dissipation", "distinctly from" Henrick et al., who credited the critical-point
+  order. On shock tubes, the Shu–Osher problem and blast waves WENO-Z is equivalent to or slightly sharper
+  than mapped WENO and better than WENO-JS at $N=200$–$800$ (§5.2, Figs. 6–10); on the Jiang–Shu composite
+  advection at $N=1600$, $t=8$, the $L_1$ errors are $7.73\times10^{-3}$ (Z), $8.06\times10^{-3}$ (mapped) and
+  $9.93\times10^{-3}$ (JS) (Table 4; [composite advection](/benchmarks/jiang-shu-composite-advection.md)).
+  Deng (2023, §1, §4.3) states that WENO-Z assigns a larger
   weight to a stencil containing a discontinuity than WENO-JS, gives sharper solutions than mapped
   WENO and is cheaper than [mapped WENO](/methods/mapped-weno.md); Luo & Wu (2021, §1, §4) note that
   the WENO-Z weight of the less-smooth stencil is still always below its linear weight. This is the
@@ -253,8 +286,22 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 
 ## Qualifications
 
+- **Orders at critical points from different measurements.** Li et al. (2022b, Table 6) measure WENO5-Z at
+  5.14–5.37 at a first-order critical point, where Borges et al. (2008, Table 3) measure 3.93–3.99 with $q=1$ and
+  4.80–4.98 with $q=2$; the test functions, $\epsilon$ and (on this page) the exponent of Li et al.'s run differ, so
+  the pair is not recorded as a contradiction. At $n_{\mathrm{cp}}\ge2$ Borges et al.'s analysis gives order 2, Li
+  et al. measure 2.11–2.32 at a second-order point, and their general statement names "the $r$th-order ENO" rate.
+- McQuaid & Brehm's "WENO-Z scheme of Jiang and Shu with smoothness indicators proposed by Liu et al." differs
+  from the founding papers' attribution: they print WENO-Z as Borges et al.'s, on Jiang–Shu indicators, and Liu et al.'s
+  indicators are of the undivided-difference form ([smoothness indicators](/definitions/smoothness-indicator.md)).
+  Their "eliminates order reduction at critical points" also differs from Borges et al.'s own order 4 at a
+  first-order critical point for $q=1$.
+- Borges et al. (2008, §2) print the linear weights in an order that matches a left-shift labelling of the
+  stencils while their Fig. 1 labels $S_0$ upwind ([WENO-JS](/methods/weno-js-reconstruction.md),
+  Qualifications); $\tau_5$ is symmetric in the two outer stencils and unaffected.
 - Ye et al. (2022, §1) attribute the redesign of the smoothness indicator for WENO-M to Borges et
-  al. and the WENO-Z scheme to Castro et al.; their §2.2 then correctly cites WENO-Z to Borges et al.
+  al. and the WENO-Z scheme to Castro et al.; their §2.2 then cites WENO-Z to Borges et al., the founding
+  paper ([Borges et al. (2008)](/sources/borges-2008.md)).
 - Huang et al. (2026, Eq. (3.6)) and Deng (2023, Eq. (4.24)) print the index $k$ inside $\alpha_j$;
   the index is $j$.
 - Hiejima (2022, §1) recalls WENO-Z only in passing, as "more accurate than the nonlinear weights
@@ -279,11 +326,18 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 WENO-Z is "less computationally expensive than the WENO-M scheme" ([mapped WENO](/methods/mapped-weno.md));
 [McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) (§3.8, citing Brehm et al. 2015) state that WENO-Z "is more expensive
 than a mapped WENO scheme". Both are statements about the same comparison, WENO-Z against Henrick et al.'s mapped
-weights, each resting on a cited work; neither paper prints a timing. What would decide it: wall-clock or operation counts of WENO-Z and
-WENO-M in one code, on one problem and hardware.
+weights, each resting on a cited work; neither paper prints a timing. Further evidence: Borges et al. (2008, §5.3,
+Tables 5–6) time both in one code (same subroutines and compiler options, only the weight routine differing) on one
+machine (AMD Opteron 250): CPU time per Runge–Kutta step 1.39 s for WENO-Z against 1.87 s for WENO-M (and 1.47 s for
+WENO-JS) on the $400^2$ shock–vortex interaction, 6.15 s against 8.27 s at $800^2$, 6.07 s against 8.13 s on the
+$800^2$ Richtmyer–Meshkov run, "about 25% faster" since "WENO-Z does not make use of any mapping". This is one
+implementation and one machine; McQuaid & Brehm's cited measurement may concern another implementation. What would decide it: wall-clock or operation counts of WENO-Z and
+WENO-M in further codes and hardware, or the implementation behind Brehm et al.'s statement.
 
 # Citations
 
+- [Borges et al. (2008)](/sources/borges-2008.md) — §1; §2, Remarks 1–2; §3, Eqs. (25)–(31), Fig. 3; §4, Eqs. (32)–(42), Tables 1–3; §5, Table 4, Figs. 6–10; §5.3, Tables 5–6; §6.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §2.2, Eqs. (14)–(15).
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eqs. (14)–(17), Table 4; §3.2; Tables 6–7; Fig. 3.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1; §2.2, Eq. (4); §4; §5, Table 1.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §2.1, Eqs. (4)–(8); §3.2.

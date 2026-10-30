@@ -5,7 +5,7 @@ description: "A WENO limiter replaces the DG polynomial of a troubled cell by a 
 status: established
 aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter, TENO limiter for RKDG]
 tags: [dg, weno, teno, limiting, characteristic]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin
@@ -26,6 +26,12 @@ reconstruct on wider stencils, the compact **simple WENO limiter** of Zhong
 compact Hermite WENO limiters ([Hermite WENO](/methods/hermite-weno.md)),
 and the multi-resolution WENO limiters of Zhu, Qiu & Shu, which "appear to be
 quite robust" ([multi-resolution WENO](/methods/multi-resolution-weno.md)).
+[Shu (2009a)](/sources/shu-2009.md) (§5.1) summarizes the idea: "first identify the so-called 'troubled cells,' then retain only the cell
+average information in such cells for the purpose of conservation and use the WENO
+procedure to reconstruct the higher order moments of the polynomials in such cells
+using the information from neighboring cells", with either classical or Hermite WENO
+reconstruction, the latter "more desirable since it involves a narrower stencil"
+(Qiu & Shu, Shu's refs. [133, 134, 136]; troubled-cell indicators compared in [135]).
 
 ## The simple WENO limiter
 
@@ -401,6 +407,13 @@ given.
 
 ## Positions on WENO limiters
 
+- [Shu (2009a)](/sources/shu-2009.md) (§5.1) motivates the WENO limiter by a judgement
+  on DG: it is more flexible than finite-volume WENO on unstructured meshes but "less
+  robust in dealing with solutions with strong shocks", because "the state of the art
+  for limiters is less advanced than the WENO procedure in controlling spurious
+  oscillations without affecting accuracy for smooth structures". The review itself shows no
+  DG computation.
+
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) state that WENO and HWENO
   limiters that reconstruct the whole polynomial are "difficult to extend …
   to higher order cases (typically higher than 3rd order) due to the
@@ -530,6 +543,7 @@ given.
 
 # Citations
 
+- [Shu (2009a)](/sources/shu-2009.md) — §5.1: WENO and Hermite WENO limiters for DG, robustness of DG limiting.
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1; §3 (Eqs. (3.1)–(3.9)); §4 (Exs. 4.1–4.10, Tables 4.1–4.18, Figs. 4.2–4.16); §5.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2, §2.6 (TVB minmod limiter), §3.1.5 (simple or Hermite WENO limiter for the two-phase Shu–Osher problem).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: §7 (locally divergence-free WENO limiter).

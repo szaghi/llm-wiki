@@ -5,7 +5,7 @@ description: "Central WENO schemes subtract weighted low-order candidates from o
 status: established
 aliases: [CWENO, central WENO, CWENOZ, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit, ALW-MR-WENO, adaptive linear weights]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-30T07:53:00Z
 ---
 
 # Central WENO (CWENO)
@@ -288,6 +288,29 @@ rests on the count "only two".)*
 - **Unstructured meshes.** Balsara et al. (2024, §I) recall extensions by Friedrichs, Käser & Iske and
   Dumbser & Käser; Tsoutsanis et al. (2021) is such an extension in the bundle.
 
+## "Central WENO" in Shu's review
+
+[Shu (2009a)](/sources/shu-2009.md) uses the name in an older and partly different sense. In §3.5.5
+"central schemes" are finite-volume schemes defined on a **staggered mesh** in the Nessyahu–Tadmor
+framework, whose advantage is that "the numerical flux is computed in the smooth part of the
+reconstructed function, hence there is no need to use explicitly a monotone flux for the scalar case or
+a Riemann solver for the system case"; WENO schemes "based on the central scheme framework" are
+those of Levy, Puppo & Russo and of Qiu & Shu (Shu's refs. [92, 93, 94, 131]). Shu reports that this
+framework "allows the componentwise WENO reconstruction procedure to be used for less oscillatory
+results for third or even fourth order schemes", while "for very high order central WENO schemes,
+characteristic WENO reconstruction is still necessary to obtain stable results"
+([characteristic decomposition](/methods/characteristic-decomposition.md)). The link with the
+construction on this page is the treatment of linear weights (§2.3.3): where accuracy fixes them
+uniquely they may be negative, and "if the usual WENO procedure is used without modification,
+oscillations and instability may appear"; one remedy is the splitting technique of Shi, Hu & Shu,
+used for the central WENO of Qiu & Shu, the other is to lower the accuracy demanded of the linear
+combination so that the weights become free, at the cost of "a lower order accuracy than the
+'authentic' WENO schemes" with the same large stencil, which is how Levy, Puppo & Russo build their
+central WENO (Shu's ref. [92]). Shu also recalls (§2.3.1) the result of Carlini, Ferretti & Russo that the
+large-stencil interpolant is a combination of the candidate interpolants with *polynomial*,
+position-dependent linear weights, non-negative on the interval common to all candidates. The review
+predates the CWENOZ and unstructured variants above.
+
 ## Relation to TENO
 
 TENO also uses candidate stencils of unequal width, but it keeps or discards each stencil with a sharp
@@ -328,6 +351,7 @@ cognate unequal-stencil approaches when introducing TENO-AA
 - [Wang et al. (2021)](/sources/wang-2021.md) — §1; §3.1.1, Step 6, Eq. (3.21).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I.
 - [Deng (2023)](/sources/deng-2023.md) — §1.
+- [Shu (2009a)](/sources/shu-2009.md) — §2.3.1; §2.3.3; §3.5.5: central (staggered) WENO, negative linear weights and the lowered-accuracy remedy, position-dependent linear weights.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §2.5.
 - [Fu (2021)](/sources/fu-2021.md) — §1.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — §1; §3.2, Eqs. (28)–(38), Lemmas 3.1–3.2, Remark 3.3; §4, Examples 4.1, 4.4–4.5, Tables 1–2, Figs. 6–9.

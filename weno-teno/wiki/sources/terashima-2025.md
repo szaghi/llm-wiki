@@ -133,7 +133,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-23), cited further in chunk 11 (2026-10-24). This source is cited on:
+Chunk 10 (2026-10-23), cited further in chunks 11–12 (2026-10-24/30). This source is cited on:
 
 * [APEC flux for approximate pressure equilibrium](/methods/apec-scheme.md)
 * [Material-interface advection tests](/benchmarks/material-interface-advection.md)

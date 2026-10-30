@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Smoothness indicators
@@ -18,17 +18,48 @@ $\beta_k$ sharing their leading term), while a stencil crossed by a discontinuit
 $\beta_k=O(1)$, so its weight is driven towards zero (the
 [ENO property](/definitions/eno-property.md)).
 
+## Antecedents: divided and undivided differences
+
+**ENO.** The stencil choice of [ENO](/methods/eno-reconstruction.md) compares absolute **divided**
+differences pairwise: [Harten et al. (1987a)](/sources/harten-1987.md) (§3, Eqs. (3.3c,d)) note that the
+$k$th divided difference is $\frac1{k!}w^{(k)}$ where the data are smooth and $O(\Delta x^{-k+p})$ across a
+jump in the $p$th derivative, so it is "an asymptotic smoothness measure", and choosing the stencil is
+"finding an interval in which $w$ has the 'smallest divided differences'". It is not an input to
+weights. [Shu & Osher (1988)](/sources/shu-1988.md) (Eqs. (3.11)–(3.13)) apply the same comparison to
+divided differences of the split point fluxes $f^\pm(u)$.
+
+**Liu–Osher–Chan.** The first WENO indicator, of [Liu et al. (1994)](/sources/liu-1994.md) (§3.2,
+p. 203), averages the squared **undivided** differences of the cell averages order by order,
+"the summation of all averages of square values of the same order differences":
+$\beta_k=\sum_{l=1}^{r-1}\frac1l\sum_{m=1}^{l}\big(\Delta_+^{r-l}\bar u_{i+k-r+m}\big)^2$ with the forward undivided
+difference $\Delta_+\bar u_j=\bar u_{j+1}-\bar u_j$ (page-local, not the centred $\Delta^m$ of the registry) and $S_k$ the cells $i+k-r+1,\dots,i+k$, i.e. for
+$r=3$ on $\{\bar u_{i-2},\bar u_{i-1},\bar u_i\}$
+$\tfrac12\big[(\bar u_{i-1}-\bar u_{i-2})^2+(\bar u_i-\bar u_{i-1})^2\big]+(\bar u_i-2\bar u_{i-1}+\bar u_{i-2})^2$.
+They state $\beta_k=O(\Delta x^2)$ on smooth and $O(1)$ on discontinuous stencils (p. 203), and credit
+C.-W. Shu with the squares: their first version used absolute values; both "work well", and one of them gives a "smoother
+($C^\infty$ vs. Lipschitz) numerical flux" (Acknowledgment; the Source page records which form the
+printed wording names).
+[Jiang & Shu (1996)](/sources/jiang-1996.md) (§2, Eqs. (2.18)–(2.25)) show by Taylor expansion that this
+indicator gives $\beta_k=(f'\Delta x)^2(1+O(\Delta x))$, whose $O(\Delta x)$ relative differences between
+stencils limit the scheme to order $r+1$; for $r=2$ it coincides with their own form.
+
 ## Jiang–Shu form
 
-The form used by nearly every source of the bundle is that of Jiang & Shu (Li et al. 2022b, Eq. (7);
-Wang & Don 2022, Eq. (8); Fu 2023, Eq. (7); Fu 2021, Eq. (12); Takagi et al. 2022, Eq. (9)): with
-$\hat f_k(x)$ the degree-$(r_k-1)$ candidate polynomial of $S_k$ on cell $I_i$,
+The form used by nearly every source of the bundle is that of Jiang & Shu (1996, §3, Eq. (3.1)),
+recalled by Li et al. (2022b, Eq. (7)), Wang & Don (2022, Eq. (8)), Fu (2023, Eq. (7)), Fu (2021,
+Eq. (12)), Takagi et al. (2022, Eq. (9)), Borges et al. (2008, Eq. (8)) and Fu et al. (2016,
+Eqs. (12), (23)): with $\hat f_k(x)$ the degree-$(r_k-1)$ candidate polynomial of $S_k$ on cell $I_i$,
 
 $$\beta_k=\sum_{j=1}^{r_k-1}\Delta x^{2j-1}\int_{x_{i-1/2}}^{x_{i+1/2}}\Big(\frac{d^j\hat f_k}{dx^j}\Big)^2dx .$$
 
 It is a sum of scaled squared $L^2$ norms of all derivatives of the candidate, hence a quadratic form
-in the stencil values. For the three-point stencils of fifth-order WENO, in the Jiang–Shu labelling
-($S_0$ most upwind; Luo & Wu 2021, Eq. (5)):
+in the stencil values. Jiang & Shu (1996, §3) motivate it as "similar to but smoother than the total
+variation measurement based on the $L^1$ norm", "emulating the idea of minimizing the total
+variation"; the factor $\Delta x^{2j-1}$ "removes $h$-dependent factors", which Shu (2009a, §2.1,
+Eq. (2.8)) restates as making the explicit formulas independent of the mesh size, adding that "in most
+of the WENO papers" the indicator is chosen this way. For the three-point stencils of fifth-order WENO,
+in the Jiang–Shu labelling ($S_0$ most upwind; Jiang & Shu 1996, Eqs. (3.2)–(3.4); Luo & Wu 2021,
+Eq. (5)):
 
 $$\begin{aligned}
 \beta_0&=\tfrac{13}{12}(f_{i-2}-2f_{i-1}+f_i)^2+\tfrac14(f_{i-2}-4f_{i-1}+3f_i)^2,\\
@@ -44,7 +75,11 @@ $\beta_1=(\bar u_i-\bar u_{i+1})^2$ (Deng 2023, Eq. (4.22); Huang et al. 2026, E
 Schmidt & Adams 2022, Eq. (10)). For the point-value *interpolation* of the alternative formulation,
 Chu, Kurganov & Na (2022, Eqs. (3.6)–(3.7)) use the same three fifth-order expressions, and reuse them
 unchanged for the interpolation to the quarter points $x_{i\mp1/4}$, where only the linear weights
-change ([alternative WENO](/methods/alternative-weno.md)).
+change ([alternative WENO](/methods/alternative-weno.md)). [Shu (2009a)](/sources/shu-2009.md)
+(§2.1, Eq. (2.9)) prints the point-value interpolation indicators in expanded form, e.g.
+$\beta_1=\tfrac13\big(4u_{i-2}^2-19u_{i-2}u_{i-1}+25u_{i-1}^2+11u_{i-2}u_i-31u_{i-1}u_i+10u_i^2\big)$ for the most
+upwind stencil (the review's $\beta_1$, the registry's $\beta_0$), and, for a WENO approximation of a derivative,
+starts the sum at the second derivative "because $P_j'(x)$ are our building blocks" (§2.3.4).
 
 **Difference-operator form.** In WCNS interpolation, Hiejima (2022, Eq. (14)), after Deng & Zhang,
 sums the unweighted squares of the scaled finite-difference derivatives of the candidate,
@@ -122,7 +157,8 @@ perfect squares in a Legendre basis, which "has never been documented in the lit
 (§1, §10); the derivation is in an online supplement that is not part of the paper read.
 
 **Other forms recalled.** Li et al. (2022b, Eq. (6)) recall the earlier Liu–Osher–Chan indicator, a
-sum of squared undivided differences of all orders below $r$. Fu (2023, §2.2) notes that improved
+sum of squared undivided differences of all orders below $r$ (see *Antecedents* for its averaging by
+order). Fu (2023, §2.2) notes that improved
 indicators developed for WENO can be used in TENO unchanged.
 
 **Interpolation polynomials.** For the point-value interpolation of a WCNS, Zhou, Ding, Huang & Luo (2023,
@@ -331,11 +367,34 @@ critical point the leading term drops to $O(\Delta x^{2m+2})$, and the ratios $\
 control the weights lose orders ([critical-point accuracy](/properties/critical-point-accuracy.md);
 [WENO-ZN](/methods/weno-zn.md) replaces $\tau$ by an undivided difference for that reason).
 
-For $r=3$, Wan & Xia (2022, Eqs. (2.18)–(2.20)) print, in the Jiang–Shu labelling,
+For $r=3$, Borges et al. (2008, Eqs. (12)–(14)) and Wan & Xia (2022, Eqs. (2.18)–(2.20)) print, in the Jiang–Shu labelling,
 $$\begin{aligned}\beta_{0,2}&=f'^2\Delta x^2+\big(\tfrac{13}{12}f''^2-\tfrac23f'f'''\big)\Delta x^4\mp\big(\tfrac{13}{6}f''f'''-\tfrac12f'f^{(4)}\big)\Delta x^5+O(\Delta x^6),\\
 \beta_1&=f'^2\Delta x^2+\big(\tfrac{13}{12}f''^2+\tfrac13f'f'''\big)\Delta x^4+O(\Delta x^6),\end{aligned}$$
 which gives $\tau_5=|\beta_0-\beta_2|=O(\Delta x^5)$ and, with the mean $\tfrac13\sum_k\beta_k=O(\Delta x^2)$,
 their smoothness detector $\tau_5/(\epsilon+\tfrac13\sum_k\beta_k)$ ([hybrid schemes](/methods/hybrid-weno.md)).
+Jiang & Shu (1996, §3, Eqs. (3.5)–(3.7)) print the expansions in the factored form
+$\beta_{0,2}=\tfrac{13}{12}(f''\Delta x^2)^2+\tfrac14(2f'\Delta x-\tfrac23f'''\Delta x^3)^2+O(\Delta x^6)$,
+$\beta_1=\tfrac{13}{12}(f''\Delta x^2)^2+\tfrac14(2f'\Delta x+\tfrac13f'''\Delta x^3)^2+O(\Delta x^6)$, which agree with
+the above through $\Delta x^4$ and carry no $\Delta x^5$ term; they conclude
+$\beta_k=(f'\Delta x)^2(1+O(\Delta x^2))$ where $f'\ne0$ (Eq. (3.8)), and at $f'=0$ print
+$\beta_k=\tfrac{13}{12}(f''\Delta x^2)^2(1+O(\Delta x^2))$ for $k=0,1,2$ (Eq. (3.9)). *(Compiler check, not
+in the sources: setting $f'=0$ in the expansions of Borges et al. gives
+$\beta_{0,2}=\tfrac{13}{12}f''^2\Delta x^4\big(1\mp2\tfrac{f'''}{f''}\Delta x+O(\Delta x^2)\big)$, a relative
+$O(\Delta x)$ difference from $\beta_1$.)* The order of WENO-JS at such points is recorded on the
+[critical-point accuracy](/properties/critical-point-accuracy.md) page. Fu et al. (2016, Eq. (24)), after
+Gerolymos et al., give for a stencil of width $r_k$ the general form
+$\beta_k=\sum_{\ell=1}^{\lfloor(r_k+1)/2\rfloor}Q_{2\ell}(x_i)\Delta x^{2\ell}+B_k\,f'f^{(r_k)}\Delta x^{r_k+1}+O(\Delta x^{r_k+2})$
+(page-local $Q_{2\ell}$, $B_k$), whose leading part is common to all widths: in smooth flow every
+candidate of [TENO](/methods/targeted-eno.md) has an $O(\Delta x^2)$ indicator, while wider stencils are
+more likely to be crossed by a discontinuity (§3.1.2).
+
+**Normalized WENO-Z indicators.** Borges et al. (2008, Eq. (27)) also write their weights through the
+normalized indicators $(\beta_k+\epsilon)/(\beta_k+\tau_5+\epsilon)$, "all smaller than unity" and close
+to 1 in smooth parts ([WENO-Z](/methods/weno-z.md)). Fu et al. (2016, App. A, Eqs. (A.1)–(A.3)) propose a
+global indicator for any $K$, the high-derivative part of the full-stencil indicator,
+$\tau_K=\sum_{j=\mathcal K}^{K-1}\Delta x^{2j-1}\int_{I_i}\big(\tfrac{d^j}{dx^j}\hat f_K\big)^2dx$ with
+$\mathcal K=\lceil K/2\rceil$ (page-local), of order $\Delta x^{2\mathcal K}$; for TENO5 and TENO6 they use
+instead the $\tau_5$ of WENO-Z and the $\tau_6$ of WENO-CU6 (§3.2–3.3).
 
 Scaling: $\beta_k[\sigma f+\mu]=\sigma^2\beta_k[f]$ for constants $\sigma$, $\mu$ (page-local; Wang
 & Don 2022, Eq. (18)). This quadratic scaling against an absolute $\epsilon$ is the source of the
@@ -580,6 +639,14 @@ Several sources use "smoothness indicator" for quantities of a different kind:
   instead remove floating-point inconsistencies ([symmetry preservation](/properties/symmetry-preservation.md)).
 - Deng (2023, Eq. (4.21)) and Huang et al. (2026, Eq. (3.3)) print the two third-order indicators as
   $IS_0$ and $\beta_1$; both are the Jiang–Shu $\beta$ of the two-point stencils.
+- Jiang & Shu (1996, Eq. (2.26)) print "$IS_k=O(h^{2p})$" for a smooth stencil, against their own
+  $O(\Delta x^2)$ of Eqs. (2.21), (3.8); the weight bound $O(\Delta x^{2q})$ of Eq. (2.28) follows from the
+  latter (see the Source page).
+- Borges et al. (2008, Eq. (26)) print $\tau_5=\tfrac{13}3|f''f'''|\Delta x^5+O(\Delta x^6)$, while their own
+  Eqs. (12), (14) give $\tau_5=\big|\tfrac{13}3f''f'''-f'f^{(4)}\big|\Delta x^5+O(\Delta x^6)$ *(compiler check, not in
+  the sources: difference of the two printed expansions)*; the order $\Delta x^5$ is unaffected.
+- Fu et al. (2016, Eq. (19)) print $\tau_6=\beta_6-\tfrac16(\beta_0+\beta_2+4\beta_1)$ without the absolute
+  value that Ye et al. (2022) and this page write.
 - Fu (2021, Eq. (11)) uses the indicator without the TENO reference constant,
   $\gamma_k=(\beta_k+\epsilon)^{-q}$ with $q=7$; this is a choice of weight, not of indicator.
 - Puppo et al. (2023, Eq. (9)) print the central CWENO3 indicator as
@@ -632,6 +699,13 @@ Several sources use "smoothness indicator" for quantities of a different kind:
 
 # Citations
 
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §3, Eqs. (3.3)–(3.4).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §III, Eqs. (3.10)–(3.13).
+- [Liu et al. (1994)](/sources/liu-1994.md) — §3.2, p. 203; §3.5–3.6; Acknowledgment.
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §2, Eqs. (2.18)–(2.28); §3, Eqs. (3.1)–(3.9).
+- [Shu (2009a)](/sources/shu-2009.md) — §2.1, Eqs. (2.8)–(2.9); §2.2, Eq. (2.17); §2.3.4.
+- [Borges et al. (2008)](/sources/borges-2008.md) — §2, Eqs. (8)–(14); §3, Eqs. (25)–(27).
+- [Fu et al. (2016)](/sources/fu-2016.md) — §2.2–2.3, Eqs. (12)–(13), (18)–(19); §3.1.2, Eqs. (23)–(24); App. A, Eqs. (A.1)–(A.3).
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eqs. (6)–(11), (16), Table 3.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §2.1, Eq. (5).
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §2.1, Eq. (8); §2.3, Eq. (18).

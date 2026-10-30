@@ -1,20 +1,22 @@
 ---
 type: Definition
 title: "Total variation diminishing (TVD) and slope limiters"
-description: "TVD reconstruction limits the interface value of a second-order scheme by a limiter of the slope ratio inside Sweby's region; the page gives the incremental-form TVD conditions for explicit and implicit Euler steps, the limiter formulas of the sources, their normalised-variable reading, the first-order barrier at extrema, and the roles of limiters in WENO, central and DG schemes."
+description: "TVD schemes do not increase the total variation; the page gives Harten's original TVNI definition and sufficient incremental-form condition, the TVD and TVB definitions of Shu and Osher, van Leer's 1979 slope limiters, the Sweby-region limiter formulas of later sources and their normalised-variable reading, the first-order barrier at extrema, and the roles of limiters in WENO, central and DG schemes."
 status: established
-aliases: [TVD, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod]
+aliases: [TVD, TVNI, total variation nonincreasing, TVB, total variation bounded, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod, monotonicity algorithm, TVB limiter]
 tags: [limiting, reconstruction, finite-volume, central-scheme]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T07:59:00Z
 ---
 
 # Total variation diminishing (TVD) and slope limiters
 
-**Total variation diminishing** (TVD) schemes satisfy $TV(u^{n+1})\le TV(u^n)$.
-Most sources of the bundle use the property without restating it and impose it
-through Sweby's limiter region; the estimate and the incremental-form
+**Total variation diminishing** (TVD) schemes satisfy $TV(u^{n+1})\le TV(u^n)$,
+$TV(u)=\sum_i\lvert u_{i+1}-u_i\rvert$. The property was introduced by
+[Harten (1983a)](/sources/harten-1983.md) as **total variation nonincreasing** (TVNI)
+(next section); most later sources of the bundle use it without restating it and
+impose it through Sweby's limiter region; the estimate and the incremental-form
 conditions behind that region are restated by
-[Puppo et al. (2023)](/sources/puppo-2023.md) (§2; next section).
+[Puppo et al. (2023)](/sources/puppo-2023.md) (§2; below).
 For a second-order reconstruction the TVD constraint is imposed through a
 **limiter** $\psi$ of the slope ratio
 
@@ -25,6 +27,41 @@ with the mirror formula, $\psi(1/r_i)$ and $\bar u_{i-1}-\bar u_i$, for
 $u^+_{i-1/2}$ ([Deng (2023)](/sources/deng-2023.md), §4.1, Eqs. (4.1)–(4.2)).
 Deng places Sweby's **second-order TVD region** between MinMod and SuperBee
 (§4.1, Fig. 2).
+
+## Origin: TVNI, TVD and TVB
+
+[Harten (1983a)](/sources/harten-1983.md) (§2, Eqs. (2.2)–(2.4)) defines a scalar scheme
+$u^{n+1}=\mathcal Hu^n$ (page-local solution operator $\mathcal H$) to be TVNI if
+$TV(\mathcal Hu)\le TV(u)$, motivated by the monotonicity property of entropy solutions,
+whose total variation does not increase; the word "TVD" is not printed in the paper. Its
+Theorem 2.1 places it between two other notions: monotone $\Rightarrow$ TVNI
+$\Rightarrow$ monotonicity preserving, and linear TVNI schemes are monotone and hence
+first order ([monotone schemes](/definitions/monotone-scheme.md)). **Lemma 2.2** gives the
+condition in incremental form: the scheme
+
+$$u^{n+1}_i=u_i+C^+_{i+1/2}(u_{i+1}-u_i)-C^-_{i-1/2}(u_i-u_{i-1}),$$
+
+with coefficients depending on $u_{i-1},\dots,u_{i+2}$ and $u_{i-2},\dots,u_{i+1}$
+respectively (page-local $C^\pm$), is TVNI **if**
+$C^+_{i+1/2}\ge0$, $C^-_{i+1/2}\ge0$ and $C^+_{i+1/2}+C^-_{i+1/2}\le1$ (Eqs. (2.9)–(2.10)); the
+paper states the condition as sufficient and proves it by summing the absolute values of
+$\Delta_{i+1/2}u^{n+1}=C^-_{i-1/2}\Delta_{i-1/2}u+(1-C^-_{i+1/2}-C^+_{i+1/2})\Delta_{i+1/2}u+C^+_{i+3/2}\Delta_{i+3/2}u$
+(Eq. (2.11); $\Delta_{i+1/2}u=u_{i+1}-u_i$, page-local). Every three-point conservative scheme
+with a differentiable flux can be put in this form by the mean-value theorem (Eq. (2.13));
+Harten's own second-order TVNI scheme is built on it
+([Harten's TVD scheme](/methods/harten-tvd-scheme.md)).
+
+[Shu & Osher (1988)](/sources/shu-1988.md) (§I, Eqs. (1.5)–(1.7)) use the name TVD for
+$TV(u^{n+1})\le TV(u^n)$ and define **total variation bounded** (TVB) on $0\le t\le T$:
+$TV(u^n)\le B$ for all $n$ and $\Delta t$ with $0\le n\Delta t\le T$, with $B$ depending only on
+$TV(u^0)$ (page-local $B$). They carry both notions to the time discretization: a
+Runge–Kutta method that is a convex combination of forward-Euler steps is TVD (TVB) under a
+scaled CFL condition whenever forward Euler is ([SSP Runge–Kutta](/methods/ssp-runge-kutta.md),
+§II); [Shu (2009a)](/sources/shu-2009.md) (§3.1) states that these methods keep the stability of
+forward Euler "in the total variation seminorm, or any other norm or seminorm". [Harten et al. (1987a)](/sources/harten-1987.md) (§1, Eqs. (1.19)–(1.21)) state the
+stability notion behind both: total variation bounded uniformly in time,
+$TV(u_h(\cdot,t))\le C\,TV(u_0)$, gives convergence of a subsequence to a weak solution; the
+[Godunov scheme](/methods/godunov-scheme.md) and MUSCL are TVD in the scalar case.
 
 ## TVD conditions in incremental form, explicit and implicit
 
@@ -45,7 +82,9 @@ page. Then (Puppo et al., §2, citing Harten, Sweby and LeVeque):
 
 - the explicit step is TVD iff $\mathsf C_i\ge0$ and $1-\mathsf C_i\ge0$; the
   first condition gives Sweby's region $0\le\psi(r)/r\le2$, $0\le\psi(r)\le2$, the
-  second a CFL condition;
+  second a CFL condition. Puppo et al. state the "iff" for this one-coefficient upwind
+  form; Harten (1983a, Lemma 2.2) prints the two-coefficient incremental form above with
+  $C^\pm\ge0$, $C^++C^-\le1$ as a sufficient condition;
 - the implicit step is TVD if $\mathsf C_i\ge0$ and $1+\mathsf C_i\ge0$; the first
   condition is the same limiter region and the second always holds, so the
   implicit Euler step with a TVD limiter is TVD for every $\Delta t/\Delta x$;
@@ -83,6 +122,49 @@ Leer lets it grow beyond ten cells at Mach 0.001 with the Rusanov flux (§2.3, �
 and OverBee is retained after the shock–helium-bubble comparison for its better interface
 thickness and smoothness (§3.4, Fig. 17). In the source of the OverBee limiter, as reported by
 Nguyen et al., it is switched on only by an interface indicator.
+
+**Van Leer's 1979 monotonicity algorithms.** [Van Leer (1979)](/sources/vanleer-1979.md)
+(§3.3, Eqs. (101)–(104); App. B, Eq. (B2)) never prints "TVD" or "total variation"; it
+speaks of "monotonicity algorithms" acting on slopes that MUSCL **stores independently**
+of the cell averages ([MUSCL](/methods/muscl-hancock.md)). With
+$\delta^-=\bar u_i-\bar u_{i-1}$, $\delta^+=\bar u_{i+1}-\bar u_i$ and the stored undivided slope
+$\Delta_i$ of cell $i$ (page-local), the limiter applied before the Lagrangean step is
+
+$$\Delta^{\mathrm{mono}}_i=\begin{cases}\mathrm{sgn}(\Delta_i)\min\big(2\lvert\delta^-\rvert,\ \lvert\Delta_i\rvert,\ 2\lvert\delta^+\rvert\big),&\mathrm{sgn}\,\delta^-=\mathrm{sgn}\,\delta^+=\mathrm{sgn}\,\Delta_i,\\ 0&\text{otherwise},\end{cases}$$
+
+by three rules: the linear profile must not exceed the neighbouring averages, the slope is
+zero at an extremum of the averages, and zero if its sign disagrees with their trend
+(Eq. (101), Fig. 3). The factors 2 may be reduced, "however, not beyond $1+O(\Delta Q)$, lest
+the scheme lose its second-order accuracy", and may decrease with the local Courant number;
+with factors 0 the scheme is Godunov's (§3.3, p. 118). The limiter guarantees positivity of
+the distributions but "can not fully guarantee monotonicity" for systems at the largest
+time steps (pp. 117–118). The paper adds a remap limiter with factors $2/\varphi$ and
+$2/(1-\varphi)$, $\varphi$ the mass fraction of a cell crossing a fixed boundary (Eqs.
+(102)–(103); page-local $\varphi$), which keeps only the zone averages positive, and a
+"narrow-base" limiter using stored interface values, weaker near a peak (Eq. (104),
+Fig. 5); both (101) and (102) "clip real peaks to the same degree as a first-order method
+would do" (§3.3). For slopes recomputed from averages on a uniform grid, Appendix B
+recalls from the fourth paper of the series the harmonic-mean slope
+$2\delta^-\delta^+/(\delta^-+\delta^+)$ when $\delta^-\delta^+>0$, zero otherwise (Eq. (B2)),
+"so that the crudest monotonicity condition is automatically accounted for".
+*(compiler check, not in the sources: with $r=\delta^-/\delta^+>0$ this is
+$\psi(r)\,\delta^+$ with $\psi(r)=2r/(1+r)=(r+\lvert r\rvert)/(1+\lvert r\rvert)$, the "van Leer" row
+of the table, which the 1979 paper gives no name; and if the stored slope in (101) is
+replaced by the central difference $\tfrac12(\delta^-+\delta^+)$, (101) becomes the
+three-argument $\mathrm{MC}_\beta$ limiter below with $\beta=2$, a substitution the paper does
+not make.)*
+
+**Minmod in the founding papers.** Harten's second-order TVNI scheme limits a correction of
+the flux, not a slope, by what is the two-argument minmod of the neighbouring corrections
+([Harten's TVD scheme](/methods/harten-tvd-scheme.md), Eq. (3.11)); the paper does not use
+the word. Harten et al. (1987a) define $M(x,y)=s\min(\lvert x\rvert,\lvert y\rvert)$ if
+$\mathrm{sgn}\,x=\mathrm{sgn}\,y=s$, zero otherwise (Eq. (3.16)), and apply it to one-sided
+derivatives in their deconvolution ENO reconstruction; with $r=2$ their ENO slopes are those
+of a second-order TVD scheme and differ from the primitive-function slope only at extrema,
+where the deconvolution gives zero (Remark 3.2, Eq. (3.24)). Shu & Osher (1988) (§III,
+Remark 3.1(b)) note that the second-order member of their flux ENO family is "similar to the
+usual minmod second order TVD scheme", with minmod replaced by "choosing the value closer to
+zero", and "is still a TVD method" (derivation omitted).
 
 **Symmetric limiters** satisfy $\psi(r)/r=\psi(1/r)$; they can be written as
 slope limiters, $u^\mp=\bar u_i\pm\tfrac12\tilde\psi(1/r_i)\,s_i$ with the central
@@ -281,6 +363,19 @@ cells flagged rough and Minmod2 elsewhere, in characteristic variables
   Figs. 8–9). The authors expect weaknesses because the limiting acts on kinetic variables,
   without any role for the projection onto conservative variables (§3.2.1). See
   [discrete kinetic relaxation schemes](/methods/discrete-kinetic-relaxation-scheme.md).
+- **The TVB-corrected minmod of RKDG.** [Zhang & Shu (2010b)](/sources/zhang-2010-b.md)
+  (§4.2, Eq. (4.2)) recall the characteristic TVB limiter of RKDG: the modified minmod
+  returns its first argument $a_1$ when $\lvert a_1\rvert\le M_{\mathrm{TVB}}\Delta x^2$ and the
+  minmod of all arguments otherwise, with one $M_{\mathrm{TVB}}$ per characteristic field
+  (page-local, the source's $M_i$); for scalar problems it is related to the second
+  derivative of the initial data near smooth extrema. In their positivity-preserving DG for
+  Euler the TVB limiter is applied first, and it remains necessary at shocks: without it
+  the scheme blows up on the Sedov blast waves even with the positivity limiter. Without the
+  positivity limiter the scheme with $M_{\mathrm{TVB}}>0$ may blow up, and the positivity
+  limiter lets $M_{\mathrm{TVB}}$ be tuned "in a much larger range", up to $(10^{10},10,10^{10})$
+  for the three fields on the [Leblanc tube](/benchmarks/leblanc-shock-tube.md) at 800 cells
+  and $(10^{20},100,10^{20})$ at 6400 (§4.2–4.3, Fig. 4.4; see
+  [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)).
 - **A TVB comparator.** The second-order member of the semi-implicit all-Mach schemes of
   [Boscarino et al. (2022)](/sources/boscarino-2022.md) (§3.3, S2T2) uses a second-order TVB
   reconstruction with constant $M_{\mathrm{TVB}}=1$ (page-local, the source's $M$, renamed to
@@ -314,6 +409,24 @@ cells flagged rough and Minmod2 elsewhere, in characteristic variables
   (§4.4). See [learned WENO weights](/methods/learned-weno-weights.md).
 
 ## The first-order barrier at extrema
+
+The founding sources state the barrier in several forms.
+[Shu & Osher (1988)](/sources/shu-1988.md) (§I, p. 3) state that TVD schemes "must
+degenerate to first order accuracy at extremacy", although TVD schemes of up to fifteenth
+spatial order (17-point stencil) exist away from extrema, and recall that the TVB
+modification of Shu's earlier paper "recovers global high order accuracy even at critical
+points", and that Sanders' third-order TVD scheme, which measures the variation on a
+piecewise-parabolic interpolant, degenerates only to second order at extrema and has no
+method-of-lines analogue (pp. 3–6). [Harten et al. (1987a)](/sources/harten-1987.md) (§2,
+p. 239) call TVD schemes "necessarily only first-order accurate at local extrema" and drop
+"monotonicity limiters" for the [ENO property](/definitions/eno-property.md); they add that
+for MUSCL-type schemes the leading error coefficient of the reconstruction is
+discontinuous at extrema, which costs one order in the maximum norm there (§1, Remark
+1.2). In Harten's own second-order TVNI scheme the order may degenerate locally where
+$\partial_xu=0$ (Harten 1983a, §3, Remark 2). [Zhang & Shu (2010b)](/sources/zhang-2010-b.md)
+(§1, §4.2) recall the same degeneracy for the minmod limiter of RKDG: their TVB limiter with
+parameter $M_{\mathrm{TVB}}=0$ "reduces to a TVD limiter", first order at extrema, with
+unsatisfactory results (next section).
 
 [Pazner (2021)](/sources/pazner-2021.md) (§4.4) recalls that TVD schemes are
 provably at most first-order accurate at smooth extrema, and observes the
@@ -363,3 +476,9 @@ bounds to global ones in cells flagged smooth by a modal indicator restores
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — §2, Eqs. (2.5)–(2.6): generalized minmod with factor 1.3.
 - [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4, §4.3, Eq. (28), Figs. 11–12: TVD convex blend of first- and second-order IMEX schemes (HAL author manuscript).
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §3.1, §4.1–4.4, Eqs. (13), (17), (23)–(24): van Albada on learned slopes, TV-increase training penalty.
+- [Harten (1983a)](/sources/harten-1983.md) — §2 (Eqs. (2.2)–(2.13), Theorem 2.1, Lemma 2.2), §3 (Eq. (3.11), Remark 2): TVNI definition, sufficient incremental condition, minmod-limited correction (NYU report DOE/ER/03077-175, March 1982).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §I (Eqs. (1.5)–(1.7), pp. 3–6), §II, §III (Remark 3.1(b)): TV, TVD and TVB definitions, degeneracy at extrema, TVD Runge–Kutta (ICASE Report 87-33).
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §1 (Eqs. (1.19)–(1.21), Remark 1.2), §2 (p. 239), §3 (Eq. (3.16), Remark 3.2, Eq. (3.24)): TVD at first order at extrema, minmod.
+- [Van Leer (1979)](/sources/vanleer-1979.md) — §3.3 (Eqs. (101)–(104), Figs. 3–5), App. B (Eq. (B2)): monotonicity algorithms for stored slopes.
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §1, §4.2–4.3 (Eq. (4.2), Fig. 4.4): TVB-corrected minmod, $M=0$ as TVD.
+- [Shu (2009a)](/sources/shu-2009.md) — §3.1: TVD (SSP) Runge–Kutta stability in the total variation seminorm.

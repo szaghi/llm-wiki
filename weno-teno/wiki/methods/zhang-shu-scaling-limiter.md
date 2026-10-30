@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -15,8 +15,9 @@ The Zhang–Shu limiter is the third ingredient of the cell-average route to
 degree-$N$ polynomial $u_h$ of cell $I_i$ (DG solution or finite-volume
 reconstruction) with cell average $\bar u_i\in G$, it replaces $u_h$ by
 $$\tilde u_h=\theta\,(u_h-\bar u_i)+\bar u_i,\qquad 0\le\theta\le1,$$
-with $\theta$ the largest factor for which the point values on a prescribed
-point set lie in $G$. The cell average is unchanged, so conservation is
+with $\theta$ a factor for which the point values on a prescribed
+point set lie in $G$, or in a slightly shrunk set $G^\varepsilon\subset G$ in
+the founding paper (below). The cell average is unchanged, so conservation is
 kept, and because $G$ is convex and $\bar u_i\in G$, a $\theta$ that works
 always exists (at worst $\theta=0$). Combined with a BP first-order flux and
 the CFL condition of a
@@ -29,6 +30,22 @@ Rem. 7.3; [Wu & Shu (2023)](/sources/wu-2023-b.md), App. B;
 [Liu et al. (2021)](/sources/liu-2021.md), §3.3.4;
 [Chen & Wu (2022)](/sources/chen-2022-b.md), §3.3;
 [Du & Yang (2022)](/sources/du-2022-b.md), §4.3).
+
+**Founding paper.** For the Euler equations the limiter, with its point set and
+CFL condition, is due to [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) (§§2–3),
+who call it the "positivity preserving limiter", "the same type of the linear
+scaling limiter used in" their maximum-principle paper (Zhang & Shu 2010a, not
+ingested). Their admissible set is $G=\{\rho>0,\ p>0\}$, convex because $p$ is
+concave in $u=(\rho,\rho v,E)$ for $\rho\ge0$ (§1, Eq. (1.3)). Theorem 2.1: if the
+degree-$N$ polynomial of every cell lies in $G$ at the $N_{\mathrm{GL}}$
+Gauss–Lobatto points, $2N_{\mathrm{GL}}-3\ge N$, the forward-Euler cell average
+with a positivity-preserving first-order flux stays in $G$ under
+$\frac{\Delta t}{\Delta x}\lVert(\lvert v\rvert+c)\rVert_\infty\le\varpi\,c_0$, with
+$\varpi$ the Gauss–Lobatto endpoint weight and $c_0$ the CFL constant of the
+first-order scheme ([optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md),
+[bound preservation](/properties/bound-preservation.md)). The limiter is then the
+only remaining task. They state the property is guaranteed for "the cell averages"
+at "small additional computational cost" (§5).
 
 ## Scalar bounds
 
@@ -49,6 +66,24 @@ the reconstruction over the whole cell (§2.3.3, Eqs. (22)–(24)); see
 For gas dynamics the constraints are enforced one after another, each
 scaling acting on the result of the previous one, with the density first:
 
+- **The original two steps** ([Zhang & Shu (2010b)](/sources/zhang-2010-b.md),
+  §§2.2–2.3, Eqs. (2.4)–(2.12), Lemma 2.5). With a floor $\varepsilon_1$ set to
+  "for example" $10^{-13}$, and in the flowchart to
+  $\min_i\{10^{-13},\bar\rho_i,p(\bar u_i)\}$, one value over all cells shared by the
+  two steps, the density is scaled first,
+  $\hat\rho=\theta_1(\rho_h-\bar\rho_i)+\bar\rho_i$,
+  $\theta_1=\min\{(\bar\rho_i-\varepsilon_1)/(\bar\rho_i-\rho_{\min,i}),1\}$ over the
+  Gauss–Lobatto points (printed without absolute value). The pressure step is not a
+  ratio of pressures: for each point value $\hat u_q$ of the density-limited state
+  with $p(\hat u_q)<\varepsilon_1$, the segment $(1-t)\bar u_i+t\hat u_q$ is cut
+  with the surface $p=\varepsilon_1$ by solving the quadratic
+  $p\big((1-t_q)\bar u_i+t_q\hat u_q\big)=\varepsilon_1$ ($t_q=1$ where
+  $p(\hat u_q)\ge\varepsilon_1$; page-local), and the whole state is scaled by
+  $\theta_2=\min_qt_q$, which they write equivalently as a ratio of Euclidean
+  distances (Eq. (2.11)). Lemma 2.5 proves, by concavity, that the limited point
+  values lie in $G^{\varepsilon_1}=\{\rho\ge\varepsilon_1,\ p\ge\varepsilon_1\}\subset G$.
+  In 2D the same steps run over the union of the two tensor Gauss × Gauss–Lobatto
+  point sets (§3.2, Eqs. (3.14)–(3.19)).
 - **Euler and Navier–Stokes, positivity of $\rho$ and $\rho e$**
   ([Cui et al. (2024)](/sources/cui-2024.md), Rem. 8.1;
   [Fan et al. (2021)](/sources/fan-2021.md), Eqs. (3.14)–(3.15),
@@ -61,7 +96,9 @@ scaling acting on the result of the previous one, with the density first:
   $(\rho e(\bar u_i)-\varepsilon)/(\rho e(\bar u_i)-\rho e(u_q))$, taken
   only where $\rho e(u_q)<\varepsilon$, and justify $\theta_2\in[0,1]$ by
   the concavity of $\rho e$ (Jensen). Here $\varepsilon_1$, $\varepsilon_2$
-  are round-off floors (page-local), not WENO regularizations.
+  are round-off floors (page-local), not WENO regularizations. This ratio is the
+  form of the later sources; the founding paper solves the segment intersection
+  above.
 - **Remapping on moving quadrilaterals** ([Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md),
   §2.6.3). The same two steps at the nine Simpson points of a
   quadrilateral mapped to $[-\tfrac12,\tfrac12]^2$: density with
@@ -332,7 +369,8 @@ Qualifications *(compiler check, not in the sources)*.
 
 The point set is that of the decomposition: Gauss–Lobatto points in 1D and
 the tensor Gauss / Gauss–Lobatto points of the classic 2D decomposition
-([Wu & Shu (2023)](/sources/wu-2023-b.md), Thm 6.2, condition (6.12);
+([Zhang & Shu (2010b)](/sources/zhang-2010-b.md), Thm 2.1, Thm 3.1, Eqs. (3.9)–(3.13);
+[Wu & Shu (2023)](/sources/wu-2023-b.md), Thm 6.2, condition (6.12);
 [Liu et al. (2021)](/sources/liu-2021.md), Eq. (36), with $Q$ Gauss and
 $L$ Gauss–Lobatto points, $Q=1$, $L=2$ for linear and $Q=2$, $L=3$ for
 quadratic reconstruction), the DGSEM nodes themselves
@@ -382,7 +420,21 @@ which preserves the property because each stage is a convex combination of
 forward-Euler steps ([Cui et al. (2024)](/sources/cui-2024.md), Rem. 7.9;
 [Wu & Shu (2023)](/sources/wu-2023-b.md), §6.2;
 [Fan et al. (2021)](/sources/fan-2021.md), §3.3;
-[Renac (2021)](/sources/renac-2021.md), §6.3). That the limiter keeps the
+[Renac (2021)](/sources/renac-2021.md), §6.3; stated for the Euler equations by
+[Zhang & Shu (2010b)](/sources/zhang-2010-b.md), Rem. 2.2, §2.3). Zhang & Shu
+(Rem. 2.7) add a practical point: the CFL bound must hold at every Runge–Kutta
+stage, whose wave speeds are not known at $t^n$, so they multiply the
+$\lVert(\lvert v\rvert+c)\rVert_\infty$ of $u^n$ by "a factor, for example 2 to 3",
+or enforce the stricter step only when a trial step produces negative density or
+pressure; SSP multistep methods do not have this complication. On accuracy,
+Zhang & Shu (2010b, §2.2, after Lemma 2.5) argue that for a smooth solution $u$ with
+$d(u,G^{\varepsilon_1})\ge M_{\mathrm d}>0$ (their set distance, see the Source page;
+$M_{\mathrm d}$ page-local) $\lvert1-\theta_2\rvert=O(\Delta x^{N+1})$, and state
+that the density step's accuracy "can be proven following the same lines" as in
+the maximum-principle paper; their third-order RKDG reaches third order on a
+low-density ($\min\rho=0.01$) density wave, with the limiter "turned on for the
+coarser meshes" (§4.1, Table 4.1;
+[density-wave advection](/benchmarks/density-wave-advection.md)). That the limiter keeps the
 design order is cited, not shown, by Wu & Shu (App. B) and Fan et al.
 (Rems. 3.2, 3.4, citing Zhang 2017); Cui et al. show order $N+1$
 numerically for $\mathbb P^2$, $\mathbb P^4$, $\mathbb P^6$ and
@@ -413,7 +465,14 @@ attributable to the magnetic field present in those (§5.1.6, Fig. 6).
 
 **A separate oscillation control.** In most sources a separate mechanism
 acts first in troubled cells flagged by a
-[troubled-cell indicator](/definitions/troubled-cell-indicator.md): a WENO
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md). In the founding
+paper it is the characteristic TVB limiter, applied before the positivity limiter;
+it remains necessary for shocks (the DG scheme blows up on the Sedov blast waves
+without it, even with the positivity limiter), and the positivity limiter lets its
+parameters be raised "in a much larger range", up to $10^{20}$ on the Leblanc tube
+([Zhang & Shu (2010b)](/sources/zhang-2010-b.md), §§4.2–4.3;
+[Sedov](/benchmarks/sedov-blast-wave.md), [Leblanc](/benchmarks/leblanc-shock-tube.md)).
+Elsewhere it is a WENO
 limiter (KXRCF in Wu & Shu, §7; the Qiu–Shu WENO limiter in Cui et al.,
 Ex. 3–5), the nonlinear HWENO reconstruction and a first-moment limiter in
 Fan et al. (§1), or subcell finite volumes. The scaling limiter controls
@@ -535,9 +594,14 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
   (§3); the limiter itself is unchanged in form.
 - **Scope.** The guarantee is on cell averages and on the chosen point set;
   between points the polynomial may leave $G$.
+- **WENO reconstructions.** Zhang & Shu (2010b, Rem. 2.6) note that the limiter is
+  harder to apply to finite-volume WENO, which delivers point values rather than a
+  polynomial, and refer to building a polynomial from the point values and the cell
+  average (compare the construction of Fan et al. above).
 
 # Citations
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §1, Eq. (1.3); §2.1, Thm 2.1, Rems. 2.2–2.4; §§2.2–2.3, Eqs. (2.4)–(2.12), Lemma 2.5, Rems. 2.6–2.7; §3, Thm 3.1, Eqs. (3.9)–(3.19); §4.1, Table 4.1; §§4.2–4.3; §5: the founding positivity limiter for Euler.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §1 (Eqs. (1.7)–(1.8)); Rems. 7.3, 7.4, 7.9 (Eqs. (7.15)–(7.18)); Rem. 8.1; Ex. 1 (Tables 3–6), Ex. 3–5.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Thm 6.2 (Eq. (6.12)); §6.2; App. B; §7.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; §3.1 (Eqs. (3.9)–(3.10), (3.14)–(3.15), Rem. 3.2); §3.2 (Eqs. (3.26)–(3.27), (3.31)–(3.32), Rem. 3.4); §3.3; Tables 4.1–4.2.

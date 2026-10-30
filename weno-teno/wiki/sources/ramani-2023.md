@@ -151,7 +151,7 @@ kept as a separate preprint entry and needs a key distinct from the bundle's
 
 # Pages created or updated
 
-Chunk 6 (2026-10-23), cited further in chunks 7–11 (2026-10-23/24). This source is cited on:
+Chunk 6 (2026-10-23), cited further in chunks 7–12 (2026-10-23/30). This source is cited on:
 
 * [Adaptive moving mesh finite differences](/methods/adaptive-moving-mesh.md)
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)

@@ -5,7 +5,7 @@ description: "A scheme is bound-preserving when its discrete solution stays in t
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Bound preservation
@@ -47,7 +47,7 @@ averages and the point values are limited (Example 5.4, Table 1).
 |---|---|---|
 | scalar law | $[U_{\min},U_{\max}]$ (global maximum principle); any interval is an invariant set | Cui et al. (2024), §1; Pazner (2021), Def. 1 |
 | linear transport, Vlasov–Poisson | $u\ge0$ | Zheng et al. (2022), Prop. 3.2; Kiechle et al. (2025), §3.2 (lower bound only) |
-| Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25); Lin et al. (2023), Eq. (3); Gu et al. (2023), §2.6.1; Abgrall et al. (2026), Eq. (1.2); Duan et al. (2025), Eq. (26), for averages and point values; Chen & Chen (2026), Eq. (33) |
+| Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Zhang & Shu (2010b), §1, Eq. (1.3), written $\{\rho>0,\ p>0\}$ with $p$ concave for $\rho\ge0$; Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25); Lin et al. (2023), Eq. (3); Gu et al. (2023), §2.6.1; Abgrall et al. (2026), Eq. (1.2); Duan et al. (2025), Eq. (26), for averages and point values; Chen & Chen (2026), Eq. (33) |
 | Euler with a minimum principle on the specific entropy | $\{\rho>0,\ \rho e>0,\ s\ge s_{\min}\}$, i.e. $p\rho^{-\gamma}\ge\exp(s_{\min})$; Pazner writes the specific entropy as $\ln(e^{1/(\gamma-1)}\rho^{-1})$ | Wu & Shu (2023), Eq. (2.3), Thm 4.7; Pazner (2021), Eq. (65) |
 | Euler with a local minimum of $\rho s$ at the solution nodes | $\{\rho\ge\rho_{\min},\ p\ge p_{\min},\ \rho s\ge(\rho s)^K_{\min}\}$, floors $10^{-8}$, bound over the element and its face neighbours | Dzanic & Witherden (2022), §3.2, §4.1 |
 | multicomponent Euler (mixture of $n_c$ ideal gases) | $\{0\le Y_k\le1,\ \rho>0,\ e>0\}$ ($Y_k$ mass fractions) | Renac (2021), Eq. (9) |
@@ -126,10 +126,31 @@ masses and specific heats, page-local). For relativistic hydrodynamics
 $g(u)=E-\sqrt{D^2+\lvert m\rvert^2}$ is concave (Chen & Wu, Lemma 2.1,
 recalled from Wu & Tang).
 
+**A precursor in slope limiting.** [Van Leer (1979)](/sources/vanleer-1979.md)
+already asks for positivity as a design goal: the "bare-minimum" second-order
+Lagrangean scheme needs "extra measures … for guaranteeing positivity of directly
+computed quantities and of derived quantities" (§2), and the monotonicity
+algorithms of §3.3 supply them. The slope limiter applied before the Lagrangean step
+keeps each linear distribution within the neighbouring slab averages and so
+"also guarantee[s] the preservation of positivity of the distributions"; the milder
+limiter of the remap step keeps only the averages of the parts of a slab that cross
+or stay within that range, so that "positivity is guaranteed only for the zone
+averages"; and where the internal energy may still become negative (small against
+the total energy, or a negative source), the time step is reduced, if necessary only
+locally (§3.3)
+([MUSCL](/methods/muscl-hancock.md),
+[total variation diminishing](/definitions/total-variation-diminishing.md)).
+
 ## Route 1: first-order BP scheme, cell-average decomposition, scaling limiter
 
 The framework recalled by [Cui et al. (2024)](/sources/cui-2024.md) (§1,
-Eqs. (1.3)–(1.8), after Zhang and Shu) and used by
+Eqs. (1.3)–(1.8), after Zhang and Shu) goes back, for the Euler equations, to
+[Zhang & Shu (2010b)](/sources/zhang-2010-b.md) (§§1–3, Thms 2.1, 3.1), who
+present it as a sufficient condition "much easier to enforce" than the earlier one
+of Perthame & Shu, which also requires
+$\bar u^{n+1}_i-\mathsf a_{\mathrm{PS}}(u^-_{i+1/2}+u^+_{i-1/2})\in G$ for a
+$\mathsf a_{\mathrm{PS}}\in(0,1]$ (page-local) and is hard to enforce at arbitrary
+order without destroying accuracy (§1, §5). It is used by
 [Wu & Shu (2023)](/sources/wu-2023-b.md) (§6, App. B),
 [Fan et al. (2021)](/sources/fan-2021.md) (§3),
 [Renac (2021)](/sources/renac-2021.md) (§6) and
@@ -138,8 +159,15 @@ Eqs. (1.3)–(1.8), after Zhang and Shu) and used by
 1. **A BP first-order scheme.** With a monotone or otherwise BP two-point
    flux $h$, the three-point update
    $\bar u_i^{n+1}=\bar u_i^n-\frac{\Delta t}{\Delta x}\big(h(\bar u_i,\bar u_{i+1})-h(\bar u_{i-1},\bar u_i)\big)$
-   stays in $G$ under $a\Delta t/\Delta x\le c_0$. Cui et al. give $c_0=1$
-   for the [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) and
+   stays in $G$ under $a\Delta t/\Delta x\le c_0$. For the Euler equations with the
+   [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) and a global $a$,
+   Zhang & Shu (2010b, Rem. 2.4) prove $c_0=1$, relaxing the $\tfrac12$ of
+   Perthame & Shu, from the identity
+   $p\big(u\pm f(u)/a\big)=\big(1-\tfrac{(\gamma-1)p}{2\rho(a\pm v)^2}\big)\big(1\pm\tfrac va\big)p$,
+   positive when $c\le a-\lvert v\rvert$; they list Godunov, Lax–Friedrichs,
+   Boltzmann-type and HLL fluxes as positivity-preserving first-order fluxes (§1).
+   Cui et al. give $c_0=1$
+   for the Lax–Friedrichs flux and
    $c_0=1/2$ for [HLL and HLLC](/methods/hll-riemann-solvers.md)
    (§7, after Eq. (7.5)); let $c_0$ denote this first-order BP CFL
    constant (page-local). Wu & Shu prove the Lax–Friedrichs case for Euler
@@ -160,6 +188,13 @@ Eqs. (1.3)–(1.8), after Zhang and Shu) and used by
 3. **A limiter** that brings the point values used by the decomposition
    back into $G$ without changing the cell average
    ([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)).
+
+Zhang & Shu (2010b, Rem. 2.2, Rem. 2.7) state that SSP Runge–Kutta and multistep
+methods keep the property because $G$ is convex, with one practical complication for
+Runge–Kutta: the CFL bound must hold at the stages, whose wave speeds are estimated in
+practice as "2 to 3" times those at $t^n$ (details on the
+[Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md) page). Their guarantee is
+that "density and pressure of the cell averages are always positive" (§5).
 
 The property that results is called *weak* bound preservation in the
 literature these sources recall: the cell average is guaranteed in $G$
@@ -955,6 +990,8 @@ as a heuristic. The details are on
 
 # Citations
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §1, Eqs. (1.3)–(1.6); §2.1, Thm 2.1, Rems. 2.2–2.4; §2.2, Lemma 2.5; Rem. 2.7; §3, Thm 3.1; §5: the cell-average route for Euler positivity, $c_0=1$ for Lax–Friedrichs.
+- [Van Leer (1979)](/sources/vanleer-1979.md) — §2 (end of the Lagrangean step); §3.3, Eqs. (101)–(102): positivity of distributions and of zone averages by slope limiting.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: §1 (definition, Eq. (1.4)); §3 (Assumption 3.4, Thms 3.9–3.10); §4.2 (admissible sets); §5 (first-order BP proofs); §6 (MHD, Thms 6.1–6.4); App. B (limiter).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §1 (Zhang–Shu framework, Eqs. (1.3)–(1.15)); §7 (Thms 7.1, 7.5, 7.6; $c_0$ values); Table 1; Rem. 8.1.
 - [Pazner (2021)](/sources/pazner-2021.md) — arXiv v1: §1–§2 (Def. 1); §3 (Props. 6–7); §4 (Props. 10–11, Eq. (65)); §4.4; §5.1 (Table 1).

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Mach 3 forward-facing step"
-description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel with a step, run to t=4 or to a steady state; it tests robustness at the expansion corner, the resolution of the Kelvin–Helmholtz roll-up of the vortex sheet from the triple point, shock stability of Riemann solvers and steady-state convergence of WENO residuals."
+description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel with a step, run to t=4 or to a steady state since van Leer (1979); it tests robustness at the expansion corner, the Kelvin–Helmholtz roll-up of the vortex sheet from the triple point, shock stability of Riemann solvers and steady-state convergence of WENO residuals."
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -18,12 +18,43 @@ sheet trails downstream. The expansion corner of the step is a
 singularity that strains robustness, and the vortex sheet is
 Kelvin–Helmholtz unstable, so the benchmark measures both whether a
 scheme survives and how much small-scale structure it resolves.
-Twenty-five sources of the bundle run it, seven of them on triangles (one of these
+Twenty-eight sources of the bundle run it, seven of them on triangles (one of these
 in a relativistic version), one on polygons and one as a steady-state
 problem; those
-that name an origin attribute it to Woodward & Colella.
+that name an origin, Harten (1983a) and Jiang & Shu (1996) among them,
+attribute it to Woodward & Colella. [Van Leer (1979)](/sources/vanleer-1979.md)
+already runs the same tunnel and step with second-order MUSCL, the runs
+made by P. Woodward (§4).
 
 ## Setup
+
+**The earliest runs.** Van Leer (1979) §4 describes Mach 3 flow
+"through a tunnel with a step, in the case of plane symmetry",
+impulsively started, inflow at Mach 3 ($v_1=3$, $c=1$ upstream) on the
+left, free outflow on the right, reflecting walls, $\gamma=1.4$, square
+meshes and 90 % of the admissible time step. The step is one fifth of
+the entrance height $H$ (page-local) and the narrow part of the tunnel
+is $2.4H$ long. On the $60\times20$ grid, whose 1008 cells van Leer
+states, the tunnel is $3H$ long and the step starts $0.6H$ from the
+inlet: $60\times20-48\times4=1008$ *(compiler check, not in the
+sources)*, which is the $[0,3]\times[0,1]$ tunnel with corner at
+$(0.6,0.2)$ below. Outputs are at about four vertical sound-crossing
+times $H/c$ ($t=4.01$–$4.06$ in the figure legends) on $60\times20$,
+$30\times10$ and $15\times5$ meshes, a near-steady state at $t=16.02$
+on $45\times15$, and Godunov's method on $80\times30$ (Figs. 7–11).
+[Harten (1983a)](/sources/harten-1983.md) §8 III ("2-D flow through a
+duct") prints the data used since: Mach 3 flow with $\rho=1.4$,
+$p=1$, $c=1$, duct width 1 and length 3, a step of height 0.2 at 0.6
+from the entrance, $t=4$, $\Delta x=\Delta y=0.1$, CFL 0.75, Strang-type
+dimensional splitting, and the corner treated "as a sharp corner
+without any rounding (or equivalent addition of numerical viscosity)";
+Harten refers the problem to Woodward and Colella.
+[Jiang & Shu (1996)](/sources/jiang-1996.md) §8.3 Ex. 2 print the same
+tunnel, a right-going Mach 3 flow, reflective walls and inflow/outflow
+ends, and adopt Woodward & Colella's corner treatment, "based on the
+assumption of a nearly steady flow in the region near the corner"; their
+grids are Woodward & Colella's medium and fine grids; the text prints
+no final time, the figure headers $t=4$.
 
 [Balsara et al. (2024)](/sources/balsara-2024.md) §IX.g and
 [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.3 print the same data:
@@ -130,6 +161,9 @@ fix at the corner.
 
 | Source | Scheme | Grid | CFL |
 |---|---|---|---|
+| [van Leer (1979)](/sources/vanleer-1979.md) §4 | second-order MUSCL (Lagrangean step and remap, slope limiters) vs Godunov's method (all slopes zero) | $60\times20$, $30\times10$, $15\times5$, $45\times15$; Godunov $80\times30$ | 0.9 of the admissible step |
+| [Harten (1983a)](/sources/harten-1983.md) §8 III | second-order [TVD scheme](/methods/harten-tvd-scheme.md) ULT2 (ULT1 in the text) vs a second-order hybrid scheme | $30\times10$ | 0.75 |
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.3 Ex. 2 | finite-difference WENO-LF-4, WENO-LF-5 (and WENO-LF-5-PS) vs ENO-LF-4, RK-4 | $122\times39$, $242\times79$ | $\Delta t=0.6\Delta x$ |
 | [Luo & Wu (2021)](/sources/luo-2021-b.md) §5.3.4 | [WENO-Z+M](/methods/weno-z-plus.md) vs WENO-Z, WENO-Z+, WENO-IS-I, WENO-Z7, WENO-Z9 | $481\times161$ | 0.5 |
 | [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.3 | seventh-order [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z | $600\times200$ | not restated for 2D |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) §IX.g | seventh-order [FD-WENO in fluctuation form](/methods/fluctuation-form-fd-weno.md), HLL-based (Fig. 17 caption) | $1440\times480$ | 0.4 |
@@ -157,6 +191,36 @@ fix at the corner.
 | [Wang et al. (2023a)](/sources/wang-2023.md) §4.8 | fifth-order characteristic-wise [A-WENO](/methods/alternative-weno.md) with affine-invariant Z-type weights, adaptive-diffusion LLF-M flux vs [LLF](/methods/lax-friedrichs-flux.md); TVD-RK3; Woodward–Colella corner treatment; $t=4$ | $900\times300$ | 0.45 |
 
 ## What the benchmark measures
+
+**Second order against Godunov.** Van Leer finds MUSCL on
+$H/\Delta y=10$ mimicking Godunov's method on $H/\Delta y=30$, and since
+Godunov's method "will not run more than twice as fast as MUSCL", calls
+this "a dramatic increase in efficiency" (Figs. 8, 11); the comparison
+is visual. On the $15\times5$ grid, with the step one mesh high, a Mach
+stem "still appears to be visible" but is, in van Leer's words, an
+artifact of the monotonicity algorithms, which force pressure contours
+to be perpendicular to a reflecting wall (Fig. 9). Du et al.'s spurious
+Mach stem below is attributed instead to the corner.
+
+**An expansion shock at the corner.** Harten notes that the sonic line
+leaving the corner may partly turn into an expansion shock in the
+Godunov results of Woodward & Colella, as Harten cites them, and finds "a
+similar behaviour" with the ULT1 scheme, whose numerical viscosity is
+$Q(x)=\lvert x\rvert$ (Eq. (8.3a)); §5 states that schemes with
+$Q(0)=0$ keep stationary jumps, admissible or not, while ULT2 uses
+$Q(x)=x^2+\tfrac14$. No figure of ULT1 is shown (§8 III). See
+[Harten's TVD scheme](/methods/harten-tvd-scheme.md).
+
+**Reflecting walls and the weights.** Jiang & Shu find all their
+schemes performing well, WENO-LF-4 and WENO-LF-5 slightly better than
+ENO-LF-4 at the contact line from the Mach stem (printed "Mach step") and with fewer visible
+"bumps", "small numerical oscillations" (Figs. 10–11). Their
+pressure–entropy weights (WENO-LF-5-PS) fail here and on the
+[double Mach reflection](/benchmarks/double-mach-reflection.md): at a
+reflecting wall the mirrored ghost values have equal pressure and
+entropy, so neither can indicate a jump in the normal velocity, the
+weights become unstable and the density turns negative (Remark, §8.3).
+See [characteristic decomposition](/methods/characteristic-decomposition.md).
 
 **Robustness of very-high-order WENO.** Luo & Wu report that both the
 seventh- and the ninth-order WENO-Z schemes fail on this problem at CFL
@@ -305,18 +369,23 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 
 ## Qualifications
 
-- Evidence is visual (contour plots), apart from de Romémont et al.'s
+- Evidence is visual (contour plots), van Leer's efficiency claim
+  included, apart from de Romémont et al.'s
   relative $L^1$ error against a twice-finer run of the standard scheme;
   no source reports an error against an exact or converged solution.
 - The Cartesian grids of the unsteady runs differ by a factor of three
-  in each direction ($481\times161$ to $1440\times480$), Mossier et
+  in each direction among the recent sources ($481\times161$ to
+  $1440\times480$), the founding runs are coarser ($15\times5$ to
+  $242\times79$), Mossier et
   al.'s $180\times60$ DG elements and Wan & Xia's steady $90\times30$
   cells are coarser still, the triangular meshes are
   locally refined or unstructured, and the time steppers and fluxes
   differ, so the roll-up seen in the papers is not comparable across
   them.
 - Yu & Hesthaven stop at $t=3$, the other non-relativistic unsteady
-  runs that print a final time at $t=4$; Mossier et al. print none.
+  runs that print a final time at $t=4$ (van Leer at $t=4.01$–$4.06$ in
+  units of $H/c$; Jiang & Shu at $t=4$ in the figure headers only);
+  Mossier et al. print none.
 - Li et al. (2022b) write that the problem "is also originally from the paper
   of [30]", with no preceding mention of that paper.
 - Tang's step interior and Gaburro et al.'s printed domain depart from
@@ -324,6 +393,9 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 
 # Citations
 
+- [van Leer (1979)](/sources/vanleer-1979.md) — §4, Figs. 7–11.
+- [Harten (1983a)](/sources/harten-1983.md) — §8 III, Fig. 7 (NYU report DOE/ER/03077-175).
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.3, Ex. 2 and Remark, Figs. 10–11 (author preprint).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.3.4, Fig. 16.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §4.4.3, Fig. 9.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §IX.g, Fig. 17.

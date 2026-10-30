@@ -159,7 +159,7 @@ Goudon 2020, Herbin 2021). No item is unparseable.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunks 8–11 (2026-10-23/24). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–12 (2026-10-23/30). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Entropy stability](/properties/entropy-stability.md)

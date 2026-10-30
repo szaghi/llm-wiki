@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Jiang–Shu composite-wave advection"
-description: "Linear advection of Jiang and Shu's four-wave profile, a smooth narrow Gaussian, a square wave, a triangle and a half ellipse, over one to a thousand periods; it tests at once the resolution of smooth peaks, the absence of oscillations at jumps and kinks, symmetry and long-time dissipation of nonlinear reconstructions."
+description: "Linear advection of Jiang and Shu's four-wave profile, a smooth narrow Gaussian, a square wave, a triangle and a half ellipse, over one to a thousand periods; it tests at once the resolution of smooth peaks, the absence of oscillations at jumps and kinks, symmetry and long-time dissipation of nonlinear reconstructions, mostly by eye, once by L1 errors."
 status: established
 aliases: [Jiang–Shu multi-wave test, multi-wave advection, multiple-wave advection, composite wave, Shu linear advection test, Gaussian–square–triangle–ellipse test]
 tags: [benchmark, weno, teno, reconstruction, low-dissipation]
-timestamp: 2026-10-24T05:33:00Z
+timestamp: 2026-10-30T07:59:00Z
 ---
 
 # Jiang–Shu composite-wave advection
@@ -13,20 +13,23 @@ timestamp: 2026-10-24T05:33:00Z
 The scalar linear advection equation $\partial_tu+\partial_xu=0$ on a
 periodic interval carries its initial data unchanged, so after any
 whole number of periods the exact solution is the initial profile. The
-composite profile attributed by the sources to Jiang & Shu puts four
+composite profile of [Jiang & Shu (1996)](/sources/jiang-1996.md) (§8.1
+Ex. 1), to whom the later sources attribute it, puts four
 waves of different regularity side by side on $[-1,1]$: a narrow smooth
 Gaussian, a square wave (two jumps), a triangle (kinks and a sharp
 peak) and a half ellipse (a smooth top with infinite slope at its
 feet). One run thus shows whether a reconstruction clips a smooth peak,
 oscillates at a jump, smears a kink, keeps the profile symmetric and,
-over many periods, how much it dissipates and distorts the waves. It is
-a visual test: none of the sources reports an error norm on it.
+over many periods, how much it dissipates and distorts the waves. Most
+sources judge it by eye; [Borges et al. (2008)](/sources/borges-2008.md)
+print $L_1$ errors and orders (Table 4).
 
 ## Data
 
 With page-local $G(x,\beta_{\mathrm G},z)=e^{-\beta_{\mathrm G}(x-z)^2}$ and
 $F(x,\alpha_{\mathrm F},a)=\sqrt{\max\big(1-\alpha_{\mathrm F}^2(x-a)^2,0\big)}$,
-the form printed by [Li et al. (2022b)](/sources/li-2022-b.md) §4.2,
+the form printed by Jiang & Shu (§8.1 Ex. 1), Borges et al. (Eq. (44)),
+[Li et al. (2022b)](/sources/li-2022-b.md) §4.2,
 [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 1 and
 [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.5 is
 
@@ -47,10 +50,15 @@ ellipse are each averaged with Simpson weights over three centres
 $\delta_{\mathrm G}$ apart. With these constants $\beta_{\mathrm G}=\ln2/0.0009$,
 so a single Gaussian falls to half its peak at
 $\lvert x-z\rvert=0.03$, and the ellipse has half-width $1/\alpha_{\mathrm F}=0.1$
-*(compiler check, not in the sources)*.
+*(compiler check, not in the sources)*. Jiang & Shu and Borges et al.
+print the constant as $\log2/(36\delta^2)$ without a base; the natural
+logarithm of this page is the reading of Yajaman et al., who print
+$\ln2$ (below).
 
 | Source | Domain | Grid | Time | Time stepping | Schemes compared |
 |---|---|---|---|---|---|
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.1 Ex. 1 | $(-1,1)$, periodic | 200 | $t=8$ (4 periods) | RK-3, CFL 0.4 (0.2 for WENO-Roe-5-A) | fourth- and fifth-order finite-difference WENO with Roe building block (WENO-Roe-4, WENO-Roe-5) and with Yang's artificial compression (WENO-Roe-5-A), against ENO-Roe-4 |
+| [Borges et al. (2008)](/sources/borges-2008.md) §5.1, Eq. (44) | $[-1,1]$, periodic | 50–1600 (Table 4); figures at 200 and 400 | $t=8$ | third-order TVD Runge–Kutta | [WENO-Z](/methods/weno-z.md) against [mapped WENO](/methods/mapped-weno.md) (WENO-M) and [WENO-JS](/methods/weno-js-reconstruction.md) |
 | [Li et al. (2022b)](/sources/li-2022-b.md) §4.2, Eqs. (34)–(36) | $[-1,1]$, periodic | 200 | $t=10$ (5 periods) | — | seventh-order [WENO-ZN](/methods/weno-zn.md) against WENO7-Z and other seventh-order schemes |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.2, Eqs. (24)–(26) | $[0,2]$ | 200; 400 | $t=200$; $t=2000$ | SSP-RK3; five-stage fourth-order SSP-RK | [TENO-THINC](/methods/teno-thinc.md), TENO5, WENO5-Z |
 | [Huang et al. (2023b)](/sources/huang-2023-b.md) §4.2, Eqs. (38)–(40) | $[0,2]$, profile shifted by 1 | 200 | $t=2$; $t=18$ | SSP-RK3, CFL 0.4 | [adaptive-dissipation TENO](/methods/adaptive-teno.md), TENO5-A, TENO5, WENO5-Z |
@@ -77,6 +85,20 @@ on 200 cells take $2000/(0.9\times0.01)\approx222{,}222.2$ steps, printed
 as 222,223 *(compiler check, not in the sources)*.
 
 ## Findings
+
+**The original comparison.** Jiang & Shu find both WENO-Roe-4 and
+WENO-Roe-5 better than ENO-Roe-4 on all four waves; WENO-Roe-4 is the
+better of the two at acute turns of the profile ("spike-like peaks"),
+WENO-Roe-5 on the square wave and at obtuse turns, and with
+[artificial compression](/methods/artificial-compression.md)
+WENO-Roe-5-A is best on every wave. They lower its CFL number to 0.2;
+at 0.4 a compression parameter of 40 gives similar results (Fig. 2).
+
+**Errors under refinement.** Borges et al. print $L_1$ errors from 50
+to 1600 points: at 1600, $9.93\times10^{-3}$ for WENO-JS,
+$7.73\times10^{-3}$ for WENO-Z and $8.06\times10^{-3}$ for WENO-M, all
+three converging at about first order, and WENO-Z "quantitatively and qualitatively equivalent to
+WENO-M" (Table 4, Figs. 4–5).
 
 **Square wave and symmetry at seventh order.** Li et al. (2022b) find
 WENO7-ZN the best of the seventh-order schemes, "especially" on the
@@ -149,21 +171,26 @@ a block is refined below 0.3 and coarsened above 0.7.
 
 ## Qualifications
 
-- All findings are visual comparisons of plotted profiles (Liang & Fu's
-  use is a static plot of the detector); no source
-  reports an error norm, a convergence rate or a measure of
-  dissipation on this test, and the grids, times and stepping differ
-  between sources, so results are not comparable across papers.
+- Apart from Borges et al.'s $L_1$ errors, the findings are visual
+  comparisons of plotted profiles (Liang & Fu's use is a static plot of
+  the detector); no other source reports an error norm, a convergence
+  rate or a measure of dissipation on this test, and the grids, times
+  and stepping differ between sources, so results are not comparable
+  across papers.
 - Li et al. (2022b) print $F(x,\alpha,a)=\sqrt{\max(1-\alpha^2(x-\alpha)^2,0)}$,
   with $\alpha$ in place of $a$ inside the square; the form with $a$, as
   printed by Abgrall et al. and Huang et al. (2023b), is the one that
   centres the ellipse at $x=0.5$.
 - Yajaman et al.'s Fig. 11 caption calls the test "the Shu linear
   advection test", while their §6 attributes it to Jiang and Shu.
+- Jiang & Shu print the domain as $-1<x<1$; their fourth- and
+  fifth-order scheme names count the order in the $L^1$ sense.
 - Takagi et al. do not state the boundary condition.
 
 # Citations
 
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.1, Ex. 1, Fig. 2 (author preprint).
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5.1, Eq. (44), Table 4, Figs. 4–5.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §4.2, Eqs. (34)–(36), Fig. 3.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.2, Eqs. (24)–(26), Figs. 2–3.
 - [Huang et al. (2023b)](/sources/huang-2023-b.md) — §4.2, Eqs. (38)–(40), Figs. 4–5.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Conservative remapping for ALE schemes"
-description: "Conservative remapping transfers cell averages from an old Lagrangian mesh to a rezoned mesh of the same topology in indirect ALE methods; the page records Gu et al.'s formulation as a moving-mesh solve of a trivial equation, its third-order multi-resolution WENO finite volumes, and its proved positivity under a cell-average decomposition."
+description: "Conservative remapping transfers cell averages from a Lagrangian mesh to another mesh; the page records van Leer's 1979 least-squares remap of a Lagrangean step back to the Eulerian grid in MUSCL, and Gu et al.'s ALE remap as a moving-mesh solve of a trivial equation with third-order multi-resolution WENO and proved positivity."
 status: established
-aliases: [remapping, remap, conservative interpolation, ALE remapping, WENO remapping, P-WENO remapping, rezone and remap]
+aliases: [remapping, remap, conservative interpolation, ALE remapping, WENO remapping, P-WENO remapping, rezone and remap, Lagrange-plus-remap, Eulerian remap]
 tags: [finite-volume, weno, positivity, bound-preserving, reconstruction]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Conservative remapping for ALE schemes
@@ -24,6 +24,43 @@ integrate the old reconstruction over the overlaps of old and new cells,
 and transport- or flux-based methods, which advect the data from one mesh
 to the other in a pseudo-time (§1). Their own method is of the second
 kind.
+
+## Lagrange plus remap in the original MUSCL
+
+The second-order scheme of [van Leer (1979)](/sources/vanleer-1979.md), coded by
+P. R. Woodward as [MUSCL](/methods/muscl-hancock.md), is a remap scheme of the simplest
+kind: each one-dimensional sweep is a Lagrangean step followed by a remap back to the fixed
+Eulerian grid (§3.2). The use of a separate remap step "originated with the group of
+W. F. Noh at Livermore"; the idea of using one in MUSCL was Woodward's (§3.2,
+Acknowledgments).
+
+- **Geometry** (§3.2, Fig. 1). The time step is restricted so that no gas crosses more than
+  one Eulerian boundary; an Eulerian cell then holds matter from one, two or three
+  Lagrangean cells. The new mass coordinates of the fixed boundaries follow from the linear
+  distributions; to avoid the quadratic equation this gives in specific volume against mass,
+  the remap uses density against the volume coordinate (Eqs. (93)–(98)).
+- **Least-squares accuracy** (Eqs. (94)–(95)). The piecewise-linear, possibly discontinuous
+  distribution inside an Eulerian cell is replaced by the linear function with the same
+  zeroth moment (cell integral) and first moment, the slope being the first moment divided
+  by $\Delta\zeta^3/12$ ($\Delta\zeta$ the cell size in the mass coordinate, page-local); the
+  fourth paper of the series is cited for this moment fitting ("scheme III") being "vastly
+  superior" to finite-difference slopes (App. B).
+- **Limiting** (§3.3, Eqs. (102)–(103)). The remap slope is limited with factors
+  $2/\varphi$ and $2/(1-\varphi)$, $\varphi$ the mass fraction of the Lagrangean cell that
+  crosses the Eulerian boundary (page-local), so that the averages of the parts crossing and
+  staying lie within the neighbouring averages; positivity is then guaranteed "only for the
+  zone averages" ([TVD and slope limiters](/definitions/total-variation-diminishing.md),
+  [bound preservation](/properties/bound-preservation.md)).
+- **Time step** (Eqs. (99)–(100.5)). The composite scheme needs
+  $\Delta t\le\min(\Delta x/\lvert\bar v\rvert,\Delta x/\bar c)$ up to higher-order terms,
+  which the author calls less stringent than the Eulerian $\Delta x/(\lvert\bar v\rvert+\bar c)$,
+  plus an anti-tangling condition on the velocity slope that the limiters can enforce.
+- **Cost** (§3.2). The remap costs about 0.55 of the Lagrangean step in the 1D shock tube
+  and up to 0.75 in 2D.
+
+In van Leer's scheme the target mesh is the fixed Eulerian grid, and the time-step
+restriction keeps the matter of each Lagrangean cell from crossing more than one Eulerian
+boundary (§3.2); the ALE remap below maps between two moving meshes.
 
 ## Remapping as a moving-mesh solve
 
@@ -207,5 +244,6 @@ and Gu et al. do not discuss it.
 
 # Citations
 
+- [Van Leer (1979)](/sources/vanleer-1979.md) — §3.2 (Eqs. (92)–(100.5), Figs. 1–2), §3.3 (Eqs. (102)–(103), Fig. 4), App. B, Acknowledgments: Lagrange-plus-remap MUSCL.
 - [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §1; §2.1–2.6, Eqs. (2.1)–(2.12), Theorems 2.1–2.2; §3.1–3.5, Tables 3.1–3.4, Figs. 6–20.
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §6.1, Eqs. (41)–(46) (ALE without remap; arXiv v2).

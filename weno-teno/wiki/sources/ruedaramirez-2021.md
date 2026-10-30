@@ -167,7 +167,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–11 (2026-10-22/24). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–12 (2026-10-22/30). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)

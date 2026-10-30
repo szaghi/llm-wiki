@@ -5,7 +5,7 @@ description: "Gradient-based reconstruction interpolates point values to the int
 status: established
 aliases: [GBR, GRB, gradient based reconstruction, MEG6, MIG4, MEG7, EG6, IG4H, MEG7-cons, MEG7-prim, monotonicity-preserving explicit gradient reconstruction, monotonicity-preserving implicit gradient reconstruction]
 tags: [reconstruction, finite-difference, limiting, low-dissipation, gpu]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Gradient-based reconstruction (MEG/MIG schemes)
@@ -205,6 +205,18 @@ Fig. 21).
   [conservative finite-difference](/definitions/conservative-finite-difference-scheme.md) page for an
   uncorrected two-point flux. The viscous discretization is only second order with Sutherland's law
   (Chamarthi 2023b, Remark 2.1).
+- **Attribution of the polynomial.** The three sources attribute the polynomial with
+  $\kappa_{\mathrm M}$ to van Leer. [Van Leer (1979)](/sources/vanleer-1979.md) (App. B,
+  Eq. (B5)) prints no $\kappa$ parameter; it prints the quadratic "scheme V", continuous at
+  the interfaces, $u(x)=\bar u_i+\frac{u_{i+1/2}-u_{i-1/2}}{\Delta x}(x-x_i)+3\,\frac{u_{i+1/2}-2\bar u_i+u_{i-1/2}}{\Delta x^2}\Big[(x-x_i)^2-\frac{\Delta x^2}{12}\Big]$
+  in terms of the cell average and two stored interface values $u_{i\pm1/2}$ (page-local),
+  states, citing the fourth paper of the series, that it has the same dispersive and
+  dissipative errors as moment fitting, and leaves it unimplemented for the Euler equations
+  because limiting and time splitting destroy interface continuity (pp. 135–136).
+  *(compiler check, not in the sources: for a quadratic with second derivative $u''$,
+  $u_{i+1/2}-2\bar u_i+u_{i-1/2}=u''\Delta x^2/6$, so the curvature coefficient of (B5) is
+  $u''/2=\tfrac32\kappa_{\mathrm M}u''$ with $\kappa_{\mathrm M}=\tfrac13$: the same quadratic,
+  parametrized by interface values instead of derivatives.)*
 - **The "κ-scheme" claim.** The fourth order is framed against van Leer & Nishikawa, who treat the
   finite-volume (cell-average) setting; the two statements concern different discretizations.
 - **Internal inconsistency on dissipation.** Chamarthi (2023a) writes that MIG4 has "superior dispersion
@@ -228,6 +240,7 @@ Fig. 21).
 
 # Citations
 
+- [Van Leer (1979)](/sources/vanleer-1979.md) — App. B, Eq. (B5): the interface-continuous quadratic "scheme V".
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §1; §3.1, Eqs. (27)–(40); §3.2, Eqs. (41)–(52), Remarks 3.1–3.4, Fig. 2; §3.3, Eqs. (53)–(64), Fig. 3, Table 5; §4, Tables 1–3, Exs. 4.1–4.18; §5.
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §1.2; §2.1–2.4, Eqs. (8)–(37), Remarks 2.1–2.5; §3, Tables 1–2, Exs. 3.1–3.11; §3.2, Figs. 15–16; App. A, Eq. (64).
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §5.1, Eqs. (15)–(25); §5.2, Eqs. (29)–(30); §7, Eqs. (36)–(44); §8, Tables 2–3; §9, Tables 5–6, Fig. 21; §10.

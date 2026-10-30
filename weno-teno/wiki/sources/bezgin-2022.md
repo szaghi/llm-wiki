@@ -153,7 +153,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–11 (2026-10-22/24). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–12 (2026-10-22/30). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)

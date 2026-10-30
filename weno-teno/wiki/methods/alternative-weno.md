@@ -5,14 +5,14 @@ description: "The alternative formulation of finite-difference WENO evaluates a 
 status: established
 aliases: [A-WENO, AFWENO, alternative formulation of WENO, alternative flux formulation, Jiang–Shu–Zhang scheme]
 tags: [weno, finite-difference, numerical-flux, reconstruction, multiphase]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-10-30T07:53:00Z
 ---
 
 # Alternative WENO (A-WENO)
 
 The alternative formulation of finite-difference WENO (Jiang, Shu & Zhang 2013, built on the
-alternative flux expansion of Shu & Osher 1988, as recalled by Ye et al. 2022, §3.1, Wang et al.
-2023b, §2, and Wang et al. 2023a, §2) keeps the [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
+alternative flux expansion of [Shu & Osher (1988)](/sources/shu-1988.md), as recalled by Ye et al. 2022,
+§3.1, Wang et al. 2023b, §2, and Wang et al. 2023a, §2) keeps the [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 on point values $u_i$ but constructs the flux differently. Instead of reconstructing split point
 fluxes, it **interpolates** left and right states $u^\mp_{i+1/2}$ at $x_{i+1/2}$ with WENO and writes
 
@@ -34,7 +34,20 @@ $$b_2=-\tfrac1{24},\quad b_4=\tfrac{7}{5760},\quad b_6=-\tfrac{31}{967680},\quad
 
 *(Compiler check, not in the sources: these are the Taylor coefficients of
 $\tfrac{z/2}{\sinh(z/2)}$, the inverse of the cell-averaging symbol, and were confirmed by series
-expansion.)* The fifth-order scheme keeps $b_2$ and $b_4$, with central differences of the point
+expansion.)* The first two are printed already by Shu & Osher (1988, §III, Eq. (3.5), p. 15), "for
+example $a_2=-\frac1{24}$, $a_4=\frac7{5760}$", as the constants that make the conservative scheme of order
+$2m$ when the flux is the interface value plus $\sum_{k=1}^{m-1}a_{2k}\Delta x^{2k}\partial_x^{2k}f$ at
+$x_{i+1/2}$.
+
+**The founding expansion.** In Shu & Osher (1988, Eqs. (3.6)–(3.15)) the expansion is applied to each
+Lax–Friedrichs split flux: $\hat f^\pm_{i+1/2}=p^\pm(x_{i+1/2})+\sum_ka_{2k}\Delta x^{2k}\partial^{2k}_xp^\pm(x_{i+1/2})$,
+where $p^\pm$ (page-local) is the degree-$2m$ [ENO](/methods/eno-reconstruction.md) interpolant of the
+point values $f^\pm(u_j)$, and the corrections are derivatives of the same polynomial. The leading term is
+thus an interpolated split flux, not a two-point flux $h(u^-,u^+)$ of interpolated states; the closest
+analogue of a general building block is their replacement of the Lax–Friedrichs splitting by any
+monotone or E-flux through flux increments (Eqs. (3.20)–(3.21)), with the caveat that such fluxes are
+not smooth at sonic points and the scheme then "will lose accuracy at sonic points" (pp. 20–22). The
+two-point-flux form above is Jiang, Shu & Zhang's (as recalled). The fifth-order scheme keeps $b_2$ and $b_4$, with central differences of the point
 fluxes $f_j=f(u_j)$ on the six points $i-2,\dots,i+3$ (Wang et al. 2023b, Eq. (4); the same formulas in Wang et al. 2023a, Eqs. (3)–(4)):
 
 $$\begin{aligned}
@@ -292,6 +305,7 @@ in double and quadruple precision (Tables 4–8).
 
 # Citations
 
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §III, Eqs. (3.5)–(3.15), (3.20)–(3.21), pp. 15–22 (ICASE report version).
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1; §2.1; §3.1–3.2, Eqs. (11)–(23), Tables 3–6; §4, Tables 7–8, 13; §4.9; App., Eqs. (A.1)–(A.26).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1; §2, Eqs. (2)–(4), Remarks 1–3; §3; §4.4, Table 1.
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §1; §2.1–2.3, Eqs. (1)–(27), Propositions 2.1–2.3; §3; §4, Tables 2–4, Figs. 6–15; Apps. A–B.

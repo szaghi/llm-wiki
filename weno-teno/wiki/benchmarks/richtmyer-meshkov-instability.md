@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Richtmyer–Meshkov instability"
-description: "A planar shock crossing a sinusoidally perturbed interface: single-mode air–SF6 at Mach 1.2 against front tracking and growth models, heavy-to-light copper–gas with phase reversal, Brouillette–Sturtevant air–acetone/SF6 with re-shock, a single-gas interface ranking Riemann solvers and reconstructions, its viscous version, shocked N2 and He bubbles and a cavitating water–vapour variant; it tests interface sharpness, growth rates and mixing."
+description: "A planar shock crossing a sinusoidally perturbed interface: air–SF6 at Mach 1.2 against growth models, heavy-to-light copper–gas, Brouillette–Sturtevant air–acetone/SF6 with re-shock, Mach 4.46 xenon–argon, a single-gas interface ranking Riemann solvers and reconstructions, its viscous version, shocked bubbles and a cavitating variant; it tests interface sharpness, growth rates and mixing."
 status: established
-aliases: [RMI, Richtmyer–Meshkov, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
+aliases: [RMI, Richtmyer–Meshkov, xenon–argon Richtmyer–Meshkov instability, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
 tags: [benchmark, multiphase, interface-capturing, dg]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-10-30T08:08:00Z
 ---
 
 # Richtmyer–Meshkov instability
@@ -68,6 +68,33 @@ are solved by entropy-stable [DGSEM](/methods/dgsem.md) of degree
 $N=3$ on $1601\times118$ Cartesian elements, 118 per wavelength, which
 Renac calls coarse compared with earlier computations; snapshots
 labelled 4, 6 and 6.6 µs before and 7 µs after re-shock (Fig. 7).
+
+**Xenon–argon, Mach 4.46, one $\gamma$.** [Borges et al. (2008)](/sources/borges-2008.md)
+§5.3.2, Eqs. (57)–(58), run a single-mode interface between xenon and
+argon in the two-dimensional Euler equations on $[0,5]\times[-1.8,1.8]$,
+with "Rankine–Hugoniot conditions for the shock", shock Mach number
+$M_s=4.46$, pre-shock temperature 296 K and pressure 0.5 atm,
+$\rho_{\mathrm{Xe}}=2.90\times10^{-3}$ and $\rho_{\mathrm{Ar}}=0.89\times10^{-3}$
+g/cm³, a single ratio of specific heats $\gamma=5/3$ for both gases,
+printed Atwood number $A=0.54$, $\lambda=3.6$ cm and $a_0=1.0$ cm
+(their $a$). The interface is diffuse: a profile $S(x,y)$ equal to 1 for
+$d\le0$, $\exp(-\alpha_{\mathrm S}\lvert d\rvert^{\beta_{\mathrm S}})$ for
+$0<d<1$ and 0 for $d\ge1$, with
+$d=\big(x_{\mathrm I}+a_0\cos(2\pi y/\lambda)+\delta_{\mathrm S}-x\big)/(2\delta_{\mathrm S})$,
+thickness $\delta_{\mathrm S}=0.2$ cm, order $\beta_{\mathrm S}=8$,
+$x_{\mathrm I}=0.5$ cm and $\alpha_{\mathrm S}=-\ln\epsilon_{\mathrm{mach}}$
+with $\epsilon_{\mathrm{mach}}$ the machine zero (the subscripted symbols
+are page-local, the source's $\delta,\beta,\alpha,\epsilon$); "the
+conservative or primitive variables are scaled according to $S(x,y)$
+between the xenon and argon gases". Fig. 12 shows xenon on the left of
+the interface and argon on the right. The run is fifth-order
+finite-difference [WENO-Z](/methods/weno-z.md) against
+[WENO-JS](/methods/weno-js-reconstruction.md) and
+[mapped WENO](/methods/mapped-weno.md), with characteristic-wise
+Lax–Friedrichs flux splitting and third-order TVD Runge–Kutta, on
+$N_x=N_y=800$ to $t=50\,\mu$s (Fig. 13). The domain height equals
+$\lambda=3.6$, so the lengths are in centimetres *(compiler check, not in
+the sources)*.
 
 **Single gas, density interface, Mach about 1.24.**
 [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.5, Eqs. (5.6)–(5.7),
@@ -220,6 +247,17 @@ on triangles (Fig. 6; see
 [entropy correction term](/methods/entropy-correction-term.md),
 [entropy projection](/methods/entropy-projection.md)).
 
+**Equivalence of WENO-Z and mapped WENO at lower cost.** On the
+xenon–argon case Borges et al. find that WENO-Z "works very well for
+this class of problems, generating equivalent solutions as the WENO-M
+scheme" (§5.3.2, Fig. 13); the evidence is density and velocity
+contours. Their CPU time per Runge–Kutta step at $800\times800$ is
+6.46 s (WENO-JS), 6.07 s (WENO-Z) and 8.13 s (WENO-M), on one code and
+one machine (AMD Opteron 250), only the weight routine differing
+(Table 6); WENO-Z takes 0.747 of the WENO-M time *(compiler check, not in
+the sources)*. These timings enter the cost comparison recorded on
+[WENO-Z](/methods/weno-z.md).
+
 **Riemann-solver ranking.** Hu et al. compare
 [HLL-type solvers](/methods/hll-riemann-solvers.md) (HLLE, HLLEM, HLLC
 and their RHLLEM-LD) in one second-order scheme and find the sharpest
@@ -257,9 +295,9 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
 ## Qualifications
 
 - The setups share only the geometry: the Atwood numbers
-  (about 0.67, 0.61, a metal–gas contrast, and 0.67 for one gas and for
-  the viscous air–SF$_6$ case), the
-  shock strengths (Mach 1.2, 1.21, 2.5, about 1.24), the direction
+  (about 0.67, 0.61, a metal–gas contrast, 0.54 for xenon–argon, and
+  0.67 for one gas and for the viscous air–SF$_6$ case), the
+  shock strengths (Mach 1.2, 1.21, 2.5, 4.46, about 1.24), the direction
   (light to heavy, heavy to light) and the presence of re-shock all
   differ, and only Bai & Li measure a growth rate.
 - Chamarthi (2023a)'s finding that TENO5 shows no roll-up comes from
@@ -282,6 +320,15 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
   pascal about 3.9 km/s, so pascal is meant *(compiler check, not in the
   sources)*. Their Table 3 labels the gas density "$\rho_{\mathrm{air}}$"
   although the gas has $\gamma=1.67$.
+- Borges et al. print $A=0.54$ beside densities
+  $2.90\times10^{-3}$ and $0.89\times10^{-3}$ g/cm³, which give
+  $(2.90-0.89)/(2.90+0.89)=0.530$ *(compiler check, not in the
+  sources)*; densities anywhere in their rounding intervals give at most
+  $(2.905-0.885)/(2.905+0.885)=0.533$ *(compiler check, not in the sources)*.
+  Their xenon and argon share $\gamma=5/3$, so the run is a
+  density-interface problem in one gas law, like Hu et al.'s, not a
+  multicomponent computation; the position of the shock at $t=0$ is
+  shown in Fig. 12 but not printed.
 - Renac defines the Atwood number with "$\rho_2=\gamma_2$ taken as the
   pre-shock density of the mixture", but component 1 is the mixture:
   with Renac's non-dimensionalization the mixture density is
@@ -298,6 +345,7 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
 
 # Citations
 
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5, §5.3.2, Eqs. (57)–(58), Table 6, Figs. 12–13.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §3.3.1–3.3.2, Tables 2–3, Figs. 16–19.
 - [Renac (2021)](/sources/renac-2021.md) — §7.4, Fig. 7 (arXiv v3).
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.9, Fig. 14.

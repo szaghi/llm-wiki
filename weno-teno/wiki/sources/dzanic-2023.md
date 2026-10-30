@@ -149,7 +149,7 @@ while [32] prints the same volume with 2010. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-22), cited further in chunks 6–11 (2026-10-23/24). This source is cited on:
+Chunk 5 (2026-10-22), cited further in chunks 6–12 (2026-10-23/30). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)

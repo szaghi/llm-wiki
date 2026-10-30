@@ -5,7 +5,7 @@ description: "Smooth density (entropy) wave carried at uniform velocity and pres
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:08:00Z
 ---
 
 # Density-wave advection
@@ -29,6 +29,7 @@ property, and conserves entropy.
 
 | Source | Profile $\rho_0$ | $v_0$, $p_0$ | Domain, boundaries | Grid, time | Use |
 |---|---|---|---|---|---|
+| [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.1 | $1+0.99\sin(x+y)$ (minimum density 0.01) | $(1,1)$, 1 | $[0,2\pi]^2$, periodic | $4^2$–$128^2$, $\Delta x=\Delta y=2\pi/N$; $t=0.1$ | third order of RKDG with the positivity limiter at low density |
 | [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.1 | $1+0.2\sin(\pi x)$ | 1, 1 | period 2 | 10–320 points (Euler), 20–320 (Navier–Stokes); $t=2$ | fifth-order accuracy, CFL 0.6 |
 | Wang et al. (2023c) Example 4.2 | $1+0.2\sin(\pi(x+y))$ | $(1,1)$, 1 | $[0,2]^2$, periodic | $10^2$–$320^2$ (Euler), $20^2$–$320^2$ (Navier–Stokes); $t=2$ | 2D accuracy |
 | [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.1 | $1+0.2\sin(\pi x)$ | 1, 1 | $[0,2]$, periodic | $h=1/10$–$1/80$, $\Delta t=0.5\Delta x^2$; final time not printed | eighth-order accuracy |
@@ -54,7 +55,7 @@ property, and conserves entropy.
 | [Wang et al. (2026)](/sources/wang-2026.md) §6.1, Eq. (60) | $1+0.2\sin(2\pi x)$ | 1, 1 | $[0,1]$, two-level AMR refined where $\rho>1.19$ | $N=32$–256, $\delta t=0.2\Delta x^2$; $t=1$ | space–time order and conservation error of high-order AMR transfers |
 | [Stone et al. (2026)](/sources/stone-2026.md) §3.1 | exact linear entropy-wave eigenmode, amplitude not printed | not printed | 1D | one wave period, grid series | convergence of the reconstructions of [AthenaK](/software/athenak.md) |
 
-All with $\gamma=1.4$ (Lin & Zhu and Zhang & Zhu print no $\gamma$; Chudzik
+All with $\gamma=1.4$ (Lin & Zhu, Zhang & Zhu and, for this test, Zhang & Shu (2010b) print no $\gamma$; Chudzik
 et al.'s background primes, page-local, are those of their linearized
 Euler system), except Wang et al. (2023c)'s Navier–Stokes cases
 ($\gamma=5/3$, $\mu=0.0005$, $\mathrm{Pr}=2/3$, $\mathrm{Re}=1000$, after
@@ -300,6 +301,19 @@ two, independent of $N$: mean 1.82 for $N=3$ and 1.61 for $N=4$ (Tables
 3–4); the bounds must be relaxed, for instance by a smoothness sensor,
 to recover high order. See [convex limiting](/methods/convex-limiting.md).
 
+**Order with a positivity limiter at low density.** In Zhang & Shu
+(2010b)'s "low density problem" the exact density has minimum 0.01, and
+their positivity limiter
+([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md))
+"does get turned on for the coarser meshes"; the scheme is third-order
+($\mathbb P^2$) RKDG with SSP-RK3.
+Their Table 4.1 gives $L^1$ errors from $1.49\times10^{-1}$ ($4^2$) to
+$3.11\times10^{-6}$ ($128^2$), orders 3.76, 3.31, 2.97, 2.78, 2.74, and
+$L^\infty$ errors from $4.22\times10^{-1}$ to $3.28\times10^{-5}$, orders
+2.62, 2.84, 2.45, 2.61, 3.02; they "clearly observe the designed order
+of accuracy for this low density problem" (§4.1). See
+[bound preservation](/properties/bound-preservation.md).
+
 **Positivity at near vacuum.** Trojak & Dzanic's positivity-preserving
 entropy filter for two-species DG (flux reconstruction in PyFR)
 converges at fitted rates 2.28, 3.16, 3.93, 5.17 and 6.61 in $L^\infty$
@@ -393,6 +407,12 @@ Their entropy and sound waves are run together; the sound waves are on
   $(1,1)$ "subsonic"; with $c'=1$ the speeds are $\sqrt2/2\approx0.71$
   and $\sqrt2\approx1.41$, so the labels are reversed *(compiler check,
   not in the sources)*.
+- Zhang & Shu (2010b) print the last $L^\infty$ order of Table 4.1 as
+  3.02; their printed errors $2.83\times10^{-4}$ and $3.28\times10^{-5}$
+  give $\log_2(2.83\times10^{-4}/3.28\times10^{-5})=3.11$ *(compiler
+  check, not in the sources)*; the other printed orders agree with the
+  printed errors to rounding. Their $L^1$ orders fall from 3.76 to 2.74
+  on the finer meshes.
 - Zhang & Zhu print the exact solutions as $\rho(x,0)$ and
   $\rho(x,0)=1+0.2\sin(x+y-2t)$ for $\rho(x,t)$ and $\rho(x,y,t)$, and
   label both column groups of their Tables 3.8–3.9 "MR-WENO"; the left
@@ -431,6 +451,7 @@ Their entropy and sound waves are run together; the sound waves are on
 
 # Citations
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §4, §4.1, Eq. (4.1), Table 4.1.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — Examples 4.1–4.2, Remark 2, Tables 4.1–4.4, Figs. 4.1–4.4.
 - [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.1, §4.4, Table 1, Fig. 7 (arXiv v1).
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §5, Fig. 1 (arXiv v2).

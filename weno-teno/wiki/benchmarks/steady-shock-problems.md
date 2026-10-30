@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Steady shock problems"
-description: "Euler problems with fixed shocks (1D stationary shock, oblique shocks, regular reflection, plate and shock-interaction flows run to a steady residual, a perturbed planar normal shock testing multidimensional stability), with slowly moving and single strong shocks as relatives; they measure steady convergence, carbuncle-type instability and post-shock errors of high-order schemes."
+description: "Euler problems with fixed shocks (1D stationary shock, quasi-1D nozzles, oblique shocks, regular reflection, plate and shock-interaction flows run to a steady residual, a perturbed planar normal shock), with slowly moving and single strong shocks as relatives; they measure steady convergence, carbuncle-type instability and post-shock errors of high-order schemes."
 status: established
-aliases: [steady shock tests, stationary shock, steady normal shock, regular shock reflection, oblique shock reflection, steady-state convergence tests, planar steady normal shock]
+aliases: [steady shock tests, stationary shock, steady normal shock, regular shock reflection, oblique shock reflection, steady-state convergence tests, planar steady normal shock, quasi-one-dimensional nozzle flow, quasi-1D nozzle]
 tags: [benchmark, teno, weno, riemann-solver, finite-volume, carbuncle]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-10-30T08:08:00Z
 ---
 
 # Steady shock problems
@@ -48,6 +48,50 @@ All schemes of both papers reach a residual near machine zero on this problem: f
 finite-difference WENO-H, CWENOZ and MRWENO in Wan & Xia, with WENO-H the least oscillatory, and
 finite-volume WENO5-Z, TENO5 and [CENO](/methods/converged-eno.md) in Liang & Fu, CENO-AMR with
 the lowest residual throughout (Fig. 5). In one dimension the stall is therefore not observed.
+
+## Quasi-one-dimensional nozzle flow
+
+Two founding sources of the bundle compute a standing shock inside a nozzle of variable cross-section
+$A(x)$: the one-dimensional Euler equations with a geometric source term, marched in time to the
+steady state.
+
+**Harten (1983a).** [Harten (1983a)](/sources/harten-1983.md) §8 (II), Eq. (8.7a), writes the
+cross-section average of the flow in an axisymmetric nozzle as
+$\partial_tw+\partial_xf(w)=-s(w,x)$ with $s=\big(0,\ p\,\tfrac{dA}{dx},\ 0\big)^\top$, "where $w$,
+$f(w)$ and $p$ are given in (7.1)" (the Euler variables of the report), and runs two nozzles:
+
+- a **divergent nozzle**, $A(x)=1.398+0.347\tanh(0.8x-4)$ (Eq. (8.7b)), supersonic at the
+  entrance and subsonic at the exit: steady states on a crude mesh with Roe's first-order scheme
+  (Fig. 4a) and with ULT1 (Fig. 4b), and with ULT1 on a finer mesh (Fig. 5);
+- a **convergent–divergent nozzle**,
+  $$A(x)=\begin{cases}1+(A_0-1)(1-x/5)^2, & x\le5,\\ 1+(A_E-1)\big[(x-5)/(x_E-5)\big]^2, & x>5,\end{cases}$$
+  (Eq. (8.7c)), $A_0$ and $A_E$ the entrance and exit areas, subsonic at both ends: ULT1 (Fig. 6).
+
+ULT1 is the second-order [TVD scheme](/methods/harten-tvd-scheme.md) of the report with the
+numerical-viscosity function $Q(x)=\lvert x\rvert$ (Eq. (8.3a)). The values of $A_0$, $A_E$ and
+$x_E$, the meshes, $\gamma$ and the residual histories are not printed; the figures are credited to
+H. C. Yee, and the report hopes that "a detailed report of these calculations and the particular
+approach to steady state will be published elsewhere".
+
+**Jiang & Shu (1996).** [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.2 Ex. 4 add to the 1D
+Euler equations the forcing term
+
+$$
+S(u)=-\frac{A'(x)}{A(x)}\big(\rho v,\ \rho v^2,\ v(E+p)\big)^\top .
+$$
+
+The nozzle has unit length, and its shape is determined "by assuming a linear, isentropic Mach
+number distribution, which is 0.8 at $x=0$ (the entrance) and 1.8 at $x=1$ (the exit)"; the exit
+condition is set by the prescribed shock position $x=0.5$. With 34 points and third-order TVD
+Runge–Kutta, finite-difference WENO-Roe-4 and WENO-Roe-5 "converge nicely to the exact solution"
+(Fig. 8), and the residue "settles down to $10^{-7}$ for this grid, and to a smaller number for a
+finer grid". The authors conclude that "WENO has its advantage for steady state calculations" and
+credit it (§1) to the WENO flux being smoother than the ENO flux. $\gamma$ is not printed anywhere in
+the paper.
+
+The two sources write the quasi-one-dimensional equations in different forms (Harten as a momentum
+source acting on cross-section averages, Jiang & Shu as a source proportional to $A'/A$ in all
+three equations), and neither relates its form to the other's.
 
 ## Two-dimensional steady shock flows
 
@@ -258,3 +302,5 @@ agreement of Table 2 on one problem.
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4.1.3, Example D.5, Fig. 24 (arXiv v3).
 - [Wang et al. (2026)](/sources/wang-2026.md) — §6.2, Figs. 11–12, Table 5; Appendix C.
 - [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.6, Fig. 6.
+- [Harten (1983a)](/sources/harten-1983.md) — §8 (II), Eqs. (8.3a), (8.7a)–(8.7c), Figs. 4–6 (NYU report DOE/ER/03077-175, March 1982).
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §1, §8.2 Ex. 4, Fig. 8 (author preprint).

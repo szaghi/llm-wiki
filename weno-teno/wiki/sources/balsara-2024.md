@@ -175,7 +175,7 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–11 (2026-10-22/24). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–12 (2026-10-22/30). This source is cited on:
 
 * [Central WENO (CWENO)](/methods/cweno.md)
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)

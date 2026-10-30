@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Generalized Riemann problem (GRP) solvers"
-description: "A generalized Riemann problem has piecewise-linear (or piecewise-smooth) data across a jump; its approximate HLL solution gives the interface flux and its time derivative, hence a one-step second-order flux; Liu, Feng and Wang carry the HLL-GRP solver to multidimensional ideal MHD through rotational invariance, and the Toro–Titarev solver reaches arbitrary order through the Cauchy–Kovalevskaya procedure."
+description: "A generalized Riemann problem has piecewise-linear (or piecewise-smooth) data across a jump; its solution gives the interface state and its time derivative, hence a one-step second-order flux; van Leer's 1979 MUSCL computes such derivatives from characteristic equations, Liu, Feng and Wang carry the HLL-GRP solver to multidimensional ideal MHD, and the Toro–Titarev solver reaches arbitrary order through the Cauchy–Kovalevskaya procedure."
 status: established
 aliases: [GRP, HLL-GRP, HLL-type generalized Riemann problem solver, generalized Riemann problem, rotational gradient]
 tags: [riemann-solver, numerical-flux, finite-volume, mhd]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-30T07:59:00Z
 ---
 
 # Generalized Riemann problem (GRP) solvers
@@ -25,6 +25,35 @@ order in one stage. As recalled by Liu et al. (2023a) (§1), this lets GRP-based
 number of [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) stages and guide mesh motion in ALE
 codes, and the HLL-type GRP solvers (HLL-, HLLC-, HLLD-GRP of Goetz, Balsara and Dumbser;
 HLLI-GRP of Balsara, Li and Montecinos) had been applied to one-dimensional systems only.
+
+## An early instance: interface time derivatives in van Leer's MUSCL
+
+The one-step second-order scheme of [van Leer (1979)](/sources/vanleer-1979.md) (§2.3–2.4,
+Eqs. (54)–(79)) solves exactly this kind of problem for ideal compressible flow in a
+Lagrangean frame, without using the name. Its data at each interface are the two limited
+linear profiles of the neighbouring cells ([MUSCL](/methods/muscl-hancock.md)); the jump is
+resolved as in Godunov's method, with exact shock and rarefaction relations and an iteration
+for the resolved pressure ([Godunov scheme](/methods/godunov-scheme.md)), and then:
+
+- the first time derivatives of velocity and pressure at the interface just after
+  resolution, and of specific volume on each side of the contact, are obtained from the
+  characteristic (Riemann-invariant) equations on both sides, with geometric and source
+  terms; the relations hold at a discontinuity, distinguish the Lagrangean sound speed from
+  the shock mass flux, but not a shock from a rarefaction, and were derived in an appendix
+  to the original version of the paper that was not printed (Eqs. (64)–(66));
+- the space derivatives entering them are the slab slopes, and the derivatives stay valid
+  until waves from the neighbouring interfaces arrive, "the usual Courant condition" (§2.3);
+- interface values advanced half a step with these derivatives give the time-centred
+  fluxes of a single forward step that is second order in time (Eqs. (69)–(90)).
+
+Where the extra pressure iteration is skipped, the linear-wave (acoustic) estimate is used,
+which van Leer finds breaks down inside shock structures and enhances post-shock
+oscillations, "an effect also known for Godunov's method" (§2.3). It is an exact-wave,
+Lagrangean instance of the problem that the HLL-type and Cauchy–Kovalevskaya solvers below
+solve approximately; the founding paper of ENO uses the same time-expansion idea at higher order
+([Harten et al. (1987a)](/sources/harten-1987.md), §4, Eqs. (4.11)–(4.14): a local
+Cauchy–Kowalewski expansion on each side, combined by a Riemann flux at quadrature nodes in
+time; see [ENO reconstruction](/methods/eno-reconstruction.md)).
 
 ## The HLL-GRP solver
 
@@ -175,6 +204,8 @@ the same reconstruction.
 
 # Citations
 
+- [Van Leer (1979)](/sources/vanleer-1979.md) — §2.3–2.4 (Eqs. (54)–(90)): interface time derivatives from characteristic equations in the Lagrangean MUSCL step.
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §4 (Eqs. (4.11)–(4.14)): Cauchy–Kowalewski interface expansion of ENO.
 - [Liu et al. (2023a)](/sources/liu-2023.md) — §1, §2 (Eqs. (1)–(18)), §3 (Eqs. (19)–(77)), §4 (Table 1, Figs. 3–20), §5, Apps. A–B.
 - [Liu et al. (2021)](/sources/liu-2021.md) — the WLS-ENO reconstruction reused by Liu et al. (2023a).
 - [Yajaman et al. (2025)](/sources/yajaman-2025.md) — §2.1 (Eqs. (5)–(17)), §7.1 (Fig. 12), §8 (Table 5).

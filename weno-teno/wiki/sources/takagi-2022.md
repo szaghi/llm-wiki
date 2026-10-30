@@ -137,7 +137,7 @@ preprint, [24] a conference contribution and [63] a book. No item is unparseable
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–11 (2026-10-22/24). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–12 (2026-10-22/30). This source is cited on:
 
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 * [Bound preservation](/properties/bound-preservation.md)

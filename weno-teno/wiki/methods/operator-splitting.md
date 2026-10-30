@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Operator splitting for stiff source terms"
-description: "Operator splitting advances the transport part of a balance law with an explicit shock-capturing step and a stiff term separately: chemistry as a constant-volume reactor per cell, two-phase relaxation as algebraic infinite-rate projections, bubble sources by Strang splitting, DG damping as a closed-form implicit stage; for a Dirac-delta source splitting is never well-balanced."
+description: "Operator splitting advances transport and a stiff term in separate steps: chemistry as a constant-volume reactor per cell, two-phase relaxation as infinite-rate projections, bubble sources by Strang splitting, DG damping as an implicit stage; a Dirac-delta source is never well-balanced; the founding TVD and MUSCL papers split space directions, the ENO paper rejects that above second order."
 status: established
-aliases: [Strang splitting, fractional-step method, convection–chemistry splitting, constant-volume reactor step, relaxation splitting, infinite-rate relaxation]
+aliases: [Strang splitting, dimensional splitting, fractional-step method, convection–chemistry splitting, constant-volume reactor step, relaxation splitting, infinite-rate relaxation]
 tags: [finite-volume, software, gpu, reacting-flows, stiff-source, well-balanced, multiphase]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Operator splitting for stiff source terms
@@ -85,6 +85,29 @@ serves the Redlich–Kwong and Noble–Abel real-gas laws without modification (
   mean and needs no iteration. The splitting is at most first order, but does not degrade the
   accuracy because $\sigma^{\mathrm{ES}}$ is of high order in smooth regions, the proof for linear scalar laws
   being referred to the [OEDG](/methods/oedg.md) paper; the CFL gain is not quantified.
+
+## Splitting the space directions
+
+The founding papers of the bundle use the same device for the space directions of a
+multidimensional conservation law, with one-dimensional schemes as the sub-steps.
+
+- **Van Leer (1979)** (§3.4) builds the multidimensional MUSCL by alternating
+  one-dimensional Eulerian sweeps in the manner of Strang; in each sweep the orthogonal
+  velocity components and their slopes ride along in the Lagrangean step and are remapped,
+  and the $n$-dimensional method carries $(n+1)(n+2)$ independent quantities per cell, $n+2$
+  averages and $n(n+2)$ first moments ([van Leer (1979)](/sources/vanleer-1979.md);
+  [MUSCL](/methods/muscl-hancock.md)).
+- **Harten (1983a)** (§8, Eq. (8.8)) advances the two-dimensional step problem by the
+  Strang-type product $u^{n+2}=L_xL_yL_yL_xu^n$ of one-dimensional solution operators
+  (page-local $L_x$, $L_y$; not the left-eigenvector matrix), second order if $L_x$ and
+  $L_y$ are stable, dissipative second-order operators
+  ([Harten (1983a)](/sources/harten-1983.md);
+  [Harten's TVD scheme](/methods/harten-tvd-scheme.md)).
+- **Harten et al. (1987a)** (§7 C4) call Strang-type splitting "only second-order accurate
+  in time and therefore unsuitable" for their higher-order ENO schemes in 2D, and outline an
+  unsplit two-dimensional reconstruction instead
+  ([Harten et al. (1987a)](/sources/harten-1987.md);
+  [ENO reconstruction](/methods/eno-reconstruction.md)).
 
 ## Two-phase relaxation: algebraic source steps
 
@@ -223,3 +246,6 @@ Neither source isolates the splitting error.
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §2.4 (Eqs. (9)–(11)), §3 (Eqs. (17)–(20), (45)), §4.1, §4.4, Apps. B–E.
 - [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.3, §4.2.3 (Fig. 13), §7: Strang splitting with an embedded Runge–Kutta pair and infinite-rate relaxation in MFC 5.0.
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.3 (Eqs. (3.20)–(3.21)): stage-wise implicit damping step.
+- [Van Leer (1979)](/sources/vanleer-1979.md) — §3.4: Strang-type alternation of one-dimensional sweeps in MUSCL.
+- [Harten (1983a)](/sources/harten-1983.md) — §8 (Eq. (8.8)): $L_xL_yL_yL_x$ splitting (NYU report DOE/ER/03077-175, March 1982).
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §7 C4: Strang splitting unsuitable above second order.

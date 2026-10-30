@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Conservative finite-difference scheme
@@ -15,7 +15,9 @@ values** $u_i\approx u(x_i)$ on a uniform grid by the flux-difference form
 
 $$\frac{du_i}{dt}=-\frac{1}{\Delta x}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big),$$
 
-(Li et al. 2022b, Eq. (2); Fu 2023, Eq. (2); Takagi et al. 2022, Eq. (4); Fu 2021, Eq. (8)). The
+([Shu & Osher (1988)](/sources/shu-1988.md), Eq. (1.3), in fully discrete form;
+[Jiang & Shu (1996)](/sources/jiang-1996.md), Eq. (2.2); [Shu (2009a)](/sources/shu-2009.md),
+Eq. (3.6); Li et al. 2022b, Eq. (2); Fu 2023, Eq. (2); Takagi et al. 2022, Eq. (4); Fu 2021, Eq. (8)). The
 fluxes telescope, so the sum of $u_i\Delta x$ changes only through boundary fluxes. The difference
 from a finite-volume scheme lies in what $\hat f_{i+1/2}$ must approximate: in FD the flux difference
 divided by $\Delta x$ must equal $\partial_xf$ at $x_i$ to high order, whereas a finite-volume flux is
@@ -23,8 +25,37 @@ the physical flux at the interface.
 
 ## Shu–Osher flux reconstruction
 
-The classical construction (Shu & Osher, as recalled by Fu 2021, §2 and Takagi et al. 2022, §2.1)
-introduces a function $\phi$ (page-local) defined implicitly by
+**The 1988 construction: interpolation plus Taylor corrections.** In the founding paper,
+[Shu & Osher (1988)](/sources/shu-1988.md) (§III, pp. 15–17; ICASE report version read) note
+that the flux difference approximates $\partial_xf$ at $x_i$ to order $2m$ if
+
+$$\hat f_{i+1/2}=f_{i+1/2}+\sum_{k=1}^{m-1}a_{2k}\Delta x^{2k}\big(\partial_x^{2k}f\big)_{i+1/2}+O(\Delta x^{2m+1}),\qquad a_2=-\tfrac1{24},\quad a_4=\tfrac7{5760}$$
+
+(Eq. (3.5); page-local $a_{2k}$). They split $f=f^++f^-$ by Lax–Friedrichs, interpolate each
+$f^\pm(u(x))$ by a polynomial $p^\pm$ of degree $2m$ on $2m+1$ point values chosen by the ENO
+divided-difference rule, starting from $x_i$ for $f^+$ and from $x_{i+1}$ for $f^-$, and take
+$\hat f^\pm_{i+1/2}=p^\pm(x_{i+1/2})+\sum_ka_{2k}\Delta x^{2k}\,\partial_x^{2k}p^\pm(x_{i+1/2})$ (Eqs. (3.6)–(3.15);
+[ENO reconstruction](/methods/eno-reconstruction.md)). The report contains no implicit function and no
+reconstruction from cell averages; for linear equations the authors state that their schemes coincide
+with the primitive-function ENO of Harten et al. except possibly in the choice of stencil, which
+uses divided differences of $f^\pm$ instead of cell averages of $u$ (Remark 3.1(c)). The first-order member
+is the Lax–Friedrichs scheme with flux $f^+_i+f^-_{i+1}$ (Remark 3.1(a)). §III constructs only even
+orders $2m$, while the tests run third-order members (3-3-LF-ENO, §IV) whose construction is not
+printed. *(Compiler check, not in the sources: $a_2$ and $a_4$ are the coefficients of
+$(z/2)/\sinh(z/2)=1-\tfrac{z^2}{24}+\tfrac{7z^4}{5760}-\dots$, the reciprocal of the symbol
+$\sinh(z/2)/(z/2)=1+\tfrac{z^2}{24}+\tfrac{z^4}{1920}+\dots$ of the sliding average, $z$ standing for
+$\Delta x\,\partial_x$; see [cell-average to point-value conversion](/operators/cell-average-point-value-conversion.md).)*
+The same paper also tries a non-conservative variant, which with a TVB cap on the divided
+differences it calls "essentially conservative"; without the cap it gives the wrong shock
+location on a Burgers Riemann problem and with it a severely smeared shock, so it was abandoned
+(Eqs. (3.18)–(3.19), p. 20; no figure printed; [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)).
+
+**The implicit-function form.** [Jiang & Shu (1996)](/sources/jiang-1996.md) (Eq. (2.3)) and
+[Shu (2009a)](/sources/shu-2009.md) (§3.2, Lemma 3.1, Eq. (3.8)) print the construction as it is
+used by the WENO literature and credit it to Shu & Osher, Jiang & Shu to their two papers of 1988 and
+1989, Shu (2009a) to the second one (1989, not ingested); Fu (2021, §2) and Takagi et al. (2022,
+§2.1) also recall it as the Shu–Osher construction. It introduces a function $\phi$ (page-local;
+the sources' $h$) defined implicitly by
 
 $$f\big(u(x)\big)=\frac1{\Delta x}\int_{x-\Delta x/2}^{x+\Delta x/2}\phi(\xi)\,d\xi ,$$
 
@@ -42,6 +73,28 @@ operator dimension by dimension. [WENO-JS](/methods/weno-js-reconstruction.md),
 [WENO-Z](/methods/weno-z.md), [WENO-ZN](/methods/weno-zn.md), [TENO](/methods/targeted-eno.md) and
 [TENO-THINC](/methods/teno-thinc.md) are used in this form in the bundle. Takagi et al. (2022, §2.1)
 call $\phi$ the "primitive function" and the $f_i$ "cell-averaged values".
+
+Shu (2009a, Lemma 3.1) proves the identity "by taking an $x$ derivative on both sides", and stresses
+that finite-difference and finite-volume WENO codes "share the main reconstruction subroutine",
+only the input–output pair differing: cell averages of $u$ to interface values in finite volumes,
+point fluxes to interface fluxes in finite differences (§3.2). The split fluxes must be "as smooth
+functions of $u$ as $f(u)$" (§3.2; [flux vector splitting](/methods/flux-vector-splitting.md)), the
+smoothness that Jiang & Shu (1996, §6, Eq. (6.1)) use to show the WENO operator is infinitely
+differentiable and to prove convergence for smooth solutions through Strang's theorem. The same
+background is stated by [Borges et al. (2008)](/sources/borges-2008.md) (§2, Eqs. (2)–(3)) and
+[Fu et al. (2016)](/sources/fu-2016.md) (§2, Eqs. (3)–(7), "the negative split flux can be obtained
+by symmetry"). Jiang & Shu (1996, §1) present their WENO as the recasting of the cell-average WENO
+of [Liu et al. (1994)](/sources/liu-1994.md) into this flux form.
+
+**Mesh restriction and cost.** Lemma 3.1 needs a uniform mesh, and Shu (2009a, §3.2) restricts
+finite-difference WENO to uniform or smooth meshes, recalling Merryman's result that a conservative
+finite-difference scheme with a local flux "cannot achieve higher than second order accuracy on
+arbitrary nonuniform nonsmooth meshes". In one dimension the two formulations cost the same; in
+two, a nonlinear finite-volume scheme needs two one-dimensional reconstructions and a Gauss
+quadrature on every face, "about three times the cost of the one-dimensional case per cell per
+direction", so that a finite-volume scheme of order above two is "two to five times as expensive"
+as a finite-difference one of the same order, more in 3-D, and finite differences are preferable
+"whenever the problem allows a uniform Cartesian or a smooth curvilinear mesh" (§3.3–3.4).
 
 Browne, Haas, Fasel & Brehm (2022, §2.2) apply the same construction to a disturbance formulation of
 the compressible Navier–Stokes equations: the state is split exactly into a steady baseflow
@@ -103,7 +156,10 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   $\hat f_{i+1/2}=h(u^-_{i+1/2},u^+_{i+1/2})-\tfrac1{24}\Delta x^2(\partial_x^2f)_{i+1/2}+\tfrac{7}{5760}\Delta x^4(\partial_x^4f)_{i+1/2}+\dots$
   (Ye et al. 2022, Eqs. (11)–(13); Wang et al. 2023b, Eqs. (2)–(4)). Any Riemann solver can be used
   and any variables interpolated ([alternative WENO](/methods/alternative-weno.md),
-  [AFTENO](/methods/afteno.md)). Ye et al. (2022, §1) draw the load-bearing distinction: classical
+  [AFTENO](/methods/afteno.md)). The coefficients $-\tfrac1{24}$ and $\tfrac7{5760}$ are those of
+  Shu & Osher (1988, Eq. (3.5)) above; there the leading term is the ENO interpolant of a split
+  flux at $x_{i+1/2}$, not a two-point flux of interpolated states, and an arbitrary monotone or
+  E-flux enters only through flux increments (Eqs. (3.20)–(3.21)). Ye et al. (2022, §1) draw the load-bearing distinction: classical
   WENO/TENO *reconstruct* split fluxes, the alternative family *interpolates* states. Chu, Kurganov
   & Na (2022, §§3–4) carry the form over to non-conservative systems
   $\partial_tu+\partial_xf(u)+\mathcal C(u)\partial_xu=0$ (they write the product on the right-hand
@@ -265,6 +321,8 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 
 ## Qualifications
 
+- Borges et al. (2008, Eq. (3)) print the semi-discrete form without the minus sign that their Eq. (2)
+  requires.
 - The flux-difference form makes a scheme conservative; it does not by itself make it high order.
   Wang et al. (2023b, §1) stress that in the FD context a standard finite-volume two-point flux is
   limited to second order, and that the high order of A-WENO comes from the derivative corrections.
@@ -297,6 +355,11 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 
 # Citations
 
+- [Shu & Osher (1988)](/sources/shu-1988.md) — Eq. (1.3); §III, Eqs. (3.1)–(3.21), Remark 3.1, pp. 15–22; §IV (ICASE Report 87-33).
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §1; §2, Eqs. (2.2)–(2.6); §6, Eq. (6.1) (author preprint).
+- [Shu (2009a)](/sources/shu-2009.md) — §3.2, Eqs. (3.6)–(3.11), Lemma 3.1; §3.3–3.4.
+- [Borges et al. (2008)](/sources/borges-2008.md) — §2, Eqs. (2)–(3).
+- [Fu et al. (2016)](/sources/fu-2016.md) — §2, Eqs. (3)–(7).
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eqs. (1)–(4).
 - [Fu (2021)](/sources/fu-2021.md) — §2, Eqs. (4)–(10).
 - [Fu (2023)](/sources/fu-2023.md) — §2, Eqs. (1)–(4); §3.4, Algorithm 1; §3.7.

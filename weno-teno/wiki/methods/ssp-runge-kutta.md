@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -19,8 +19,9 @@ possibly reduced time step.
 
 ## The three-stage third-order scheme
 
-The default of almost every source here is the scheme of Shu & Osher, as printed by
-[Fu (2021)](/sources/fu-2021.md) (§5, Eq. (30)), with page-local stage values $u^{(1)}$, $u^{(2)}$:
+The default of almost every source here is scheme (2.18) of
+[Shu & Osher (1988)](/sources/shu-1988.md) (§II, p. 12; ICASE report version read), with
+page-local stage values $u^{(1)}$, $u^{(2)}$:
 
 $$\begin{aligned}
 u^{(1)}&=u^n+\Delta t\,\mathcal L(u^n),\\
@@ -28,13 +29,35 @@ u^{(2)}&=\tfrac34u^n+\tfrac14u^{(1)}+\tfrac14\Delta t\,\mathcal L(u^{(1)}),\\
 u^{n+1}&=\tfrac13u^n+\tfrac23u^{(2)}+\tfrac23\Delta t\,\mathcal L(u^{(2)}).
 \end{aligned}$$
 
-Several sources call it "third-order TVD Runge–Kutta"
-([Li et al. (2022b)](/sources/li-2022-b.md), [Luo & Wu (2021)](/sources/luo-2021-b.md),
+The same coefficients are printed by [Liu et al. (1994)](/sources/liu-1994.md) (§2, p. 202,
+with the time step absorbed in the operator), [Jiang & Shu (1996)](/sources/jiang-1996.md)
+(Eq. (1.3)), [Borges et al. (2008)](/sources/borges-2008.md) (Eq. (43)),
+[Shu (2009a)](/sources/shu-2009.md) (§3.1, Eq. (3.5)) and [Fu (2021)](/sources/fu-2021.md)
+(§5, Eq. (30)). Shu & Osher found it by "extensive searching" among the third-order
+solutions of their accuracy conditions (Eq. (2.17)); each stage needs only the operator at the
+previous stage, which saves storage, and the authors could not identify it with any classical
+third-order method, those of Lambert having negative coefficients and small CFL numbers in
+the form (2.12) below (p. 12).
+
+**Names.** Shu & Osher (1988, §II) call these "TVD Runge–Kutta type time discretizations"
+and a scheme satisfying their accuracy and total-variation conditions "$r$-th order TVD"; the
+words "strong stability preserving" do not appear in the paper. Shu (2009a, §3.1) prints the
+scheme as "TVD Runge–Kutta" after Shu & Osher and credits the name SSP to Gottlieb, Shu and
+Tadmor (ref. [58] there). Jiang & Shu (1996) write "RK-3 (TVD)", Liu et al. (1994) and
+Borges et al. (2008) "TVD Runge–Kutta" ("RK-TVD"), and [Fu et al. (2016)](/sources/fu-2016.md)
+(§5) "strongly stable" Runge–Kutta. Several later sources call it "third-order TVD
+Runge–Kutta" ([Li et al. (2022b)](/sources/li-2022-b.md), [Luo & Wu (2021)](/sources/luo-2021-b.md),
 [Wang & Don (2022)](/sources/wang-2022-b.md), citing Gottlieb & Shu 1998). CFL numbers used
 with it:
 
 | Source | Scheme | CFL $\nu$ |
 |---|---|---|
+| [Shu & Osher (1988)](/sources/shu-1988.md) | FD ENO with Lax–Friedrichs building blocks, third order in space and time | 0.8 in 1D, 0.4 in 2D (fourth-order pair with RK4: 0.6 and 0.3); the 1D numbers in 2D "led to instability–overflow" (§IV, Ex. 3) |
+| [Liu et al. (1994)](/sources/liu-1994.md) | FV WENO, $r=2$ with this scheme, $r=3$ with a fourth-order TVD RK | $\Delta t/\Delta x=0.8$ (advection), 0.6 (Burgers, Euler smooth data), 0.4 and 0.2 (Sod, Lax) (§4) |
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) | FD WENO-JS | 0.4 on the composite advection (0.2 with artificial compression); $\Delta t=0.6\Delta x$ with classical RK4 on most Euler problems (§8) |
+| [Borges et al. (2008)](/sources/borges-2008.md) | FD WENO-JS, WENO-M, WENO-Z | 0.4, with $\Delta t$ "bounded by $\Delta x^{5/3}$" (§5) |
+| [Fu et al. (2016)](/sources/fu-2016.md) | FD TENO5, TENO6 | 0.6; third-order RK in 1D, second-order "strongly stable" RK in 2D, both cited to a multiresolution paper of Domingues et al. (§5) |
+| [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) | positivity-preserving RKDG, $N=2$ | not printed; the stage wave speeds are estimated as 2–3 times those of $u^n$ (Remark 2.7, below) |
 | [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) | DGSEM with subcell limiting | 0.5 (blending recomputed every stage, §5) |
 | [Li et al. (2022b)](/sources/li-2022-b.md) | FD WENO-ZN, 1D | 0.5 (Eq. (38)) |
 | [Wang et al. (2023b)](/sources/wang-2023-b.md) | A-WENO with CURH flux | 0.45; $\Delta x^{2/3}$ in the accuracy test (Remark 1) |
@@ -134,8 +157,74 @@ found by sampling $10^4$ wavenumbers (Thm. 2.2, Eq. (2.33)); the tests run at CF
 result is a necessary condition for the linear scheme only. The same replacement had been used in
 finite-difference HWENO, as the authors cite (§2.1).
 
+## The Shu–Osher form and its CFL factor
+
+[Shu & Osher (1988)](/sources/shu-1988.md) (§II, pp. 7–10) start from a forward-Euler step
+$u+\Delta t\,\mathcal L(u)$ that is TVD (or TVB) under $\Delta t/\Delta x\le\lambda_0$ (page-local
+$\lambda_0$) and rewrite an explicit Runge–Kutta method, stages
+$u^{(i)}=u^{(0)}+\Delta t\sum_{k<i}c_{ik}\mathcal L(u^{(k)})$, $u^{(0)}=u^n$, as
+
+$$u^{(i)}=\sum_{k=0}^{i-1}\Big[\alpha_{ik}u^{(k)}+\beta_{ik}\Delta t\,\mathcal L\big(u^{(k)}\big)\Big],\qquad \alpha_{ik}\ge0,\quad\sum_{k}\alpha_{ik}=1,$$
+
+with $\beta_{ik}=c_{ik}-\sum_{l=k+1}^{i-1}c_{lk}\alpha_{il}$ (Eq. (2.12); page-local $c_{ik}$,
+$\alpha_{ik}$, $\beta_{ik}$, the latter two unrelated to the registry's WENO weights and
+smoothness indicators). When every $\beta_{ik}\ge0$, each stage is a convex combination of
+forward-Euler steps of size $(\beta_{ik}/\alpha_{ik})\Delta t$. A negative $\beta_{ik}$ is
+handled by replacing $\mathcal L$ in that term by an operator $\tilde{\mathcal L}$ (page-local)
+whose backward step $u-\Delta t\,\tilde{\mathcal L}(u)$ is TVD under the same restriction, i.e.
+an approximation that is TVD for the time-reversed problem (for $\partial_tu=\partial_xu$, the
+backward difference where $\mathcal L$ is the forward one, p. 8). **Proposition 2.1:** the scheme
+is TVD under
+
+$$\frac{\Delta t}{\Delta x}\le\lambda_0\min_{i,k}\frac{\alpha_{ik}}{\lvert\beta_{ik}\rvert}$$
+
+(Eq. (2.13)), the factor the paper calls "CFL#". **Remark 2.1** replaces the total variation by
+any convex functional into the non-negative reals, for which the same argument gives
+non-increase. This is the origin of the forward-Euler argument the rest of this page relies on.
+
+The schemes printed in the paper (pp. 11–14; orders as labelled there):
+
+| order | scheme | CFL# | $\tilde{\mathcal L}$ needed |
+|---|---|---|---|
+| 2 | (2.15): Heun's (modified Euler) method, "optimal" in CFL# and in avoiding $\tilde{\mathcal L}$ | 1 | no |
+| 3 | (2.18), above | 1 | no |
+| 4 | (2.20): the classical four-stage RK4 rewritten in the form (2.12) | $\tfrac23$ | on $u^{(0)}$, $u^{(1)}$ |
+| 4 | (2.21): (2.20) with a modified third stage | $\tfrac{137}{200}$ | on $u^{(0)}$, $u^{(1)}$ |
+| 4 | (2.22) | 0.87 | on $u^{(0)}$, $u^{(1)}$ |
+
+For fourth order the accuracy conditions leave nine free parameters, and the authors' search
+"seems to indicate" that negative $\beta_{ik}$ cannot be avoided (p. 12). The paper also rewrites a
+six-stage method from p. 143 of Lambert, labelled fifth order, with CFL# $\tfrac7{30}$ and
+$\tilde{\mathcal L}$ on three stages (Eq. (2.23)). *(Compiler check, not in the sources: in Butcher
+form the coefficients of (2.23) as printed satisfy the order conditions only through order two,
+$b^\top Ac=\tfrac8{45}\ne\tfrac16$, while the printed CFL# $\tfrac7{30}$ is reproduced; and (2.21) prints
+$\Delta t\,\mathcal L(u^{(3)})$ in the formula for $u^{(3)}$, whereas with $\mathcal L(u^{(2)})$ the
+scheme is the fourth-order one whose minimum ratio is the printed $\tfrac{137}{200}$.)* Their
+order statement for $m$-stage-type schemes, quoted from an earlier reference, and the label
+"$m$" of the cases are indexed inconsistently in the report (see the Source page). In several
+space dimensions the CFL numbers shrink by the factor $1/d$ (§III, p. 22).
+
+**Classical RK4 as a non-TVD stepper.** [Jiang & Shu (1996)](/sources/jiang-1996.md)
+(Eq. (1.4)) use the classical RK4, which "can be made TVD by an increase of operation counts",
+citing Shu & Osher, for most of their Euler tests and for the accuracy tests with
+$\Delta t\sim\Delta x^{5/4}$, so that the fourth-order time error is effectively fifth order.
+Their linear-stability CFL limits for WENO are 1.625 (RK3) and 1.745 (RK4) for $r=2$, and 1.434 (RK3) and 1.731 (RK4) for $r=3$
+(Table 5; method of computation not shown), and their convergence result for smooth solutions
+(Theorem 6.1, through Strang's theorem) needs a Runge–Kutta method of order at least
+$\max(r,3)$. [Shu (2009a)](/sources/shu-2009.md) (§3.1) recalls, after Wang & Spiteri, that
+fifth-order WENO with forward Euler or second-order Runge–Kutta "is linearly unstable", so
+these "should not be used even if the problem is steady state".
+
 ## Why SSP: forward Euler suffices
 
+- [Shu & Osher (1988)](/sources/shu-1988.md) (Prop. 2.1, Remark 2.1) and, as a summary,
+  [Shu (2009a)](/sources/shu-2009.md) (§3.1): the schemes "maintain stability in the total
+  variation seminorm, or any other norm or seminorm, of the first order Euler forward method
+  with the same spatial discretization", under the reduced step above.
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) (Remark 2.2) state that their
+  positivity theorem for one forward-Euler step stays valid with SSP Runge–Kutta and SSP
+  multistep methods because the admissible set is convex, and apply the scaling limiter at
+  every stage (§2.3; [Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md)).
 - [Cui et al. (2024)](/sources/cui-2024.md) prove their bound-preserving DG theorems for one
   forward-Euler step and state that they hold for SSP time stepping (Thm. 7.1, footnote 2,
   Remark 7.9).
@@ -405,6 +494,21 @@ finite-difference HWENO, as the authors cite (§2.1).
   linear test $u'=\lambda u$ gives $u^{n+1}=\big(1+\tfrac{11}6z+\dots\big)u^n$, $z=\lambda\Delta t$, so the
   printed scheme is not even first-order consistent; with the factors it is the Shu–Osher
   scheme above.)*
+- **Negative coefficients.** The convex-combination argument covers Shu & Osher's fourth- and
+  higher-order schemes only with the extra operator $\tilde{\mathcal L}$ in the terms with
+  $\beta_{ik}<0$ (Prop. 2.1); the forward-Euler transfers listed above concern methods whose
+  coefficients are all non-negative.
+- [Liu et al. (1994)](/sources/liu-1994.md) (p. 202) also print a fourth-order TVD Runge–Kutta
+  for their $r=3$ scheme whose first stage carries the full operator step where Shu & Osher's (2.20) has
+  $\tfrac12\Delta t\,\mathcal L$ *(compiler check, not in the sources: on $y'=\lambda y$ the printed
+  stages give $R(z)=1+\tfrac{145}{108}z+\tfrac{43}{54}z^2+\tfrac7{24}z^3+\tfrac1{12}z^4$, $z=\lambda\Delta t$,
+  and with half that step in the first stage $\sum_{k\le4}z^k/k!$)*.
+- **Stage wave speeds.** [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) (Remark 2.7) note
+  that enforcing the forward-Euler positivity CFL at all three stages of SSP-RK3 needs a bound
+  of $\lvert v\rvert+c$ at the stages from the data at $t^n$; in practice they multiply the
+  speed of $u^n$ by "a factor, for example 2 to 3", or impose the stricter step only when a trial
+  step produces negative density or pressure, and note that SSP multistep methods do not have
+  this complication.
 - **Two statements of the positivity CFL of SSP-RK3.** [Fan et al. (2021)](/sources/fan-2021.md)
   (§3.3) state that their forward-Euler positivity bound carries over to SSP-RK3 "if the
   CFL is one third" of it; [Wong et al. (2021)](/sources/wong-2021.md) (§5.3) state for
@@ -419,6 +523,13 @@ finite-difference HWENO, as the authors cite (§2.1).
 
 # Citations
 
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §II, Eqs. (2.10)–(2.23), Prop. 2.1, Remark 2.1, pp. 7–14; §III, p. 22; §IV, Ex. 3 (ICASE Report 87-33).
+- [Liu et al. (1994)](/sources/liu-1994.md) — §2, p. 202; §4.
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — Eqs. (1.3)–(1.4); §6, Theorem 6.1, Table 5; §8 (author preprint).
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5, Eq. (43).
+- [Shu (2009a)](/sources/shu-2009.md) — §3.1, Eq. (3.5).
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — Remarks 2.2, 2.7; §2.3; §4.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §5.
 - [Fu (2021)](/sources/fu-2021.md) — §5, Eq. (30) (arXiv v1).
 - [Cui et al. (2024)](/sources/cui-2024.md) — Thm. 7.1, Remarks 7.7, 7.9, §7 (arXiv v1).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — §6.2 (arXiv v1).

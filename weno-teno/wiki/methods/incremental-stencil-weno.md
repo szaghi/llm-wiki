@@ -5,7 +5,7 @@ description: "Incremental-stencil WENO (WENO-IS, WENO5IS) of Wang, Xiang and Hu 
 status: established
 aliases: [WENO-IS, WENO5IS, IS-WENO, incremental-stencil WENO interpolation, WCNS-IS interpolation]
 tags: [weno, reconstruction, multiphase, interface-capturing]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Incremental-stencil WENO
@@ -18,6 +18,13 @@ are combined by a convex WENO combination, not by a cut-off, into the five-point
 indicator. Wong et al. call the original a finite-volume reconstruction and adapt it to the node-to-midpoint
 interpolation of a [WCNS](/methods/weighted-compact-nonlinear-scheme.md); Zhang et al. use the same
 formulas, under the name WENO5IS, as the base of a finite-volume multiphase scheme.
+
+The incremental widths come from the founding TENO paper, [Fu, Hu & Adams (2016)](/sources/fu-2016.md)
+(§3.1.1, Eq. (21), Fig. 1), where the full stencil "is constructed from low-order stencils with
+incrementally increasing width" starting from **three**-point stencils, each with at least one upwind
+point, and the candidates are selected by a sharp cut-off rather than combined by smooth weights.
+WENO-IS starts instead from two-point stencils; Fu (2023, §2.1) judges
+that it adds the dissipation of second-order candidates (see [TENO](/methods/targeted-eno.md)).
 
 ## Candidates and linear weights
 
@@ -55,6 +62,11 @@ with [smoothness indicators](/definitions/smoothness-indicator.md)
 - the TENO reference indicator, the third- and fourth-derivative part of the five-point indicator,
   $$\tau^{\mathrm{ref}}_5=\tfrac{13}{12}(u_{i+2}-4u_{i+1}+6u_i-4u_{i-1}+u_{i-2})^2+\tfrac14(u_{i+2}-2u_{i+1}+2u_{i-1}-u_{i-2})^2,$$
   attributed to Fu, Hu & Adams (page-local symbol of the registry §10; it is not the WENO-Z $\tau_5=|\beta_0-\beta_2|$).
+  It is the $K=5$ case of the general global indicator of Fu et al. (2016, App. A, Eq. (A.1)),
+  $\sum_{j=3}^{4}\Delta x^{2j-1}\int_{I_i}\big(\tfrac{d^j}{dx^j}\hat f_5\big)^2dx$ with $\hat f_5$ the five-point
+  polynomial *(compiler check, not in the sources: the symbolic difference of the two expressions is zero,
+  both for cell-average and for point-value interpolation of the five data)*; Fu et al. themselves run
+  TENO5 with the WENO-Z $\tau_5$ (§3.2).
 
 The exponent on each ratio is 1. Wong et al. do not print $\epsilon$; Zhang et al. use $\epsilon=10^{-15}$.
 The product form for the two-point stencils makes their weights fall away from $d_k$ when either the stencil
@@ -128,5 +140,6 @@ formula for it ([WENO-Z+](/methods/weno-z-plus.md)).
 
 - [Wong et al. (2021)](/sources/wong-2021.md) — §1; §4.3, Eqs. (84)–(101); App. B, Eqs. (B.2)–(B.21); §6.1, Table 4 (arXiv v1).
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.1; §3.3, Eq. (49), Algorithm 1; App. C, Eqs. (C.1)–(C.11); §4.4–4.8, Figs. 12–16.
+- [Fu, Hu & Adams (2016)](/sources/fu-2016.md) — §3.1.1, Eq. (21), Fig. 1; §3.2; App. A, Eq. (A.1): incremental widths from three-point stencils; general global indicator.
 - [Fu (2023)](/sources/fu-2023.md) — §2.1.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.

@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:01:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -14,15 +14,18 @@ Gas at rest with unit density fills $[0,1]$ between two reflecting
 walls. Two thin regions at the ends hold pressures five and four orders
 of magnitude above the middle, so two strong blast waves run inwards
 and interact. By $t=0.038$ the density shows narrow peaks and contacts
-(Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
+(Borges et al. (2008) and Fu (2021) single out the peak near
+$x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Forty-one sources of the
-bundle run it, and three more run its left half as a single blast.
+resolution against a fine-grid reference. Forty-five sources of the
+bundle run it, the earliest Harten et al. (1987a), and three more run
+its left half as a single blast.
 
 ## Setup
 
-The common data, printed by Fu (2021), Takagi et al., Ye et al., Wang
+The common data, printed by Harten et al. (1987a), Jiang & Shu (1996),
+Borges et al. (2008), Fu et al. (2016), Fu (2021), Takagi et al., Ye et al., Wang
 et al. (2023b), Wang et al. (2023c), Zhao et al., Chertock et al., Deng, Huang et al. (2026), Li, Shu & Qiu,
 Wang et al. (2021), Bezgin et al., Fan et al. (2023), Hong, Ye & Ye, Hu,
 Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren, Liang et al., Zhou et
@@ -44,6 +47,10 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 
 | Source | Cells / points | Reference | Notes |
 |---|---|---|---|
+| [Harten et al. (1987a)](/sources/harten-1987.md) §7 B2, Eqs. (7.11)–(7.13) | $J=400$, 200 (100 not shown) | the same scheme, $J=800$ | "4th-order" and "2nd-order" [ENO](/methods/eno-reconstruction.md), Roe flux; outputs from $t=0.010$ to $0.038$; local positivity check |
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.2 Ex. 3 | 199, 399, 799 points, CFL 0.6 (figure headers) | ENO-RF-5, 1600 | finite-difference WENO-RF-3 (RK-3), WENO-RF-4, WENO-RF-5, WENO-RF-5-A (RK-4) |
+| [Borges et al. (2008)](/sources/borges-2008.md) §5.2.3, Eq. (52) | 400, 800 | WENO-M, 4000 | [WENO-Z](/methods/weno-z.md) vs [mapped WENO](/methods/mapped-weno.md), WENO-JS; characteristic-wise Lax–Friedrichs splitting, third-order TVD Runge–Kutta |
+| [Fu et al. (2016)](/sources/fu-2016.md) §5.3 | 400 | WENO5-JS, 2500 | Roe flux with entropy fix; [TENO](/methods/targeted-eno.md) TENO5, TENO5-opt, TENO6, TENO6-opt vs WENO-JS, WENO-Z, [WENO-CU6](/methods/weno-cu6.md), WENO-CU6-M |
 | [Fu (2021)](/sources/fu-2021.md) §5.5 | 400 | WENO5-JS, 2500 | Roe flux with entropy fix; [TENO-AA](/methods/adaptive-teno.md) vs [WENO-CU6](/methods/weno-cu6.md) |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.5 | 400, also 800–3200 | WENO5-JS, 32000 | CFL 0.35, Roe splitting with entropy fix; [TENO-THINC](/methods/teno-thinc.md) |
 | [Ye et al. (2022)](/sources/ye-2022.md) §4.6, Eq. (46) | 400 (text) | WENO-JS, 2500 | [AFTENO](/methods/afteno.md), AFWENO |
@@ -87,6 +94,29 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.9 | 400 cells, third order ($\mathbb P^2$), SSP-RK3 | LF scheme, 100,000 cells | global [COS(DG)](/methods/cos-dg.md) vs TVB ($M=100$), moment, MP, MMP, WENO and simple-WENO DG limiters with the KXRCF indicator, OFDG and [OEDG](/methods/oedg.md); Zhang–Shu positivity limiter |
 
 ## Findings across sources
+
+**The founding runs.** Harten et al. take their "4th-order" ENO run on
+$J=800$ as the "converged" solution; $J=400$ agrees with it in velocity
+and pressure, and the fourth-order scheme on $J=100$ (not shown) is of
+the quality of the second-order one on $J=200$ (Figs. 17–19). A local
+positivity check reduces the order of the reconstruction where a
+reconstructed state would lose positivity; in this run it acts during
+two time steps before the interaction and only in the interaction zone,
+and never in their Riemann problems (§7 B2, p. 285). Jiang & Shu find
+their fourth- and fifth-order WENO "much better" than the third-order
+one and comparable with the unmodified fourth-order ENO of Shu & Osher
+as they cite it; WENO-RF-4 is slightly better than WENO-RF-5 on the
+medium grid, WENO-RF-5 better on the fine one, and with
+[artificial compression](/methods/artificial-compression.md)
+WENO-RF-5-A on the coarse and medium grids is nearly as good as
+WENO-RF-5 on the medium and fine grids (Fig. 7). Borges et al. find
+WENO-Z giving a sharper peak near $x=0.78$ and resolving the structure
+at $x=0.86$ and the contact near $x=0.8$ better than WENO-M (Figs.
+9–10). Fu et al. (2016) find TENO5 and TENO5-opt resolving density,
+pressure and velocity better than WENO-JS and WENO-Z, which overshoot
+in velocity near $x=0.86$; WENO-CU6 produces spurious waves near
+$x=0.75$ and $0.86$, and WENO-CU6-M fails on this problem (Figs.
+13–14).
 
 **Density-peak resolution.** The new scheme of each paper sharpens the
 peaks and contacts of its baseline. Fu (2021) gets a better density peak
@@ -325,6 +355,10 @@ with specifications deferred to an earlier paper (Fig. 7).
 
 ## Qualifications
 
+- Harten et al. print the right interval half-open, $0.9\le x<1$
+  (Eq. (7.11)), with reflecting walls by reflection of the cell values
+  (Eq. (7.12)); Jiang & Shu print all three intervals open,
+  $0<x<0.1$, $0.1<x<0.9$, $0.9<x<1$.
 - Kolluru et al. give the Fejér–Korovkin parameters as $(1.35,0.99)$ in
   the text and $(1.355,0.999)$ in the Fig. 17 caption.
 - Chamarthi (2023a) and (2023b) both print the low-pressure region as
@@ -369,6 +403,10 @@ with specifications deferred to an earlier paper (Fig. 7).
 
 # Citations
 
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §7 B2, Eqs. (7.11)–(7.13), Figs. 17–19, p. 285.
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.2, Ex. 3, Fig. 7 (author preprint).
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5.2.3, Eq. (52), Figs. 9–10.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §5.3, Figs. 13–14.
 - [Fu (2021)](/sources/fu-2021.md) — §5.5, Fig. 6 (arXiv v1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.5, Figs. 8–9.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.6, Eq. (46), Fig. 6.

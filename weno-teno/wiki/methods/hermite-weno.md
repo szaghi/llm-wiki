@@ -5,7 +5,7 @@ description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plu
 status: established
 aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO, HWENO-U, HWENO-M, unified-stencil HWENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T07:53:00Z
 ---
 
 # Hermite WENO
@@ -17,6 +17,15 @@ first moments in the more recent ones, or a neighbour's whole polynomial in elem
 given order needs fewer cells. Fan, Zhang & Qiu (2021, §1) summarize the trade-off: HWENO schemes have
 more compact stencils than WENO schemes and higher resolution at the same order, but they are in
 practice less robust, and the extra equation for the derivative or moment raises their cost.
+
+[Shu (2009a)](/sources/shu-2009.md) (§5.1) places HWENO between finite-volume WENO and
+[discontinuous Galerkin](/methods/discontinuous-galerkin.md): finite-volume WENO evolves one piece of
+information per cell, DG of degree $N$ evolves $N+1$, and the Hermite WENO schemes of Qiu & Shu (Shu's
+refs. [133, 136, 137]) "evolve a linear function per cell (hence they evolve two pieces of information
+per cell in one dimension) and reconstruct the necessary point values to higher order accuracy";
+"because each cell contains more than one degree of freedom, the reconstruction would involve a
+narrower stencil for the same order of accuracy, resulting in more compact WENO schemes". The same
+reconstruction serves as a DG limiter ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
 
 ## Moment-based HWENO
 
@@ -538,6 +547,7 @@ are given in the ingested sources.
 
 # Citations
 
+- [Shu (2009a)](/sources/shu-2009.md) — §5.1: HWENO as the intermediate between finite-volume WENO and DG; compact stencils.
 - [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) — Abstract; §1; §2.1–2.2, Eqs. (2.2)–(2.34), (2.36)–(2.59), Remarks 1–3; §3, Tables 3.1–3.4, Examples 3.5–3.10; §4.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; §3, Eqs. (3.2)–(3.33), Theorems 1–2; §4, Tables 4.1–4.2, Fig. 4.1; §5; App. A.
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §3, Eq. (8); Eq. (9); §5, Eq. (11), Remarks 2–4, 6; §7.4.

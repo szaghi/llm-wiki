@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–vortex interaction"
-description: "An isentropic vortex advected through a stationary Mach 1.1 shock on [0,2]×[0,1]; the reference setup tests the resolution of the shocked vortex through pressure profiles against fine-grid references, and amplified, strong-vortex, relativistic or non-Euler variants test bound preservation, shock-capturing dissipation and non-conservative multiphase schemes."
+description: "An isentropic vortex advected through a stationary Mach 1.1 shock on [0,2]×[0,1]; the reference setup tests the resolution of the shocked vortex through pressure profiles against fine-grid references, and amplified, strong-vortex, Mach 3, relativistic or non-Euler variants test bound preservation, shock-capturing dissipation and non-conservative multiphase schemes."
 status: established
 aliases: [shock–vortex, vortex–shock interaction, shock/vortex interaction]
 tags: [benchmark, weno, dg, bound-preserving, multiphase]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-10-30T07:59:00Z
 ---
 
 # Shock–vortex interaction
@@ -21,6 +21,7 @@ vortex the same configuration becomes a near-vacuum test for
 
 ## Reference setup
 
+[Jiang & Shu (1996)](/sources/jiang-1996.md) §8.3 Ex. 5, Eqs. (8.3)–(8.6),
 [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.2, Eq. (46),
 [Huang et al. (2026)](/sources/huang-2026.md) §6.10,
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 and
@@ -28,8 +29,8 @@ vortex the same configuration becomes a near-vacuum test for
 [Liang et al. (2022)](/sources/liang-2022.md) §4.7, Eq. (43) and
 [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.6, Eq. (43) and
 [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.10 print the
-same construction (Zhang & Zhu with a different upstream velocity, see
-Qualifications). The upstream state is
+same construction (Jiang & Shu and Zhang & Zhu with a different printed
+upstream velocity, see Qualifications). The upstream state is
 $(\rho,v_1,v_2,p)=(1,\,1.1\sqrt\gamma,\,0,\,1)$, so that the stream
 moves at Mach 1.1 into the stationary shock; the downstream state
 follows from the Rankine–Hugoniot conditions; $\gamma=1.4$. Let
@@ -44,7 +45,7 @@ $$
 \delta s=0 .
 $$
 
-Li et al. (2022b), Huang et al. (2026) and Zhang & Zhu write the velocity as
+Jiang & Shu, Li et al. (2022b), Huang et al. (2026) and Zhang & Zhu write the velocity as
 $\mathcal E\,(r/r_c)\,e^{\mathcal A(1-r^2/r_c^2)}(\sin\theta,-\cos\theta)$
 with $\theta$ the polar angle about the centre, which is the same field,
 since $(r/r_c)\sin\theta=\bar y/r_c$ *(compiler check, not in the
@@ -52,6 +53,7 @@ sources)*.
 
 | Source | $\mathcal E$ | $\mathcal A$ | $r_c$ | Grid | Final time | Scheme |
 |---|---|---|---|---|---|---|
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.3 Ex. 5 | 0.3 | 0.204 | 0.05 | $251\times100$, uniform in $y$, refined in $x$ around the shock by a Roberts transform; reflective top and bottom | 0.6 (also 0.05, 0.20, 0.35, 0.8) | WENO-LF-5 and its pressure–entropy-weight variant WENO-LF-5-PS vs ENO-LF-4 |
 | [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.2 | 0.3 | 0.204 | 0.05 | $200\times100$; reference $2000\times1000$ WENO7-Z | 0.6 | [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z |
 | [Huang et al. (2026)](/sources/huang-2026.md) §6.10 | 0.3 | 0.204 | 0.05 | $h=1/100$; fine-mesh WENO5-JS reference | not printed | [ROUND, LD-ROUND](/methods/round-scheme.md) vs WENO3-NN, WENO5-JS |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 | 0.3 | 0.204 | 0.05 | $400\times200$, reflective top and bottom | 0.8 | [OEDG](/methods/oedg.md) |
@@ -62,6 +64,21 @@ sources)*.
 
 ### Variants of the Euler setup
 
+- **Mach 3 shock, compact vortex.** [Borges et al. (2008)](/sources/borges-2008.md)
+  §5.3.1, Eq. (56), after Kopriva, send a counter-clockwise vortex
+  through a Mach 3 shock: azimuthal speed
+  $\mathcal E\,r\,(r_0^{-2}-r_1^{-2})$ for $r\le r_0$,
+  $\mathcal E\,r\,(r^{-2}-r_1^{-2})$ for $r_0\le r\le r_1$ and zero
+  beyond, with $\mathcal E=0.25$ (their $\Gamma$), $r_0=0.2$, $r_1=1$
+  (page-local radii), $\gamma=1.4$, inflow and outflow in $x$, periodic
+  in $y$, $t=1$ on $400\times400$ (and $800\times800$ for timing). The
+  vortex centre and the domain extent are not printed.
+- **Oblique shock and vortex pair (viscous).** The review of
+  [Shu (2009a)](/sources/shu-2009.md) (Fig. 6.1) reproduces a
+  fifth-order WENO Navier–Stokes computation of a colliding vortex pair
+  of Mach number $0.8$ crossing an oblique shock of Mach 1.2 at
+  $45^\circ$, shown as shadowgraphs at $t=5$, 7, 9 and 13; no further
+  data are printed.
 - **Viscous, Tenaud et al. setting, curvilinear mesh.**
   [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.3.3, after Tenaud et
   al. (2000), hold a stationary shock at $x=1.0$ in a square box of side
@@ -123,6 +140,23 @@ sources)*.
   time $t=19$ is read from their figure captions.
 
 ## Findings across sources
+
+**The original comparison.** Jiang & Shu find WENO-LF-5-PS working
+"nicely" on this problem, where the reflective boundary is
+nonessential, and capturing at $t=0.8$ the reflection of a branch of
+the shock bifurcation from the top boundary (Fig. 15(a–d)); with 90
+pressure contours from 1.19 to 1.37 at $t=0.6$ the three schemes give
+"approximately the same resolution", the WENO schemes slightly less
+numerical noise and WENO-LF-5 a little less than WENO-LF-5-PS
+(Fig. 15(e–g)).
+
+**Cost of the weights.** Borges et al. time their Mach 3 run with one
+code on one machine (AMD Opteron 250), only the weight routine
+differing: per Runge–Kutta step 1.47 s (WENO-JS), 1.39 s (WENO-Z) and
+1.87 s (WENO-M) on $400^2$, and 6.54, 6.15 and 8.27 s on $800^2$, so
+WENO-Z is "about 25% faster than the WENO-M scheme, since WENO-Z does
+not make use of any mapping" (Table 5); see
+[WENO-Z](/methods/weno-z.md) for the cost comparison across sources.
 
 **Resolution of the transmitted vortex.** Li et al. (2022b) find WENO-ZN
 closest to the $2000\times1000$ reference in pressure along $y=0.5$
@@ -244,15 +278,21 @@ a numerical result.
   where the run ends at $t=0.24$ and the figures are at $0.06$; $0.06$ is
   meant *(compiler check, not in the sources)*.
 
-- Zhang & Zhu's Table 3.1 caption names Examples 3.5–3.9, but the table
-  also has rows for this Example 3.10. They print the upstream state as
-  $(\rho,v_1,v_2,p)=(1,\sqrt\gamma,0,1)$, while calling the shock Mach
-  1.1. With $\rho=p=1$ the sound speed is $\sqrt{\gamma p/\rho}=\sqrt\gamma$,
-  so the printed stream is at Mach 1; the other sources of the reference
-  setup print $1.1\sqrt\gamma$ *(compiler check, not in the sources)*.
+- Jiang & Shu (§8.3 Ex. 5) describe "a stationary Mach 1.1 shock" and
+  print its left state as $(\rho,v_1,v_2,p)=(1,\sqrt\gamma,0,1)$, and
+  Zhang & Zhu print the same pair. With $\rho=p=1$ the sound speed is
+  $\sqrt{\gamma p/\rho}=\sqrt\gamma$, so the printed stream is at
+  Mach 1; Li et al. (2022b) and the other sources of the reference setup
+  print $1.1\sqrt\gamma$ *(compiler check, not in the sources)*. Jiang &
+  Shu print no numerical value of $\gamma$. Zhang & Zhu's Table 3.1
+  caption names Examples 3.5–3.9, but the table also has rows for this
+  Example 3.10.
 
 # Citations
 
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.3, Ex. 5, Eqs. (8.3)–(8.6), Fig. 15 (author preprint).
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5, §5.3.1, Eq. (56), Fig. 11, Table 5.
+- [Shu (2009a)](/sources/shu-2009.md) — §6, Fig. 6.1.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §4.4.2, Eq. (46), Fig. 8.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.10, Fig. 15.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.16, Fig. 12 (arXiv v1).

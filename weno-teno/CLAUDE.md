@@ -32,7 +32,8 @@ here, in this bundle's notation.
 ## Corpus
 
 - Primary archive: `~/papers/mosaic/weno-teno/*.pdf` (read-only; Layer 1),
-  207 PDFs at founding, named `year_Crossref_Journal_Surname_Title-prefix.pdf`.
+  207 PDFs at founding (217 after the human added ten founding papers on
+  2026-10-30, ingested as chunk 12), named `year_Crossref_Journal_Surname_Title-prefix.pdf`.
   The year in the filename is the online year, the surname is sometimes
   a given name (`Dinshaw` for Balsara, `C` for C. B. Sousa), and roughly a
   third of the files are arXiv, HAL or SSRN preprints despite the "Crossref" in
@@ -103,7 +104,15 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 11 staged 2026-10-24 (archive complete):** the last five
+**Chunk 12 completed 2026-10-30 (night protocol, commit pending):** ten
+founding papers added by the human (van Leer 1979, Harten 1983, Harten et
+al. 1987, Shu & Osher 1988, Liu et al. 1994, Jiang & Shu 1996, Borges et
+al. 2008, Shu 2009, Zhang & Shu 2010, Fu et al. 2016); 214 of 217 ingested
+(feng-2026, li-2024 and wu-2023 still await a re-download), 230 concept
+pages plus the registry, 5733 bibliography entries, eight contradictions
+open (new: order of WENO-JS at critical points).
+
+**Chunk 11 committed 2026-10-24 (3e40199), archive complete at the time:** the last five
 sources, the whole-bundle deep lint and the closing bibliography sweeps;
 204 of 207 ingested (feng-2026, li-2024 and wu-2023 await a re-download),
 224 concept pages plus the registry, 5567 bibliography entries, seven

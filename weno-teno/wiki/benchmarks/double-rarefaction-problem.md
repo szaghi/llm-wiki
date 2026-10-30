@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem of two gases receding from e
 status: established
 aliases: [123 problem, receding flow, double rarefaction, double rarefaction with vacuum, water cavitation tube, two-phase expansion tube]
 tags: [benchmark, positivity, bound-preserving, riemann-solver]
-timestamp: 2026-10-23T19:51:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Double rarefaction (123) problem
@@ -34,6 +34,8 @@ right of the centre.
 
 | Source | Data | Domain | Grid | Final time |
 |---|---|---|---|---|
+| [Borges et al. (2008)](/sources/borges-2008.md) §5.2.1, Eq. (50), "123 problem" | $(1,\mp2,0.4)$, split at $x=0$ | $[-5,5]$ | 200 | 1 |
+| [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.3 | $(7,\mp1,0.2)$; also 2D with $v_2=0$, cut at $y=0$ | not printed | $\Delta x=0.01$ | 0.6 |
 | [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) §IV.C | $(1,\mp2,0.4)$ | $(-0.5,0.5)$ | 16 space–time quadrilaterals, $\mathbb P^2$ | 0.15 |
 | [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.3 | $(7,\mp1,0.2)$ | $[-1,1]$ | 200 cells, exact reference | 0.6 |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.5b | $(7,\mp1,0.2)$ | $[-1,1]$ | 400 points, reference from Zhang & Shu | 0.6 |
@@ -66,6 +68,11 @@ The three data sets fall in the three regimes of the vacuum criterion
   $\gamma$ for this problem; with $\gamma=5/3$, the value of Fu's Le Blanc
   problem, $c=0.408$ and the criterion gives $2.45<4$, the same regime.
 
+Zhang & Shu (2010b) attribute the critical-case data to Linde & Roe,
+and Wang et al. take the reference of their critical-case run from
+"Zhang & Shu". Borges et al.'s placement of the no-vacuum data, on
+$[-5,5]$ to $t=1$, is that of Li, Li, Don & Wang, of Tang and of Fan et al. (2025b).
+
 Luo et al. call their problem the "receding flow" or 123 problem and
 pose it, after Liou, as an open problem of overheating: an anomalous
 internal energy at the centre produced by Eulerian, Lagrangian and ALE
@@ -92,6 +99,24 @@ here $1.871+0.390=2.26>2$, a near-vacuum case like the 123 data
 *(compiler check, not in the sources)*.
 
 ## Findings across sources
+
+**The positivity limiter is needed at the vacuum point.** Zhang & Shu
+(2010b) run the critical case, whose exact solution contains a vacuum,
+with third-order Runge–Kutta DG and their
+[positivity-preserving limiter](/methods/zhang-shu-scaling-limiter.md),
+without the TVB limiter they use for shocks, and capture "the low
+pressure and the low density ... very well". Without the positivity
+limiter the DG scheme blows up; the TVB limiter alone stabilizes it but
+gives a result "poor" compared with the positivity-limited one, which
+is not plotted (§4.3, Fig. 4.3). See
+[bound preservation](/properties/bound-preservation.md).
+
+**Dissipation of the weights.** Borges et al. run the no-vacuum data
+with fifth-order finite-difference WENO, characteristic-wise
+Lax–Friedrichs splitting and third-order TVD Runge–Kutta, and find
+[WENO-Z](/methods/weno-z.md) and mapped WENO more accurate than WENO-JS
+"due to their lesser dissipativity", the same verdict as on their Sod
+and Lax runs (§5.2.1, Fig. 6).
 
 **Positivity limiters are triggered.** Fan, Zhang & Qiu's (2021)
 positivity-preserving hybrid [HWENO](/methods/hermite-weno.md) computes the critical case
@@ -286,6 +311,8 @@ condition is shown (§4.1).
 
 # Citations
 
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5.2.1, Eq. (50), Fig. 6.
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §4.3, Fig. 4.3.
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §IV.C, Figs. 18–21 (author manuscript).
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; Ex. 4.3, Fig. 4.3, Table 4.2.
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.5b, Fig. 5.10.

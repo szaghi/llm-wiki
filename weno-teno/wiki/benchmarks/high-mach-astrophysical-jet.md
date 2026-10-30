@@ -1,17 +1,18 @@
 ---
 type: Benchmark
 title: "High-Mach astrophysical jets"
-description: "Mach 80 and Mach 2000 gas jets injected into a light ambient medium, and their relativistic, MHD and gas–liquid relatives; near-vacuum, extreme-Mach-number robustness tests that most high-order schemes pass only with a positivity- or invariant-domain-preserving limiter."
+description: "Mach 80 and Mach 2000 gas jets (ambient density 5 in Zhang and Shu's original, 0.5 in most later sources), and their relativistic, MHD and gas–liquid relatives; near-vacuum, extreme-Mach-number robustness tests that most high-order schemes pass only with a positivity- or invariant-domain-preserving limiter."
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # High-Mach astrophysical jets
 
-A dense, fast gas jet is injected through a narrow slot into a lighter
-ambient gas at the same pressure. With injection speed 800 the jet Mach
+A dense, fast gas jet is injected through a narrow slot into an
+ambient gas at the same pressure, lighter in most later sources and of
+the same density in Zhang & Shu's (2010b) original runs (see below). With injection speed 800 the jet Mach
 number is about 2000, with speed 30 it is about 80; the bow shock, the
 contact surface and the cocoon then sit next to regions of nearly zero
 density and pressure, and in the Mach 2000 jet the kinetic energy per unit volume of the
@@ -25,9 +26,41 @@ measure of resolution.
 
 ## The Euler jets
 
-Common data ($\gamma=5/3$), printed by [Fu (2021)](/sources/fu-2021.md)
+**The original runs.** [Zhang & Shu (2010b)](/sources/zhang-2010-b.md)
+§4.4 compute both jets "without radiative cooling", crediting the Mach 80
+problem to Ha, Gardner, Gelb & Shu, with $\gamma=5/3$, in $(\rho,v_1,v_2,p)$:
+
+- **Mach 80** ("the Mach number of the jet inflow is 80 with respect to
+  the soundspeed in the jet gas"): domain $[0,2]\times[-0.5,0.5]$,
+  "full of the ambient gas with $(5,0,0,0.4127)$ initially"; on the left
+  boundary $(5,30,0,0.4127)$ for $y\in[-0.05,0.05]$ and $(5,0,0,0.4127)$
+  otherwise; outflow on the right, top and bottom; terminal time $0.07$;
+  $448\times224$ mesh; TVB parameters $M_1=\dots=M_4=10{,}000$; "the
+  result is comparable to the one in" Ha et al.
+- **Mach 2000**: domain $[0,1]\times[-0.25,0.25]$, the same ambient state
+  $(5,0,0,0.4127)$, jet $(5,800,0,0.4127)$ for $y\in[-0.05,0.05]$ of the
+  left boundary and $(5,0,0,0.4127)$ otherwise; terminal time $0.001$;
+  $640\times320$ mesh; $M_1=\dots=M_4=10^7$. The jet speed 800 is
+  "around Mach 2100 with respect to the soundspeed in the jet gas".
+
+The scheme is third-order RKDG ($\mathbb P^2$) with SSP-RK3, the
+characteristic TVB limiter and their positivity limiter at every stage
+([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md),
+[bound preservation](/properties/bound-preservation.md)); they present
+the problem as one where "negative pressure could appear since the
+internal energy is very small compared to the huge kinetic energy".
+In the original the ambient density equals the jet density, 5; the
+later common data below carry the ambient density 0.5.
+
+[Shu (2009a)](/sources/shu-2009.md) §6.2, item 5, recalls Ha et al.'s
+radiative-cooling computation: because of the very high Mach number
+shock (Mach 80), "many high resolution schemes become unstable but the
+WENO code is able to resolve the solution well". The review prints no
+data.
+
+**Common data of the later sources** ($\gamma=5/3$), printed by [Fu (2021)](/sources/fu-2021.md)
 §5.7.3 and [Takagi et al. (2022)](/sources/takagi-2022.md) §4.9, both
-citing Zhang & Shu's positivity-preserving DG paper for it (their refs.
+citing Zhang & Shu (2010b) for it (their refs.
 [76] and [74]; Rueda-Ramírez et al. (2022) attribute the Mach 2000 jet to Ha et
 al., Wang & Don take the setup from Gao et al.), in $(\rho,v_1,v_2,p)$:
 
@@ -46,6 +79,7 @@ speed and 682.08 with respect to the ambient one.
 
 | Source | Scheme | Grid | Final time | Positivity treatment |
 |---|---|---|---|---|
+| [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.4 | RKDG $\mathbb P^2$, SSP-RK3, characteristic TVB limiter (ambient density 5, see above) | Mach 80: $448\times224$; Mach 2000: $640\times320$ | Mach 80: $0.07$; Mach 2000: $0.001$ | their positivity limiter at every Runge–Kutta stage |
 | [Fu (2021)](/sources/fu-2021.md) §5.7.3 | [TENO-AA](/methods/adaptive-teno.md), LLF | Mach 80: $448\times224$; Mach 2000: $800\times400$ | not printed | positivity-preserving flux limiter |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.9 | [TENO-THINC](/methods/teno-thinc.md), TENO5, WENO5-Z | $800\times400$, CFL 0.35 | not stated | positivity-preserving flux limiter |
 | [Fu (2023)](/sources/fu-2023.md) Fig. 5 | TENO10 (review, reproduced) | $448\times224$, $800\times400$ | — | positivity-preserving limiter |
@@ -86,6 +120,9 @@ $[0,1]\times[-0.25,0.25]$ of the other sources.
 **A positivity limiter is needed by most schemes.** Fu (2021) computes
 both jets with LLF and the positivity-preserving flux limiter; Takagi
 et al. use the same kind of limiter for all three schemes they compare;
+Zhang & Shu (2010b), whose positivity limiter is the subject of the
+test, run both jets with it on top of the TVB limiter, with TVB
+parameters as large as $10^7$ on the Mach 2000 jet (§4.4).
 Fu (2023) presents the TENO10 jet as an example of near-vacuum robustness
 "with the PP limiter". Wang & Don state that their affine-invariant
 schemes are not positivity preserving in general and need a PP limiter
@@ -165,7 +202,7 @@ printed state is $30/\sqrt{(5/3)(0.4127)/5}\approx80.9$, the value of
 the common data *(compiler check, not in the sources)*.
 
 **Oscillation suppression and positivity as separate steps.** Cao et
-al. (2026) run both jets, citing Zhang & Shu's positivity paper and Ha
+al. (2026) run both jets, citing Zhang & Shu (2010b) and Ha
 et al. for them, with fourth-order COS(DG), which damps the
 non-mean modes of each DG polynomial once per time step, together with
 the Zhang–Shu positivity-preserving limiter; since COS acts only after
@@ -176,8 +213,8 @@ not used (Ex. 6.15, Figs. 17–18). They present the jets as tests of
 robustness at Mach numbers up to 2000, where negative pressure can
 occur, and find bow shocks and shear layers sharply resolved,
 consistent with the two cited works. Their Mach 80 run imposes outflow
-on the rest of the left boundary, where Takagi et al. impose
-$(5,0,0,0.4127)$.
+on the rest of the left boundary, where Takagi et al. and Zhang & Shu
+(2010b) impose $(5,0,0,0.4127)$.
 
 **An exception without a stated limiter.** Peng, Sun & Wu compute the
 Mach 2000 jet with OEDG on $320\times160$ to $t=0.001$ and report no
@@ -402,9 +439,18 @@ closest to them (§5.2.3).
 ## Qualifications
 
 - Fu (2021), Takagi et al. and Liang et al. (2022) do not print the final
-  times of the jets; the sources that do (Rueda-Ramírez et al. 2022 and 2024, Peng et
+  times of the jets; the sources that do (Zhang & Shu 2010b, Rueda-Ramírez et al. 2022 and 2024, Peng et
   al., Fan et al. 2022, 2023 and 2025a, Li et al. 2023a) use $t=10^{-3}$ for
-  Mach 2000.
+  Mach 2000, and Zhang & Shu (2010b) $t=0.07$ for Mach 80.
+- Ambient density: Zhang & Shu (2010b, §4.4, both jets) print the
+  ambient state $(5,0,0,0.4127)$, equal in density to the jet; Fu (2021)
+  and Takagi et al. (2022), who cite Zhang & Shu (2010b) for the setup, and the
+  later sources listed under the common data print $(0.5,0,0,0.4127)$.
+  With the original data the jet and ambient sound speeds coincide, so
+  Rueda-Ramírez et al.'s second Mach number (682.08, relative to the
+  ambient gas of density 0.5) has no counterpart there *(compiler check,
+  not in the sources)*. The two setups are recorded side by side; no
+  source compares them.
 - Fan, Zhang & Qiu (2022)'s printed jet density 0.5 makes their jet a
   Mach 682 jet as defined on this page; whether the printed value or
   the name is the slip cannot be told from the paper.
@@ -438,6 +484,8 @@ closest to them (§5.2.3).
 
 # Citations
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §4.2, §4.4, Figs. 4.5–4.6.
+- [Shu (2009a)](/sources/shu-2009.md) — §6.2, item 5.
 - [Fu (2021)](/sources/fu-2021.md) — §5.7.3, Figs. 11–14 (arXiv v1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.9, Fig. 20.
 - [Fu (2023)](/sources/fu-2023.md) — §3.1, Fig. 5 (reproduced).

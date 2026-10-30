@@ -6,6 +6,123 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 12 — founding papers: MUSCL, TVD, ENO, TVD Runge–Kutta, WENO, WENO-Z, the WENO review, Zhang–Shu positivity, TENO (2026-10-30)
+
+Sources (10): vanleer-1979, harten-1983, harten-1987, shu-1988, liu-1994,
+jiang-1996, borges-2008, shu-2009, zhang-2010-b, fu-2016. Added by the human
+after the archive phase (217 files; 214 of 217 ingested, the three defective
+files unchanged). 230 concept pages plus the registry, 5733 bibliography
+entries, eight contradictions open. Done under the night protocol (no
+staging; `.night/` snapshot).
+
+### Versions read (not the version of record)
+
+- `harten-1983`: NYU Courant report DOE/ER/03077-175 (March 1982), 69-page
+  NTIS reproduction.
+- `shu-1988`: ICASE Report 87-33 / NASA CR-178304 (May 1987).
+- `jiang-1996`: author preprint (40 pages, undated).
+- `liu-1994`: version of record, image-only scan (read visually).
+
+### Contradictions
+
+- **Opened: order of WENO-JS at critical points** (accuracy at critical
+  points): Jiang & Shu (1996, Eq. (3.9)) state and use fifth order; Borges
+  et al. (2008, §2, Table 3) state third order at a first-order critical
+  point and print the errors. *Open.* The Δx⁵ term that Jiang & Shu's
+  expansions (3.5)–(3.7) leave out (printed by Borges et al., Eqs.
+  (12)–(14)) is recorded on jiang-1996 as a compiler check.
+- WENO-Z against mapped WENO cost (existing, weno-z): Borges et al.'s
+  Tables 5–6 (1.39 s against 1.87 s per Runge–Kutta step, one code, one
+  machine) added; still *Open*.
+
+### Recorded side by side (no verdict)
+
+- TVD: Harten's Lemma 2.2 is a sufficient condition (the paper's term is
+  "TVNI"); Puppo's "iff" form kept with its attribution.
+- MUSCL as van Leer (1979) prints it (Woodward's Lagrangean step plus remap;
+  no κ family, no Hancock predictor, no "TVD"); the 1979 forward-facing-step
+  run beside the Woodward & Colella attribution.
+- TENO: Fu et al. (2016) print no ε; the page's 10⁻⁴⁰ stays with Takagi, Ye
+  & Fu (2023). TENO6 is sixth order in Fu et al. (only TENO6-opt is fifth);
+  Hong et al.'s "TENO6 is fifth order" attributed.
+- High-Mach jets: Zhang & Shu (2010b) print the ambient state (5,0,0,0.4127);
+  later sources 0.5 density.
+- Lax tube: Borges et al. print the left pressure 0.3528, Fu et al. (2016)
+  the left velocity 0.689 (others 3.528 and 0.698).
+- Characteristic decomposition: four founding variants (per interface;
+  cell state; node state; interface average).
+- Conservative finite differences: Shu & Osher (1988) build the flux by
+  interpolation plus Taylor corrections; the implicit-function (φ) form is
+  credited to 1988 and 1989 by Jiang & Shu, to 1989 by Shu (2009a).
+
+### Printed slips (on the Source pages; compiler checks verified)
+
+- **Liu et al. (1994), p. 202:** the fourth-order TVD Runge–Kutta as printed
+  gives $R(z)=1+\frac{145}{108}z+\frac{43}{54}z^2+\dots$ (not consistent);
+  with ½L in the first stage it is fourth order.
+- **Shu & Osher (1988), (2.23)** ("fifth order", from Lambert p. 143):
+  $b^\top Ac=8/45\ne1/6$, order 2 as printed; CFL 7/30 reproduced. (2.21)
+  prints ΔtL(u⁽³⁾) where L(u⁽²⁾) gives classical RK4 with CFL 137/200.
+  Decision for the human: compare with the JCP version if wanted.
+- Borges et al. (2008): linear weights printed against the Fig. 1 labelling;
+  Eq. (26) drops a term; Table 1 exponent; Table 3 first entry; Atwood
+  number 0.54 (densities give at most 0.533).
+- Harten (1983a): (3.5b) sign, (3.10a) factor and argument, (6.1b), (8.4)–(8.5)
+  and others (15 items in the notes).
+- Harten et al. (1987a): Tables IB/IIB, (3.19b), (6.5c), (A.9)/(A.10), Sod cited
+  as [23].
+- Jiang & Shu (1996): shock–vortex left state (1,√γ,0,1) with "Mach 1.1";
+  speed-up statements against Table 6; refs [11]/[17] with the same vol:pages.
+- Zhang & Shu (2010b): Table 4.1 last L∞ order 3.02 (errors give 3.11);
+  accuracy assumption printed as a distance to the set.
+- Fu et al. (2016): stencil numbering in §3.2, "Eq. (22)" for (23), Fig. 6
+  legend, "three-dimensional" tests; refs [5]/[43] a duplicate.
+- Van Leer (1979), Shu (2009a): cross-reference and label slips.
+
+### Identity and bibliography (decisions for the human)
+
+1. **`san-2014`** (existing entry): Crossref gives first page 254, the entry
+   has 256. Correct the field?
+2. **`harten-1983-e`** (Harten, Lax & van Leer ICASE report): no year printed;
+   keyed with the citing year 1983; the report year is unverified.
+3. Two Zhang & Shu 2010 works beyond the Source: `zhang-2010-c` (SIAM J. Numer.
+   Anal. 48:772) and `zhang-2010-d` (a pre-publication form).
+4. ha-2005 and shu-2005 page misprints in the citing lists (Crossref-checked,
+   noted only); bihari-1995 is J. Comput. Appl. Math.
+
+### Symbols (page-local, candidates for registry §10 or unification)
+
+- Critical-point order: m (critical-point-accuracy, borges-2008) against
+  n_cp (weno-z and the Borges/Tang text): one letter?
+- Harten's compression switch: θ_AC on four pages, θ_H on hybrid-weno (which
+  writes it at the interface; Harten defines it per cell; not checked).
+- Divided-difference speed: 𝖺 (harten-tvd-scheme) against ā (godunov-scheme,
+  harten-1983); stored slope Δ_i (TVD page) against 𝗌_i (vanleer-1979);
+  forward-Euler limit λ₀ (ssp-runge-kutta) against Δt_FE (shu-1988).
+- Harten's viscosity Q(ν) on six pages (clashes with the SBP Q); W as the
+  primitive function (clashes with the Lorentz factor); φ as mass fraction.
+- Multi-page page-local symbols: η_b (TENO blend), μ_ZS, 𝖺_PS, M_d, α_ik/β_ik,
+  a_2k, p^±, C_k, s₁/s₂.
+
+### Candidates for new pages (kept inline)
+
+Quasi-1D nozzle flow (Harten 1983a, Jiang & Shu 1996: two sources), exact
+Riemann solver (van Leer, App. A), Cauchy–Kowalewski procedure, negative
+linear weights, optimized TENO backgrounds.
+
+### Other follow-ups
+
+- Li et al. (2022b)'s WENO5-Z orders 5.14–5.37 at a critical point are quoted
+  on weno-z and critical-point-accuracy without q.
+- Verdict wording older than chunk 12 remains (alternative-weno, "correct",
+  lines ~147 and ~304).
+- sod-and-lax-shock-tubes description shortened to 58 words: "multiphase
+  relatives" replaces the longer list.
+- The compiler removed an assumption-bearing check (Harten et al.'s step
+  counts converted to times) from the nonconvex-flux page, and a
+  compiler-voice sentence on the roles of conservation, compactness and
+  entropy from the Lax–Wendroff page.
+
 ## Chunk 11 — closing chunk: COS(DG), adaptive-dissipation AWENO, learned fluxes, high-order AMR, AthenaK; whole-bundle deep lint (2026-10-24)
 
 Sources (5): cao-2026, liu-2026, wang-2026, wang-2023, stone-2026. 204 of

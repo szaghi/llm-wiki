@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Lax–Wendroff theorem"
-description: "The Lax–Wendroff theorem makes conservation in flux form, with consistent numerical fluxes, the condition for a convergent scheme to converge to a weak solution; the sources invoke it for local conservation, Active Flux, subcell fluxes of DGSEM and conservative multi-medium schemes, extend it to a vanishing conservation defect, and show wrong shock speeds without conservation."
+description: "The Lax–Wendroff theorem makes conservation in flux form with consistent fluxes the condition for convergence to a weak solution; the founding TVD and ENO papers pair it with total-variation bounds and entropy consistency; later sources invoke it for Active Flux, DGSEM subcells and multi-medium schemes, extend it to a vanishing conservation defect, and show wrong shock speeds without conservation."
 status: established
 aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
 tags: [finite-volume, finite-difference, dg]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:12:00Z
 ---
 
 # Lax–Wendroff theorem
@@ -21,10 +21,33 @@ $$\frac{d}{dt}\bar u_i=-\frac1{\Delta x}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big),
 
 and the numerical flux is **consistent** with the physical one. The sources use it in one
 direction only: conservation (with consistent fluxes) is what a scheme needs for
-convergence to a weak solution (Abgrall & Barsukow, §1). Only
-[Gaburro et al. (2024)](/sources/gaburro-2024.md) restate convergence hypotheses, for a
+convergence to a weak solution (Abgrall & Barsukow, §1). The founding papers of TVD and ENO
+schemes state the convergence argument around it (next section), and
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) restate convergence hypotheses for a
 modified version of the theorem (below); otherwise the bundle records the theorem through
 what the sources derive from it.
+
+## The convergence argument of the founding papers
+
+[Shu & Osher (1988)](/sources/shu-1988.md) (§I, Eqs. (1.3)–(1.4)) write the conservative
+scheme $u^{n+1}_i=u^n_i-\frac{\Delta t}{\Delta x}(\hat f_{i+1/2}-\hat f_{i-1/2})$ with a
+consistent flux $\hat f(u,\dots,u)=f(u)$ and state that this guarantees that bounded,
+almost-everywhere convergent subsequences converge to weak solutions, citing the
+Lax–Wendroff theorem. [Harten (1983a)](/sources/harten-1983.md) (§1) states the full chain
+for a conservative scheme, citing earlier work: (i) a total variation bounded uniformly in
+$t$, $\Delta t$ and $\Delta x$, (ii) consistency with the entropy condition for all entropy
+functions, and (iii) uniqueness implied by the entropy condition give convergence to the
+entropy solution; the discrete entropy inequality the paper defines is
+$\eta(u^{n+1}_i)\le\eta(u^n_i)-\frac{\Delta t}{\Delta x}(\hat F_{i+1/2}-\hat F_{i-1/2})$ with a
+consistent numerical entropy flux $\hat F$ (page-local; Eq. (1.5)). Harten proves (i)
+([TVD](/definitions/total-variation-diminishing.md)) for the paper's scalar scheme and only
+conjectures that entropy consistency
+([entropy stability](/properties/entropy-stability.md)) carries over to it (§5;
+[Harten's TVD scheme](/methods/harten-tvd-scheme.md)).
+[Harten et al. (1987a)](/sources/harten-1987.md) (§1, Eq. (1.19)) state the same pairing for
+ENO: $TV(u_h(\cdot,t))\le C\,TV(u_0)$ gives convergence of a subsequence in $L^1_{\mathrm{loc}}$ to
+a weak solution, and they leave the total-variation bound of ENO as a conjecture
+(Eq. (1.22)).
 
 ## The consistency condition
 
@@ -114,7 +137,17 @@ conservation defect" there (§4.4; [Lax–Friedrichs flux](/methods/lax-friedric
 
 ## What dropping conservation costs
 
-Three sources show the consequence the theorem warns of, a wrong shock speed:
+Four sources show the consequence the theorem warns of, a wrong shock speed:
+
+- **A non-conservative ENO variant.** [Shu & Osher (1988)](/sources/shu-1988.md) (§III,
+  Eqs. (3.18)–(3.19), p. 20) tried a variant of their flux ENO scheme that differentiates the
+  interpolant at the grid point instead of differencing fluxes. Without a cap on the divided
+  differences it gives the wrong shock location on a Burgers Riemann problem
+  ($u=\tfrac12$ left, $u=-1$ right, fifth-order versions); with the cap it becomes, in their
+  word, "essentially conservative", a conservative scheme plus $O(\Delta x^2)$, which keeps
+  the conclusion of the theorem, and the location is correct but the shock "severely
+  smeared"; the variant was abandoned (no figure printed; see
+  [Burgers-equation tests](/benchmarks/burgers-equation-tests.md)).
 
 - **Non-conservative blending in time.** The [Quinpi](/methods/quinpi.md) scheme blends a
   high-order and a first-order implicit solution cell by cell, which is not conservative.
@@ -179,6 +212,9 @@ Three sources show the consequence the theorem warns of, a wrong shock speed:
 # Citations
 
 - [Abgrall & Barsukow (2023)](/sources/abgrall-2023.md) — §1 (author preprint).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §I (Eqs. (1.3)–(1.4)), §III (Eqs. (3.16)–(3.19), p. 20) (ICASE Report 87-33).
+- [Harten (1983a)](/sources/harten-1983.md) — §1 (Eqs. (1.3)–(1.5)), §5 (NYU report DOE/ER/03077-175, March 1982).
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §1 (Eqs. (1.19), (1.22)).
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §2.4 (Eqs. (18)–(22), Observation 1, Remark 1), App. A.1 (Lemma A.1), §8.2 (arXiv v1).
 - [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) — §2.1 (Eq. (8)), §5.1 (Figs. 2–3) (arXiv v2).
 - [Puppo et al. (2023)](/sources/puppo-2023.md) — §3.3.4, §4.3.2 (Fig. 7) (arXiv v2).

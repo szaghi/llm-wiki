@@ -149,7 +149,7 @@ told apart by venue.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-22), cited further in chunks 5–11 (2026-10-22/24). This source is cited on:
+Chunk 4 (2026-10-22), cited further in chunks 5–12 (2026-10-22/30). This source is cited on:
 
 * [Adaptive moving mesh finite differences](/methods/adaptive-moving-mesh.md)
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)

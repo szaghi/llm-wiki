@@ -1,16 +1,20 @@
 ---
 type: Method
 title: "MUSCL and MUSCL–Hancock schemes"
-description: "MUSCL reconstructs limited piecewise-linear states from cell averages, in a one-parameter κ family; MUSCL–Hancock adds a half-step predictor of the boundary values and one Riemann solve per interface, a second-order single-step scheme that the bundle's AMR, immersed-boundary and multiphase solvers use as their base discretization."
+description: "MUSCL was named in 1979 for Woodward's code of van Leer's second-order sequel to Godunov's method, a Lagrangean step with stored limited slopes and characteristic interface derivatives followed by a remap; later sources use the name for limited piecewise-linear reconstruction in a κ family and for the MUSCL–Hancock predictor scheme that the bundle's AMR, immersed-boundary and multiphase solvers build on."
 status: established
 aliases: [MUSCL, MUSCL reconstruction, kappa scheme, κ-scheme, MUSCL–Hancock method, MHM, van Leer MUSCL]
 tags: [reconstruction, limiting, finite-volume, riemann-solver, muscl]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-10-30T07:59:00Z
 ---
 
 # MUSCL and MUSCL–Hancock schemes
 
-**MUSCL** reconstruction (after van Leer, as recalled by the sources) replaces the cell average
+**MUSCL**, "Monotonic Upstream-centered Scheme for Conservation Laws", is the name of the
+code in which P. R. Woodward implemented the second-order Godunov-type method of
+[van Leer (1979)](/sources/vanleer-1979.md) (§1); the original is a Lagrangean scheme with
+independently stored slopes followed by a remap (next section). In the later sources of the
+bundle, MUSCL reconstruction (after van Leer, as they recall it) replaces the cell average
 $\bar u_i$ by a limited linear function in each cell and evaluates it at the two faces; the
 interface states feed a two-point flux $h(u^-_{i+1/2},u^+_{i+1/2})$. **MUSCL–Hancock** makes
 the scheme second order in time within a single step: the two boundary values of each cell are
@@ -18,6 +22,60 @@ advanced by half a time step with the physical flux before the Riemann problems 
 In this bundle neither is a subject of study; both are the base discretization of
 second-order finite-volume solvers into which the sources' contributions are built — adaptive
 mesh refinement on curvilinear meshes, an immersed-boundary method, a multiphase model.
+
+## The original MUSCL (van Leer 1979)
+
+Van Leer (1979) presents the method as "a second-order sequel to Godunov's method" for ideal
+compressible flow in plane, cylindrical or spherical symmetry, extended to several
+dimensions by time splitting ([Godunov scheme](/methods/godunov-scheme.md)). As printed:
+
+1. **Lagrangean step with stored slopes** (§2.2, Eqs. (39)–(53)). In the mass coordinate,
+   specific volume, velocity and total energy are linear in each slab, given by the slab
+   average and a slope that is "independent" of the averages, "can not be derived from the
+   latter and must be stored separately"; six slab data are updated per cell. The averages
+   are updated by exact integral balances, valid "regardless of the presence of
+   discontinuities in the slab".
+2. **Interface states** (§2.3, Eqs. (54)–(66)). At each interface the jump between the two
+   linear profiles is resolved as in Godunov's method, with exact wave relations and an
+   iteration for the resolved pressure (acoustic start value; iteration only where it
+   differs by more than 1 %); the first time derivatives of velocity, pressure and volume
+   just after resolution come from the characteristic equations on both sides of the
+   contact. This is the interface-derivative idea of the
+   [generalized Riemann problem](/methods/generalized-riemann-problem.md), which the paper
+   does not name.
+3. **Half step and full step** (§2.4, Eqs. (67)–(90)). Interface values advanced half a step
+   with these derivatives give time-centred fluxes for a one-step second-order update; new
+   slopes come from the new interface values ("interface differencing").
+4. **Remap** (§3.2, Eqs. (92)–(100.5)). The Lagrangean result is remapped to the fixed
+   Eulerian grid with least-squares (first-moment) accuracy
+   ([conservative remapping](/methods/conservative-remapping.md)).
+5. **Monotonicity algorithms** (§3.3, Eqs. (101)–(104)). The stored slopes are limited
+   before the Lagrangean step and in the remap, so that the linear profiles stay within the
+   neighbouring averages ([TVD and slope limiters](/definitions/total-variation-diminishing.md)).
+
+The convective scheme inside the Lagrangean step is the upstream-centred "scheme II" of the
+fourth paper of the series; with slopes recomputed from averages it "boils down to" Fromm's
+second-order scheme (App. B). The paper prints no κ parameter, no Hancock predictor and no
+"TVD": the κ family and the Hancock step below are the later sources' forms. Its own list of
+desiderata includes least-squares fitting in the Lagrangean step, a limiter that clips peaks
+less, shallow water and MHD (§5).
+
+**Evidence of 1979** (§4). On Sod's tube (100 cells, Courant number 0.9, 34 steps to
+$t=0.14154$; [Sod and Lax tubes](/benchmarks/sod-and-lax-shock-tubes.md)) the method is
+called "superior to all methods tested by Sod", at 0.47 s per step on an IBM 370/158 and
+0.17 s on a CDC 6600. On the Mach 3 [forward-facing step](/benchmarks/forward-facing-step.md)
+(runs by Woodward) MUSCL on a grid with entrance height of 10 cells is said to mimic
+Godunov's method on 30, and a 1008-cell step takes 8.78 s per time step, 2.33 times the
+FCT code ALFVEN, which must run at Courant numbers at most $\tfrac12$, so MUSCL is 15–20 %
+slower in absolute time advancement (§4, pp. 123, 129). On the coarsest grid an apparent
+Mach stem is an artifact of the limiters (Fig. 9).
+
+[Harten et al. (1987a)](/sources/harten-1987.md) (§1, Eqs. (1.12), (1.21); §2) take MUSCL as
+the second-order member of the reconstruct–evolve–average hierarchy, piecewise-linear
+$\mathsf R=\bar u_i+s_i(x-x_i)$ with $s_i=\partial_xu(x_i)+O(\Delta x)$, TVD in the scalar
+case; because the limiter makes the error coefficient of the reconstruction discontinuous at
+extrema, they call such schemes "second order accurate" in quotation marks, $L_1$ order 2
+and maximum-norm order 1 (Remark 1.2).
 
 ## The κ family of limited reconstructions
 
@@ -183,6 +241,8 @@ shows proper second order convergence for all of the resolutions we have tested"
 
 # Citations
 
+- [Van Leer (1979)](/sources/vanleer-1979.md) — §1, §2.2–2.4 (Eqs. (39)–(90)), §3.2–3.4 (Eqs. (92)–(104)), §4 (Figs. 6–11), §5, App. B.
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §1 (Eqs. (1.12), (1.21), Remark 1.2), §2.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.3 (Eqs. (26)–(31)), §3.1.
 - [Peng et al. (2022)](/sources/peng-2022.md) — §2.1, §2.3, §2.4 (Eqs. (15)–(20)), §2.5.2, §3.1 (Fig. 5) (accepted manuscript).
 - [Wang et al. (2022a)](/sources/wang-2022.md) — §2.1 (Eqs. (4)–(11)), §3.3 (Table 1), §3.6.

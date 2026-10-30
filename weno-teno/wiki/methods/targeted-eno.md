@@ -5,12 +5,13 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Targeted ENO (TENO)
 
-**Targeted ENO** (Fu, Hu and Adams 2016, as recalled by the sources) is a family
+**Targeted ENO**, introduced by [Fu, Hu & Adams (2016)](/sources/fu-2016.md)
+(§3, Eqs. (21)–(29), Tables 1–2, 5), is a family
 of nonlinear shock-capturing reconstructions in which each candidate stencil is
 either used with its *linear* weight or discarded completely. A $K$-point TENO
 scheme combines $K-2$ candidate fluxes,
@@ -26,7 +27,15 @@ decided by a sharp cut-off on a scale-separated smoothness measure
 [Liang et al. (2022)](/sources/liang-2022.md), §2.2, Eqs. (6)–(15)). This is the defining difference from
 WENO, where every stencil contributes with a smoothness-dependent weight, and from
 ENO, which keeps only the smoothest stencil and cannot recover the full-stencil
-optimal accuracy (Fu 2023, §2.3).
+optimal accuracy (Fu 2023, §2.3). Fu et al. (2016, §3.1.4) explain the name: because
+$\delta_k$ is binary, "a smooth-transition from high-order to low-order through the
+weighting strategy is prevented", yet the scheme can reach "arbitrarily high-order
+accuracy while satisfying the ENO property"
+([ENO property](/definitions/eno-property.md)). Their motivation (§1) is that
+classical WENO is too dissipative for turbulence simulations, that very-high-order
+WENO loses robustness when several discontinuities lie close together, and that
+WENO-CU6 produces spurious waves at marginally resolved wavenumbers
+([WENO-CU6](/methods/weno-cu6.md)).
 
 ## The basic recipe (finite difference)
 
@@ -40,18 +49,24 @@ about $x_{i+1/2}$.
 
 $$\{r_k\}=\begin{cases}\{3,3,3,4,\dots,\tfrac{K+2}{2}\},&K\ \text{even},\\ \{3,3,3,4,\dots,\tfrac{K+1}{2}\},&K\ \text{odd},\end{cases}\qquad k=0,\dots,K-3,$$
 
-(Fu 2023, Eq. (5); Ye et al., Eq. (1); Huang et al., Eq. (7); Hong et al., Eq. (7)). TENO numbers stencils differently from
+(Fu et al. 2016, §3.1.1, Eq. (21), where $r$ is redefined as "the width of a specific
+candidate stencil"; Fu 2023, Eq. (5); Ye et al., Eq. (1); Huang et al., Eq. (7); Hong et al., Eq. (7)). TENO numbers stencils differently from
 the registry's WENO convention: $S_0=\{i-1,i,i+1\}$ is the central stencil,
 $S_1=\{i,i+1,i+2\}$ the downwind-biased one, $S_2=\{i-2,i-1,i\}$ the upwind one,
 then $S_3=\{i,\dots,i+3\}$, $S_4=\{i-3,\dots,i\}$, $S_5=\{i,\dots,i+4\}$, each
-containing at least one upwind point (Takagi et al., Fig. 1; Ye et al., Table 1).
+containing at least one upwind point, "decreasing the strong anti-dissipation induced
+by a pure downwind stencil" (Fu et al. 2016, §3.1.1, Fig. 1, Table 1, which prints the
+candidate fluxes up to $S_5$; Takagi et al., Fig. 1; Ye et al., Table 1). An order-$K$
+reconstruction uses $\bigcup_{k=0}^{K-3}S_k$, and adding the upwind- or downwind-biased
+$S_{K-2}$ gives order $K+1$; odd orders are upwind-biased and even orders central
+(Fu et al. 2016, §3.1.1).
 The three smallest are the WENO5-JS stencils, which Fu (2023, §2.1) credits for
 keeping WENO5-JS robustness at very high order. Starting from 2-point stencils is
 possible but adds the dissipation of a second-order candidate, "which renders the
 motivation questionable" (§2.1). The fifth-order candidate fluxes are
 $\hat f^{(0)}=\tfrac16(-f_{i-1}+5f_i+2f_{i+1})$,
 $\hat f^{(1)}=\tfrac16(2f_i+5f_{i+1}-f_{i+2})$,
-$\hat f^{(2)}=\tfrac16(2f_{i-2}-7f_{i-1}+11f_i)$ (Takagi et al., Eq. (7)).
+$\hat f^{(2)}=\tfrac16(2f_{i-2}-7f_{i-1}+11f_i)$ (Fu et al. 2016, Table 1; Takagi et al., Eq. (7)).
 
 **2. Strong scale separation.**
 
@@ -59,7 +74,15 @@ $$\gamma_k=\Big(C+\frac{\tau_K}{\beta_k+\epsilon}\Big)^q,\qquad C=1,\ q=6,\ \eps
 
 (Fu 2023, Eq. (6); Takagi et al., Eq. (8); Ye et al., Eq. (6)), with $\beta_k$
 the Jiang–Shu [smoothness indicator](/definitions/smoothness-indicator.md) of
-$S_k$ and $\tau_K$ a smoothness measure of the full $K$-point stencil. The
+$S_k$ and $\tau_K$ a smoothness measure of the full $K$-point stencil. Fu et al.
+(2016, §3.1.2, Eqs. (22)–(23)) print the measure with $C=1$ and "typically $q=6$"
+($q=6$ in all their runs, Table 5), and the indicator of a stencil of width $r_k$ as the
+Jiang–Shu sum over the derivatives $1,\dots,r_k-1$; they print no value of $\epsilon$,
+only "a small value to prevent division by zero" (§2.2). The value $10^{-40}$ is that
+of the later sources cited above. Fu et al. argue that the large $q$ and small $C$
+enhance discontinuity detection "rather than" sacrificing it, against WENO-Z and
+WENO-CU6, which avoid $q>1$, and WENO-CU6-M, whose $C=1000$, $q=4$ "reduces the
+effectiveness of discontinuity detection" (§3.1.2). The
 subscript of $\tau_K$ is the full-stencil size $K$, as in the registry and the
 sources, not the power of $\Delta x$ it carries ($\tau_K$ is of order 6 for every
 $K\ge6$ below). Ye et al.
@@ -71,7 +94,10 @@ note the same form covers WENO-Z ($C=1$) and WENO-CU6 ($C=20$), with $q=2$ in
   with $\tau_5=O(\Delta x^5)$ and $\tau_5/(\beta_k+\epsilon)=O(\Delta x^3)$, Eqs. (25)–(27);
   Liang et al., §2.2, "for a low computational cost"; Huang et al., §2, "following"
   Borges et al. and Fu et al.; Hong et al., Eq. (17), chosen for cost instead of the
-  full-stencil form). The adaptive TENO5-A replaces it by a sixth-order five-point
+  full-stencil form). Fu et al. (2016, §3.2) state that $\tau_5$ "is taken from
+  Eq. (14) in WENO-Z", where it is printed as $\lvert\beta_0-\beta_2\rvert$ in the
+  WENO-JS labels (0 upwind, 2 downwind), i.e. the same outer-stencil difference; the
+  TENO-label form $\lvert\beta_1-\beta_2\rvert$ is the later sources'. The adaptive TENO5-A replaces it by a sixth-order five-point
   $\tau_5$ ([adaptive TENO](/methods/adaptive-teno.md));
 - $K\ge6$: $\tau_K=\big\lvert\beta_K-\tfrac16(\beta_1+\beta_2+4\beta_0)\big\rvert=O(\Delta x^6)$,
   with $\beta_K$ the indicator of the full stencil (the WENO-CU6 form; Fu 2023,
@@ -79,19 +105,36 @@ note the same form covers WENO-Z ($C=1$) and WENO-CU6 ($C=20$), with $q=2$ in
   full in Eq. (29); Hong et al., Eq. (10), who print the five-point indicator
   $\beta_{5,5}$ of $\{i,\dots,i+4\}$ and the 8-point $\tau_8$ as a 36-term
   quadratic form with denominator 62270208000, Eqs. (19)–(20), to show the cost).
+  For TENO6, Fu et al. (2016, §3.3) take the WENO-CU6 $\tau_6$ of their Eq. (19),
+  printed as $\beta_6-\tfrac16(\beta_0+\beta_2+4\beta_1)$ in the WENO-JS labels,
+  without absolute value. For general $K$ their own global indicator is a different
+  one (App. A, Eqs. (A.1)–(A.3)): the part of the full-stencil Jiang–Shu indicator
+  with the high derivatives,
+  $\tau_K=\sum_{j=\lceil K/2\rceil}^{K-1}\Delta x^{2j-1}\int_{I_i}\big(\tfrac{d^j}{dx^j}\hat f_K(x)\big)^2dx
+  =\Delta x^{2\lceil K/2\rceil}\big(f^{(\lceil K/2\rceil)}(x_i)\big)^2+O(\Delta x^{2\lceil K/2\rceil+2})$,
+  "$\approx O(\Delta x^K)$", with $\hat f_K$ the $K$-point polynomial (the printed
+  lower limit is $(K+1)/2$ for odd $K$ and $K/2$ for even $K$). The sixth-order
+  $\tau_K$ for every $K\ge6$ is therefore the later sources' choice, not the
+  appendix's.
 
 **3. Normalization and sharp cut-off.**
 
 $$\chi_k=\frac{\gamma_k}{\sum_l\gamma_l},\qquad
 \delta_k=\begin{cases}0,&\chi_k<C_T,\\1,&\text{otherwise}\end{cases}$$
 
-(Fu 2023, Eqs. (8)–(9); Takagi et al., Eqs. (11)–(12)).
+(Fu et al. 2016, §3.1.3, Eqs. (25)–(26); Fu 2023, Eqs. (8)–(9); Takagi et al.,
+Eqs. (11)–(12)). Fu et al. call $C_T$ "a compromise between good spectral properties
+and numerical robustness" and also "an effective and direct means to control the
+spectral properties" for specific problems, such as compressible turbulence with
+embedded shocklets (§3.1.3).
 
 **4. Renormalized linear weights.** $\omega_k=d_k\delta_k/\sum_ld_l\delta_l$
-(Fu 2023, Eq. (10)). For TENO5 $d_0=6/10$, $d_1=3/10$, $d_2=1/10$, the
-fifth-order upwind scheme in TENO labelling (Takagi et al., Eq. (13)); for TENO7
-$d=(18,9,3,4,1)/35$ (Ye et al., Eq. (4)). Huang et al. (§2, Table 1) list the
-formal-order weights for $K=3,\dots,8$:
+(Fu et al. 2016, §3.1.4, Eqs. (27)–(28); Fu 2023, Eq. (10)). For TENO5 $d_0=6/10$, $d_1=3/10$, $d_2=1/10$, the
+fifth-order upwind scheme in TENO labelling (Fu et al. 2016, Table 5; Takagi et al., Eq. (13)); for TENO7
+$d=(18,9,3,4,1)/35$ (Ye et al., Eq. (4)). Fu et al. (2016, §3.1.1, Table 2) list the
+formal-order weights for $K=3,\dots,8$, "the optimal weight for candidate stencil
+$S_k$ to assemble a $K$-th order scheme", and Huang et al. (§2, Table 1) reprint
+the same table:
 
 | $K$ | $d_0,d_1,\dots,d_{K-3}$ |
 |---|---|
@@ -105,6 +148,17 @@ formal-order weights for $K=3,\dots,8$:
 The $K=7$ row agrees with Ye et al. The $d_k$ can instead be chosen by
 spectral optimization (TENO8-opt; Fu 2023, §2.5), see
 [approximate dispersion relation](/definitions/approximate-dispersion-relation.md).
+The founding paper already does so (Fu et al. 2016, §4, Eq. (31), Tables 3–5): the
+order-$K$ background is replaced by $\eta_{\mathrm b}g^{(1)}+(1-\eta_{\mathrm b})g^{(2)}$
+of two order-$(K-1)$ sub-schemes ($\eta_{\mathrm b}$ the page-local blending parameter
+used for TENO-M below), at the cost of one order. TENO5-opt takes $\eta_{\mathrm b}=0.2$,
+$d=(0.55,0.4,0.05)$ (fourth order; $\eta_{\mathrm b}=0.4$ is the upwind fifth-order scheme), and
+TENO6-opt $\eta_{\mathrm b}=0.54$, $d=(0.462,0.3,0.054,0.184)$ (fifth order; $\eta_{\mathrm b}=0.5$ is
+the sixth-order central scheme), chosen with the dispersion–dissipation ratio of Hu
+et al. *(Compiler check, not in the sources: every row of their Tables 3–4 lies on
+$d=(\tfrac12+\tfrac{\eta_{\mathrm b}}4,\tfrac12-\tfrac{\eta_{\mathrm b}}2,\tfrac{\eta_{\mathrm b}}4)$ for five points and
+$d=(\tfrac3{10}+\tfrac{3\eta_{\mathrm b}}{10},\tfrac3{10},\tfrac{\eta_{\mathrm b}}{10},\tfrac25-\tfrac{2\eta_{\mathrm b}}5)$
+for six, e.g. $\eta_{\mathrm b}=0.54$: $0.3+0.162=0.462$, $0.4-0.216=0.184$.)*
 [Liang & Fu (2024b)](/sources/liang-2024-b.md) (§2.2, Eqs. (9)–(20);
 §3.3.1, Eqs. (36)–(46)) recall the eight-point recipe in full, stencil
 widths $\{3,3,3,4,4,5\}$, $q=6$, $\epsilon=10^{-40}$ and the sixth-order
@@ -133,6 +187,7 @@ Values used:
 
 | value | context | source |
 |---|---|---|
+| $10^{-5}$; $10^{-7}$ | TENO5 and TENO5-opt; TENO6 and TENO6-opt (one parameter set for all tests); called "problem independent" | [Fu et al. (2016)](/sources/fu-2016.md), §5, Table 5; §6 |
 | $10^{-5}$ to $10^{-7}$ | typical range; smaller resolves higher wavenumbers | Fu 2023, §2.3; Ye et al., §2.3 |
 | $10^{-5}$ to $10^{-7}$ | "rather flexible" range, recalled for unstructured TENO | Ji et al., §3.3 |
 | $10^{-5}$ | TENO5 default | Takagi et al., §4; Liang et al., §2.2; Huang et al., §2 ("by spectral analysis") |
@@ -167,7 +222,11 @@ a function of $C_T$ (the table does not name the scheme): $1.058$ at $10^{-4}$, 
 $10^{-6}$, $1.322$ at $10^{-7}$, $1.398$ at $10^{-8}$, $1.473$ at $10^{-9}$,
 $1.549$ at $10^{-10}$, $1.624$ at $10^{-11}$, $1.706$ at $10^{-12}$ and $1.794$ at
 $10^{-13}$ *(compiler check, not in the sources: about $0.08$ per decade)*. This quantifies the statement of Fu (2023,
-§2.5) that a smaller $C_T$ resolves higher wavenumbers.
+§2.5) that a smaller $C_T$ resolves higher wavenumbers. For TENO5, Fu et al. (2016,
+§3.2, Fig. 3) state that the linear scheme's dispersion and dissipation are recovered
+up to the wavenumbers 1.75, 1.85 and 1.95 for $C_T=10^{-5}$, $10^{-6}$ and $10^{-7}$;
+for six points (§3.3, Fig. 4) WENO-CU6 departs from its linear scheme at 1.2 and
+TENO6 "significantly" later.
 
 An adaptive, locally varying $C_T$ is the subject of
 [adaptive TENO](/methods/adaptive-teno.md).
@@ -177,13 +236,23 @@ An adaptive, locally varying $C_T$ is the subject of
 - **Exact recovery of the linear scheme.** Where all $\delta_k=1$, the scheme is
   its background linear scheme exactly, not asymptotically; TENO therefore keeps
   that scheme's dispersion and dissipation up to intermediate wavenumbers
-  (Fu 2023, §2.5, Figs. 2–3; Takagi et al., §2.2; Huang et al., §1). On
+  (Fu 2023, §2.5, Figs. 2–3; Takagi et al., §2.2; Huang et al., §1). Fu et al.
+  (2016, §5.1, Fig. 10) show it first: on Gaussian-pulse advection the $L_\infty$
+  convergence of TENO5, TENO6 and their optimized versions "coincide[s]" with that of
+  their background linear schemes, the optimized ones one order lower. On
   Gaussian-pulse advection the $L_\infty$ errors of TENO5 equal those of the
   fifth-order linear scheme at every resolution from $N_x=80$ to $1280$
   (Liang et al., §4.1, Table 4, orders 4.83–5.00), and those of TENO6, TENO8 and
   TENO-M are "almost the same" as those of their linear backgrounds (Hong et al.,
   §5.1, Fig. 8); on unstructured triangles TENO3–TENO6 reproduce the linear
   schemes' errors digit for digit (Ji et al., §5.1, Tables 1–4).
+- **Formal order.** Fu et al. (2016, §3.1.5, Eq. (29)) give a sufficient condition:
+  all $\chi_k\ge C_T$ holds if every $\gamma_k\to C$ (with $C=1$), which they call "equivalent to"
+  $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$ for some $s>0$, "a much weaker condition
+  than those required for previous WENO schemes"; the argument is one paragraph, with
+  no proof (see Contradictions). They state that $\tau_5$, $\tau_6$ and the
+  appendix $\tau_K$ satisfy it "even near critical points" ("It is easy to find",
+  §§3.2–3.3, App. A); the paper contains no critical-point test.
 - **Order at critical points.** With the sixth-order $\tau_K$, TENO reaches its
   design order on Gaussian-pulse advection, with no degeneration for a test
   function with a second-order critical point or for Burgers, where WENO-JS and
@@ -205,8 +274,10 @@ An adaptive, locally varying $C_T$ is the subject of
   is exact only for quadratics, so it is third order like each candidate.)*
 - **Robustness with multiple discontinuities.** With two discontinuities in the
   global stencil all candidates of seventh-order WENO are non-smooth, while
-  seventh-order TENO still contains a smooth three-point stencil (Ye et al.,
-  §2.1, Figs. 1–2; schematic).
+  seventh-order TENO still contains a smooth three-point stencil (Fu et al. 2016,
+  §3.1.1, Fig. 2; Ye et al., §2.1, Figs. 1–2; schematic), so that TENO "can recover the
+  robustness of fifth-order WENO scheme even for very-high-order reconstructions"
+  (Fu et al. 2016, §3.1.1).
 - **Dissipation.** Fu (2023, §1) reports that WENO's excess dissipation can
   underpredict "approximately the upper 3/4 of the resolvable wavenumbers" in
   broadband turbulence, which is TENO's motivation. Yet fixed-cut-off TENO is "still
@@ -223,7 +294,9 @@ An adaptive, locally varying $C_T$ is the subject of
   after their finite-difference paper, to the variation in time of the stencil choice at
   fixed interfaces, and their [converged ENO](/methods/converged-eno.md) scheme makes the
   cut-off depend on the previous step; their parameters for TENO5 are not printed.
-- **Cost.** TENO6-A costs 17% more than WENO5-JS on GPU and 47% more on CPU
+- **Cost.** Fu et al. (2016, §6) state that TENO's arithmetic operations are
+  "similar to" those of classical WENO, "although not specially studied".
+  TENO6-A costs 17% more than WENO5-JS on GPU and 47% more on CPU
   (Fu 2023, §5.4); TENO5 costs 810 ms against 696 ms for WENO5-Z per step on a
   $512\times128$ double Mach reflection (Takagi et al., Table 3), but 55.10 s
   against 54.99 s in the timing of Huang et al. (Table 3, same grid, hardware not
@@ -243,6 +316,33 @@ An adaptive, locally varying $C_T$ is the subject of
   hardware not stated) time TENO5 at 40.04 s and 630.89 s, TENO6 at 45.00 s and
   717.20 s, against 36.51 s and 593.16 s for WENO5-Z, on $400\times100$ and
   $1000\times250$.
+
+## Evidence in the founding paper
+
+Fu et al. (2016, §5, Table 5) run one parameter set throughout: Roe-averaged
+[characteristic decomposition](/methods/characteristic-decomposition.md), global
+[Lax–Friedrichs splitting](/methods/lax-friedrichs-flux.md) (Roe flux with entropy fix on
+the blast waves), third-order (1D) or second-order (2D, on a wavelet-based adaptive
+multiresolution grid) strongly stable Runge–Kutta, CFL 0.6, against WENO-JS, WENO-Z,
+WENO-CU6 and WENO-CU6-M. They report:
+
+- on the [Sod and Lax tubes](/benchmarks/sod-and-lax-shock-tubes.md) ($N_x=100$), sharper
+  contacts than WENO-JS and slight oscillations or an overshoot of WENO-CU6-M at the
+  contact (§5.2);
+- on the [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md)
+  ($N_x=400$), velocity overshoots of WENO-JS and WENO-Z near $x=0.86$, spurious waves of
+  WENO-CU6 near $x=0.75$ and $0.86$, and a failure of WENO-CU6-M (§5.3);
+- on the [Shu–Osher problem](/benchmarks/shu-osher-problem.md) ($N_x=200$), TENO5-opt
+  best among the five-point schemes, with entropy-wave amplitudes "up to 4.52" for
+  TENO6 and "about 4.4" for TENO5-opt (§5.4);
+- on [double Mach reflection](/benchmarks/double-mach-reflection.md) (effective
+  $1024\times256$), small scales of TENO5-opt "comparable to" fifth-order WENO-JS and of
+  TENO6 to ninth-order WENO-JS, both at $\Delta x=1/960$ in a cited work, and a failure
+  of WENO-CU6-M (§5.5);
+- on [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) at $128\times512$,
+  structures comparable to WENO-JS and WENO-Z at $256\times1024$ (§5.6), and on the
+  [viscous shock tube](/benchmarks/viscous-shock-tube.md) at $\mathrm{Re}=1000$ the
+  closest fit to the reference for TENO6-opt (§5.7).
 
 ## Variants
 
@@ -496,6 +596,10 @@ combination ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)):
   $\tau^{\mathrm{ref}}_5=(u_i''')^2\Delta x^6+O(\Delta x^8)$ (Eq. (100); App. B, Eq. (B.20)); it enters
   WENO-Z-type weights, not a cut-off ([smoothness indicators](/definitions/smoothness-indicator.md),
   [WENO-Z](/methods/weno-z.md)). Its order, 6, matches that of the sixth-order $\tau_K$ above.
+  *(Compiler check, not in the sources: the appendix $\tau_K$ of Fu et al. (2016) at $K=5$ sums
+  $j=3,4$, which is this third- and fourth-derivative part by definition; for a smooth $f$ its
+  expansion is $\Delta x^6(f^{(3)})^2+O(\Delta x^8)$.)* Fu et al. themselves run TENO5 with the WENO-Z $\tau_5$, not with
+  it (§3.2).
 
 [Zhang et al. (2024a)](/sources/zhang-2024.md) (§3.3, App. C, Eqs. (C.1)–(C.11)) use the same
 incremental-stencil WENO5IS, with the same linear weights and reference indicator, as the base
@@ -623,13 +727,19 @@ primitive variables and applies an HLLC flux (arXiv v2). Chamarthi reports:
 - "$K$-point TENO is $K$th order" (Fu 2023, §2) holds when the $d_k$ are chosen
   for maximum order; the spectrally optimized TENO8-AA and TENO10-AA of
   [Fu (2021)](/sources/fu-2021.md) are of order 6 and 8, and Fu (2023, §3.1)
-  itself calls TENO10 a "10-point 8th-order" scheme. Likewise TENO6 and TENO-M6
-  are fifth order and TENO8 and TENO-M8 sixth order, by the dissipation-optimized
-  backgrounds ([Hong et al. (2022)](/sources/hong-2022.md), §5.1), and TENO5-A is
-  third order ([adaptive TENO](/methods/adaptive-teno.md)). *(Compiler check, not in
+  itself calls TENO10 a "10-point 8th-order" scheme. [Hong et al. (2022)](/sources/hong-2022.md)
+  (§5.1) state that TENO6 and TENO-M6 are fifth order and TENO8 and TENO-M8 sixth order, by
+  the dissipation-optimized backgrounds they use; in the founding paper the TENO6 with
+  $d=(9,6,1,4)/20$ is sixth order and only TENO6-opt is fifth order (Fu et al. 2016,
+  Table 5, §5.1), so the name TENO6 denotes different backgrounds in the two sources.
+  TENO5-A is third order ([adaptive TENO](/methods/adaptive-teno.md)). *(Compiler check, not in
   the sources: in TENO-M8 the target schemes on the seven-point unions adjacent to a
   discontinuity, $\hat f_1$ and $\hat f_7$ of Hong et al.'s Eq. (30), are seventh
   order, above the sixth-order background used where all stencils are smooth.)*
+- Fu et al. (2016, §6) call the cut-off "problem independent", determined by spectral
+  analysis; they use $10^{-5}$ for the five-point and $10^{-7}$ for the six-point schemes
+  (Table 5), and Takagi et al. and Liang et al. (table above) raise it to $10^{-4}$ on the
+  blast wave.
 - Hong et al. run Rayleigh–Taylor with $\epsilon=10^{-4}$ instead of $10^{-40}$ "to
   alleviate" round-off symmetry breaking, following Fu et al. (2018) (§5.5; see
   [symmetry preservation](/properties/symmetry-preservation.md)).
@@ -676,7 +786,12 @@ primitive variables and applies an HLLC flux (arXiv v2). Chamarthi reports:
 Adams 2016) states that "to guarantee the $K$th-order accuracy of a $K$-point
 TENO scheme in smooth regions" the criterion is
 $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$ for some $s>0$, "much weaker" than
-the $\tau_K=O(\Delta x^K)$ typically required by WENO-Z.
+the $\tau_K=O(\Delta x^K)$ typically required by WENO-Z. The founding paper prints
+this side: [Fu et al. (2016)](/sources/fu-2016.md) (§3.1.5, Eq. (29)) derive
+$\tau_K/(\beta_{k}+\epsilon)=O(\Delta x^s)$, $s>0$, in one paragraph from
+$\chi_k\ge C_T$ and $\gamma_k\to C$ ("equivalent to"), call it "much weaker than those
+required for previous WENO schemes", and say nothing on how $C_T$ must compare with
+$1/(K-2)$.
 [Ye et al. (2022)](/sources/ye-2022.md) (§3.5, Eqs. (36)–(38), attributed to Fu,
 Hu and Adams 2017) state that "to ensure that the overall scheme achieves $K$th-order
 accuracy" the condition $\tau_K/(\beta_k+\epsilon)=O(\Delta x^{K-2})$ "need[s] to
@@ -684,9 +799,13 @@ be satisfied", hence, with $\beta_k=O(\Delta x^2)$, $\tau_K=O(\Delta x^K)$. Both
 statements concern the same property (design order of TENO in smooth regions,
 with the same sharp cut-off), so they are a genuine conflict and not two
 conditions for different properties: Fu's sufficient condition makes Ye et al.'s
-necessary one false. The two sources cite different earlier papers (Fu 2023's
-[117] is the 2016 JCP paper, Ye et al.'s [14] the 2017 JCP paper), neither
-ingested. Ye et al. are also at odds with themselves: they adopt the sixth-order
+necessary one false. The two sources cite different earlier papers: Fu 2023's
+[117] is the 2016 JCP paper, now ingested as Fu et al. (2016), and Ye et al.'s [14] the 2017 JCP paper,
+not ingested; Fu et al. (2016) do not state Ye et al.'s $O(\Delta x^{K-2})$ condition.
+*(Compiler check, not in the sources: their appendix $\tau_K$, printed as
+$\approx O(\Delta x^K)$, gives $\tau_K/(\beta_k+\epsilon)=O(\Delta x^{K-2})$ where
+$\beta_k=O(\Delta x^2)$, so it meets both conditions and does not decide the question.)*
+Ye et al. are also at odds with themselves: they adopt the sixth-order
 $\tau_K$ of Eq. (39) as "enough" for TENO of any order, which violates their
 Eq. (38) for $K\ge7$. What would decide it: an analysis of the cut-off step,
 showing whether $\chi_k\ge C_T$ for every $k$ (and hence $\omega_k=d_k$ exactly)
@@ -718,12 +837,16 @@ high-order critical points. Both statements concern a six-point-class TENO with
 the same sixth-order global indicator at a critical point where the first and
 second derivatives vanish. Neither source names the other's test: Fu states
 neither the test function nor $\epsilon$ and $C_T$; Zhang et al. report their rates
-"disregarding the effect of $\epsilon$". What would decide it: the same pointwise
+"disregarding the effect of $\epsilon$". The founding paper does not supply Fu's
+numerics: [Fu et al. (2016)](/sources/fu-2016.md) only state that their global indicators
+satisfy Eq. (29) "even near critical points" (§§3.2–3.3, App. A) and test convergence on
+Gaussian-pulse advection alone (§5.1). What would decide it: the same pointwise
 test with TENO6 at several $\epsilon$ and $C_T$, reporting which $\delta_k$ are cut
 at the critical point.
 
 # Citations
 
+- [Fu, Hu & Adams (2016)](/sources/fu-2016.md) — §1; §3, Eqs. (21)–(29), Tables 1–2, Figs. 1–4; §4, Eq. (31), Tables 3–5; §5, Figs. 10–23; §6; App. A, Eqs. (A.1)–(A.3): the founding paper: stencils, scale separation, cut-off, formal-order condition, TENO5/TENO6 and optimized backgrounds, tests.
 - [Fu (2023)](/sources/fu-2023.md) — §§1–5, Eqs. (2)–(33), Figs. 1–9: the review of the family.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.2, Eqs. (5)–(14), Table 2, Table 3: TENO5 recipe, order, cost.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §2, Eqs. (1)–(10); §3.3–3.5, Eqs. (24)–(39); §4.5, §4.7: stencils, $\tau_K$, $q$ and $C_T$ tests.

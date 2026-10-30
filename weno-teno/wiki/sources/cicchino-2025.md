@@ -156,7 +156,7 @@ own entry; [39] prints "complex geometrics" in its title. No item is unparseable
 
 # Pages created or updated
 
-Chunk 9 (2026-10-23), cited further in chunks 10–11 (2026-10-23/24). This source is cited on:
+Chunk 9 (2026-10-23), cited further in chunks 10–12 (2026-10-23/30). This source is cited on:
 
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Entropy projection](/methods/entropy-projection.md)

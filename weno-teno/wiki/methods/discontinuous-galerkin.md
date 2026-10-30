@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-10-30T07:53:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -19,6 +19,21 @@ the flux is monotone, and for a system it is an approximate Riemann solver.
 With an explicit Runge–Kutta stepper the scheme is called RKDG
 ([Peng, Sun & Wu (2024)](/sources/peng-2024.md), §2.1, citing Reed–Hill and
 Cockburn–Shu).
+
+[Shu (2009a)](/sources/shu-2009.md) (§5.1, Eq. (5.1)) prints the same weak form
+with a monotone flux and draws the connection to finite volumes: with $v$ the
+indicator function of $I_i$ the scheme "becomes identical to the finite volume
+scheme", so DG "is a generalized finite volume scheme"; the essential difference is
+that a finite-volume scheme evolves one piece of information per cell and
+reconstructs the rest by WENO, while DG evolves the whole polynomial, $N+1$ pieces
+per cell in 1D. Because "the WENO procedure is only applied at the reconstruction
+stage", it "cannot be directly used" inside DG, which therefore relies on limiters.
+Shu judges DG "more flexible than finite volume WENO schemes" on unstructured
+meshes but "less robust in dealing with solutions with strong shocks", because "the
+state of the art for limiters is less advanced than the WENO procedure"; Hermite
+WENO and WENO limiters are the two ways Shu records of combining the methods
+([Hermite WENO](/methods/hermite-weno.md),
+[WENO limiters for DG](/methods/weno-limiter-dg.md)).
 
 ## Semi-discrete weak form
 
@@ -377,7 +392,9 @@ identical to a finite-volume scheme. In 1D with forward Euler it reads
 $\bar u_i^{n+1}=\bar u_i^n-\frac{\Delta t}{\Delta x}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big)$
 (Cui et al. (2024), Eq. (1.5)). In multi-D the face integrals are evaluated
 by Gauss quadrature (Eq. (7.2); Wu & Shu (2023), Eqs. (6.6)–(6.8)). This
-identity is the hinge of the Zhang–Shu bound-preserving framework:
+identity is the hinge of the Zhang–Shu bound-preserving framework, introduced
+for the Euler equations by [Zhang & Shu (2010b)](/sources/zhang-2010-b.md)
+(§§2–3) for DG and finite-volume schemes alike:
 
 1. A [cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
    writes $\bar u_i$ as a convex combination of point values that includes
@@ -388,6 +405,13 @@ identity is the hinge of the Zhang–Shu bound-preserving framework:
    steps under a CFL condition proportional to the boundary weight
    $\varpi$.
 
+Zhang & Shu (2010b, Table 2.1) give the resulting Lax–Friedrichs CFL bounds
+$\tfrac16$ for $N=2,3$ and $\tfrac1{12}$ for $N=4,5$, "comparable with and only
+slightly more restrictive than" the linear-stability CFL of DG. Their tests run
+$\mathbb P^2$ RKDG with SSP-RK3: third order on a low-density density wave with the
+limiter active on the coarser meshes (§4.1, Table 4.1), and Sedov blast waves, double
+rarefaction with vacuum, the Leblanc tube, Mach 80 and Mach 2000 jets and Mach 5.09
+shock diffraction without negative density or pressure (§§4.2–4.5).
 Cui et al. (2024) prove that the classical Gauss–Lobatto decomposition is
 optimal in 1D and on $\mathbb Q^N$. On $\mathbb P^N$ it is not, and the
 optimal bound-preserving CFL number for balanced directional wave speeds,
@@ -547,7 +571,12 @@ interfaces.
   there. Cui et al. (2024) apply the Qiu–Shu WENO limiter before the
   bound-preserving limiter in their Examples 3–5 (§8). Wu & Shu (2023) apply
   a locally divergence-free WENO limiter in cells flagged by the KXRCF
-  indicator (§7). Du, Shu & Zhong (2022) make the simple WENO limiter of
+  indicator (§7). In Zhang & Shu (2010b, §§4.2–4.3) the characteristic TVB limiter
+  is applied before the positivity limiter and remains necessary at shocks (the
+  scheme blows up on the Sedov blast waves without it); the positivity limiter lets
+  the TVB parameters be raised far beyond what the scheme otherwise tolerates, while
+  with the TVB parameter $0$ the limiter is a TVD limiter, first order at extrema, with
+  results they call unsatisfactory. Du, Shu & Zhong (2022) make the simple WENO limiter of
   Zhong & Shu cheaper for systems on triangles and point clouds by
   projecting only two polynomials per direction to characteristic
   variables; they save about 6–55 % of the CPU time on shocked problems
@@ -848,6 +877,8 @@ $N=1,2,3$ (§6.2, Table 10).
 
 # Citations
 
+- [Shu (2009a)](/sources/shu-2009.md) — §5.1, Eq. (5.1): DG as a generalized finite-volume scheme; robustness of DG limiting.
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §§2–3, Table 2.1; §4: positivity-preserving RKDG for Euler, TVB limiter before the positivity limiter.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — §2.1 Eq. (2.2), Eq. (3.3), Prop. 4.6, Thm 4.1, §5.1 Table 1.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — Eq. (1.5), Eq. (7.2), Thm 7.1, Remark 7.7, Table 1, §8.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — Eqs. (6.6)–(6.8), Thm 6.4, §7.

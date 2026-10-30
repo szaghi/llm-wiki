@@ -162,7 +162,7 @@ paper's printed order.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-23), cited further in chunks 7–11 (2026-10-23/24). This source is cited on:
+Chunk 6 (2026-10-23), cited further in chunks 7–12 (2026-10-23/30). This source is cited on:
 
 * [Central WENO (CWENO)](/methods/cweno.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)

@@ -6,7 +6,7 @@ status: established
 symbol: "$\\mathsf C_{2p}$, $\\mathsf C_{2p}^{-1}$"
 aliases: [average-to-point transformation, AtoP, PtoA, point-value passage, Laplacian correction, deconvolution of cell averages, McCorquodale–Colella correction]
 tags: [finite-volume, mhd, reconstruction]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Cell-average to point-value conversion
@@ -60,6 +60,41 @@ sources: the stencils are diamonds, not boxes; the 2-D formulas are not tensor p
 has centre weight $\tfrac{169}{144}$ and a corner term $\tfrac1{576}\bar u^{\Sigma11}$, against $\tfrac76$ and no corner
 term — because terms of total degree above $2(p-1)$ are dropped. The fourth- and sixth-order 1-D formulas and
 the fourth-order face formula were rechecked on monomials.)*
+
+**Deconvolution in the founding ENO paper.** [Harten et al. (1987a)](/sources/harten-1987.md)
+(§3(2), Eqs. (3.11)–(3.23)) give the same expansion for the sliding average on a uniform mesh,
+$\bar u(x)=\sum_k\alpha^{\mathrm D}_k\Delta x^ku^{(k)}(x)$ with $\alpha^{\mathrm D}_k=0$ for odd $k$ and
+$\alpha^{\mathrm D}_k=2^{-k}/(k+1)!$ for even $k$ (Eq. (3.12); page-local $\alpha^{\mathrm D}_k$), i.e.
+$\tfrac1{24}$ and $\tfrac1{1920}$ for $k=2,4$, the coefficients of Teissier et al.'s Eq. (83) above
+*(compiler check, not in the sources: $2^{-2}/3!=\tfrac1{24}$, $2^{-4}/5!=\tfrac1{1920}$)*. Truncated at
+order $r$, the relation between the scaled derivatives of the average and those of the function is
+an upper-triangular matrix with unit diagonal and $\alpha^{\mathrm D}_2,\alpha^{\mathrm D}_4,\dots$ on the
+even superdiagonals, inverted by back substitution (Eqs. (3.13)–(3.19)). Their **reconstruction via
+deconvolution** (RD) applies it to derivatives of an ENO interpolant of the cell averages, each
+taken as the minmod of its one-sided values at $x_i$ (Eqs. (3.14)–(3.17)), and builds the cell
+polynomial $\sum_k\frac1{k!}D_{k,i}\big((x-x_i)/\Delta x\big)^k$ from the deconvolved values
+$D_{k,i}$ (Eq. (3.18); page-local). The name comes from writing the average as the convolution of
+$u$ with the characteristic function of a cell (Eq. (3.22)); RD needs a uniform mesh, unlike their
+primitive-function reconstruction ([ENO reconstruction](/methods/eno-reconstruction.md)). The printed
+back-substitution coefficient $\alpha^{\mathrm D}_l$ in Eq. (3.19) agrees with the matrix of Eq. (3.13)
+only for $k=0$ *(compiler check, not in the sources: row $k$ of (3.13) gives the coefficient
+$\alpha^{\mathrm D}_{l-k}$)*, the case used for conservation (Eq. (3.21)).
+
+**The same coefficients in finite-difference fluxes.** The inverse expansion
+$u=\bar u-\tfrac1{24}\Delta x^2\partial_x^2\bar u+\tfrac7{5760}\Delta x^4\partial_x^4\bar u-\dots$ above has
+the coefficients that [Shu & Osher (1988)](/sources/shu-1988.md) (Eq. (3.5), p. 15) print for the
+derivative corrections of a [conservative finite-difference](/definitions/conservative-finite-difference-scheme.md)
+flux, $a_2=-\tfrac1{24}$, $a_4=\tfrac7{5760}$: there the point values of $f$ play the role of sliding
+averages of the numerical flux function *(compiler check, not in the sources: both are the
+coefficients of $(z/2)/\sinh(z/2)$, the reciprocal of the averaging symbol, with $z=\Delta x\,\partial_x$)*.
+
+**When the distinction matters.** [Shu (2009a)](/sources/shu-2009.md) (§3.4) states that "for first
+and second order schemes there is no need to distinguish" averages from point values, the cell
+average agreeing with the value at the centroid to second order, and quantifies what the
+distinction costs a nonlinear finite-volume scheme in 2-D without a point-value passage: two
+one-dimensional reconstructions and a Gauss quadrature on every face, about three times the
+one-dimensional cost per cell and direction, so that finite volumes above second order cost two to
+five times finite differences of the same order.
 
 **Fourier symbol.** On $e^{\mathrm ik_wx}$ the cell average multiplies the point value by
 $\frac{2\sin(k_w\Delta x/2)}{k_w\Delta x}$ in each averaged direction; Teissier et al. use this factor to set
@@ -175,6 +210,9 @@ by differentiating at $\xi=0$.)*
 
 # Citations
 
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §3(2), Eqs. (3.11)–(3.23); App., Eq. (A.18).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §III, Eq. (3.5), p. 15 (ICASE Report 87-33).
+- [Shu (2009a)](/sources/shu-2009.md) — §3.4.
 - [Teissier et al. (2024)](/sources/teissier-2024.md) — §1; §3.1–3.7, Eqs. (18)–(65); §4.1–4.2, Tables 2–3, Fig. 11; §5; App. A, Eqs. (83)–(120) (arXiv v2).
 - [Berta et al. (2024)](/sources/berta-2024.md) — §3.1–3.2, Eqs. (16)–(30); §3.4, Eq. (33); App. A.
 - [Mignone et al. (2024)](/sources/mignone-2024.md) — §1; §3.2–3.10, Eqs. (24)–(29), (48), (53)–(56); §4.1–4.2, §4.5, Table 1.

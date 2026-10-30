@@ -146,7 +146,7 @@ duplicates were found.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-22), cited further in chunks 5–11 (2026-10-22/24). This source is cited on:
+Chunk 4 (2026-10-22), cited further in chunks 5–12 (2026-10-22/30). This source is cited on:
 
 * [ADER schemes](/methods/ader-scheme.md)
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)

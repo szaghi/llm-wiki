@@ -153,7 +153,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-23), cited further in chunk 11 (2026-10-24). This source is cited on:
+Chunk 10 (2026-10-23), cited further in chunks 11–12 (2026-10-24/30). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Asymptotic preservation](/properties/asymptotic-preservation.md)

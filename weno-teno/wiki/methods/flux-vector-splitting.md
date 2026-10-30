@@ -5,7 +5,7 @@ description: "Flux vector splitting writes the flux as a sum of parts whose Jaco
 status: established
 aliases: [FVS, flux-vector splitting, Steger–Warming splitting, upwind flux splitting, van Leer splitting, van Leer–Hänel splitting, Toro–Vázquez splitting]
 tags: [numerical-flux, flux-splitting, finite-difference, finite-volume, characteristic, bound-preserving]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Flux vector splitting
@@ -106,6 +106,29 @@ Duan et al., is left to future work (§5–§6).
 
 ## Splittings in finite-difference and finite-volume codes
 
+- **The founding finite-difference ENO.** [Shu & Osher (1988)](/sources/shu-1988.md) (§III,
+  Eqs. (3.1)–(3.3), (3.20)–(3.21); ICASE report version read) need only $\pm\,df^\pm/du\ge0$ and
+  $f^++f^-=f$; for systems the matrix version requires $\partial f^+/\partial u$ to have non-negative
+  and $\partial f^-/\partial u$ non-positive eigenvalues (pp. 22–23). They generalize the
+  building block to any monotone or E-flux $h_{i+1/2}$ (page-local) through the flux increments
+  $f_{i+1}-h_{i+1/2}$ and $h_{i+1/2}-f_i$, which replace the undivided differences $f^+_{i+1}-f^+_i$
+  and $f^-_{i+1}-f^-_i$ in the ENO interpolation and sum to $f_{i+1}-f_i$ (Eq. (3.21)). If the two
+  interpolants use the same stencil their sum interpolates $f$; otherwise the defect is an $r$-th
+  undivided difference of the increments, which is $O(\Delta x^{r+1})$ if $h$ is smooth to order
+  $r$. Godunov, Engquist–Osher and entropy-fixed Roe fluxes are not smooth at sonic points, so ENO
+  schemes on them "will lose accuracy at sonic points"; their tests nevertheless show the
+  Engquist–Osher building block smearing less than Lax–Friedrichs on nonconvex Riemann problems
+  (§IV, Ex. 4; [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
+- **Smoothness of the splitting.** [Shu (2009a)](/sources/shu-2009.md) (§3.2) states that any
+  splitting with $\pm\,df^\pm/du\ge0$ gives the monotone flux $f^+(u^-)+f^-(u^+)$, that the split
+  parts must be "as smooth functions of $u$ as $f(u)$", and that finite-difference WENO "can only
+  use monotone fluxes which correspond to smooth flux splitting", pointing to
+  [Jiang & Shu (1996)](/sources/jiang-1996.md) for other splittings. Jiang & Shu use, besides global
+  Lax–Friedrichs, a Roe splitting with entropy fix ("RF", after Shu & Osher) and a "Roe building
+  block" in which $f^\pm$ are not reconstructed separately; with Lax–Friedrichs building blocks the
+  operation count of characteristic fourth- and fifth-order ENO is 3 to 4 times that of a
+  second-order scheme, with the Roe building block about 1.5 times (§2, §7;
+  [Roe solver](/methods/roe-riemann-solver.md)).
 - **Finite differences.** [Wong et al. (2021)](/sources/wong-2021.md) (§4.3) state that a
   finite-difference WENO scheme "can only be used with flux-vector splitting methods" when high
   order is wanted, since a Riemann solver makes it "degenerate to only second order"; the
@@ -156,6 +179,12 @@ described in full on [semi-implicit all-Mach schemes](/methods/semi-implicit-all
 
 ## Qualifications
 
+- **Riemann fluxes in finite differences.** Wong et al. (2021, §4.3) and Shu (2009a, §3.2) restrict
+  high-order finite-difference WENO to flux-vector splitting; the E-flux route of Shu & Osher
+  (1988) is not a two-point flux of interpolated states but enters through flux increments, and its
+  order condition is the smoothness of the E-flux, which fails at sonic points for the upwind fluxes
+  they name.
+
 - **Order of the Steger–Warming loss.** Duan et al. observe second order with Steger–Warming in
   the Active Flux point-value update and attribute it tentatively to non-differentiability; the
   finite-difference users above report no accuracy test of their Steger–Warming runs, so the
@@ -176,6 +205,9 @@ described in full on [semi-implicit all-Mach schemes](/methods/semi-implicit-all
 
 # Citations
 
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §III, Eqs. (3.1)–(3.3), (3.20)–(3.21), pp. 20–23; §IV, Ex. 4 (ICASE Report 87-33).
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §2, Eqs. (2.4)–(2.6); §7 (author preprint).
+- [Shu (2009a)](/sources/shu-2009.md) — §3.2, Eqs. (3.10)–(3.11).
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §2 (Eqs. (5)–(13), Remarks 2.1–2.2), §3.2, §5 (Exs. 5.1–5.7, Remark 5.1), App. A, App. D (Ex. D.1) (arXiv v3).
 - [Barsukow et al. (2026)](/sources/barsukow-2026.md) — §3.4 (Eqs. (27)–(32)), §5–§6 (arXiv v2).
 - [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §2.1 (Eq. (8), Lemma 1, Remarks 2.1–2.2), §2.2 (Lemmas 2–3) (HAL author manuscript).

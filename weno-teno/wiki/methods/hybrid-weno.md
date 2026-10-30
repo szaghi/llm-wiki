@@ -5,7 +5,7 @@ description: "Hybrid schemes use a cheap linear (central, energy-preserving or o
 status: established
 aliases: [hybrid WENO, TENO-S, TENO-E, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -19,6 +19,32 @@ turned off and the linear scheme is used. Two motives recur: lower numerical dis
 regions, which matters for turbulence, and lower cost, since the linear scheme needs neither weights
 nor, for systems, a [characteristic decomposition](/methods/characteristic-decomposition.md).
 
+## An early hybrid: Harten's switched viscosity
+
+The oldest hybrid printed in the bundle is the comparator of [Harten (1983a)](/sources/harten-1983.md)
+(§8, Eqs. (8.1b), (8.9); NYU report version read): Harten's earlier hybrid scheme (ref. [6] there,
+not ingested), written in the characteristic fields of the Roe linearization as
+$\hat f_{i+1/2}=\tfrac12\big(f(u_i)+f(u_{i+1})\big)-\frac{\Delta x}{2\Delta t}\sum_l\mathsf b^{(l)}_{i+1/2}R^{(l)}_{i+1/2}$ with
+
+$$\mathsf b^{(l)}_{i+1/2}=\Big[\big(\nu^{(l)}_{i+1/2}\big)^2+\tfrac14\,\theta^{(l)}_{\mathrm H}\Big]\mathsf s^{(l)}_{i+1/2},\qquad
+\theta^{(l)}_{\mathrm H,i}=\frac{\lvert\mathsf s^{(l)}_{i+1/2}-\mathsf s^{(l)}_{i-1/2}\rvert}{\lvert\mathsf s^{(l)}_{i+1/2}\rvert+\lvert\mathsf s^{(l)}_{i-1/2}\rvert}$$
+
+(page-local: $\mathsf s^{(l)}_{i+1/2}=L^{(l)}_{i+1/2}(u_{i+1}-u_i)$ the wave strength,
+$\nu^{(l)}=\Delta t\,\lambda_l/\Delta x$ at the average state, $\theta_{\mathrm H}$ the switch of Eq. (6.1b),
+written at the interface as in the source's "appropriate variant"). The flux is Lax–Wendroff where
+$\theta_{\mathrm H}$ vanishes and adds the linear viscosity of the coefficient $x^2+\tfrac14$ where it is
+one; $0\le\theta_{\mathrm H}\le1$, $\theta_{\mathrm H}=O(\Delta x)$ in smooth regions and $O(1)$ at
+discontinuities, as shown in ref. [6] (Eq. (6.2)). The same switch is the
+[artificial compression](/methods/artificial-compression.md) of Harten's
+[TVD scheme](/methods/harten-tvd-scheme.md), where it is applied only in the contact field. On the
+[Mach 3 forward-facing step](/benchmarks/forward-facing-step.md) ($10\times30$ cells, $t=4$, CFL 0.75)
+the hybrid is shown beside the TVD scheme ULT2 (Fig. 7). The "Harten's" detector of Li, Chen & Ren
+(2022a), recorded under MDAD-HY below, has the same form for scalar data. *(Compiler check, not in the
+sources: with the wave strengths replaced by the first differences $f_{i+1}-f_i$ and $f_i-f_{i-1}$,
+$\theta_{\mathrm H,i}=\lvert f_{i+1}-2f_i+f_{i-1}\rvert/(\lvert f_{i+1}-f_i\rvert+\lvert f_i-f_{i-1}\rvert)$, so that
+detector is $1-\theta_{\mathrm H,i}$ with an added $\epsilon$.)* Harten (1983a) prints neither the
+threshold 0.3 nor an $\epsilon$.
+
 ## Variants recalled in the sources
 
 - **Hybrid compact-ENO/WENO.** Takagi et al. (2022, §1) recall Adams & Shariff's hybrid compact-ENO
@@ -26,7 +52,11 @@ nor, for systems, a [characteristic decomposition](/methods/characteristic-decom
   characteristic-wise hybrid compact-WENO scheme of Ren et al. with a new flow sensor.
 - **Freezing the nonlinear adaptation.** Fu (2021, §1) recalls Hill & Pullin's switch, which freezes
   the WENO adaptation when the ratio of the largest to the smallest smoothness indicator is below a
-  problem-dependent threshold.
+  problem-dependent threshold; [Fu et al. (2016)](/sources/fu-2016.md) (§1), introducing
+  [TENO](/methods/targeted-eno.md), had already called that threshold "likely to be problem dependent".
+- **Compact and spectral partners.** [Shu (2009a)](/sources/shu-2009.md) (§5.2–5.3) lists, among the
+  relatives of WENO, a hybrid compact–WENO scheme with a shock detector and hybrid spectral–WENO
+  schemes, without details.
 - **Hybrid TENO.** Fu (2023, §3.4, Eqs. (21)–(24)) recalls a hybrid that builds the sensor from the TENO
   scale separation itself. On four stencils, with $\gamma_k=(\beta_k+\epsilon)^{-q}$, $q=6$, where
   $\epsilon$ "also functions as a cut-off on the stencil smoothness", and $\chi_k=\gamma_k/\sum\gamma_l$,
@@ -493,6 +523,9 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 
 # Citations
 
+- [Harten (1983a)](/sources/harten-1983.md) — §6 (Eqs. (6.1)–(6.2)), §8 (Eqs. (8.1)–(8.2), (8.9), Fig. 7) (NYU report DOE/ER/03077-175).
+- [Shu (2009a)](/sources/shu-2009.md) — §5.2–5.3.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §1.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §3.4, Eqs. (21)–(24), Fig. 7; §5.4.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1; §3.2.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1; §5.3.1, Table 1.

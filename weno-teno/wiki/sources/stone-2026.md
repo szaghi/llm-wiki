@@ -152,7 +152,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 11 (2026-10-24). This source is cited on:
+Chunk 11 (2026-10-24), cited further in chunk 12 (2026-10-30). This source is cited on:
 
 * [AthenaK](/software/athenak.md)
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)

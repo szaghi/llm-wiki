@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem with pressure ratio 10^9 and
 status: established
 aliases: [LeBlanc problem, Le Blanc shock tube, LeBlanc shock tube]
 tags: [benchmark, positivity, bound-preserving, low-dissipation]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:08:00Z
 ---
 
 # Leblanc shock tube
@@ -80,6 +80,7 @@ states, so this is the $\gamma=5/3$ version carried as two phases
 
 | Source | Left, $x<0$ | Right | Grid | Final time |
 |---|---|---|---|---|
+| [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.3 | $\rho_L=2$, $v_L=0$, $p_L=10^9$, $\gamma=1.4$ | $\rho_R=0.001$, $v_R=0$, $p_R=1$ | 800 and 6400 cells, $\Delta x=20/N$; exact solution | $10^{-4}$ |
 | [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.5 | $(\rho,v,p)=(2,\ 0,\ 10^9)$ | $(0.001,\ 0,\ 1)$ | 3200 cells, logarithmic plots | $10^{-4}$ |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.5c | same | same | 6400 points | $10^{-4}$ |
 | [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.4 | same, Navier–Stokes $\mathrm{Re}=1000$ | same | 3200 points | $10^{-3}$ as printed |
@@ -95,6 +96,12 @@ different states this is a different problem from the first version,
 not a rescaling of it *(compiler check, not in the sources)*. Wang et
 al. describe the density and pressure ratios as $O(10^3)$ and
 $O(10^9)$.
+
+Zhang & Shu (2010b) print the states, $\gamma$, the final time and
+$\Delta x=20/N$ but neither the domain nor the position of the jump; a
+cell size $20/N$ fits the $[-10,10]$ of the later sources *(compiler
+check, not in the sources)*. They are the oldest source of this version
+in the bundle.
 
 Peyvan et al. use a fixed $\Delta t=2.0893\times10^{-8}$ and cite the
 problem as the "Leblanc Sod problem". Fan et al. (2025b) attribute their
@@ -119,7 +126,16 @@ print *(compiler check, not in the sources, for the arithmetic)*.
 
 ## Findings across sources
 
-**Robustness needs a positivity safeguard.** Fu runs the very-high-order
+**Robustness needs a positivity safeguard.** Zhang & Shu (2010b) run
+third-order RKDG with the characteristic TVB limiter and their
+positivity limiter ([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md))
+and "tune up" the TVB parameters to $(M_1,M_2,M_3)=(10^{10},10,10^{10})$
+on 800 cells and $(10^{20},100,10^{20})$ on 6400 cells, the smaller value
+in the second, linearly degenerate field that carries the contact.
+"Without the positivity limiter, the DG scheme is unstable for such
+large values of $M_i$", and with the TVB limiter alone at small $M_i$ the
+results are "much worse" (§4.3, Fig. 4.4, logarithmic plots of density
+and pressure). Fu runs the very-high-order
 [TENO-AA](/methods/adaptive-teno.md) on this problem with LLF splitting
 and the [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md),
 like all the paper's extreme cases, and reports it stable (§5.7). Fan, Zhang &
@@ -263,6 +279,9 @@ almost no cells are troubled (Table 4.2).
   $\gamma=1.4$ variants nearly coincide.
 - Evidence is visual against fine-grid or exact references, except Lin,
   Chan & Tomas's $L^1$ errors against the exact solution.
+- Zhang & Shu (2010b) show the run against the exact solution on two
+  grids without an error norm; their TVB parameters are tuned to this
+  problem.
 - Peyvan et al. write that "the pressure ratio is $10^9$ and the
   density ratio is $10^5$" (§4.1 and Fig. 1 caption); their printed
   densities $2$ and $0.001$ give a ratio of $2\times10^3$, as in the
@@ -290,6 +309,7 @@ almost no cells are troubled (Table 4.2).
 
 # Citations
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §4.2, §4.3, Fig. 4.4.
 - [Fu (2021)](/sources/fu-2021.md) — §5.7.1 (arXiv v1).
 - [Deng (2023)](/sources/deng-2023.md) — App. A.8, Fig. 34.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; Ex. 4.5, Fig. 4.5, Table 4.2.

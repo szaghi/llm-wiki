@@ -151,7 +151,7 @@ Forum). [47] is a personal communication. No item was unparseable.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-22), cited further in chunks 6–11 (2026-10-23/24). This source is cited on:
+Chunk 5 (2026-10-22), cited further in chunks 6–12 (2026-10-23/30). This source is cited on:
 
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)
 * [Compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)

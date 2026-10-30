@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Mapped WENO"
-description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–Shu nonlinear weights through a mapping function that fixes the linear weights, restoring the fifth-order condition at first-order critical points at a higher cost than WENO-JS; one source prints the mapping inside a seventh-order WCNS, another maps second-order TVD weights to build a third-order WENO."
+description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–Shu weights through a mapping that fixes the linear weights, restoring the fifth-order condition at first-order critical points but not where f'' also vanishes, at a higher CPU time than WENO-JS and WENO-Z in Borges et al.'s timings; another source maps second-order TVD weights for a third-order WENO."
 status: established
 aliases: [WENO-M, mapped weights, Henrick mapping, mapping-function-free WENO-M]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Mapped WENO
@@ -13,22 +13,26 @@ timestamp: 2026-10-23T15:11:00Z
 Mapped WENO (WENO-M) of Henrick, Aslam & Powers corrects the [WENO-JS](/methods/weno-js-reconstruction.md)
 weights $\omega_k$ through a mapping function $g(\omega)$ (Luo & Wu 2021, §1: "a mapping function to
 correct the WENO-JS weights"; Deng 2023, §1: "modifies the non-linear weights through a mapping
-function"; Takagi et al. 2022, §1: "remapping the WENO5-JS nonlinear weights").
+function"; Takagi et al. 2022, §1: "remapping the WENO5-JS nonlinear weights"). Shu (2009a, §2.3.5)
+describes it as "another choice of the nonlinear weights, based on the same smoothness indicators ... to
+enhance accuracy in smooth regions, especially at smooth extrema".
 
 ## The mapping
 
-Chamarthi (2023b, §3, Eqs. (47)–(48)) is the only ingested source that prints the mapping, applied to the
-weights of the seventh-order WCNS7M comparator ([WCNS](/methods/weighted-compact-nonlinear-scheme.md);
-citing Henrick et al. and Jin et al.). In registry notation, with $d_k$ the linear weights,
+[Borges et al. (2008)](/sources/borges-2008.md) (§2, Eq. (24)) print the mapping, after Henrick et al., and
+Chamarthi (2023b, §3, Eqs. (47)–(48)) prints it again, applied to the weights of the seventh-order WCNS7M
+comparator ([WCNS](/methods/weighted-compact-nonlinear-scheme.md); citing Henrick et al. and Jin et al.).
+In registry notation, with $d_k$ the linear weights,
 
 $$g_k(\omega)=\frac{\omega\big(d_k+d_k^2-3d_k\omega+\omega^2\big)}{d_k^2+(1-2d_k)\omega},$$
 
-and the mapped weights are used in place of $\omega_k$; the author states that the mapping "efficiently
-recovers the formal order of accuracy of the scheme". Chamarthi prints the denominator with a minus,
-$d_k^2-(1-2d_k)\omega$. *(Compiler check, not in the sources: with the plus sign
-$g_k(0)=0$, $g_k(d_k)=d_k$ and $g_k(1)=1$; with the printed minus $g_k(d_k)=d_k(1-d_k)/(3d_k-1)$, e.g.
-$-\tfrac{63}{3904}$ for $d_k=\tfrac1{64}$, so the printed map would not fix the linear weights on which the
-recovery of order rests.)*
+and the mapped weights are used in place of $\omega_k$. Borges et al. list its properties: $g_k$ is
+non-decreasing with $0\le g_k\le1$, $g_k(0)=0$, $g_k(1)=1$; $g_k(d_k)=d_k$ and $g_k'(d_k)=g_k''(d_k)=0$; hence
+$g_k(\omega)=d_k+O(\Delta x^6)$ when $\omega=d_k+O(\Delta x^2)$. Chamarthi states that the mapping
+"efficiently recovers the formal order of accuracy of the scheme", and prints the denominator with a minus,
+$d_k^2-(1-2d_k)\omega$, against the plus of Borges et al. *(Compiler check, not in the sources: with the
+printed minus $g_k(d_k)=d_k(1-d_k)/(3d_k-1)$, e.g. $-\tfrac{63}{3904}$ for $d_k=\tfrac1{64}$, so that form
+would not fix the linear weights.)*
 
 ## A third-order mapping of TVD weights
 
@@ -65,14 +69,27 @@ intuitive and hard to comprehend" (§3.3), a judgement without comparison.
 - **Purpose: critical points.** WENO-M was designed because WENO-JS fails to recover the optimal
   order at critical points (Deng 2023, §1; Fu 2021, §1; Takagi et al. 2022, §1; Balsara et al. 2024,
   §I). Li et al. (2022b, §2) recall that it satisfies the fifth-order condition at first-order
-  critical points ([critical-point accuracy](/properties/critical-point-accuracy.md)). Wang et al.
+  critical points ([critical-point accuracy](/properties/critical-point-accuracy.md)). Borges et al.
+  (2008, §2, after Eq. (24)) add that the mapping does not improve the order when $f''$ also vanishes:
+  then $\beta_k=D(1+O(1))$, $\omega_k=d_k+O(1)$, and the scheme is second order like WENO-JS. Wang et al.
   (2021, §1) describe it as one of "two important variants" for "achieving optimal order near critical
   points", whose "nonlinear weights are pushed smoothly to the optimal values by a regularization
   process", the other being [WENO-Z](/methods/weno-z.md). Deng (2023,
   §1) adds that Henrick et al. also pointed out the sensitivity of WENO schemes to the regularization
   $\epsilon$. Hiejima (2022, §1) recalls it as "adjusting the weights to smoothly move the optimal
   values and meet the fifth-order accuracy".
-- **Cost.** Luo & Wu (2021, §1) state that the mapping functions "dramatically" increase the
+- **Why it helps on shocks.** Borges et al. (2008, Remark 1) state that, "distinctly from" Henrick et
+  al., they "do not credit" the better shock results of WENO-M to its order at critical points "but to the
+  smaller dissipation that results from the assignment of larger weights to discontinuous stencils";
+  next to a jump, WENO-M raises those weights slightly over WENO-JS's $10^{-8}$, and WENO-Z to about
+  $10^{-4}$ (Fig. 3). They run WENO-M with $\epsilon=10^{-40}$ (Remark 2, §5) and find WENO-Z
+  "equivalent" to it on composite advection and on the Richtmyer–Meshkov instability, slightly sharper on
+  blast waves (§5).
+- **Cost.** Borges et al. (2008, Tables 5–6) time it in one code on one machine: 1.87 s per Runge–Kutta step
+  against 1.47 s for WENO-JS and 1.39 s for WENO-Z on the $400^2$ shock–vortex interaction, and similar ratios at
+  $800^2$ and on the Richtmyer–Meshkov run *(compiler check, not in the sources: $1.87/1.47=1.27$,
+  $1.87/1.39=1.35$)*; the cost question between WENO-Z and WENO-M is recorded on the
+  [WENO-Z](/methods/weno-z.md) page. Luo & Wu (2021, §1) state that the mapping functions "dramatically" increase the
   computational expense, and recall Hong's mapping-function-free WENO-M, which uses a pre-discrete
   mapping to reduce that cost. Wan & Xia (2022, §1) put the extra CPU time of WENO-M at "about 20%"
   (stated, without a measurement). Deng (2023, §1) and Luo & Wu (2021, §1) recall that
@@ -110,12 +127,14 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 ## Qualifications
 
 - The page records only what the ingested sources state about WENO-M; the proofs and the analysis of the
-  mapping belong to Henrick et al., which is not ingested. The Henrick mapping is printed once, in a comparator
-  scheme and with a sign slip; it is recorded above with the sign that fixes $d_k$. The
+  mapping belong to Henrick et al., which is not ingested; Borges et al. (2008) recall the mapping and its
+  properties from it. Chamarthi's print of the mapping carries the opposite sign in the denominator. The
   third-order mapping of Komissarov & Phillips acts on TVD weights and is a different map.
 
 # Citations
 
+- [Borges et al. (2008)](/sources/borges-2008.md) — §2, Eq. (24), Remarks 1–2; §3, Fig. 3; §5, Tables 5–6.
+- [Shu (2009a)](/sources/shu-2009.md) — §2.3.5.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1.
 - [Deng (2023)](/sources/deng-2023.md) — §1; §4.3.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §2.

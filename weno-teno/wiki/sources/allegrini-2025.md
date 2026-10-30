@@ -163,7 +163,7 @@ unclear volume. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-23), cited further in chunk 11 (2026-10-24). This source is cited on:
+Chunk 10 (2026-10-23), cited further in chunks 11–12 (2026-10-24/30). This source is cited on:
 
 * [Asymptotic preservation](/properties/asymptotic-preservation.md)
 * [Flux vector splitting](/methods/flux-vector-splitting.md)

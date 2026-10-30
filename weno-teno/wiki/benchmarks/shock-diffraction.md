@@ -5,7 +5,7 @@ description: "Shock-diffraction benchmarks: the 2D Mach 5.09 corner problem, its
 status: established
 aliases: [shock diffraction problem, shock diffraction at a corner, shock diffraction around a backward-facing step, Mach 5.09 shock diffraction, Mach 10 shock reflection and diffraction]
 tags: [benchmark, positivity, bound-preserving, dg, relativistic, gpu]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-10-30T08:08:00Z
 ---
 
 # Shock diffraction
@@ -19,7 +19,7 @@ problem has no exact solution; the sources read it as a robustness
 test: a scheme must keep density and pressure positive in the
 expansion and stay free of oscillations at the strong shock, and the
 contours of density and pressure at $t=2.3$ are compared visually.
-Five sources of the bundle run it, four in the Euler form (one on a
+Six sources of the bundle run it, five in the Euler form (one on a
 rescaled geometry) and one in a relativistic form; two, one of them
 already counted, run a Mach 10 variant in which the double-Mach-reflection shock meets a
 backward step, one runs the three-dimensional diffraction of a
@@ -29,7 +29,8 @@ counterpart on a cone.
 
 ## Setup
 
-[Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.7 and
+[Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.5, who credit the
+problem as a DG test to Cockburn & Shu, [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.7 and
 [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.4 print the same
 data, with $\gamma=1.4$:
 
@@ -42,16 +43,17 @@ data, with $\gamma=1.4$:
   $1\le x\le13$; reflecting walls on $0\le x\le1$, $y=6$ and on $x=1$,
   $0\le y\le6$;
 - final time $t=2.3$; 20 density contours from 0.066227 to 7.0668 and
-  40 pressure contours from 0.091 to 37 (Du et al. on triangles, Fan,
-  Zhang & Qiu 2021).
+  40 pressure contours from 0.091 to 37 (Zhang & Shu 2010b, Figs.
+  4.7–4.8; Du et al. on triangles, Fan, Zhang & Qiu 2021).
 
 [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.6, the
 finite-difference companion of Fan et al. (2021), prints the same data,
 outflow at $y=11$, $\Delta x=\Delta y=1/64$, $\mathrm{Re}=1000$ and
 $\infty$, and the same 20 density contours (Fig. 5.5).
 
-The top boundary differs: Fan et al. (2021, 2022) state outflow on $y=11$,
-$0\le x\le13$; Du et al. impose the exact motion of the shock there.
+The top boundary differs: Zhang & Shu (2010b) and Fan et al. (2021, 2022)
+state outflow on $y=11$, $0\le x\le13$; Du et al. impose the exact
+motion of the shock there.
 
 ### Rescaled corner of Hu, Yuan & Zhao
 
@@ -217,6 +219,7 @@ check, not in the sources)*. The paper prints no $\gamma$.
 
 | Source | Scheme | Mesh | Notes |
 |---|---|---|---|
+| [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.5 | third-order RKDG with the characteristic TVB limiter ($M_i=100$) and their positivity limiter ([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)) | $\Delta x=\Delta y=1/32$ and $1/64$ | Figs. 4.7–4.8 |
 | [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.7 | positivity-preserving hybrid [HWENO](/methods/hermite-weno.md), finite volume, cubic reconstruction, SSP-RK3; Euler and Navier–Stokes ($\mathrm{Re}=1000$, $\mathrm{Pr}=0.72$) | $\Delta x=\Delta y=1/32$ | time step with page-local constants $a=1/12$, $b=0.001$ as in their whole paper |
 | [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.4 | RKDG $\mathbb P^1$, $\mathbb P^2$ with the improved vs the original [simple WENO limiter](/methods/weno-limiter-dg.md), KXRCF threshold $C_k=0.01$, SSP-RK3 | triangles, $h=1/16$ | CFL 0.3 ($\mathbb P^1$), 0.18 ($\mathbb P^2$) |
 | [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.10 | as above, DG on polygonal cells from random point clouds | 219,200 ($\mathbb P^1$) and 493,200 ($\mathbb P^2$) points | positivity-preserving limiter for $\mathbb P^2$; 20 density contours 0.066227–7.1 |
@@ -227,7 +230,13 @@ check, not in the sources)*. The paper prints no $\gamma$.
 
 ## Findings across sources
 
-**Positivity behind the corner.** Fan, Zhang & Qiu (2021) use the
+**Positivity behind the corner.** Zhang & Shu (2010b) state that it
+"is easy to get negative density and/or pressure below and to the
+right of the corner", recall that Cockburn & Shu used "an ad hoc
+positivity correction procedure" to avoid blow-ups of their DG code,
+and find their result "comparable to the one in" Cockburn & Shu "with
+the advantage that negative pressure and density never appear" (§4.5).
+Fan, Zhang & Qiu (2021) use the
 problem to show
 robustness in the low-density, low-pressure region behind the corner.
 Their scaling positivity limiter is triggered in only 0.23 % of the
@@ -362,6 +371,7 @@ outside the shock and the torus vortex (Figs. 22–23).
 
 # Citations
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §4.5, Figs. 4.7–4.8.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; §4, Ex. 4.7, Fig. 4.7, Table 4.2.
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §4.2; Ex. 4.4, Figs. 4.5–4.7, Table 4.8; Ex. 4.10, Fig. 4.16, Table 4.18.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.11, Fig. 17 (arXiv v1).

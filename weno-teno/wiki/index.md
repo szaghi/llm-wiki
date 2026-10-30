@@ -19,7 +19,7 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** all 11 chunks ingested (204 of 207 sources; feng-2026, li-2024 and wu-2023
+**Corpus:** all 12 chunks ingested (214 of 217 sources; feng-2026, li-2024 and wu-2023
 await a re-download, see `INGESTION-ISSUES.md`). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
@@ -96,7 +96,14 @@ low-Mach finite elements, a positivity-preserving immersed-boundary TENO and the
 Chunk 11 (2023–2026 papers): the COS(DG) oscillation suppression, Wang, Don & Wang's AWENO
 with adaptive Lax–Friedrichs dissipation, learned entropy-stable fluxes, low-dissipation
 high-order AMR with WENO transfers, and the AthenaK code. The [Sources](/sources/index.md)
-index lists what is in; a whole-bundle deep lint closed the archive.
+index lists what is in; a whole-bundle deep lint closed the archive. Chunk 12 (added
+2026-10-30): ten founding papers — [Van Leer (1979)](/sources/vanleer-1979.md) (MUSCL),
+[Harten (1983a)](/sources/harten-1983.md) (TVD schemes), [Harten et al. (1987a)](/sources/harten-1987.md)
+(ENO), [Shu & Osher (1988)](/sources/shu-1988.md) (TVD Runge–Kutta and finite-difference ENO),
+[Liu et al. (1994)](/sources/liu-1994.md) and [Jiang & Shu (1996)](/sources/jiang-1996.md) (WENO),
+[Borges et al. (2008)](/sources/borges-2008.md) (WENO-Z), the WENO review of
+[Shu (2009a)](/sources/shu-2009.md), the positivity-preserving DG limiter of
+[Zhang & Shu (2010b)](/sources/zhang-2010-b.md) and the TENO paper of [Fu et al. (2016)](/sources/fu-2016.md).
 
 ## Reading guide
 
@@ -104,7 +111,7 @@ index lists what is in; a whole-bundle deep lint closed the archive.
 [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 (point values, flux reconstruction, and its relation to finite volumes; the
 [cell-average to point-value conversion](/operators/cell-average-point-value-conversion.md)
-bridges the two) and the
+bridges the two), the [ENO reconstruction](/methods/eno-reconstruction.md) it grew from, and the
 [WENO-JS reconstruction](/methods/weno-js-reconstruction.md), with its
 [smoothness indicators](/definitions/smoothness-indicator.md), the
 [ENO property](/definitions/eno-property.md) and
@@ -150,7 +157,9 @@ and [AFTENO](/methods/afteno.md) extend it.
 principle lead to [TENO-THINC](/methods/teno-thinc.md). The compact-stencil view
 of [Deng (2023)](/sources/deng-2023.md) organises reconstructions on the
 [normalised-variable diagram](/definitions/normalised-variable-diagram.md),
-against [TVD limiters](/definitions/total-variation-diminishing.md), and
+against [TVD limiters](/definitions/total-variation-diminishing.md) (with
+[Harten's TVD scheme](/methods/harten-tvd-scheme.md), [monotone schemes](/definitions/monotone-scheme.md),
+the [Godunov scheme](/methods/godunov-scheme.md) and [artificial compression](/methods/artificial-compression.md)), and
 yields the [ROUND schemes](/methods/round-scheme.md).
 
 **3. Fluxes and characteristic projection.** The
@@ -275,7 +284,8 @@ conservative scheme, [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.
 implicit CWENO stepping of [Quinpi](/methods/quinpi.md).
 
 **9. Benchmarks.** Scalar: [Burgers equation tests](/benchmarks/burgers-equation-tests.md),
-the [Buckley–Leverett problem](/benchmarks/buckley-leverett-problem.md) and
+the [Buckley–Leverett problem](/benchmarks/buckley-leverett-problem.md),
+[Riemann problems with nonconvex scalar fluxes](/benchmarks/nonconvex-scalar-riemann-problem.md) and
 [solid-body rotation](/benchmarks/solid-body-rotation.md), with the
 [Jiang–Shu composite-wave advection](/benchmarks/jiang-shu-composite-advection.md). One-dimensional:
 [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md), the

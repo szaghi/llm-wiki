@@ -140,7 +140,7 @@ title. No DOIs are printed.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–11 (2026-10-22/24). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–12 (2026-10-22/30). This source is cited on:
 
 * [Five- and six-equation diffuse-interface models](/definitions/five-equation-model.md)
 * [Gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md)

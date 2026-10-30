@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -209,6 +209,28 @@ jumps.
   PDE residual (page-local $h$ the mesh size, $\lambda_{\max}$ the local maximum speed). See
   [artificial viscosity](/methods/artificial-viscosity.md).
 
+### The numerical-viscosity coefficient of three-point schemes
+
+The same reading is the starting point of [Harten (1983a)](/sources/harten-1983.md) (§3,
+Eqs. (3.1), (3.6)–(3.7), (3.15)). Every three-point conservative scheme is written as
+
+$$\hat f_{i+1/2}=\tfrac12\big[f(u_i)+f(u_{i+1})\big]-\frac{\Delta x}{2\Delta t}\,Q(\nu_{i+1/2})\,(u_{i+1}-u_i),$$
+
+with $\nu_{i+1/2}$ the signed local Courant number and $Q$ "the coefficient of numerical
+viscosity" (page-local; not the dissipation matrix above). The Lax–Wendroff scheme is
+$Q=\nu^2$; a scheme with $Q$ approximates to second order the modified equation with
+viscosity coefficient $\frac{\Delta x^2}{2\Delta t}\,[Q(\nu)-\nu^2]$, so $Q-\nu^2$ is the
+dissipation relative to the second-order scheme. Total variation nonincreasing three-point
+schemes need $\lvert\nu\rvert\le Q(\nu)\le1$, and $Q=\lvert\nu\rvert$, upwind differencing, is the
+least dissipative of them (Lemmas 3.1, 5.1); [monotone schemes](/definitions/monotone-scheme.md)
+always carry a viscosity of this kind that is nonnegative and not identically zero, and are first order (§2, Eq. (2.7)). Two
+consequences that the paper draws: a viscosity that vanishes at $\nu=0$, as $Q=\lvert\nu\rvert$ does,
+leaves stationary jumps, admissible or not, as steady solutions, so the paper smooths $Q$ near zero
+(§5, Eq. (5.3)); and the paper's second-order scheme removes the viscosity $Q-\nu^2$ in smooth regions
+by a limited anti-diffusive correction of the flux
+([Harten's TVD scheme](/methods/harten-tvd-scheme.md)). Harten calls added viscosity "an
+irretrievable loss of information" (§1; [artificial viscosity](/methods/artificial-viscosity.md)).
+
 ### An explicit high-order dissipation term
 
 The same flux form with a higher-order dissipation term is the Lerat–Corre
@@ -295,6 +317,16 @@ parameters; larger values "may introduce excessive anti-dissipation errors and
 potentially lead to numerical instability"
 ([Huang et al. (2026)](/sources/huang-2026.md), §4.2).
 
+**Slope choice and dissipation in MUSCL.** [Van Leer (1979)](/sources/vanleer-1979.md)
+(App. B, p. 134) recalls from the fourth paper of the series a linear analysis of three ways
+of updating the slopes of a piecewise-linear scheme: moment (least-squares) fitting has an
+evolutionary convective error two orders of $\Delta x$ smaller than finite-difference slopes,
+and the maximum dissipative error per step of interface differencing is a factor 3 smaller
+than that of slopes from averaged differences but a factor 3 larger than that of moment
+fitting. The same paper notes that the numerical damping decreases as the local Courant
+number approaches 1, and lets the limiter factors depend on it (§3.3;
+[TVD and slope limiters](/definitions/total-variation-diminishing.md)).
+
 ## 3. The imaginary part of the modified wavenumber
 
 In the [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
@@ -353,6 +385,24 @@ weights in smooth data; without that penalty the scheme converges only at second
 1.90 and 1.95 on two test functions), with it at about third order on $\tanh(2x)$ (2.93)
 ([learned WENO weights](/methods/learned-weno-weights.md)).
 
+**Weight on the discontinuous stencil.** [Borges et al. (2008)](/sources/borges-2008.md)
+(§2 Remark 1, §4, §6) locate WENO dissipation at shocks in the weight that the stencil
+crossing the discontinuity receives: [WENO-Z](/methods/weno-z.md) gives it weights around
+$10^{-4}$ where WENO-JS gives around $10^{-8}$ (Fig. 3), and the authors credit the better
+shock results of WENO-Z and [mapped WENO](/methods/mapped-weno.md) not to their higher order at
+critical points but "to the smaller dissipation that results from the assignment of larger
+weights to discontinuous stencils", against the reading of Henrick et al.
+([critical-point accuracy](/properties/critical-point-accuracy.md)). Raising the exponent $q$
+brings the scheme closer to the central one in smooth regions but lowers the relative weight
+of the discontinuous stencil, "making the scheme more dissipative" (§4), so all their
+experiments use $q=1$; on the Sod, Lax and 123 problems with 200 points they attribute the
+better results of WENO-Z and WENO-M to "their lesser dissipativity" (§5.2.1, Fig. 6).
+[Fu et al. (2016)](/sources/fu-2016.md) (§1, §3, §4.1) recall the same argument against $q>1$ in
+WENO-Z and WENO-CU6, whose "strong adaptation introduces excessive nonlinear dissipation at
+intermediate and high wave numbers", and design [TENO](/methods/targeted-eno.md) so that the
+background linear scheme, which they call the main source of dissipation, is recovered up to
+high wavenumbers (Fig. 3).
+
 ## Dissipation adapted to the local scale
 
 Several sources make the dissipation of the linear background itself a function
@@ -361,7 +411,18 @@ of the local resolution.
 - **Order traded for dissipation.** The six- and eight-point backgrounds of wide TENO are
   dissipation-optimized at fifth and sixth order instead of sixth and eighth, to damp spurious
   waves at marginally resolved wavenumbers ([Hong, Ye & Ye (2022)](/sources/hong-2022.md), §1,
-  §5.1; see [targeted ENO](/methods/targeted-eno.md)).
+  §5.1; see [targeted ENO](/methods/targeted-eno.md)). The construction is that of
+  [Fu et al. (2016)](/sources/fu-2016.md) (§4, Eq. (31), Tables 3–4): an order-$K$ background is
+  replaced by a blend $\eta g^{(1)}+(1-\eta)g^{(2)}$ of two order-$(K-1)$ sub-schemes
+  (page-local $\eta$, $g^{(1,2)}$), tuned so that the dispersion–dissipation ratio of Hu et al.
+  stays of order 10 in the non-resolved range
+  ([approximate dispersion relation](/definitions/approximate-dispersion-relation.md));
+  $\eta=0.2$ gives the fourth-order TENO5-opt and $\eta=0.54$ the fifth-order TENO6-opt, one
+  order below the full stencil. For six-point schemes $\eta=\tfrac12$ is the
+  non-dissipative central scheme, and Fu et al. find the nonlinear six-point schemes with
+  ratios of order 100 between reduced wavenumbers 1.1 and 1.8, the five-point ones at most
+  5.5, "free from spurious waves, but over-dissipative" (§4.1, Fig. 5); they state that
+  WENO-SYMBO and WENO-BO produce anti-dissipation at low to intermediate wavenumbers (§4.1).
 - **A dissipation parameter set by a scale sensor.** In the MDCD flux of
   [Li, Chen & Ren (2022a)](/sources/li-2022.md) dissipation enters only through the parameter
   $c_{\mathrm{diss}}$ of the [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
@@ -688,6 +749,10 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 
 # Citations
 
+- [Harten (1983a)](/sources/harten-1983.md) — §1, §2 (Eq. (2.7)), §3 (Eqs. (3.1), (3.6)–(3.7), (3.15)), §5 (Lemma 5.1, Eq. (5.3)): numerical-viscosity coefficient of three-point schemes (NYU report DOE/ER/03077-175, March 1982).
+- [Borges et al. (2008)](/sources/borges-2008.md) — §2 (Remark 1), §4, §5.2.1 (Fig. 6), §6, Fig. 3: dissipation through the weight of the discontinuous stencil and the exponent $q$.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §1, §3 (Fig. 3), §4.1–4.3 (Eq. (31), Tables 3–4, Fig. 5): background scheme as dissipation source, dissipation-optimized backgrounds.
+- [Van Leer (1979)](/sources/vanleer-1979.md) — §3.3, App. B: dissipative errors of slope-updating choices.
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §§3.1–3.3, Eqs. (36)–(49); §4.10, Figs. 17–18: non-dissipative smooth branch, tuned TENO dissipation.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.3, Fig. 5; §5.4, Fig. 7; §5.6: Alfvén-wave damping, magnetic-energy decay, pressure-maximum proxy (arXiv v4).
 - [Fu (2023)](/sources/fu-2023.md) — §3.6, Eq. (29): flux as central part plus jump term.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation tests"
-description: "The inviscid Burgers equation as test bed: 1D to 3D sine data for accuracy before the shock and shock capturing after, energy and entropy tests of split forms, discontinuous data, a slow shock across a block interface, Burgers balance laws with source terms, 2D Riemann data, and gamma = 3 Euler data reducing to Burgers; setups, breaking times, orders."
+description: "The inviscid Burgers equation as test bed: 1D to 3D sine data for accuracy before the shock and shock capturing after, since the founding ENO and WENO papers, energy and entropy tests of split forms, discontinuous data, a slow shock across a block interface, balance laws, 2D Riemann data, and gamma = 3 Euler data reducing to Burgers."
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Burgers equation tests
@@ -17,7 +17,9 @@ steepen and form a shock at the breaking time
 $t_{\mathrm b}=-1/\min_xu_0'(x)$ (page-local symbol), so a single
 initial profile serves two tests: an accuracy test at $t<t_{\mathrm b}$,
 where the exact solution follows from characteristics, and a
-shock-capturing test at $t>t_{\mathrm b}$. The sources also use
+shock-capturing test at $t>t_{\mathrm b}$. The founding ENO and WENO
+papers already use it so, with errors measured before the shock and at
+a distance from it after. The sources also use
 discontinuous data, a slow shock across a block interface, balance laws
 with a source term, a two-dimensional Riemann problem, and Euler data
 that reduce exactly to Burgers.
@@ -26,6 +28,10 @@ that reduce exactly to Burgers.
 
 | Source | Data | Domain | Accuracy time | Shock time |
 |---|---|---|---|---|
+| [Harten et al. (1987a)](/sources/harten-1987.md) §7 A1, Eq. (7.1) | $u_0=1+\tfrac12\sin(\pi x)$ | $[-1,1]$, periodic | $0.3$, $J=8$–$128$ cells, CFL 0.6 | $2/\pi$, $J=16$ |
+| [Shu & Osher (1988)](/sources/shu-1988.md) Ex. 1, Eq. (4.1) | $u_0=\tfrac14+\tfrac12\sin(\pi x)$ | $[-1,1]$, periodic | $0.3$, $\Delta x=1/10$–$1/40$ | $2/\pi$, $1.1$, $\Delta x=1/10$–$1/40$ |
+| [Shu & Osher (1988)](/sources/shu-1988.md) Ex. 2, Eq. (4.2) | $u_0=\tfrac14+\tfrac12\sin(\pi(x+y)/2)$ | $[-2,2]^2$ | $0.3$, $\Delta x=\Delta y=1/5$–$1/20$ | $2/\pi$, $1.1$, $\Delta x=\Delta y=1/20$ |
+| [Liu et al. (1994)](/sources/liu-1994.md) Example 2 | $u_0=\tfrac12+\sin(\pi x)$ | $[-1,1]$, periodic | $0.15$, 80–320 cells, $\Delta t/\Delta x=0.6$ | $0.3183$, $0.55$ (errors $\ge0.1$ from the shock), 80–320 cells |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.1 | $u_0=0.5+\sin(\pi x)$ | $[0,2]$, periodic | $0.5/\pi$, 10–320 cells | $1.5/\pi$, 200 cells |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.2 | $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,4]^2$, periodic | $0.5/\pi$, $10^2$–$320^2$ | $1.5/\pi$, $200^2$, cut along $x=y$ |
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.1 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2]$; $[0,4]^2$, periodic | $0.5/\pi$, 10–320 cells; $10^2$–$320^2$ | — |
@@ -47,6 +53,13 @@ that reduce exactly to Burgers.
 | [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.1, Ex. 6.12 | $u_0=\sin x+0.5$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2\pi]$; $[-2,2]^2$, periodic | $0.6$; $\mathbb P^1$ 1280–10240, $\mathbb P^2$ 320–2560, $\mathbb P^3$ 160–1280 cells | 2D: $1.5/\pi$, $160\times80$, third order, cut along the diagonal cells |
 | [Liu et al. (2026)](/sources/liu-2026.md) §5.1.1, §5.1.4 | $u_0=A\sin x+B$ (training family); 2D $u_0=A\sin(2\pi x+x_0)\cos(2\pi y+y_0)+B$ ($A$, $B$, $x_0$, $y_0$ page-local, random) | $[0,2\pi]$; $[0,1]^2$, periodic | training data on $[0,0.1]$ (1D) | test to $T=3$ (1D), $T=1.6$ (2D) |
 
+Harten et al. state the shock at $t=2/\pi$ for their data, Shu & Osher
+that theirs are smooth until $t=2/\pi$ (in 2D along $\xi=x+y$, where
+the data are $\tfrac14+\tfrac12\sin(\pi\xi/2)$), and Liu et al. that
+theirs form a shock at $1/\pi$, the time $0.3183$ of their Fig. 4. Shu &
+Osher's 1D data, domain and accuracy time are those of Qin et al.'s run
+below, and Liu et al.'s data are those of Li, Shu & Qiu, Fan et al.,
+Zhong et al. and Zhang & Zhu, on $[-1,1]$ instead of $[0,2]$.
 For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$ (stated by Zhong et
 al.); along the diagonal the
 two-dimensional data have the same breaking time (the data of Li, Shu
@@ -80,6 +93,41 @@ $u_0=\sin x+0.5$, $t_{\mathrm b}=1$, so $t=0.6$ is an accuracy time,
 and their 2D data are Li, Shu & Qiu's on a shifted square, with
 $t_{\mathrm b}=1/\pi$ along the diagonal *(compiler check, not in the
 sources)*.
+
+**Founding accuracy tables.** Harten et al.'s
+[ENO](/methods/eno-reconstruction.md) schemes, built on the Roe flux
+without entropy correction, reach at $t=0.3$ the $L_1$ rates (from
+$J=64$ to $128$) 0.99, 1.83, 2.56, 3.53, 4.62 for $r=1,\dots,5$ with
+reconstruction via the primitive function (RP), and 0.99, 2.18, 3.35,
+4.53, 5.53 with reconstruction via deconvolution (RD); at $J=128$ the
+$L_1$ errors are $6.835\times10^{-7}$ (RP, $r=4$), $8.385\times10^{-8}$
+(RD, $r=4$) and $9.810\times10^{-9}$ (RD, $r=5$) (Tables IA–IB). The
+authors call such schemes "$r$th order accurate" in quotation marks:
+order $r$ in $L_1$, one less in the maximum norm (Remarks 1.2,
+3.1). They also run the data as an
+initial-boundary-value problem, with inflow
+$u(-1,t)=1+\tfrac12\mathscr U(-1-t,\tfrac12t)$ (their exact solution
+$\mathscr U$, page-local) and outflow at $x=1$, the stencil kept inside
+the domain (Eq. (7.6); Tables IIA–IIB), and a second one with
+$u_0=\sin(\pi x+\pi)$ and $u(-1,t)=0$, whose shock forms at $t=1/\pi$
+and stays at $x=0$ (Fig. 4, $J=16$, $t=0.6$). Shu & Osher's
+finite-difference ENO with Lax–Friedrichs building blocks, chosen
+because the data contain a sonic point, show "full order of accuracy
+in both $L_1$ and $L_\infty$": at $\Delta x=1/40$ the third-order
+scheme 3-3-LF-ENO has $L_1$ error $6.5\times10^{-6}$ (rate 3.13) and
+the fourth-order 4-4-LF-ENO $9.2\times10^{-7}$ (rate 4.76) (Table 1).
+After the shock there are no oscillations, and the errors at distance
+at least $0.1$ from the shock are of the size of the smooth case, $L_1$
+$8.6\times10^{-6}$ at $t=2/\pi$ and $1.4\times10^{-6}$ at $t=1.1$ for
+4-4-LF-ENO (Table 2); the two-dimensional run, dimension by dimension at
+half the one-dimensional CFL numbers, gives "essentially the same
+results" ($L_1$ $4.5\times10^{-7}$, rate 4.80, at $\Delta x=1/20$;
+Tables 3–4). Liu et al.'s [WENO](/methods/weno-js-reconstruction.md)
+with $r=3$ reaches at $t=0.15$ the $L_1$ rates 4.13 and 4.79 ($L_1$
+$5.44\times10^{-8}$ on 320 cells; Table III); at $t=0.55$ the errors at
+least $0.1$ from the shock have rates 4.89 and 6.70 and the size of the
+smooth case (Table IV), which "shows that the error propagation of the
+schemes is still very local".
 
 **Orders.** Li, Shu & Qiu's sixth-order moment-based
 [multi-resolution HWENO](/methods/hermite-weno.md), with the first
@@ -430,6 +478,15 @@ use two Burgers-type tests of their
 
 ## Discontinuous data and interacting shocks
 
+[Shu & Osher (1988)](/sources/shu-1988.md) (p. 20) run the Riemann
+data $u=\tfrac12$ on the left and $u=-1$ on the right with fifth-order
+versions of their conservative scheme and of a non-conservative
+variant (their Eq. (3.18)): without a further limitation of the
+reconstruction (their Eq. (3.16)) the variant "gives the wrong shock
+location"; with it "the shock location becomes correct" but the shock
+suffers "a rather severe smearing", and the variant was abandoned; no grid, time or figure is printed. See
+[Lax–Wendroff theorem](/results/lax-wendroff-theorem.md).
+
 [Puppo et al.](/sources/puppo-2023.md) §4.3.2–4.3.3 run, on periodic
 $[-1,1]$:
 
@@ -606,6 +663,15 @@ going from 5.6338 % to 0 % (Table 4).
 
 ## Qualifications
 
+- Shu & Osher's Table 1 prints the 4-4-LF-ENO $L_\infty$ error at
+  $\Delta x=1/40$ as $5.4\times10^{-5}$ with rate 4.35;
+  $\log_2(1.1\times10^{-4}/5.4\times10^{-5})=1.03$, whereas
+  $5.4\times10^{-6}$ gives 4.35 *(compiler check, not in the sources)*.
+  Their two-dimensional near-shock error lists repeat the
+  one-dimensional ones digit for digit except five entries of the
+  third-order list at $t=2/\pi$, without comment. Harten et al.'s Tables IB and IIB carry printed slips in a
+  few entries, recorded on their Source page; several of their observed
+  rates exceed $r$ (RD, $r=5$, 5.53).
 - Li, Shu & Qiu caption the Burgers figures "density" and call the
   unknown $\mu$, the letter of the velocity in their Euler examples.
 - Their M5-I orders 8.85 and 8.72 at 40 and 80 cells (Table 3.1)
@@ -667,6 +733,9 @@ going from 5.6338 % to 0 % (Table 4).
 
 # Citations
 
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §1, Remark 1.2; §7 A1, Eqs. (7.1)–(7.6), Tables IA–IIB, Figs. 1–4.
+- [Shu & Osher (1988)](/sources/shu-1988.md) — p. 20; §IV, Exs. 1–2, Eqs. (4.1)–(4.2), Tables 1–4, Figs. 1–12 (ICASE Report 87-33).
+- [Liu et al. (1994)](/sources/liu-1994.md) — §4, Example 2, Tables III–IV, Figs. 4–5.
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.1–3.4, Tables 3.1–3.4, Figs. 3.1–3.2 (arXiv v1).
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.1, Table 3.1, Fig. 3.1, Remark 3.1.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §6.2.1–6.2.2, Eqs. (78)–(80), Table 2, Figs. 17–22 (arXiv v2).

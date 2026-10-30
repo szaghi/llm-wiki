@@ -1,24 +1,80 @@
 ---
 type: Method
 title: "Characteristic decomposition"
-description: "Local characteristic decomposition projects stencil data onto the eigenvectors of the flux Jacobian at an interface state, reconstructs each field separately and projects back; WENO, TENO and central-upwind schemes use it against oscillations, multiphase sources project primitive variables at material interfaces, entropy-stable schemes scale the eigenvectors, and some schemes do without it."
+description: "Local characteristic decomposition projects stencil data onto the eigenvectors of the flux Jacobian frozen at one state, usually an interface average, reconstructs each field separately and projects back; WENO, TENO and central-upwind schemes use it against oscillations, multiphase sources project primitive variables at material interfaces, entropy-stable schemes scale the eigenvectors, and some schemes do without it."
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Characteristic decomposition
 
 For a system $\partial_tu+\partial_xf(u)=0$, $u\in\mathbb R^m$, a nonlinear reconstruction
-applied component by component to the conserved variables couples the fields at a
-discontinuity and produces oscillations. Local characteristic decomposition freezes the
-Jacobian at an interface: with $R_{i+1/2}$, $L_{i+1/2}=R_{i+1/2}^{-1}$ the right- and
-left-eigenvector matrices of $A$ at an average of the two neighbouring states, every datum of
-the stencil is projected, $\zeta_k=L_{i+1/2}u_k$ (page-local symbol), the scalar
-reconstruction is applied to each of the $m$ fields, and the result is projected back with
-$R_{i+1/2}$. The same matrix is used for all stencil points of one interface, so the
-projection is linear and exactly invertible.
+applied component by component to the conserved variables can oscillate where discontinuities
+of different fields interact: [Harten et al. (1987a)](/sources/harten-1987.md) (§2, p. 240; §5,
+p. 254) state that the scalar ENO reconstruction needs at least $r+1$ points of smoothness
+between discontinuities, which fails where waves of different fields collide, so that the
+component-wise reconstruction "may cease to be non-oscillatory" there. Local characteristic
+decomposition freezes the Jacobian at one state, in most sources an average of the two states
+neighbouring the interface ([Jiang & Shu (1996)](/sources/jiang-1996.md), Eq. (4.1);
+[Fu (2023)](/sources/fu-2023.md)): with $R_{i+1/2}$, $L_{i+1/2}=R_{i+1/2}^{-1}$ the right- and
+left-eigenvector matrices of $A$ at that state, every datum of the stencil is projected,
+$\zeta_k=L_{i+1/2}u_k$ (page-local symbol), the scalar reconstruction is applied to each of the
+$m$ fields, and the result is projected back with $R_{i+1/2}$. The same matrix is used for all
+stencil points of one interface, so the projection is linear and exactly invertible. The
+founding papers freeze it at other states as well (next section).
+
+## Origins: flux-level and reconstruction-level decompositions
+
+- **Flux level, per interface (Harten 1983a).** [Harten (1983a)](/sources/harten-1983.md)
+  (§4, Eqs. (4.6)–(4.8); NYU report version read) extends the scalar
+  [TVD scheme](/methods/harten-tvd-scheme.md) to systems by applying it "scalarly" to each
+  characteristic field of a linearization at a symmetric average state of $u_i$ and $u_{i+1}$, "a somewhat
+  generalized version of the procedure suggested by P. Roe": the jump is decomposed into the wave
+  strengths $L_{i+1/2}(u_{i+1}-u_i)$, one per field, along the columns of $R_{i+1/2}$, each field
+  with its own numerical viscosity and, for the Euler equations, the
+  [artificial compression](/methods/artificial-compression.md) switch only in the contact field (§6–§7).
+  Any symmetric average is allowed; with Roe's average the scheme for $m=1$ is the scalar one and
+  stationary discontinuities are exact steady solutions (§4). The total variation is measured in the
+  characteristic wave strengths (Eq. (4.12)), and the TVD property (the paper's "TVNI"), convergence and second order are proved only for
+  constant-coefficient systems (Lemma 4.2, Corollary 4.3).
+- **Reconstruction level, per cell (Harten et al. 1987a).** For ENO,
+  [Harten et al. (1987a)](/sources/harten-1987.md) (§5, Eq. (5.8); §6, Eq. (6.3a)) project the stencil
+  averages with the left eigenvectors at the **cell** state $\bar u_i$ of the cell being reconstructed,
+  $L(\bar u_i)\,\bar u_k$ for the stencil cells $k$, reconstruct each field and project back with
+  $R(\bar u_i)$. On the [Sod and Lax tubes](/benchmarks/sod-and-lax-shock-tubes.md) the
+  characteristic version removes the "noise" of the component-wise one, which is still "acceptable for
+  practical calculations" on Sod and "much noisier" on Lax (§7 B1, Figs. 10–12, 15); reflecting walls
+  are "very suitable" for it because a reflected 3-wave is a 1-wave (§7 B2).
+- **Point values, per node (Shu & Osher 1988).** In the flux-based ENO of
+  [Shu & Osher (1988)](/sources/shu-1988.md) (pp. 22–23; ICASE report version read) the
+  Lax–Friedrichs splitting matrix is frozen at one state for the whole region, and the split fluxes
+  are projected with the eigenvectors of $\partial f/\partial u$ at the node $u_i$, interpolated field
+  by field and recombined with the right eigenvectors at $u_i$; the paper prints no Euler results
+  ("work currently under way").
+- **Interface average for WENO (Jiang & Shu 1996).** [Jiang & Shu (1996)](/sources/jiang-1996.md)
+  (§4, Eqs. (4.1)–(4.4)) project the point fluxes of the whole stencil with the eigenvectors of
+  $A_{i+1/2}$, the Jacobian at the arithmetic mean $\tfrac12(u_i+u_{i+1})$ or the Roe matrix, compute
+  the WENO weights field by field and recombine; the projections "are responsible for most of the
+  floating point operations of WENO schemes (true also for ENO schemes)". Their
+  **pressure–entropy** variant (WENO-LF-5-PS, Eqs. (4.5)–(4.6)) computes the weights of the two
+  genuinely nonlinear fields from pressure and those of the linearly degenerate fields from entropy,
+  which by the linearity of the candidate fluxes needs only two projections and two back-projections;
+  it fails on the [forward-facing step](/benchmarks/forward-facing-step.md) and the
+  [double Mach reflection](/benchmarks/double-mach-reflection.md), which the authors explain by the
+  symmetry of pressure and entropy at a reflecting wall, unable to signal a jump of the normal velocity
+  (§8.3, Remark p. 34), and on the 2D shock–entropy wave. [Liu et al. (1994)](/sources/liu-1994.md)
+  (§4.2) use the characteristic reconstruction of Harten et al. with Roe's average for their Euler
+  Riemann problems; [Borges et al. (2008)](/sources/borges-2008.md) (§5.2) and
+  [Fu et al. (2016)](/sources/fu-2016.md) (§5) the Roe-averaged interface version with Lax–Friedrichs
+  splitting.
+- **When it is needed (Shu 2009a).** [Shu (2009a)](/sources/shu-2009.md) (§3.5.3) states that
+  component-wise reconstruction "usually" gives satisfactory results up to third order, while
+  characteristic reconstruction gives better non-oscillatory results at higher order, "albeit with an
+  increased computational cost"; for central (staggered) WENO, component-wise reconstruction is
+  acceptable up to third or fourth order and characteristic reconstruction "is still necessary" at very
+  high order (§3.5.5).
 
 ## Finite-difference and finite-volume algorithms
 
@@ -75,7 +131,8 @@ $R$ and $L=R^{-1}$ it reads $A=R\Lambda L$ *(compiler check, not in the sources)
 
 ## Variants of the frozen state and of where the projection acts
 
-- **Averaged state.** Roe averages in [Fu (2023)](/sources/fu-2023.md),
+- **Averaged state.** Arithmetic mean or Roe matrix in Jiang & Shu (1996, Eq. (4.1)), any symmetric
+  average in Harten (1983a, Eq. (4.6)); Roe averages in [Fu (2023)](/sources/fu-2023.md),
   [Fu (2021)](/sources/fu-2021.md), [Luo & Wu (2021)](/sources/luo-2021-b.md),
   [Takagi et al. (2022)](/sources/takagi-2022.md) and [Wang & Don (2022)](/sources/wang-2022-b.md);
   an arithmetic average of primitive variables (with $E$ and $H$ derived from it) in
@@ -86,7 +143,8 @@ $R$ and $L=R^{-1}$ it reads $A=R\Lambda L$ *(compiler check, not in the sources)
   reconstruct once per zone, in the characteristic variables of zone $i$, obtaining both
   $u^-_{i+1/2}$ and $u^+_{i-1/2}$ from one projection (§VI, steps 2–3); this is what lets
   their [fluctuation-form scheme](/methods/fluctuation-form-fd-weno.md) use one
-  reconstruction per zone instead of two.
+  reconstruction per zone instead of two. Harten et al. (1987a, Eq. (5.8)) already freeze the
+  eigenvectors at the state of the cell being reconstructed.
 - **Non-conservative systems.** [Chu et al. (2022)](/sources/chu-2022.md) (Remarks 6.2–6.3)
   project with the eigenvectors of $A(\hat u_{i+1/2})+\mathcal C(\hat u_{i+1/2})$ (in this
   bundle's sign; their $A-B$), the quasilinear matrix of the two-layer shallow-water system
@@ -420,6 +478,14 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 
 # Citations
 
+- [Harten (1983a)](/sources/harten-1983.md) — §4, Eqs. (4.6)–(4.13), Lemma 4.2, Corollary 4.3; §6–§7 (NYU report DOE/ER/03077-175).
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §2, p. 240; §5, Eq. (5.8); §6, Eq. (6.3a); §7 B1–B2, Figs. 10–15.
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §III, pp. 22–23 (ICASE Report 87-33).
+- [Liu et al. (1994)](/sources/liu-1994.md) — §4.2.
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §4, Eqs. (4.1)–(4.6); §8.3 (author preprint).
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5.2.
+- [Shu (2009a)](/sources/shu-2009.md) — §3.5.3, §3.5.5.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §5.
 - [Fu (2023)](/sources/fu-2023.md) — §3.4 (Algorithm 1, hybrid TENO, Eqs. (21)–(24)), §3.6 (Algorithm 2).
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §2.1 (Eqs. (2.5)–(2.8)), §3, Apps. A–B (arXiv v2).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VI (pointwise algorithm, steps 2–3).

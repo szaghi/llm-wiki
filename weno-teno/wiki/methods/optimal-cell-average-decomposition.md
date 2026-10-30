@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Optimal cell-average decomposition
@@ -56,6 +56,31 @@ $$\Delta t\Big(\frac{a^{(1)}}{\Delta x}+\frac{a^{(2)}}{\Delta y}\Big)\le c_0\,\m
 for their bound-preserving MHD schemes (Thm 6.2, $\lambda\le\widehat\omega_1$
 in their notation).
 
+The classic decomposition is the construction of
+[Zhang & Shu (2010b)](/sources/zhang-2010-b.md) for the Euler equations
+(Thm 2.1, Eqs. (2.1)–(2.3); Thm 3.1, Eqs. (3.9)–(3.13)). In 1D they require
+$2N_{\mathrm{GL}}-3\ge N$, write the forward-Euler cell average as the interior
+Gauss–Lobatto values plus two first-order updates of Lax–Friedrichs type with the
+endpoint weight $\varpi$, and obtain the CFL condition
+$\frac{\Delta t}{\Delta x}\lVert(\lvert v\rvert+c)\rVert_\infty\le\varpi\,c_0$; for the Lax–Friedrichs
+flux they print $a\Delta t/\Delta x\le\tfrac16$ for $N=2,3$ and $\tfrac1{12}$ for $N=4,5$
+(Table 2.1), "comparable with and only slightly more restrictive than" the
+linear-stability CFL of DG. In 2D the edge integrals use an $L$-point Gauss rule exact
+for degree $2N+1$ (page-local $L$), and the two tensor Gauss × Gauss–Lobatto rules are
+blended with weights $\frac{a^{(1)}\Delta t}{\Delta x\,\mu_{\mathrm{ZS}}}$ and
+$\frac{a^{(2)}\Delta t}{\Delta y\,\mu_{\mathrm{ZS}}}$,
+$\mu_{\mathrm{ZS}}=a^{(1)}\frac{\Delta t}{\Delta x}+a^{(2)}\frac{\Delta t}{\Delta y}$ (page-local), which gives the 2D condition above.
+On the choice of rule they state that any quadrature that includes both cell ends and
+is exact for degree $N$ "will work", and that "for $k=2,3$" (their degree) "we have verified
+that the Gauss–Lobatto quadrature is the best choice" (Rem. 2.3), a verification for two
+degrees without a printed argument. The constant $c_0=1$ of the Lax–Friedrichs scheme is
+also theirs: Rem. 2.4 proves the first-order scheme with a global $a$ positivity-preserving
+under $a\Delta t/\Delta x\le1$, relaxing the $\tfrac12$ of Perthame & Shu
+([bound preservation](/properties/bound-preservation.md)). *(Compiler check, not in the
+sources: the three- and four-point Gauss–Lobatto weights on $[-\tfrac12,\tfrac12]$ are
+$(\tfrac16,\tfrac23,\tfrac16)$ and $(\tfrac1{12},\tfrac5{12},\tfrac5{12},\tfrac1{12})$, so Table 2.1
+is $\varpi$ times $c_0=1$.)*
+
 ## Results
 
 **1D optimality** ([Cui et al. (2024)](/sources/cui-2024.md), Thm 2.3).
@@ -66,7 +91,7 @@ all non-negative $p\in\mathbb P^N$" with
 $p^\star=\prod_{\ell=1}^{N_{\mathrm{GL}}-2}(x-x^{\mathrm{GL}}_\ell)^2$, which has degree
 $2(N_{\mathrm{GL}}-2)\le N$ and vanishes at the internal nodes. This confirms a claim of
 Zhang and Shu, who had checked it only for $N=2,3$ (as recalled after
-Thm 2.3).
+Thm 2.3; [Zhang & Shu (2010b)](/sources/zhang-2010-b.md), Rem. 2.3).
 
 **2D general theory on Cartesian cells.**
 - An OCAD exists for any $\mathbb V^N$ (Thm 3.4): Carathéodory's theorem
@@ -398,6 +423,7 @@ change.
 
 # Citations
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §2.1, Thm 2.1, Eqs. (2.1)–(2.3), Rems. 2.3–2.4, Table 2.1; §3.1, Thm 3.1, Eqs. (3.3)–(3.13): the classic decomposition and its CFL condition.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §1 (Defs 1.1, 1.3; Problems 1.2, 1.4; Eqs. (1.6), (1.10), (1.13)–(1.15)); Thm 2.3; §3 (Lemmas 3.1–3.20, Thms 3.4, 3.12, 3.26, 3.29); Thm 4.1; §5 (Thms 5.1–5.17, Alg. 5.20); Thm 6.1 and Fig. 11; §7 (Thm 7.1, Rems. 7.4, 7.7); §8 (Tables 1–10); App. C.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Thm 6.2 (Gauss–Lobatto BP CFL condition).
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §3.1–§3.2 (Eqs. (3.9)–(3.12), (3.26)–(3.30)).

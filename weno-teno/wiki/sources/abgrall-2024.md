@@ -152,7 +152,7 @@ a different work, and is entered under a disambiguated key. Ref. [12] prints iss
 
 # Pages created or updated
 
-Chunk 4 (2026-10-22), cited further in chunks 5–11 (2026-10-22/24). This source is cited on:
+Chunk 4 (2026-10-22), cited further in chunks 5–12 (2026-10-22/30). This source is cited on:
 
 * [Asymptotic preservation](/properties/asymptotic-preservation.md)
 * [Bound preservation](/properties/bound-preservation.md)

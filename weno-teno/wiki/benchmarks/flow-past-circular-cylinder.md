@@ -5,7 +5,7 @@ description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid
 status: established
 aliases: [cylinder flow, supersonic cylinder, bow shock over a cylinder, cylinder wake at Re 40, flow over a cylinder]
 tags: [benchmark, limiting, immersed-boundary, flux-reconstruction]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:08:00Z
 ---
 
 # Flow past a circular cylinder
@@ -29,6 +29,25 @@ Strouhal number.
 
 ## Supersonic and hypersonic inviscid flow
 
+**Mach 3 shock onto a cylinder: the curvilinear-grid original.**
+[Jiang & Shu (1996)](/sources/jiang-1996.md) §8.3 Ex. 6 (author preprint)
+place a cylinder of unit radius at the origin and map the computational
+square $(\xi,\eta)\in[0,1]^2$ (page-local coordinates) to the physical
+plane by
+$x=\big(R_x-(R_x-1)\xi\big)\cos\big(\theta(2\eta-1)\big)$,
+$y=\big(R_y-(R_y-1)\xi\big)\sin\big(\theta(2\eta-1)\big)$ (Eqs. (8.7)–(8.8)),
+with $R_x=3$, $R_y=6$ and $\theta=5\pi/12$ (page-local angle), on a uniform
+$60\times80$ computational mesh (Fig. 16a). The flow is initialized by "a
+Mach 3 shock moving toward the cylinder from the left"; the cylinder
+surface $\xi=1$ is reflective, $\xi=0$ an inflow and $\eta=0,1$ outflow
+boundaries. Finite-difference [WENO](/methods/weno-js-reconstruction.md)
+WENO-LF-5 with RK-4 and $\Delta t=0.6\Delta x$ gives the pressure contour of
+Fig. 16b, and "similar results can be obtained by WENO-LF-4 and ENO-LF-4".
+The paper prints neither the final time, nor $\gamma$, nor the states
+around the shock, and reports no residual; the run demonstrates the scheme
+on a general structured grid, with the eigenvectors of the curvilinear
+Euler system taken from Shu et al. (1992), as they cite it.
+
 **Mach 3 on a curvilinear grid.** [Wan & Xia (2022)](/sources/wan-2022.md)
 Ex. 4.6, after Jiang & Shu, map $(\xi,\eta)\in[0,1]^2$ to
 $x=-\big(R_x-(R_x-0.5)\xi\big)\cos\big(\theta(2\eta-1)\big)$,
@@ -37,7 +56,11 @@ $R_x=3$, $R_y=6$, $\theta=\pi/2$ (page-local computational coordinates $\xi$, $\
 inflow boundary at $\xi=0$, reflective wall at $\xi=1$, outflow at
 $\eta=0,1$. The wall $\xi=1$ is the half circle of radius 0.5, so $D=1$,
 and the inflow speed $3\sqrt{1.4}$ is Mach 3 for $\rho=p=1$, $\gamma=1.4$
-*(compiler check, not in the sources)*. On $60\times80$ cells their
+*(compiler check, not in the sources)*. Against Jiang & Shu's printed map,
+Wan & Xia's has the radius $0.5$ in place of 1, a reflected $x$ and the
+angle $\pi/2$ in place of $5\pi/12$, and a uniform Mach 3 inflow state in
+place of a moving shock: a different instance of the same
+curvilinear-grid problem; no source compares the two. On $60\times80$ cells their
 [hybrid WENO](/methods/hybrid-weno.md) scheme (WENO-H), CWENOZ and
 multi-resolution WENO all reach residues of about $10^{-14}$; on
 $120\times160$ only WENO-H reaches round-off, and its shock is sharper.
@@ -402,6 +425,10 @@ the trend with Mach number is captured (Fig. D.25).
   density and pressure stay positive "at every grid point for all time",
   while the ghost-point values come from a linear extrapolation and no
   CFL number is printed for any test.
+- Jiang & Shu's run (1996, §8.3 Ex. 6) is a single pressure-contour
+  figure with no final time, error measure or residual; Wan & Xia's
+  "after Jiang & Shu" setup differs from it in radius, angle and initial
+  data (see above).
 - Ren et al. do not print $\gamma$; their inviscid and viscous runs use
   different grids and Mach numbers, and the viscous comparison is a
   single stagnation value.
@@ -428,6 +455,7 @@ the trend with Mach number is captured (Fig. D.25).
 
 # Citations
 
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.3 Ex. 6, Eqs. (8.7)–(8.8), Fig. 16 (author preprint).
 - [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.6.
 - [Chen et al. (2022)](/sources/chen-2022.md) — §6.4, §6.7, Tables 2–3, Figs. 15–19, 27–28.
 - [Kou et al. (2022)](/sources/kou-2022.md) — §5.2, Table 1, Fig. 14, App. D, Fig. D.25.

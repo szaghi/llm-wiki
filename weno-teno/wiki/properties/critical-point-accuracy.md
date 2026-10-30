@@ -1,17 +1,19 @@
 ---
 type: Property
 title: "Accuracy at critical points"
-description: "A nonlinear reconstruction keeps its design order at a critical point, where the first m derivatives vanish, only if its weights still converge fast enough to the linear weights there; WENO-JS and WENO-Z lose orders, and mapped, ZN, symmetric-indicator and exponential weight designs restore them up to a scheme-dependent critical-point order or, for exponential weights, at any order."
+description: "A nonlinear reconstruction keeps its design order at a critical point, where the first m derivatives vanish, only if its weights still converge fast enough to the linear weights there; later sources measure WENO-JS and WENO-Z losing orders, against the fifth order Jiang and Shu print, and mapped, ZN, symmetric-indicator and exponential weights restore them to a scheme-dependent order."
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference, critical-points]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Accuracy at critical points
 
 A point is an **$m$th-order critical point** of $f$ if $f'=\dots=f^{(m)}=0$ there and
-$f^{(m+1)}\ne0$ (Deng 2023, Definition 3; Li et al. 2022b, notation of Tables 4–5). A smooth extremum
+$f^{(m+1)}\ne0$ (Deng 2023, Definition 3; Li et al. 2022b, notation of Tables 4–5);
+[Borges et al. (2008)](/sources/borges-2008.md) (Eq. (35)) define the order $n_{\mathrm{cp}}$ by the vanishing
+derivatives alone and write $n_{\mathrm{cp}}=0$ for a non-critical point. A smooth extremum
 is a first-order critical point. A nonlinear reconstruction has the property when its observed order
 at such points equals its design order; the bundle's sources measure it on $f(x)=x^ke^x$ at $x=0$, a
 $(k-1)$th-order critical point (Li et al. 2022b, §4.1).
@@ -27,20 +29,43 @@ number of orders. Li et al. (2022b, Eqs. (12)–(13)) recall the conditions for 
 the finite-difference scheme: necessary and sufficient
 $\sum_k\mathsf a_k(\omega^+_k-\omega^-_k)=O(\Delta x^r)$ together with $\omega^\pm_k-d_k=O(\Delta x^{r-1})$,
 sufficient $\omega^\pm_k-d_k=O(\Delta x^r)$, where $\pm$ marks the weights at $x_{i\pm1/2}$ (the
-coefficients $\mathsf a_k$, page-local, the source's $A_k$, are not defined in the paper).
+coefficients $\mathsf a_k$, page-local, the source's $A_k$, are not defined in the paper). Borges et al.
+(2008, §2, Eqs. (6), (15)–(23)) derive the fifth-order case, after Henrick et al., and define the
+coefficients: $\hat f^{(k)}_{i\pm1/2}=h_{i\pm1/2}+\mathsf a_k\Delta x^3+O(\Delta x^4)$; the conditions are
+$\sum_k(\omega^\pm_k-d_k)=O(\Delta x^6)$ (always true by normalization),
+$\sum_k\mathsf a_k(\omega^+_k-\omega^-_k)=O(\Delta x^3)$ and $\omega^\pm_k-d_k=O(\Delta x^2)$, with the sufficient
+$\omega^\pm_k-d_k=O(\Delta x^3)$; if $\beta_k=D(1+O(\Delta x^p))$ with $D$ nonzero and independent of $k$, then
+$\omega_k=d_k+O(\Delta x^p)$ (lemma recalled from Henrick et al.). [Jiang & Shu (1996)](/sources/jiang-1996.md)
+(§2, Eqs. (2.12)–(2.14), (2.17)) had stated $\omega_k=d_k+O(\Delta x^{r-1})$, i.e. $O(\Delta x^2)$ for $r=3$, as
+sufficient for order $2r-1$, with the same lemma in the form $\beta_k=D(1+O(\Delta x^{r-1}))$.
+
+**Before WENO.** TVD schemes are first order at extrema ([Harten et al. 1987a](/sources/harten-1987.md),
+§2, p. 239; [Shu & Osher 1988](/sources/shu-1988.md), p. 3, who recall that Shu's TVB modification
+"recovers global high order accuracy even at critical points";
+[total variation diminishing](/definitions/total-variation-diminishing.md)). For
+[ENO](/methods/eno-reconstruction.md), Harten et al. (1987a, Remark 1.2) place the loss where the
+reconstruction error coefficient fails to be Lipschitz, "at extrema" for MUSCL-type schemes and at
+roots of higher derivatives for higher order, where the local error drops one order. Liu et al. (1994,
+p. 207) recall that standard ENO "experienced an (easily fixed) loss of accuracy" on $\sin^4(\pi x)$
+data and report "No such degeneracy" for their WENO.
 
 ## Scheme by scheme
 
 | scheme | behaviour at critical points | source |
 |---|---|---|
-| [WENO-JS](/methods/weno-js-reconstruction.md) | loses order: WENO5-JS 3.04–3.15 (1st), 2.00 (2nd), 3.39–3.72 (3rd); WENO7-JS 2.87–4.00, WENO9-JS 4.00–7.12 at the tested points | Li et al. 2022b, Tables 6–8 |
-| [mapped WENO](/methods/mapped-weno.md) | the mapping restores the fifth-order condition at first-order critical points | Li et al. 2022b, §2 (recalled) |
-| [WENO-Z](/methods/weno-z.md) | falls to the $r$th-order ENO rate when $\tau_{2r-1}$ and $\beta_k$ have leading terms of the same order; WENO5-Z 5.14–5.37 (1st) but 2.11–2.32 (2nd); WENO7-Z cannot improve at a 3rd-order point for $q=1$ or 2 (3.24–3.55) | Li et al. 2022b, §2, Table 4, Tables 6–7 |
+| [WENO-JS](/methods/weno-js-reconstruction.md) | fifth order at critical points ("also 5th order accurate"), from $\beta_k=\tfrac{13}{12}(f''\Delta x^2)^2(1+O(\Delta x^2))$ at $f'=0$; see Contradictions | Jiang & Shu 1996, §3, Eq. (3.9) |
+| WENO-JS | third order at a first-order critical point, second if $f''$ also vanishes; orders 2.95–2.99 on $x^3+\cos x$ at $x=0$ with $\epsilon=10^{-40}$, 64-digit arithmetic | Borges et al. 2008, §2 (after Henrick et al.), Table 3 |
+| WENO-JS | loses order: WENO5-JS 3.04–3.15 (1st), 2.00 (2nd), 3.39–3.72 (3rd); WENO7-JS 2.87–4.00, WENO9-JS 4.00–7.12 at the tested points | Li et al. 2022b, Tables 6–8 |
+| Liu–Osher–Chan WENO ($r=3$) | third order at critical points, by Jiang & Shu's expansion of its indicator | Jiang & Shu 1996, §2, Eqs. (2.23)–(2.25) |
+| [mapped WENO](/methods/mapped-weno.md) | the mapping restores the fifth-order condition at first-order critical points; it fails, second order like WENO-JS, if $f''$ also vanishes | Li et al. 2022b, §2 (recalled); Borges et al. 2008, §2, after Eq. (24); Shu 2009a, §2.3.5 (motivation: "especially at smooth extrema") |
+| [WENO-Z](/methods/weno-z.md) ($r=3$) | order $\min(5,s_1+2,s_2+3)$: 5, 4, 2 for $n_{\mathrm{cp}}=0$, $1$, $\ge2$ with $q=1$; fifth order at $n_{\mathrm{cp}}=1$ with $q=2$; orders 3.93–3.99 ($q=1$) and 4.80–4.98 ($q=2$) on $x^3+\cos x$ | Borges et al. 2008, §4, Eqs. (32)–(42), Tables 1–3 |
+| WENO-Z | falls to the $r$th-order ENO rate when $\tau_{2r-1}$ and $\beta_k$ have leading terms of the same order; WENO5-Z 5.14–5.37 (1st) but 2.11–2.32 (2nd); WENO7-Z cannot improve at a 3rd-order point for $q=1$ or 2 (3.24–3.55) | Li et al. 2022b, §2, Table 4, Tables 6–7 |
 | fifth-order WENO-ZN | fifth order at 1st and 2nd order with $q=2$; fifth/fourth with $q=1$; no improvement at 3rd order | Li et al. 2022b, §3.1 (recalled from the fifth-order paper), Table 6 |
 | [WENO-ZN](/methods/weno-zn.md), order $2r-1$ | design order up to $(2r-4)$th-order critical points; WENO7-ZN 6.99–7.91 at 2nd–4th, WENO9-ZN 8.99–9.00 at 3rd–5th | Li et al. 2022b, Table 5, Tables 7–8 |
 | WENO-Z$\eta$ (Fan) | up to $(r-1)$th-order points, with an $O(\Delta x^{2r+2})$ global indicator | Li et al. 2022b, §3.3 (derived) |
 | OWENO (Baeza et al.) | optimal order at critical points of any order | Li et al. 2022b, §2 (recalled) |
-| [TENO](/methods/targeted-eno.md) | design order on a test function with a second-order critical point, no tuning of $\epsilon$ | Fu 2023, §3.1 (stated, numerics in cited work) |
+| [TENO](/methods/targeted-eno.md) | condition $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, stated to hold "even near critical points" for $\tau_5$, $\tau_6$ and the general $\tau_K$; no critical-point test | Fu et al. 2016, §3.1.5, §3.2–3.3, App. A (stated) |
+| TENO | design order on a test function with a second-order critical point, no tuning of $\epsilon$ | Fu 2023, §3.1 (stated, numerics in cited work) |
 | fifth-order TENO-Z, TENO-A, TENO-LAD (global indicator $\tau_5$, fixed or floor-based cut-off) | design order at a first-order critical point; orders 3.00 to 2.26 at a second-order one and 4.01 to 3.26 at a third-order one | Tang 2024, §4.1, Tables 1–3 |
 | TENO-AZ ([adaptive TENO](/methods/adaptive-teno.md)), cut-off $C_T=\min(10^{-5},\lvert\beta_0+\beta_2-2\beta_1\rvert)$ | errors of the linear fifth-order scheme at critical points of order 1, 2 and 3 | Tang 2024, §3, Eqs. (19)–(20); §4.1, Tables 1–3 |
 | WENO5-NN ([learned WENO weights](/methods/learned-weno-weights.md)) | weights deviate less from $d_k$ than WENO5-JS near the saddle points of $\sin^3(\pi x)$; no order test | Nogueira et al. 2024, §3.4, Fig. 6 |
@@ -280,12 +305,37 @@ the $\epsilon$ parameter in the weighting formula to a grid-dependent form" (§5
 
 ## Weight of the evidence
 
-Fu (2023, §2.3) recalls Acker et al.'s finding that raising the weights of the less-smooth stencils
+Borges et al. (2008, Remark 1, §4) state that, "distinctly from" Henrick et al., they "do not credit"
+the better shock results of mapped WENO to its order at critical points "but to the smaller dissipation
+that results from the assignment of larger weights to discontinuous stencils"; their WENO-Z with $q=1$,
+fourth order at a first-order critical point, matches mapped WENO on shock problems (§5), and raising
+$q$ to 2 restores the order but makes the scheme "more dissipative" (§4). Jiang & Shu (1996, §2) and
+Borges et al. (2008, §2) both point to $\epsilon$: in the first, Liu et al.'s higher observed orders come
+partly from $\epsilon$ dominating $\beta_k$ on fine grids; in the second, $\epsilon=10^{-6}$ hid the
+critical-point defect of WENO-JS. Fu (2023, §2.3) recalls Acker et al.'s finding that raising the weights of the less-smooth stencils
 matters more for resolution than keeping the order at critical points, and Li et al. (2022b, §2)
 relay Baeza et al.'s caveat that shock performance depends on how far from zero the weights of
 discontinuous stencils are, not on accuracy at critical points. The improvement at critical points is
 therefore one design target among several ([WENO-Z+](/methods/weno-z-plus.md) trades it for
 resolution).
+
+## Contradictions
+
+**Order of WENO-JS at critical points.** *Open.*
+[Jiang & Shu (1996)](/sources/jiang-1996.md) (§3, Eqs. (3.5)–(3.9)) print, at $f'=0$,
+$\beta_k=\tfrac{13}{12}(f''\Delta x^2)^2(1+O(\Delta x^2))$ for $k=0,1,2$, "which implies that the weights
+resulting from the measurement (3.1) are also 5th order accurate at critical points", and build the
+fifth-order claim of the scheme on it; their accuracy tests on $\sin\pi x$ and $\sin^4\pi x$ use
+$\epsilon=10^{-6}$ (Tables 3–4). [Borges et al. (2008)](/sources/borges-2008.md) (§2), after Henrick et al.,
+state $\omega_k=d_k+O(\Delta x)$ at a first-order critical point, hence third order (second if $f''$ also
+vanishes), that $\epsilon=10^{-6}$ hid this, and print WENO-JS orders 2.95–2.99 at a first-order critical
+point with $\epsilon=10^{-40}$ in 64-digit arithmetic (Table 3); Li et al. (2022b, Table 6) measure 3.04–3.15.
+The expansions of Borges et al. (Eqs. (12)–(14)) carry a $\Delta x^5$ term that Jiang & Shu's printed
+expansions omit; at $f'=0$ that term makes $\beta_0$ and $\beta_2$ differ from $\beta_1$ by a relative $O(\Delta x)$
+(compiler check on the [smoothness-indicator](/definitions/smoothness-indicator.md) page), and the two papers state different
+order conditions on $\omega_k-d_k$ (*Mechanism* above). What would decide it: the fifth-order expansion of
+$\beta_k$ at $f'=0$ carried through the necessary-and-sufficient conditions of Henrick et al., or a source
+that reconciles Jiang & Shu's sufficient condition (2.14) with them.
 
 ## Qualifications
 
@@ -310,7 +360,7 @@ resolution).
   the evidence is a plot of the weights on $\sin^3(\pi x)$ at $\Delta x=0.01$, without a convergence test.
 - *(Compiler check, not in the sources.)* Lemma 2 gives sharper bounds than Proposition 1 states:
   $\delta\in(-1,0)$ (critical point in $I_{i-1}$) maps to $0<\tilde u_i<\tfrac13$ and
-  $\delta\in(1,2)$ (in $I_{i+1}$) to $\tfrac23<\tilde u_i<1$. Proposition 1 is correct but weaker.
+  $\delta\in(1,2)$ (in $I_{i+1}$) to $\tfrac23<\tilde u_i<1$. Proposition 1 states weaker bounds.
 - The WENO-ZN order count of Li et al. ignores the adaptive term of the weight; see the
   Qualifications of [WENO-ZN](/methods/weno-zn.md).
 - Li et al. (2023a, §2.3) argue from the order of $\tau^*$ alone. *(Compiler check, not in the sources:
@@ -330,6 +380,13 @@ resolution).
 
 # Citations
 
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §2, Eqs. (2.12)–(2.25); §3, Eqs. (3.5)–(3.9); Tables 3–4.
+- [Borges et al. (2008)](/sources/borges-2008.md) — §2, Eqs. (6), (15)–(24), Remarks 1–2; §4, Eqs. (32)–(42), Tables 1–3; §5.
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §1, Remark 1.2; §2, p. 239.
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §I, p. 3.
+- [Liu et al. (1994)](/sources/liu-1994.md) — p. 207, Table II.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §3.1.5, Eq. (29); §3.2–3.3; App. A.
+- [Shu (2009a)](/sources/shu-2009.md) — §2.3.5 (mapped weights motivated by smooth extrema).
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §1–§2, Eqs. (12)–(23), Table 4; §3, Table 5; §4.1, Tables 6–8.
 - [Deng (2023)](/sources/deng-2023.md) — §1; §2.2, Def. 3, Lemmas 1–2, Prop. 1.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §3.4; §6.1, Table 3.

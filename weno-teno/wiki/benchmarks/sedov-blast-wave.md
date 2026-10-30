@@ -5,7 +5,7 @@ description: "Point-explosion benchmark: the energy of one or a few cells drives
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-10-30T08:08:00Z
 ---
 
 # Sedov blast wave
@@ -15,9 +15,9 @@ internal energy elsewhere is $10^{-12}$ per unit volume. A strong
 shock (planar in 1D, cylindrical in the 2D corner version) runs outwards, and behind it the density
 falls towards zero at the centre, so the solution combines a shock of
 enormous strength with a near-vacuum core. The problem has a
-self-similar exact solution, which six of the one-dimensional sources
-use as reference (the four Fan et al. papers, Li, Shu & Qiu and Abgrall
-et al. (2026)), and Vilar & Abgrall (2024) compare a polar run with
+self-similar exact solution, which seven of the one-dimensional sources
+use as reference (Zhang & Shu (2010b), the four Fan et al. papers, Li,
+Shu & Qiu and Abgrall et al. (2026)), and Vilar & Abgrall (2024) compare a polar run with
 its shock radius and peak density. Pressure is a tiny difference of large energies near the
 centre, so a high-order scheme without a
 [positivity](/properties/bound-preservation.md) safeguard tends to
@@ -36,6 +36,7 @@ holds $E=3.2\times10^8$, $3.2\times10^{20}$ times the ambient value
 
 | Source | Cells | Reference | Scheme |
 |---|---|---|---|
+| [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.2 | 800 ($\Delta x=4/N$) | exact solution | third-order RKDG with the characteristic TVB limiter, $(M_1,M_2,M_3)=(10^4,10^4,10^4)$, then their positivity limiter ([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)); $\gamma=1.4$ |
 | [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.4 | 400 | exact solution | positivity-preserving hybrid [HWENO](/methods/hermite-weno.md), Euler and Navier–Stokes ($\mathrm{Re}=1000$) |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.8 | 400 | exact solution | moment-based multi-resolution HWENO, with and without modified first moments |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.5a | 400 | WENO-JS5, 6400 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5, original WENO5-MR), WENO-AO5, WENO-JS5 |
@@ -46,6 +47,11 @@ holds $E=3.2\times10^8$, $3.2\times10^{20}$ times the ambient value
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.7 | 400 points or cells | — | ghost multi-resolution GMR-WENO3/5/7 vs [MR-WENO](/methods/multi-resolution-weno.md), finite differences and finite volumes |
 | [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.9 | 800 | exact solution | moment-based finite-volume [HWENO-U](/methods/hermite-weno.md) with unified stencils vs HWENO-M, WENO-ZQ; Zhang–Shu-type positivity limiter; outflow boundaries |
 | [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Example D.4 | 801 ($\Delta x=4/N$) | — | bound-preserving generalized [Active Flux](/methods/active-flux.md) with local Lax–Friedrichs [flux vector splitting](/methods/flux-vector-splitting.md) of the point-value update, CFL 0.4 |
+
+Zhang & Shu (2010b) print $\rho=1$, $v=0$, $E=10^{-12}$ and the centre
+cell $E_0/\Delta x$ with $E_0=3{,}200{,}000$, $T=0.001$, the common data;
+they print no boundary conditions, and the inlet/outlet boundaries above
+come from the later sources.
 
 Duan et al. (arXiv v3) put the energy $3.2\times10^6/\Delta x$ both in the
 centre cell average and in its two interface point values, the extra
@@ -84,6 +90,13 @@ The blast is placed in the lower-left corner cell of $[0,1.1]^2$ with
 reflecting (symmetry) left and bottom boundaries and outflow elsewhere,
 $\rho=1$, $v=0$, on $160\times160$ cells ($\Delta x=\Delta y=1.1/160$).
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.2: $\rho=1$, zero
+  velocity, $E=10^{-12}$ except the lower-left cell, where
+  $E=0.244816/(\Delta x\Delta y)$; $\gamma=1.4$; reflective (symmetry)
+  left and bottom edges; $T=1$, $N=160$, $\Delta x=\Delta y=1.1/N$; TVB
+  parameters $(8000,16{,}000,16{,}000,8000)$; compared with a Lagrangian
+  result they cite (Fig. 4.2). These are the data the later corner runs
+  print.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.6: $E=10^{-12}$
   except the corner cell, where $E=0.244816/(\Delta x\Delta y)$; $t=1$;
   30 density contours from 0.95 to 5 (Fig. 4.6).
@@ -289,7 +302,13 @@ spurious oscillations, and the WCNS gives much sharper shocks
 
 ## Findings across sources
 
-**A positivity safeguard is the price of running the test.** Fan,
+**A positivity safeguard is the price of running the test.** Zhang &
+Shu (2010b) state that their positivity limiter alone is not enough:
+"The DG scheme without the TVB limiter will produce blow-ups for the
+Sedov blast waves even if we use the positivity limiter", so the TVB
+limiter is applied first and the positivity limiter after it (§4.2).
+Their Fig. 4.1 sets the 1D density, velocity and pressure against the
+exact solution. Fan,
 Zhang & Qiu (2021) state that the earlier hybrid HWENO of Zhao, Chen & Qiu blows up on
 both Sedov problems from loss of positivity (no figure shown); their
 scaling limiter is triggered in 3.00 % of the cells in 1D and 1.09 % in
@@ -381,13 +400,14 @@ stated (Table 4.2).
   the reading *(compiler check, not in the sources)*.
 - Vilar & Abgrall's background total energy $10^{-14}/0.4=2.5\times10^{-14}$
   is consistent with $\gamma=1.4$ *(compiler check, not in the sources)*.
-- Among the 1D sources only Fan, Zhao, Xiong & Qiu, Fan et al. (2025a),
+- Among the 1D sources only Zhang & Shu (2010b), Fan, Zhao, Xiong & Qiu, Fan et al. (2025a),
   Abgrall et al. (2026) (§4.2) and Li, Li, Don & Wang print $\gamma=1.4$
   for the problem; Fan, Zhang & Qiu (2021) use
   $\gamma=1.4$ throughout their paper, the others print none.
 
 # Citations
 
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §4.2, Eq. (4.2), Figs. 4.1–4.2.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; Ex. 4.4, Ex. 4.6, Fig. 4.6, Table 4.2.
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.8, Fig. 3.6; comment p. 31 (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.5a, Fig. 5.9.

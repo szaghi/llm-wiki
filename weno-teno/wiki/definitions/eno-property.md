@@ -5,24 +5,57 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T07:53:00Z
 ---
 
 # ENO property
 
-ENO schemes (Harten et al., as recalled by Takagi et al. 2022, §1, Fu 2023, §2.3 and Deng 2023, §1)
-pick, among the candidate stencils, the one on which the data are smoothest, so the reconstruction
-never interpolates across a discontinuity. A weighted reconstruction has the **ENO property** when it
-reproduces this behaviour through its weights: the weight of a candidate stencil that contains a
-discontinuity tends to zero, while on smooth stencils the weights tend to the linear ones. Luo & Wu
+Takagi et al. (2022, §1), Fu (2023, §2.3) and Deng (2023, §1) recall that ENO schemes pick, among
+the candidate stencils, the one on which the data are smoothest, so that the reconstruction does not
+interpolate across a discontinuity. In the founding paper the choice is made point by point by the
+smallest divided differences, under the assumption that "for $h$ sufficiently small there are at least
+$(r+1)$ points of smoothness between discontinuities"; Harten et al. (1987a, §2, p. 240) add that
+where discontinuities interact "there are not enough points to select a stencil of $(r+1)$ points from
+the region of smoothness" ([ENO reconstruction](/methods/eno-reconstruction.md)). A weighted
+reconstruction has the **ENO property** when it reproduces this behaviour through its weights: the
+weight of a candidate stencil that contains a discontinuity tends to zero, while on smooth stencils
+the weights tend to the linear ones. Luo & Wu
 (2021, §1) state the design principle: "the weights of the discontinuous substencils are designed to
 be asymptotically small. This design is why WENO schemes have the ENO property." For the compact
 third-order scheme, Deng (2023, §4.3) and Huang et al. (2026, §3.1) write the condition as
 $\omega_k\to0$ if and only if stencil $k$ contains a discontinuity.
 
-The property is not a sharp mathematical statement in the bundle's sources. Wang & Don (2022, §3)
-use an operational diagnosis: point-wise errors that decay monotonically and exponentially away from
-the singularity, against Gibbs-type oscillations when the property is lost.
+## Founding statements
+
+Two founding papers state the property as an inequality.
+
+- **Total variation (ENO).** [Harten et al. (1987a)](/sources/harten-1987.md) (Eq. (1.9c)) require
+  of the reconstruction $TV(R(\cdot;\bar u))\le TV(u)+O(\Delta x^r)$, and of the scheme
+  $TV(\bar u^{n+1})\le TV(u)+O(\Delta x^r)$ (Eq. (1.13b)). It "excludes a Gibbs-like phenomenon but
+  allows for the production of spurious oscillations on the level of the truncation error", which
+  "may occur only in the smooth part" (§2). The bound for the adaptive interpolant is proved in
+  their paper II, not in this one (Eq. (3.5b)), and holds under the separation assumption above. For
+  the scalar scheme they conjecture $TV(v^{n+1})\le TV(v^n)+O(\Delta x^{p+1})$, $p>0$, "based on
+  heuristic analysis and extensive numerical experimentation" (Eq. (1.22)).
+- **Weights (WENO).** [Liu et al. (1994)](/sources/liu-1994.md) (§3.3, Definition 1, Eq. (3.8)) say
+  that a weighted reconstruction has the "ENO property" if the normalized weight of a stencil in a
+  smooth region is $O(1)$ and that of a stencil in a discontinuous region is at most $O(\Delta x^r)$;
+  their weights $\alpha_k=C_k/(\epsilon+\beta_k)^r$ (positive constants $C_k$, page-local) satisfy it with the bound
+  $\max(O(\epsilon^r),O(\Delta x^{2r}))$ for $\epsilon=10^{-5}$, provided at least one candidate is
+  smooth (Eq. (3.9)). The explicit $\epsilon^r$ term is the mechanism by which a too-large $\epsilon$
+  defeats the property (see *How it is lost*).
+
+[Jiang & Shu (1996)](/sources/jiang-1996.md) (§2, Eqs. (2.26)–(2.28)) give the weight of a
+non-smooth stencil as $O(\Delta x^{2q})$ (registry $q$, their $p=2$), and add that with more than one
+smooth stencil each gets an $O(1)$ weight, so the weights "do not exactly resemble the ENO digital
+weights"; next to the jump of their test function they find $\omega\approx\frac17$ and $\frac67$ on the
+two smooth stencils (§3, Fig. 1). [Shu (2009a)](/sources/shu-2009.md) (§2.1, p. 86) explains why the
+combination stays non-oscillatory even when every substencil contains the jump: for a step in
+$(x_i,x_{i+1})$ the large-stencil interpolant and the two candidates whose stencils contain $x_{i+1}$ are monotone on
+$[x_i,x_{i+1}]$, and a convex combination of monotone approximations is monotone.
+
+Wang & Don (2022, §3) use an operational diagnosis: point-wise errors that decay monotonically and
+exponentially away from the singularity, against Gibbs-type oscillations when the property is lost.
 
 ## How weight designs realize it
 
@@ -30,6 +63,11 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   for smooth stencils, and the weights of [WENO-JS](/methods/weno-js-reconstruction.md) and
   [WENO-Z](/methods/weno-z.md) decrease with $\beta_k$
   ([smoothness indicators](/definitions/smoothness-indicator.md)).
+- **WENO-Z.** [Borges et al. (2008)](/sources/borges-2008.md) (§1, §3, Fig. 3) argue that the
+  strategy "should be to augment the influence of the stencil containing the discontinuity as much as
+  possible, without destroying the essentially non-oscillatory behavior": next to a jump WENO-Z gives
+  the discontinuous stencils weights of about $10^{-4}$ against about $10^{-8}$ for WENO-JS, and the
+  solutions stay essentially non-oscillatory.
 - **WENO-ZN.** Li et al. (2022b, §3.3(2)) argue that $S_0$ and $S_{r-1}$ cover the global stencil
   without overlap, so any discontinuity falls in one of them; then the adaptive term of the weights is
   small and the ranking by $\beta_k$ takes over. This is a heuristic argument, not a theorem
@@ -37,7 +75,11 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   $\epsilon=\Delta x^m$ out of their comparison because they "cannot keep the ENO property well".
 - **WENO-Z+.** Luo & Wu (2021, §2.3) recall that Acker et al. proved the ENO property of WENO-Z+ for
   an $O(1)$ coefficient of the extra term ([WENO-Z+](/methods/weno-z-plus.md)).
-- **TENO.** Fu (2023, §2.3) calls TENO's sharp cut-off an "ENO-like stencil selection": a stencil is
+- **TENO.** [Fu et al. (2016)](/sources/fu-2016.md) (§3.1.1, Fig. 2) argue that classical WENO
+  "fails to guarantee the ENO property" when two close discontinuities cross every equal-width
+  candidate of a very-high-order stencil, while the three-point candidate of TENO can still be singled
+  out; with the binary cut-off the scheme reaches "arbitrarily high-order accuracy while satisfying the
+  ENO property", hence the name targeted ENO (§3.1.4). Fu (2023, §2.3) calls TENO's sharp cut-off an "ENO-like stencil selection": a stencil is
   kept with its linear weight or dropped. It differs from ENO, which keeps only the smoothest stencil
   and cannot recover the full-stencil linear scheme, whereas TENO "tends to rule out the nonsmoothest
   stencil crossed by genuine discontinuities" ([targeted ENO](/methods/targeted-eno.md)).
@@ -133,6 +175,12 @@ to deliver them.
 
 # Citations
 
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §2, pp. 239–240; Eqs. (1.9c), (1.13b), (1.22), (3.5b).
+- [Liu et al. (1994)](/sources/liu-1994.md) — §3.3, Definition 1, Eqs. (3.8)–(3.9).
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §2, Eqs. (2.26)–(2.28); §3, Fig. 1.
+- [Shu (2009a)](/sources/shu-2009.md) — §2.1, p. 86.
+- [Borges et al. (2008)](/sources/borges-2008.md) — §1; §3, Fig. 3.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §3.1.1, Fig. 2; §3.1.4.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §3.3(2); §4.1.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.1–3.2.2, Figs. 4–6.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1; §2.3.

@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-24T06:02:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # Scale and affine invariance
@@ -42,11 +42,24 @@ affine invariance in the terms of this page. This page uses Wang & Don's split. 
 follow Wang & Don's scale invariance, $\mathsf R[\sigma f]=\sigma\mathsf R[f]$ for every real $\sigma$, negative
 values included, i.e. homogeneity of degree one.
 
+The earliest statement in the bundle is [Shu (2009a)](/sources/shu-2009.md) (§3.5.1), whose notion has two
+parts: the WENO reconstruction "does not change when the solution is amplified by a constant or when the mesh
+size $\Delta x$ changes", and the finite-volume and finite-difference WENO schemes are **self-similar**, unchanged
+when $\Delta x$ and $\Delta t$ change by the same factor. Offsets ($\mu\ne0$) are not part of it. Shu stresses
+the consequence that no "explicit, mesh size $\Delta x$-dependent thresholds" are needed to detect
+discontinuities, and calls the property "very important ... for many applications".
+
 ## How classical weights fail
 
 In Jiang–Shu and WENO-Z weights the [smoothness indicators](/definitions/smoothness-indicator.md)
 scale as $\beta_k[\sigma f+\mu]=\sigma^2\beta_k[f]$ while $\epsilon$ does not, so the weights
-depend on $\sigma$ (Wang & Don 2022, Eq. (18)).
+depend on $\sigma$ (Wang & Don 2022, Eq. (18)). Shu (2009a, §3.5.1) states the condition under which
+classical weights are scale invariant: $\epsilon$ chosen as "a small percentage of the typical size of
+$u_i$", a data-relative value (also offered in §2.1 as an alternative to the "typical" $\epsilon=10^{-6}$); the
+review does not say whether "typical size" is local to the stencil or global. Invariance under a change of
+$\Delta x$ rests on the factors $\Delta x^{2l-1}$ of the Jiang–Shu indicator, which Shu (§2.1, Eq. (2.8)) says
+make its explicit formulas independent of the mesh size. In §7 (item 7) the review discourages modifications
+of WENO made for analysis that destroy self-similarity.
 
 - Deng (2023, App. A.2, Fig. 13) measures the scale-invariance error
   $\max_x|\mathsf R[\sigma\bar u]/\sigma-\mathsf R[\sigma_0\bar u]/\sigma_0|$ with $\sigma_0=10^{20}$ on $N_x=320$
@@ -330,6 +343,7 @@ problem scaled by 100 OF-HWENO "excessively smears" (Ex. 9, Fig. 3.8).
 
 # Citations
 
+- [Shu (2009a)](/sources/shu-2009.md) — §2.1, Eqs. (2.8), (2.10); §3.5.1; §7, item 7.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §1, Defs. 1–4; §2.2–2.4, Eqs. (9)–(18), Theorem 1; §3.1–3.3; App. A.
 - [Deng (2023)](/sources/deng-2023.md) — §1; §2.2–2.3, Lemma 1, Def. 7, Prop. 2; §4.3; §6.2, Prop. 6, Eq. (6.6); App. A.2, Fig. 13.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — §1; §2, Eqs. (2.6), (2.13)–(2.14), Theorems 2.6, 2.10, Remarks 2.8–2.12; Ex. 5.6–5.8.

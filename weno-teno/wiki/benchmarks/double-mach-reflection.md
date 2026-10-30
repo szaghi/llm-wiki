@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:08:00Z
 ---
 
 # Double Mach reflection
@@ -21,8 +21,8 @@ a slip line from the primary triple point and a wall jet. The slip line
 is Kelvin–Helmholtz unstable, and the amount of roll-up a scheme
 resolves on a given grid is the visual gauge of its
 [numerical dissipation](/definitions/numerical-dissipation.md) in every
-source that runs it. Fifty-seven sources of the bundle run it,
-fifty-three in the Woodward–Colella form (one of them on a randomly
+source that runs it. Fifty-nine sources of the bundle run it,
+fifty-five in the Woodward–Colella form (one of them on a randomly
 distorted curvilinear grid, one extruded to three dimensions) and four in a variant (two
 wedges in the physical frame on unstructured meshes, a relativistic
 version, a dimensional ramp with an immersed boundary); most cite Woodward & Colella (1984)
@@ -42,7 +42,8 @@ likewise by [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.6,
 [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.5, Eq. (42) and
 [Liang et al. (2022)](/sources/liang-2022.md) §4.5,
 [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.5, Eq. (4.10) and
-[Huang et al. (2025a)](/sources/huang-2025.md) §5.5, Eq. (47), in
+[Huang et al. (2025a)](/sources/huang-2025.md) §5.5, Eq. (47), and
+[Fu et al. (2016)](/sources/fu-2016.md) §5.5, Eq. (40), in
 $(\rho,v_1,v_2,p)$:
 
 $$
@@ -148,7 +149,8 @@ $p=1+\tfrac{2\gamma}{\gamma+1}(M^2-1)=1+\tfrac76\cdot99=116.5$
 $116.5$ is the Rankine–Hugoniot post-shock pressure and $116.8333$ is
 $1/3$ (about 0.29 %) higher; Fu (2021), Takagi et al., Ye et al. and
 Huang et al. (2026), Huang, Liang & Fu, Ji, Liang & Fu (2022, 2023) and
-Liang et al. (2022) and Huang et al. (2025a) print it without comment. It is a setup difference, not a
+Liang et al. (2022), Huang et al. (2025a) and Fu et al. (2016), the oldest of
+this group in the bundle, print it without comment. It is a setup difference, not a
 contradiction: no source compares the two. The shock's horizontal
 speed $10/\sin60^\circ=10/\cos30^\circ=20/\sqrt3$ matches the
 upper-boundary formulas of Peng et al., Dzanic & Witherden and Hiejima
@@ -166,6 +168,15 @@ The inequality $y<\sqrt3(x-1/6)$ assigns the post-shock state to the
 region below the front, the opposite side to the other sources' $y\ge1.732(x-0.1667)$,
 which is the gas at rest ahead of the shock on the wall side; the
 text does not otherwise state which side carries the post-shock state.
+
+[Jiang & Shu (1996)](/sources/jiang-1996.md) §8.3 Ex. 3 (author preprint)
+print the geometry without the states: $[0,4]\times[0,1]$, the reflecting
+wall from $x=1/6$, a right-moving Mach 10 shock at $x=1/6$, $y=0$ making a
+$60^\circ$ angle with the $x$-axis, the exact post-shock condition on
+$0\le x\le1/6$ of the bottom and the exact shock motion on the top; they
+refer to Woodward & Colella "for a detailed description", and their
+grids $240\times59$ and $480\times119$ "correspond to the medium and fine
+grids" there. The final time $t=0.2$ is printed in the figure headers.
 
 [Lesur et al. (2023)](/sources/lesur-2023.md) §4.1 take "Colella &
 Woodward (1984) initial conditions" without printing them, and
@@ -190,9 +201,9 @@ starting at $x=1/6$, [Deng (2023)](/sources/deng-2023.md) App. A.11
 speak of "a 30° ramp", Dzanic & Witherden and Mossier, Beck & Munz of
 a "30° ramp" and Hiejima
 of a shock "reflected by an inclined plane of 30°", whereas Fu (2021), Takagi
-et al., Huang et al. (2026), Peng et al., Du et al., Yu & Hesthaven and
-[Balsara et al. (2024)](/sources/balsara-2024.md) §IX.h speak of a
-$60^\circ$ incidence, and Maltsev et al. of a "ramp inclined by
+et al., Huang et al. (2026), Peng et al., Du et al., Yu & Hesthaven,
+[Balsara et al. (2024)](/sources/balsara-2024.md) §IX.h, Jiang & Shu (1996)
+and Fu et al. (2016) speak of a $60^\circ$ angle or incidence, and Maltsev et al. of a "ramp inclined by
 $\alpha=60^\circ$". The printed data are the same; a shock normal to
 the flow meets a $30^\circ$ ramp at $60^\circ$, so the two angles
 describe one configuration *(compiler check, not in the sources)*.
@@ -252,6 +263,8 @@ describe one configuration *(compiler check, not in the sources)*.
 
 | Source | Scheme family | Domain / grid | Notes |
 |---|---|---|---|
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.3 Ex. 3 | finite-difference [WENO](/methods/weno-js-reconstruction.md) WENO-LF-4, WENO-LF-5 vs ENO-LF-4, RK-3, $\Delta t=0.6\Delta x$; WENO-LF-5-PS (pressure–entropy weights) also tried | $[0,4]\times[0,1]$, $240\times59$, $480\times119$; plotted $[0,3]\times[0,1]$ | 30 contours 1.731–20.92 (author preprint) |
+| [Fu et al. (2016)](/sources/fu-2016.md) §5.5 | [TENO](/methods/targeted-eno.md) TENO5, TENO5-opt, TENO6, TENO6-opt vs WENO-JS, WENO-Z, [WENO-CU6](/methods/weno-cu6.md), WENO-CU6-M; Roe-averaged characteristic decomposition, global LF splitting, CFL 0.6 | $[0,4]\times[0,1]$, wavelet adaptive multiresolution, effective $1024\times256$ ($\Delta x=\Delta y=1/256$) | plotted $[2,3]\times[0,0.9]$; 43 contours 1.887–20.9 |
 | [Fu (2021)](/sources/fu-2021.md) §5.5.1 | [very-high-order TENO](/methods/adaptive-teno.md) (TENO8-AA, TENO10-AA) vs [WENO-CU6](/methods/weno-cu6.md) | $[0,4]\times[0,1]$; TENO $512\times128$, $800\times200$; WENO-CU6 $512\times128$, $1024\times256$ | 43 density contours 1.887–20.9 |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.6 | [TENO-THINC](/methods/teno-thinc.md) vs WENO5-Z, TENO5, TENO6 | $512\times128$, $1024\times256$ | cost table; CFL and $\epsilon$ sensitivity |
 | [Ye et al. (2022)](/sources/ye-2022.md) §4.8 | [AFTENO](/methods/afteno.md) and AFWENO | $1024\times256$ ($h=1/256$) | zoom $[2,3]\times[0,0.8]$ |
@@ -481,6 +494,17 @@ the discontinuities in the same place and differ in the wall jet, where
 the improved ghost-cell method produces smaller-scale vortices and a
 smoother field than the cut-cell method (§3.4, Figs. 14–15).
 
+**The early WENO and TENO runs.** Jiang & Shu (1996) find that WENO-LF-4,
+WENO-LF-5 and ENO-LF-4 "resolve the two Mach stems well" on both grids
+(Figs. 12–13). Fu et al. (2016) find TENO5-opt resolving "the finest
+small-scale structures and the strongest wall jet" among the five-point
+schemes, comparable, as they read it, to fifth-order WENO-JS at
+$\Delta x=\Delta y=1/960$ in Fig. 1 of Shi, Zhang & Shu (2003), followed by
+TENO5; among the six-point schemes TENO6 produces "the richest small-scale
+structures", comparable to ninth-order WENO-JS at $1/960$ in the same
+figure, and TENO6-opt slightly fewer, its result "still much better" than WENO-CU6's
+(§5.5, Figs. 17–18).
+
 **Robustness and stability margin.** The strong shock is also a
 robustness test. Luo & Wu must lower the CFL number to 0.1 for every
 scheme because their ninth-order reference WENO-Z9 does not run at
@@ -513,6 +537,20 @@ helping to preserve positivity, whereas TENO and CWENO run at all three
 resolutions (§5.8, Figs. 24–25); they also state that CWENO with a large
 central linear weight "typically fails" here, which fixes their choice
 of that weight (§2.4).
+
+The two founding WENO and TENO papers already report failures here.
+Jiang & Shu's WENO-LF-5-PS, whose weights are computed from pressure and
+entropy instead of the characteristic variables, "does not work because
+of the strong reflecting wave pattern"; their Remark (§8.3) explains it
+by the reflective boundary: the mirrored ghost values carry identical
+pressure and entropy, so neither can indicate a jump in the normal
+velocity, which "will result in an unstable weight distribution in the
+normal direction near the reflective boundary and cause fatal errors
+such as density becoming negative" (see
+[characteristic decomposition](/methods/characteristic-decomposition.md)).
+Fu et al. (2016) state that WENO-CU6-M (WENO-CU6 with $C=1000$, $q=4$)
+"fails the simulation" (§5.5), as it does on their Woodward–Colella blast
+waves (§5.3).
 
 Two further sources use the problem as a robustness gate. Duan, Barsukow
 & Klingenberg find bound-preserving limiting necessary near the corner
@@ -695,7 +733,8 @@ grid, not an exact solution.
   (2022a), no source gives an error
   norm; claims of superiority rest on contour plots, often against
   figures of other papers (Fu 2021 compares with
-  figures of another work; Ye et al. with literature grids; Deng's
+  figures of another work; Fu et al. (2016) with Fig. 1 of Shi, Zhang &
+  Shu (2003), as they cite it; Ye et al. with literature grids; Deng's
   comparison cites a WENO-JS5 result "in [65]", a reference on an
   improved third-order WENO-Z scheme).
 - Fu (2023) prints "$t=2.0$" in the caption of Fig. 8, Takagi et
@@ -770,6 +809,8 @@ grid, not an exact solution.
 
 # Citations
 
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.3 Ex. 3 and Remark, Figs. 12–13 (author preprint).
+- [Fu et al. (2016)](/sources/fu-2016.md) — §5, §5.3, §5.5, Eq. (40), Table 5, Figs. 17–18.
 - [Fu (2021)](/sources/fu-2021.md) — §5.5.1, Figs. 7–8.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.6, Table 3, Fig. 10.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.8, Eq. (48), Fig. 9.

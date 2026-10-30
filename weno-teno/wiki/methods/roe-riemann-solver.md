@@ -5,7 +5,7 @@ description: "Roe's solver upwinds every characteristic field of a linearized fl
 status: established
 aliases: [Roe flux, Roe scheme, Roe solver, linearized Riemann solver, Roe–Harten flux]
 tags: [riemann-solver, numerical-flux, characteristic, finite-volume]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-10-30T08:10:00Z
 ---
 
 # Roe approximate Riemann solver
@@ -32,6 +32,16 @@ the wave speeds of their HLL flux, with $D_\rho=\sqrt{\rho^+/\rho^-}$ (page-loca
 
 $$\hat v=\frac{v^-+v^+D_\rho}{1+D_\rho},\qquad \hat H=\frac{H^-+H^+D_\rho}{1+D_\rho},\qquad \hat c=\sqrt{(\gamma-1)\big(\hat H-\tfrac12\hat v^2\big)} .$$
 
+The founding papers print the same averages as ratios of arithmetic means,
+$\hat v=\{\!\{\sqrt\rho\,v\}\!\}/\{\!\{\sqrt\rho\}\!\}$, $\hat H=\{\!\{\sqrt\rho\,H\}\!\}/\{\!\{\sqrt\rho\}\!\}$, with $\hat c$ as above
+([Harten (1983a)](/sources/harten-1983.md), Eq. (7.4); [Harten et al. (1987a)](/sources/harten-1987.md),
+Eq. (6.9)). *(Compiler check, not in the sources: dividing numerator and denominator by
+$\sqrt{\rho^-}$ gives the $D_\rho$ form above.)* Harten et al. (1987a, Remark 6.1) state that with
+this average the Roe flux is exact for a single shock or a single contact (Eq. (6.10)), and Harten
+(1983a, §4) that with it a stationary discontinuity is an exact steady solution of the scheme; that
+paper also calls the average "rather expensive" and finds that the arithmetic mean "will do just as well"
+in many applications (§7).
+
 The same averages supply the eigenvectors of most
 [characteristic decompositions](/methods/characteristic-decomposition.md) in the bundle and
 the Einfeldt speed bounds of HLLE, $s^-=\min(v^--c^-,\hat v-\hat c)$,
@@ -39,6 +49,27 @@ $s^+=\max(v^++c^+,\hat v+\hat c)$ (Ji et al., Eq. (35)); [Hu et al. (2022)](/sou
 (Eq. (2.6)) also include $0$ in the minimum and the maximum, so that the flux is fully upwind
 in supersonic flow. Sciacovelli et al. avoid the Roe matrix in their dissipation because the Roe
 average has no unique, cheap extension to real and multi-species gases (§3).
+
+## Scalar form and the founding uses
+
+For a scalar law [Harten et al. (1987a)](/sources/harten-1987.md) (Eq. (4.21)) write
+$h^{\mathrm{Roe}}(u^-,u^+)=\tfrac12\big(f(u^-)+f(u^+)-\lvert\bar a\rvert(u^+-u^-)\big)$ with the
+Rankine–Hugoniot speed $\bar a=\big(f(u^+)-f(u^-)\big)/(u^+-u^-)$ (page-local), i.e. $f(u^-)$ if
+$\bar a>0$ and $f(u^+)$ otherwise, and for systems the form at the top of this page with wave
+strengths $L(\hat u)(u^+-u^-)$ (Eqs. (5.11a–c)). It admits a stationary expansion shock with
+$\bar a=0$ and "should not be used" across a sonic rarefaction without an entropy correction (§4,
+p. 253). In their ENO schemes the Riemann flux evaluated on the two Cauchy–Kowalewski expansions
+only acts as a "pointer" to the expansion whose domain of validity contains the interface, so the
+exact Godunov flux can be replaced by Roe's without loss of order (§4, pp. 252–253), and the
+Riemann solver matters less as the order grows (§7 A2, p. 274). In
+[Harten (1983a)](/sources/harten-1983.md) (§8, Eq. (8.5)) "ROE" is the first-order scheme, the
+member $Q(x)=\lvert x\rvert$ of the paper's viscosity family, against which the second-order
+[TVD scheme](/methods/harten-tvd-scheme.md) is compared. [Jiang & Shu (1996)](/sources/jiang-1996.md)
+(§2, §7) use the Roe matrix as one choice of the averaged Jacobian of their
+[characteristic decomposition](/methods/characteristic-decomposition.md), a Roe flux splitting
+with entropy fix ("RF", after Shu & Osher) and a "Roe building block", whose operation count is
+about 1.5 times that of a second-order scheme against 3 to 4 times with Lax–Friedrichs building
+blocks ([Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
 
 ## Relation to HLL-type solvers
 
@@ -74,12 +105,44 @@ among Roe's defects; the sources that use the solver add an entropy fix:
   $C_T=10^{-4}$ to run stably) and the hybrid TENO-S of
   [Liang & Fu (2024b)](/sources/liang-2024-b.md) (§4.4), "to obtain a stable result".
 
-The fix itself is not written out in any of these sources.
+None of these entries writes its fix out. The founding papers print three different forms:
+
+- **Smoothed numerical viscosity (Harten 1983a).** Harten (Eq. (5.3); NYU report version read)
+  replaces the viscosity $Q(x)=\lvert x\rvert$ of the upwind scheme, a function of the local CFL number
+  $x=\frac{\Delta t}{\Delta x}\bar a$, by $Q(x)=\frac{x^2}{4\varepsilon_{\mathrm H}}+\varepsilon_{\mathrm H}$ for
+  $\lvert x\rvert<2\varepsilon_{\mathrm H}$ and $\lvert x\rvert$ otherwise, "with say $\varepsilon_{\mathrm H}=0.05$"
+  (page-local $\varepsilon_{\mathrm H}$, a fraction of the CFL number, not a speed), because a scheme with
+  $Q(0)=0$ keeps every stationary jump, admissible or not, as a steady solution. The paper does not
+  call it an entropy fix and does not attribute it to Hyman. It calls this choice "the best", yet
+  its Euler runs use $Q=\lvert x\rvert$ (ULT1), and on the Mach 3 step ULT1 shows part of the sonic line
+  turning into an expansion shock, like the Godunov results it compares with (§5, §8 III).
+- **Threshold on the speed (Harten et al. 1987a).** $h^{\mathrm{Roe}}=\tfrac12\big(f(u^-)+f(u^+)-\max(\lvert\bar a\rvert,\epsilon_{\mathrm R})(u^+-u^-)\big)$
+  with $\epsilon_{\mathrm R}=0.1\,\Delta x/\Delta t$ (page-local, a speed; Eqs. (7.8a,b); $\epsilon_{\mathrm R}=\Delta x/\Delta t$ gives
+  Lax's first-order scheme), and for nonconvex fluxes
+  $\epsilon_{\mathrm R}=\max\big(0,\ \bar a-a_L,\ a_R-\bar a\big)$ with $a_L$, $a_R$ extremal
+  Rankine–Hugoniot speeds from each state over the interval (Eqs. (7.8c,d), after Harten & Hyman;
+  page-local symbols), with which the flux "becomes computationally equivalent to the exact"
+  Godunov flux. With the crude threshold the shock of their nonconvex Riemann problem lags by 8, 3
+  and 1 cells for $r=1,2,4$, a lag in cells that does not grow under refinement (§7 A2, Figs. 6, 8);
+  their Euler and Burgers runs use no entropy correction (pp. 267, 275).
+- **Switch to local Lax–Friedrichs (Liu et al. 1994).** The scalar "Roe with entropy fix" of
+  [Liu et al. (1994)](/sources/liu-1994.md) (Eq. (2.6a)) is the upwind value $f(u^-)$ or $f(u^+)$ when
+  $f'$ keeps one sign on the interval between the states, and the local Lax–Friedrichs flux with the
+  maximum of $\lvert f'\rvert$ over that interval otherwise (Eq. (2.6b)); for the Euler equations they
+  refer to Harten et al. for a fix "formed by Roe's average" (§4.2).
+
+[Fu et al. (2016)](/sources/fu-2016.md) (§5.3), the earliest of the TENO papers, already switch to
+"Roe flux with entropy fix" for the blast waves, without printing the fix.
 
 ## Uses in the sources
 
 | Source | Discretization | Use |
 |---|---|---|
+| [Harten (1983a)](/sources/harten-1983.md) | first-order upwind and second-order TVD FD, Euler | Roe averages for the characteristic fields of every scheme; first-order "ROE" as the comparator (§7–§8) |
+| [Harten et al. (1987a)](/sources/harten-1987.md) | FV ENO with Cauchy–Kowalewski fluxes | Roe flux as the Riemann "pointer", without entropy correction on Sod, Lax and blast waves (§4–§7) |
+| [Liu et al. (1994)](/sources/liu-1994.md) | FV WENO | scalar Roe with switch to LLF; Euler: Roe with entropy fix and characteristic reconstruction (§2, §4.2) |
+| [Jiang & Shu (1996)](/sources/jiang-1996.md) | FD WENO-JS | Roe splitting with entropy fix (RF) and Roe building block; Roe matrix for the characteristic projection (§2, §4, §7) |
+| [Fu et al. (2016)](/sources/fu-2016.md) | FD TENO | Roe flux with entropy fix on the Woodward–Colella blast waves (§5.3) |
 | [Hong et al. (2022)](/sources/hong-2022.md) | FD WENO/TENO comparison | default flux for systems; van Leer flux-vector splitting for the double Mach reflection and 2D Riemann problems |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) | second-order Godunov FV, HD and MHD (IDEFIX) | linearized Roe solver of Cargo and Gallice for MHD; Sod tube (Roe, linear, RK2, 500 points), Brio–Wu tube, magnetized rotor; RK3 + PPM + Roe is the most accurate Orszag–Tang combination at a given resolution (§4.1–4.2, Figs. 2, 6, 9–11) |
 | [Huang & Zahr (2022)](/sources/huang-2022.md) | high-order implicit shock tracking (DG) | smoothed Roe flux with Harten–Hyman fix |
@@ -177,6 +240,11 @@ micro-jet that LWLS-WENO-Z gives (§5.2.3, Fig. 14).
 
 # Citations
 
+- [Harten (1983a)](/sources/harten-1983.md) — §4, §5 (Eq. (5.3)), §7 (Eq. (7.4)), §8 (Eq. (8.5)) (NYU report DOE/ER/03077-175).
+- [Harten et al. (1987a)](/sources/harten-1987.md) — §4 (Eq. (4.21)), §5 (Eqs. (5.11a–c)), §6 (Eq. (6.9), Remark 6.1), §7 A2 (Eqs. (7.8a–d)), §7 B.
+- [Liu et al. (1994)](/sources/liu-1994.md) — §2, Eqs. (2.6a)–(2.6b); §4.2.
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §2, §4 (Eq. (4.1)), §7 (author preprint).
+- [Fu et al. (2016)](/sources/fu-2016.md) — §5.3.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §1, §2.2–2.3 (Eqs. (2.5)–(2.8)).
 - [Ji et al. (2022)](/sources/ji-2022.md) — Eqs. (35)–(36).
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §4.1–4.2 (Figs. 2, 6, 7, 9–11).

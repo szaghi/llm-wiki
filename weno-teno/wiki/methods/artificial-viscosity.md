@@ -5,7 +5,7 @@ description: "Artificial viscosity adds solution-dependent dissipation instead o
 status: established
 aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T07:59:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -625,6 +625,20 @@ that the flux and limiter "do not induce excessive numerical viscosity"
 
 ## Positions against artificial viscosity
 
+- [Harten (1983a)](/sources/harten-1983.md) (§1), founding TVD schemes, grants that added
+  artificial viscosity can give a conservative scheme the uniform total-variation bound and
+  the entropy consistency that convergence needs, but holds that "viscosity represents an
+  irretrievable loss of information" that degrades resolution. The paper's alternative keeps a
+  first-order viscosity and cancels it, where the data are smooth, by a limited correction
+  of the flux ([Harten's TVD scheme](/methods/harten-tvd-scheme.md)). In that framework every
+  three-point conservative scheme is the central flux minus a viscosity term with
+  "coefficient of numerical viscosity" $Q$, a function of the local Courant number
+  ([numerical dissipation](/definitions/numerical-dissipation.md)); one of the paper's test schemes,
+  ULT2 ($Q=\nu^2+\tfrac14$), is the Lax–Wendroff scheme plus the linear viscosity
+  $\tfrac18(u_{i+1}-2u_i+u_{i-1})$ (§5), and its comparison hybrid scheme multiplies the same
+  $\tfrac14$ term by an artificial-compression switch, $Q=\nu^2+\tfrac14\theta_{\mathrm{AC}}$ field by
+  field (§8, Eq. (8.9);
+  [artificial compression](/methods/artificial-compression.md)).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) (§1) reject
   artificial-viscosity shock capturing for DG (Persson–Peraire and later
   variants, as recalled) in hyperbolic problems: it lowers performance,
@@ -768,6 +782,7 @@ that the flux and limiter "do not induce excessive numerical viscosity"
 # Citations
 
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — arXiv v1: §1; §3 (Eqs. (20)–(35), Fig. 1); §4.1; §5.2 (Fig. 11).
+- [Harten (1983a)](/sources/harten-1983.md) — §1, §3 (Eq. (3.1)), §5, §8 (Eq. (8.9)): viscosity as loss of information, numerical-viscosity coefficient, ULT2 (NYU report DOE/ER/03077-175, March 1982).
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — arXiv v1: §3 (Eqs. (4)–(8)); Rem. 2; §6 (Eqs. (16)–(18), Rem. 6); §7.3–§7.4; §8.
 - [Pazner (2021)](/sources/pazner-2021.md) — arXiv v1: §3.1 (Eqs. (32)–(35)); §3.4 (Fig. 1); §4.4.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1, §1.2 (Eq. (1.2)); §2.2 (Eqs. (2.9)–(2.12)); Rems. 2.2–2.3.

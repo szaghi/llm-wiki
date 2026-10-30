@@ -136,7 +136,7 @@ page range "107–107"; [1] keeps Hopf's printed equation in the title. No print
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–11 (2026-10-22/24). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–12 (2026-10-22/30). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)

@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-30T07:57:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -24,6 +24,43 @@ $\hat f^-_{i+1/2}$ from $f^-$ by the mirror rule, and $\hat f_{i+1/2}=\hat f^+_{
 ([Li et al. (2022b)](/sources/li-2022-b.md), §2, Eqs. (1)–(4);
 [Ye et al. (2022)](/sources/ye-2022.md), Eq. (20), $a=\max\lvert f'(u)\rvert$).
 
+## Origin as the building block of finite-difference ENO and WENO
+
+- **Shu & Osher (1988).** The splitting enters the bundle with the flux-based ENO schemes of
+  [Shu & Osher (1988)](/sources/shu-1988.md) (§III, Eqs. (3.1)–(3.4), p. 15; ICASE report version
+  read): $f^\pm=\tfrac12(f\pm au)$ with $a\ge\max\lvert f'(u)\rvert$ **a constant**, so that
+  $\pm\,df^\pm/du\ge0$ and $f^++f^-=f$; the first-order member of their family is the
+  Lax–Friedrichs scheme with flux $f^+(u_i)+f^-(u_{i+1})$ (Remark 3.1(a)). For systems $a$ becomes a
+  constant matrix: either a large multiple of the identity, which "may smear" the slower waves, or
+  $R(\bar u)\,\mathrm{diag}(\bar a_l)\,L(\bar u)$ frozen at one state $\bar u$ (page-local), with each
+  $\bar a_l\ge\lvert\lambda_l(u)\rvert$ "throughout the region" and a "sufficiently large" margin
+  (pp. 22–23). Their reason for this building block is smoothness: any monotone or E-flux can
+  replace it (Eqs. (3.20)–(3.21); [flux vector splitting](/methods/flux-vector-splitting.md)), but
+  Godunov, Engquist–Osher and entropy-fixed Roe fluxes are not smooth at sonic points and ENO
+  schemes built on them "will lose accuracy at sonic points", whereas Lax–Friedrichs is
+  $C^\infty$ (pp. 20–22). The price is dissipation: Lax–Friedrichs is "much inferior" to Godunov or
+  Engquist–Osher at first order and only "slightly inferior" at higher order (p. 21), and on their
+  nonconvex Riemann problems and the [Buckley–Leverett problem](/benchmarks/buckley-leverett-problem.md)
+  the third-order Lax–Friedrichs ENO smears more than the Engquist–Osher one (§IV, Ex. 4, Figs. 21–38).
+- **Jiang & Shu (1996).** [Jiang & Shu (1996)](/sources/jiang-1996.md) (Eq. (2.5)) take
+  $a=\max\lvert f'(u)\rvert$ "over the whole relevant range of $u$", global Lax–Friedrichs, and use
+  the smoothness of this splitting to make the WENO spatial operator infinitely differentiable, the
+  hypothesis of their convergence theorem for smooth solutions (§6, Eq. (6.1), Theorem 6.1). They
+  also measure its cost (§7): with Lax–Friedrichs building blocks the operation count per point and
+  stage of characteristic fourth- and fifth-order ENO is 3 to 4 times that of a second-order scheme,
+  against about 1.5 times with a Roe building block, in which $f^\pm$ are not reconstructed
+  separately ([Roe solver](/methods/roe-riemann-solver.md)).
+- **Shu (2009a).** The review prints the two-point flux
+  $h^{\mathrm{LF}}=\tfrac12\big(f(u^-)+f(u^+)-a(u^+-u^-)\big)$ with $a=\max_u\lvert f'(u)\rvert$ among the
+  monotone fluxes (§3.1) and the splitting as "the most commonly used flux splitting" of
+  finite-difference WENO (§3.2); only the global form is printed
+  ([Shu (2009a)](/sources/shu-2009.md)).
+- **Later founding papers.** [Borges et al. (2008)](/sources/borges-2008.md) (§5.2) use the
+  first-order Lax–Friedrichs flux as the "low order building block" of characteristic-wise
+  WENO-Z (global or local not stated), and [Fu et al. (2016)](/sources/fu-2016.md) (§5) the
+  global Lax–Friedrichs splitting with Roe-averaged characteristic decomposition for TENO, with a
+  Roe flux with entropy fix on the blast waves.
+
 ## Naming conventions
 
 The sources disagree on words, not on mathematics. [Jeong et al. (2022)](/sources/jeong-2022.md)
@@ -39,7 +76,11 @@ and "LLF" for extreme cases; [Takagi et al. (2022)](/sources/takagi-2022.md) (§
 $\tfrac12\lvert Q\rvert(u_{i+1}-u_i)$ and print $Q=\tfrac12I$ for "Lax–Friedrichs" and
 $Q=a_{i+1/2}I$ for Rusanov. *(compiler check, not in the sources: the classical
 Lax–Friedrichs scheme in this form has $Q=\frac{\Delta x}{\Delta t}I$, so $\tfrac12I$ needs a
-normalization the paper does not state.)* This page reads every occurrence by the
+normalization the paper does not state.)* [Liu et al. (1994)](/sources/liu-1994.md) (Eq. (2.6b)) call "local
+Lax–Friedrichs" the flux $\tfrac12\big(f(u^-)+f(u^+)-a(u^+-u^-)\big)$ with
+$a=\max\lvert f'(u)\rvert$ over the whole interval between $u^-$ and $u^+$, not only at the two
+states, and use it as the fallback of their scalar Roe flux where $f'$ changes sign between the
+states ([Roe solver](/methods/roe-riemann-solver.md)). This page reads every occurrence by the
 speed bound it uses.
 
 ## In finite-difference WENO and TENO for systems
@@ -260,6 +301,18 @@ reduce the speeds by jump detectors rather than by a flow-feature sensor.
 
 ## Bound preservation and invariant domains
 
+- **First-order positivity, direct proof.** [Zhang & Shu (2010b)](/sources/zhang-2010-b.md)
+  (Remark 2.4) prove that the first-order Lax–Friedrichs scheme for the Euler equations with the
+  global coefficient $a=\max(\lvert v\rvert+c)$ keeps positive density and pressure under
+  $\nu=a\Delta t/\Delta x\le1$, relaxing the bound $\nu\le\tfrac12$ of Perthame & Shu that they
+  recall. The update is the convex combination
+  $u^{n+1}_i=(1-\nu)u^n_i+\tfrac\nu2\big(u^n_{i+1}-f(u^n_{i+1})/a\big)+\tfrac\nu2\big(u^n_{i-1}+f(u^n_{i-1})/a\big)$,
+  and the pressure of the two bar states is
+  $$p\Big(u\pm\frac{f(u)}a\Big)=\Big(1-\frac p\rho\,\frac{\gamma-1}{2(a\pm v)^2}\Big)\Big(1\pm\frac va\Big)p,$$
+  positive because $c\le a-\lvert v\rvert$. With their Gauss–Lobatto cell-average decomposition this
+  gives the high-order cell-average bounds $\nu\le\tfrac16$ for $N=2,3$ and $\nu\le\tfrac1{12}$ for
+  $N=4,5$ (Table 2.1; [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md),
+  [Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md)).
 - **First-order BP.** [Wu & Shu (2023)](/sources/wu-2023-b.md) prove with
   [geometric quasilinearization](/methods/geometric-quasilinearization.md) that the
   first-order finite-volume LF scheme for 1D Euler is bound preserving for
@@ -267,6 +320,7 @@ reduce the speeds by jump detectors rather than by a flow-feature sensor.
   and the 2D ten-moment LF scheme under the sum of the two directional CFL numbers $<1$
   (§5.3); for multicomponent MHD the 2D LF scheme is BP provided a discrete divergence
   vanishes (Thm. 6.1; see [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+  The first-order bound $\nu\le1$ is the one Zhang & Shu (2010b) proved directly above.
   [Cui et al. (2024)](/sources/cui-2024.md) use $c_0=1$ for LF against $c_0=\tfrac12$ for
   HLL/HLLC as the first-order BP CFL constant (§7), so that with LF and their optimal decomposition the
   linear-stability time step $1/(2N+1)$ of $\mathbb P^N$-DG already guarantees BP for $N\le9$
@@ -584,6 +638,9 @@ $a=\max(\lvert\lambda^-_{\max}\rvert,\lvert\lambda^+_{\max}\rvert)$ over the glo
 - Wu & Shu's LF statements are proved for the first-order scheme; the high-order FV/DG MHD
   result uses Gauss-quadrature LF fluxes with a viscosity bound and its proof is "omitted"
   (Thm. 6.2).
+- Shu (2009a, §3.1) prints the Engquist–Osher flux, $f^+(u^-)+f^-(u^+)$ with
+  $f^+(u)=f(0)+\int_0^u\max(f'(v),0)\,dv$ and $f^-(u)=\int_0^u\min(f'(v),0)\,dv$, under the label
+  $\hat f^{LF}$ of the preceding Lax–Friedrichs bullet.
 - [Fu (2023)](/sources/fu-2023.md) mis-cites the Rusanov and Roe references by one number in
   Algorithm 1 (a slip of the review, not a disagreement).
 - **A coefficient below the wave-speed bound.** The LLF-M coefficient of Wang et al. (2023a)
@@ -597,6 +654,13 @@ $a=\max(\lvert\lambda^-_{\max}\rvert,\lvert\lambda^+_{\max}\rvert)$ over the glo
 
 # Citations
 
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §III, Eqs. (3.1)–(3.4), (3.20)–(3.21), Remark 3.1, pp. 15–23; §IV, Ex. 4 (ICASE Report 87-33).
+- [Liu et al. (1994)](/sources/liu-1994.md) — §2, Eqs. (2.6a)–(2.6b).
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §2, Eq. (2.5); §6, Eq. (6.1), Theorem 6.1; §7 (author preprint).
+- [Borges et al. (2008)](/sources/borges-2008.md) — §5.2.
+- [Shu (2009a)](/sources/shu-2009.md) — §3.1–3.2.
+- [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — Remark 2.4, Table 2.1.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §5, §5.3.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §2 (Eqs. (1)–(4)), Eq. (38).
 - [Ye et al. (2022)](/sources/ye-2022.md) — Eqs. (13), (19)–(22).
 - [Fu (2023)](/sources/fu-2023.md) — §3.4 (Algorithm 1), §3.6.

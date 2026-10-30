@@ -3,15 +3,19 @@ type: Method
 title: "WENO-JS reconstruction"
 description: "The Jiang–Shu weighted ENO reconstruction: a convex combination of r-point candidate polynomials with weights d_k/(β_k+ε)^q, giving order 2r−1 in smooth regions and ENO behaviour at discontinuities; the baseline every later weight design modifies."
 status: established
-aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS]
+aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS, WENO-LF-5, WENO-RF-5, WENO-Roe-5, weighted ENO]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-30T08:09:00Z
 ---
 
 # WENO-JS reconstruction
 
-WENO-JS is the weighted essentially non-oscillatory reconstruction of Jiang and Shu, as recalled
-by every WENO source of the bundle. A value at the interface $x_{i+1/2}$ (a numerical flux in
+WENO-JS is the weighted essentially non-oscillatory reconstruction of
+[Jiang & Shu (1996)](/sources/jiang-1996.md), recalled by every WENO source of the bundle; it recasts
+the cell-average WENO of [Liu et al. (1994)](/sources/liu-1994.md) in the finite-difference flux
+form and gives it a new smoothness indicator (see *Origin* below). The name "WENO-JS" is the later
+literature's: the paper names its schemes WENO-LF-5, WENO-RF-5 and WENO-Roe-5 after the flux
+splitting, with the order counted "in $L^1$ sense" (§3). A value at the interface $x_{i+1/2}$ (a numerical flux in
 finite differences, a left state $u^-_{i+1/2}$ in finite volumes) is built as a convex combination
 of $r$ candidate reconstructions on the $r$-point stencils $S_0,\dots,S_{r-1}$ that cover a
 $(2r-1)$-point global stencil:
@@ -21,11 +25,64 @@ $$\hat f_{i+1/2}=\sum_{k=0}^{r-1}\omega_k\,\hat f^{(k)}_{i+1/2},\qquad
 \alpha_k=\frac{d_k}{(\beta_k+\epsilon)^q}.$$
 
 The linear weights $d_k$ make $\sum_kd_k\hat f^{(k)}_{i+1/2}$ the $(2r-1)$th-order upwind-biased
-linear scheme on the global stencil. The [smoothness indicators](/definitions/smoothness-indicator.md)
+linear scheme on the global stencil; Jiang & Shu (1996, §2, Eqs. (2.9)–(2.14)) call it the
+"upstream central scheme" and the $d_k$ "optimal weights", and show that
+$\omega_k=d_k+O(\Delta x^{r-1})$ suffices for order $2r-1$, which holds if
+$\beta_k=D(1+O(\Delta x^{r-1}))$ with $D$ nonzero and independent of $k$ (Eq. (2.17)). The [smoothness indicators](/definitions/smoothness-indicator.md)
 $\beta_k$ push the weight of a stencil crossed by a discontinuity towards zero, which is the
 [ENO property](/definitions/eno-property.md). Classical WENO uses $q=2$ (Fu 2023, §3.1; Ye et al. 2022, §2.2,
-"for most WENO schemes"); Li et al. (2022b, Eq. (5)) call the exponent the knob that "controls the
+"for most WENO schemes"; Fu et al. 2016, §2.2, "generally defined as $q=2$"). Jiang & Shu (1996,
+§2, p. 8) find $q=2$ "adequate to obtain essentially non-oscillatory approximations at least for
+$r=2,3$", against Liu et al.'s suggestion $q=r$, and use it in all tests;
+[Shu (2009a)](/sources/shu-2009.md) (§2.1, p. 87) adds that $\beta_k^{-q}$ with $q\ne2$ and
+$e^{-c\beta_k}$ (page-local $c$) "were tested and the choice ... was made ... after considering both
+cost and performance". Li et al. (2022b, Eq. (5)) call the exponent the knob that "controls the
 magnitude of the numerical dissipation", and Fu (2023, §3.1) contrasts it with TENO's larger $q=6$–$7$.
+
+## Origin
+
+**Liu–Osher–Chan WENO (finite volume).** Liu et al. (1994, §3) introduced weighted ENO as a change
+of the reconstruction step of cell-average [ENO](/methods/eno-reconstruction.md) only: instead of the
+single smoothest stencil, the reconstruction in cell $I_i$ is a convex combination of all $r$
+primitive-function candidates of degree $r-1$, one polynomial per cell evaluated at both ends, fed to a
+two-point monotone flux (Eqs. (2.7), (3.6)). Their weights are $\alpha_k=C_k/(\epsilon+\beta_k)^r$ with
+$\epsilon=10^{-5}$ (Eq. (3.9)) and the undivided-difference indicators recorded on the
+[smoothness-indicator](/definitions/smoothness-indicator.md) page; the exponent is $r$, so $2$ for
+$r=2$ and $3$ for $r=3$ (Eqs. (3.16), (3.18)). The constants $C_k$ (page-local) are chosen, according to
+the sign of $f'(\bar u_i)$, to cancel the leading error term at the upwind end of the cell only
+(Eq. (3.12)), which gives order $r+1$ away from sonic points (Eq. (3.15)): $C=(\tfrac12,1)$ for $r=2$ and
+$(\tfrac1{12},\tfrac12,\tfrac14)$ for $r=3$ when $f'(\bar u_i)>0$. *(Compiler check, not in the sources:
+normalized, these are $(\tfrac13,\tfrac23)$ and $(\tfrac1{10},\tfrac35,\tfrac3{10})$, the optimal weights
+of the $(2r-1)$th-order scheme in the same upwind-first order.)* The authors claim third and fourth
+order for $r=2,3$ and observe about fourth and fifth (Tables I–V), "surprisingly better" than the
+analysis (p. 207). They credit C.-W. Shu with the squared differences in the indicator; they first
+used absolute values (Acknowledgment).
+
+**Jiang–Shu (finite difference).** Jiang & Shu (1996, §§1–3) formulate WENO on the point-value flux
+version of ENO of [Shu & Osher (1988)](/sources/shu-1988.md). Their Taylor analysis of the Liu et al.
+indicator gives $\beta_k=(f'\Delta x)^2(1+O(\Delta x))$, hence $\omega_k=d_k+O(\Delta x)$ and only order
+$r+1$ in smooth monotone regions, a result they say "was proven in [Liu et al.] using a different
+approach"; they call the higher orders of Liu et al.'s tables "superficial", from large coarse-grid
+errors and from $\epsilon$ dominating $\beta_k$ on fine grids (§1; §2, p. 7). Their new indicator
+(§3, Eq. (3.1)) gives $\beta_k=(f'\Delta x)^2(1+O(\Delta x^2))$ where $f'\ne0$ (Eq. (3.8)), so condition
+(2.17) holds for $r=3$ and the scheme is fifth order. For $r=2$ the two indicators coincide (WENO-X-3);
+Liu et al.'s $r=3$ scheme is their WENO-X-4. The paper further proves convergence for smooth scalar
+solutions through Strang's theorem, the WENO operator being infinitely differentiable with a smooth
+splitting such as global Lax–Friedrichs (§6, Theorem 6.1), and gives linear-stability CFL numbers
+1.434 (third-order TVD Runge–Kutta) and 1.731 (classical fourth order) for $r=3$ (Table 5;
+[SSP Runge–Kutta](/methods/ssp-runge-kutta.md)). Shu (2009a, §3.1, p. 95) adds that fifth-order WENO
+with forward Euler or second-order Runge–Kutta "is linearly unstable, hence they should not be used
+even if the problem is steady state" (citing Wang & Spiteri). For the Euler equations Jiang & Shu add
+weights computed from pressure and entropy, which cut the characteristic projections to two
+(WENO-LF-5-PS, §4; [characteristic decomposition](/methods/characteristic-decomposition.md)), Yang's
+artificial compression for contacts (§5; [artificial compression](/methods/artificial-compression.md)),
+and a threshold that sets $\omega_k=d_k$ when some $\beta_k<\tfrac12$ (Eq. (8.2), §8.3 Ex. 4).
+
+**Cost.** On a CRAY C-90, 1D/2D/3D CPU times for $10^{4-d}$ iterations are 7.45/60.84/78.89 s for
+WENO-LF-5 against 16.67/122.52/171.42 s for fourth-order ENO and 1.75/13.13/15.48 s for a
+second-order scheme, all WENO variants running near 500 MFlops, "50% of the peak speed" (Jiang &
+Shu 1996, §7, Tables 6–7). The characteristic projections "are responsible for most of the floating
+point operations" (§4).
 
 ## Construction
 
@@ -70,10 +127,16 @@ limit is the third-order scheme $-\tfrac16\bar u_{i-1}+\tfrac56\bar u_i+\tfrac13
 Huang et al. state the design conditions: consistency $\sum\omega_k=1$, accuracy $\omega_k-d_k=O(\Delta x^2)$,
 and $\omega_k\to0$ iff the stencil contains a discontinuity (Deng; Huang et al.).
 
-**Regularization.** Deng (2023, §1) recalls that Jiang and Shu recommended $\epsilon=10^{-6}$, a
+**Regularization.** Jiang & Shu (1996, §2, p. 6) introduce $\epsilon$ "to avoid the denominator to
+become zero" and write "in our later tests, we will take $\epsilon=10^{-6}$"; Liu et al. (1994, p. 203)
+used $10^{-5}$. Shu (2009a, §2.1) describes $10^{-6}$ as "typically chosen ... in actual calculations",
+or "a small number relative to the size of the typical $u_i$", and Borges et al. (2008, Remark 2)
+as "commonly suggested in the literature", keeping it for WENO-JS "to compare with the classical
+scheme at its best" (§5); Fu et al. (2016, §2.2) recall that $\epsilon$ "indeed acts as a cutoff of
+the smoothness measure". Deng (2023, §1) recalls that Jiang and Shu recommended $\epsilon=10^{-6}$, a
 value that "reduces the influence of non-linear weights"; Kuzmin & Vedral (2023, §5) use
 $\epsilon=10^{-6}$ and $q=2$ for the Jiang–Shu-type weights of their Hermite candidates. For WENO-Z
-weights Borges et al. suggest $\epsilon=10^{-40}$ (as recalled by Deng 2023, §4.3), the value Luo &
+weights Borges et al. (2008, §5) use $\epsilon=10^{-40}$ (also recalled by Deng 2023, §4.3), the value Luo &
 Wu (2021) use; Wang & Don (2022) test $10^{-12}$ and $10^{-40}$ ([WENO-Z](/methods/weno-z.md)).
 Zheng, Shu & Qiu (2021, Eq. (24)) also use $\epsilon=10^{-6}$ with $q=2$. Zhang, Jiang, Qin, Qu & Yan (2024b, §2.2, Eqs. (5)–(8))
 recall the scheme with $\epsilon=10^{-6}$ "in" Jiang & Shu and $q=2$, against $10^{-40}$ in their WENO-Z, WENO-CU6 and TENO
@@ -95,17 +158,24 @@ $\{x_{i-2+k},x_{i-1+k},x_{i+k}\}$, $k=0,1,2$, into the quartic on five points wi
 
 $$d_0(x)=\frac{(x-x_{i+1})(x-x_{i+2})}{12\Delta x^2},\qquad d_2(x)=\frac{(x-x_{i-2})(x-x_{i-1})}{12\Delta x^2},\qquad d_1=1-d_0-d_2,$$
 
-and Jiang–Shu indicators and weights. *(Compiler check, not in the sources: at $x_{i+1/2}$ these give
-$(d_0,d_1,d_2)=(\tfrac1{16},\tfrac58,\tfrac5{16})$, the interpolation weights, distinct from the
-reconstruction weights above.)* They apply it to primitive variables in local characteristic fields.
+and Jiang–Shu indicators and weights, applied to primitive variables in local characteristic fields.
+At $x_{i+1/2}$ the interpolation weights are
+$(d_0,d_1,d_2)=(\tfrac1{16},\tfrac58,\tfrac5{16})$, distinct from the reconstruction weights above;
+Shu (2009a, §2.1, Eqs. (2.1)–(2.5)) prints them with the candidates
+$\tfrac38u_{i-2}-\tfrac54u_{i-1}+\tfrac{15}8u_i$, $-\tfrac18u_{i-1}+\tfrac34u_i+\tfrac38u_{i+1}$,
+$\tfrac38u_i+\tfrac34u_{i+1}-\tfrac18u_{i+2}$ and the five-point interpolant
+$\tfrac1{128}(3,-20,90,60,-5)$, together with the point-value form of the indicators (Eq. (2.9)). The
+same review prints sixth-order WENO *integration* weights $(-\tfrac{17}{240},\tfrac{137}{120},-\tfrac{17}{240})$,
+an example of negative linear weights, which make the combination non-convex and need the
+splitting technique of Shi, Hu & Shu or a lower target order (§2.3.3–2.3.4).
 
 **Point values inside a finite-volume scheme.** Berta, Mignone, Bugli & Mattia (2024, §3.2, Eqs. (24)–(26); arXiv v4
 read) convert the cell averages of a fourth-order finite-volume MHD scheme to point values at cell centres and
 interpolate those, so the candidates are the point-value interpolants
 $\tfrac18(3u_{i-2}-10u_{i-1}+15u_i)$, $\tfrac18(-u_{i-1}+6u_i+3u_{i+1})$, $\tfrac18(3u_i+6u_{i+1}-u_{i+2})$ with the interpolation
 weights $(\tfrac1{16},\tfrac58,\tfrac5{16})$, and the Jiang–Shu indicators "have been found to be the same" on point values;
-the weights are of [WENO-Z](/methods/weno-z.md) type. *(Compiler check, not in the sources: these weights reproduce the
-five-point interpolation $\tfrac1{128}(3,-20,90,60,-5)$ coefficient by coefficient.)* The same paper's fallback WENO3 is
+the weights are of [WENO-Z](/methods/weno-z.md) type. These weights reproduce the five-point interpolation $\tfrac1{128}(3,-20,90,60,-5)$ printed by
+Shu (2009a, Eq. (2.4)). The same paper's fallback WENO3 is
 the point-value version of the third-order scheme, with linear weights $\tfrac34$ on the central and $\tfrac14$ on the upwind
 candidate against $\tfrac23$ and $\tfrac13$ in the cell-average form, Z-type weights after Yamaleev & Carpenter and
 $\epsilon=\Delta x^2$ "to avoid loss of accuracy at critical points" (Eqs. (27)–(28); see Qualifications).
@@ -119,6 +189,13 @@ fourth-order averaging, "required to achieve 5th-order accuracy associated with 
 reconstructions" ([MFC](/software/mfc.md)). Wong et al. (2021, §4.3), citing Sebastian & Shu, state
 that finite-difference WENO and WCNS avoid the multi-dimensional reconstruction and are "four times
 cheaper in 2D and nine times cheaper in 3D" than finite-volume WENO (relayed; no timing is printed).
+Shu (2009a, §3.4) gives the count behind such statements: a nonlinear finite-volume scheme needs two
+1-D reconstructions and a Gauss quadrature per face, "about three times the cost of the
+one-dimensional case per cell per direction", so in 2-D a finite-volume scheme of order above two is
+"two to five times as expensive" as the finite-difference one, "depending on the specific coding and
+type of computer", and more in 3-D; the finite-difference form is restricted to uniform or smooth
+meshes ([conservative finite differences](/definitions/conservative-finite-difference-scheme.md)).
+In 1-D the two cost the same (§3.3).
 On unstructured meshes, Tsoutsanis et al. (2021, Eq. (32)) keep the Jiang–Shu weight form with $q=4$,
 $\epsilon=10^{-6}$; their unstructured WENO carries the full order on every directional stencil,
 unlike their [CWENO](/methods/cweno.md) (§3.2). Ji, Liang & Fu (2022, §2.3, Eqs. (15)–(16))
@@ -153,8 +230,14 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
 
 ## Properties and limitations
 
-- **Accuracy at critical points.** WENO-JS loses order where low derivatives vanish
-  ([critical-point accuracy](/properties/critical-point-accuracy.md)). On $x^ke^x$ at $x=0$, Li et
+- **Accuracy at critical points.** The founding paper and the later literature differ here
+  ([critical-point accuracy](/properties/critical-point-accuracy.md), where the disagreement is
+  recorded). Jiang & Shu (1996, §3, Eq. (3.9)) print $\beta_k=\tfrac{13}{12}(f''\Delta x^2)^2(1+O(\Delta x^2))$
+  at $f'=0$, "which implies that the weights ... are also 5th order accurate at critical points".
+  Borges et al. (2008, §2), after Henrick et al., state that at a first-order critical point
+  $\omega_k=d_k+O(\Delta x)$ and WENO-JS is third order, second order if $f''$ also vanishes, and that
+  $\epsilon=10^{-6}$ hid the defect; their extended-precision test with $\epsilon=10^{-40}$ gives orders
+  2.95–2.99 (Table 3). On $x^ke^x$ at $x=0$, Li et
   al. (2022b, Table 6) measure for WENO5-JS orders 3.04–3.15 at a first-order critical point, 2.00 at
   a second-order one and 3.39–3.72 at a third-order one; WENO7-JS and WENO9-JS also lose several
   orders (Tables 7–8). Fu (2021), Fu (2023), Takagi et al. (2022), Balsara et al. (2024) and Luo &
@@ -166,7 +249,10 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
   Wang & Don (2022, App. A, Theorem 2) show that replacing $\epsilon$ by $\epsilon\,\mathsf m^2[f]$,
   with $\mathsf m$ the mean absolute deviation of the stencil data, makes the JS weights affine
   invariant ([affine-invariant WENO](/methods/affine-invariant-weno.md),
-  [scale invariance](/properties/scale-invariance.md)).
+  [scale invariance](/properties/scale-invariance.md)). Shu (2009a, §3.5.1) states the converse
+  condition: with $\epsilon$ "a small percentage of the typical size of $u_i$" the reconstruction "does
+  not change when the solution is amplified by a constant or when the mesh size $\Delta x$ changes";
+  this covers scaling but not offsets.
 - **Dissipation.** Luo & Wu (2021, §4) argue that classical weights give the less-smooth stencil
   less than its linear weight, which adds positive nonlinear dissipation, so WENO-JS is always more
   dissipative than its linear scheme UD5 ([numerical dissipation](/definitions/numerical-dissipation.md)).
@@ -179,7 +265,11 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
 - **Symmetry.** Fu (2023, §3.8) recalls that WENO9-JS breaks the symmetry of the Rayleigh–Taylor
   instability at $\Delta x=1/1920$ while WENO5-JS keeps it
   ([symmetry preservation](/properties/symmetry-preservation.md)).
-- **Measured accuracy.** On $u_t+u_x=0$, $u_0=\sin\pi x$, $t=2$, WENO5-JS has $L_1$ error
+- **Measured accuracy.** In the founding tests ($u_t+u_x=0$ on $[-1,1]$, $u_0=\sin\pi x$, $t=1$, RK4
+  with $\Delta t\sim\Delta x^{5/4}$) WENO-RF-5 reaches $L_\infty$ error $1.35\times10^{-9}$ and $L_1$
+  $6.79\times10^{-10}$ at $N=320$, orders 5.03 and 5.00, against $1.53\times10^{-10}$ and $9.73\times10^{-11}$
+  for the linear scheme; Liu et al.'s fourth-order WENO-RF-4 is more accurate at $N=10$ but less on
+  finer grids (Jiang & Shu 1996, Table 3; §9). On $u_t+u_x=0$, $u_0=\sin\pi x$, $t=2$, WENO5-JS has $L_1$ error
   $7.94\times10^{-11}$ at $N_x=640$, against $9.72\times10^{-12}$ for TENO5 (Ye et al. 2022,
   Tables 7–8). On a 1-D Euler density wave at 320 points, WENO-JS5 has $L_1$ error
   $1.93\times10^{-10}$ against $2.93\times10^{-11}$ for the linear Upwind5 scheme, at 1.5809 s against
@@ -257,6 +347,12 @@ reconstructing fluxes.
   Ye et al. 2022, §3.3) number the central stencil $S_0=\{i-1,i,i+1\}$, the downwind-biased
   $S_1=\{i,i+1,i+2\}$ and the upwind $S_2=\{i-2,i-1,i\}$, so their $(d_0,d_1,d_2)=(6/10,3/10,1/10)$
   is the same scheme.
+- Borges et al. (2008, §2) print $(d_0,d_1,d_2)=(\tfrac3{10},\tfrac35,\tfrac1{10})$ while their Fig. 1 and
+  Eqs. (9)–(11) put $S_0$ upwind; the values match their Eq. (5), where $k$ is a left shift, so the
+  paper uses two opposite labellings (see the Source page).
+- Jiang & Shu (1996) is a finite-difference paper; the finite-volume form of the same weights on
+  cell averages, with $(d_0,d_1,d_2)=(\tfrac1{10},\tfrac35,\tfrac3{10})$ and the same indicator formulas, is
+  printed by Shu (2009a, §2.2, Eqs. (2.11)–(2.17)).
 - Li et al. (2022b, Table 2) print the entry $77/20$ in the $r=5$, $k=4$ row; the row sums to 1 only
   with $77/60$, which is the value the candidate polynomial gives (and the mirror of the $k=0$ row
   of the same table).
@@ -270,6 +366,12 @@ reconstructing fluxes.
 
 # Citations
 
+- [Jiang & Shu (1996)](/sources/jiang-1996.md) — §§1–3, Eqs. (2.9)–(2.17), (3.1), (3.8)–(3.9); §4; §5; §6, Theorem 6.1, Table 5; §7, Tables 6–7; Eq. (8.2); Table 3; §9.
+- [Liu et al. (1994)](/sources/liu-1994.md) — §2, Eq. (2.7); §3, Eqs. (3.6), (3.9), (3.12), (3.15)–(3.19); Tables I–V; p. 207; Acknowledgment.
+- [Shu (2009a)](/sources/shu-2009.md) — §2.1, Eqs. (2.1)–(2.10), p. 87; §2.2, Eqs. (2.11)–(2.17); §2.3.3–2.3.4; §3.1, p. 95; §3.3–3.4; §3.5.1.
+- [Borges et al. (2008)](/sources/borges-2008.md) — §2, Remark 2; §5; Table 3.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §2.2, Eqs. (9)–(13).
+- [Shu & Osher (1988)](/sources/shu-1988.md) — §III (the point-value flux ENO that Jiang & Shu weight).
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eqs. (2)–(7); Tables 1–2, 6–8; §4.5, Fig. 11.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §2.1, Eqs. (1)–(5); §4.
 - [Deng (2023)](/sources/deng-2023.md) — §1; §4.3, Eqs. (4.19)–(4.23); Figs. 5, 13.
