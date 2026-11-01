@@ -5,7 +5,7 @@ description: "When accuracy on the full stencil fixes the linear weights of a WE
 status: established
 aliases: [negative weights, negative ideal weights, negative optimal weights, non-existent linear weights, Shi–Hu–Shu technique, treating negative weights in WENO]
 tags: [weno, reconstruction, teno, cweno, finite-volume]
-timestamp: 2026-10-30T08:41:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Negative linear weights
@@ -55,6 +55,10 @@ case in which no set of linear weights reaches the full-stencil order.
   bound their dissipation parameter by $0\le c_{\mathrm{diss}}\le\min(c_{\mathrm{disp}},\tfrac19-\tfrac13c_{\mathrm{disp}})$,
   which "guarantees" non-negative $d_k$ of their four candidates and a convex combination (§2.3,
   §3.1, Table 1; [MDCD schemes](/methods/mdcd-scheme.md)).
+- **Diffusion fluxes.** [Yang & Qiu (2026)](/sources/yang-2026.md) (§1) recall that the sixth-order
+  conservative finite-difference WENO for $\partial_x^2g(u)$ of Liu, Shu & Zhang (DWENO) has negative ideal
+  weights, which Abedian et al. avoid; their own Hermite scheme takes arbitrary positive weights
+  ([Hermite WENO](/methods/hermite-weno.md)).
 
 ## Remedies
 
@@ -89,6 +93,13 @@ multi-resolution scheme takes any positive linear weights. The same freedom is c
 [Wang et al. (2021)](/sources/wang-2021.md) and for WENO-ZQ by
 [Zheng et al. (2022)](/sources/zheng-2022.md); see the CWENO page for the evidence on which positive
 weights keep the design order.
+The recent Hermite schemes repeat the argument: [Zhang et al. (2026a)](/sources/zhang-2026.md) (§1) state that
+the linear weights of WENO-ZQ and multi-resolution WENO "can be any positive number, as long as their sum equals
+1", so one set serves every evaluation point and negative weights are avoided; [Zhang et al. (2026b)](/sources/zhang-2026-b.md)
+(§4) that their CWENO-form Hermite reconstruction "can avoid the generation of the negative weights"; and Yang &
+Qiu (2026, §2.1) use "artificial" positive weights $(0.98,0.01,0.01)$ for both convective and diffusive fluxes.
+Zhang et al. (2026b, Example 3.12) also report a limit of "any" (failure not plotted): the multi-resolution HWENO with weights
+$10^{l-1}$ fails on a Rayleigh–Taylor problem and needs $4^{l-1}$ ([multi-resolution WENO](/methods/multi-resolution-weno.md)).
 
 **5. Drop the convex combination (TENO).** Fu (2023) argues from Kang & Li's necessary and sufficient
 condition for WENO-like linear combinations that the TENO combination "will always work" for the first
@@ -120,3 +131,6 @@ the drawback (§3.9; [targeted ENO](/methods/targeted-eno.md)).
 - [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §2.3, §3.1, Table 1.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.1.1.
 - [Zheng et al. (2022)](/sources/zheng-2022.md) — §1, §2.2.
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §1; §2.1; §4.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §1.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §4; Example 3.12.

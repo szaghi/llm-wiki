@@ -6,6 +6,86 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 13 — Hermite and multi-resolution WENO, moving-mesh transport exactness (2026-11-01)
+
+Sources (5): zhang-2026, zhang-2026-b, yang-2026, luo-2026, cai-2026. Added by the
+human from `~/papers/re-download` on 2026-11-01 and copied into the archive by the
+compiler with the human's authorization. A sixth file, the erratum of Zhao, Tao &
+Zhang (J. Sci. Comput. 103:17, 2025, doi:10.1007/s10915-025-02831-2), was copied
+too but is not ingested (see Decisions).
+
+### Contradictions opened
+
+None. Eight remain open from earlier chunks.
+
+### Printed inconsistencies (recorded on the Source pages)
+
+- **yang-2026:** the advective stability limit $CFL_a\approx0.4159$ (§2.3) is not
+  reproduced: the printed symbol (2.27), which equals the Fourier transform of (2.23)
+  with (2.26) to round-off, keeps the TVD-RK3 amplification factor in the unit disc up
+  to $a\Delta t/\Delta x\approx1.114$ (compiler check, 200001 samples). The diffusive limit
+  0.2827, which sets the CFL used, reproduces. Also: (2.13) sum from $m=1$; weights
+  numbered $\gamma_1..\gamma_3$ in §3; $q_0$ for $\phi_0$ in (2.23); a factor ½ in
+  Im $G_a$ of (2.28); Table 2 DWENO $L^\infty$ at $N=80$; two figure references.
+  Ref. [34] printed "J. Comput. Phys. 38 (2009)" is Zhang & Wu, J. Sci. Comput.
+  38:127-148 on Crossref (recorded as printed, with a note).
+- **luo-2026:** Table 3.2 RK-HWENO $L^1$ order printed 2.981, 3.21 from the printed
+  errors; the abstract's "smaller numerical errors" against Table 3.2, where RK-HWENO has
+  the smaller $L^1$ error on the three finest meshes (a qualification, not a
+  contradiction); Eq. (2.5) bracket, $\lambda_\alpha$ for $\lambda_s$, subscripts.
+- **cai-2026:** "roughly a tenfold increase in remapping time" (§6) against Table 3's
+  64781.5 s / 3942.6 s = 16.4; §5.2 attaches "nearly a tenfold increase" to the
+  pseudo-time levels (19.7 against 2.0). Remark 4.5 (any $k$, any SSP method) holds
+  for $k\ge3$ only in the evolved-moment sense (Simpson's rule is not exact for
+  quartics; compiler check).
+- **zhang-2026-b:** Rayleigh–Taylor (Ex. 3.12) top and bottom boundary states printed
+  in reverse order relative to the initial data; Table 4's columns identical for four
+  schemes and Table 2's HWENO-ALW-II identical to HWENO-MR in every entry (stated as
+  printed, no inference drawn).
+- **zhang-2026:** a "fifth-order polynomial" $q_2$ of degree four; $\tau_2$ called
+  an absolute difference but defined as a squared mean; the troubled-cell test is a
+  dead band of half-width $\Delta x$, not the plain sign test of the prose, and is not
+  scale-invariant (compiler check).
+
+### Identity and metadata
+
+- luo-2026 and cai-2026 are arXiv preprints with no journal version on Crossref as of
+  2026-11-01: `resource: arXiv:<id>`, `venue: arXiv preprint`. Their Source pages must
+  be updated (metadata, version note) when they appear in a journal.
+- "HMR-WENO" names two different schemes: zhang-2026's baseline (MR-WENO with the
+  indicator of Wang, Tian, Zhu & Zhao 2023) and zuo-2024-b's hybrid. Every page that
+  uses the name keeps them apart.
+- Harten et al.'s ENO III, printed "J. Comput. Phys. 131 (1987) 3-47" by both
+  Zhang et al. papers, is mapped to the 1997 reprint entry `harten-1997`.
+- Canuto et al. (spectral methods book): cai-2026 prints 2006 (Crossref agrees), but
+  the bibliography keys the book `canuto-2007-b`; the citation was mapped to the
+  existing key with a note.
+
+### Bundle fit
+
+- yang-2026 (degenerate parabolic equations: porous medium, Buckley–Leverett with
+  capillarity) is peripheral: HWENO and conservative finite differences are in scope,
+  the equations are not hyperbolic. It is the bundle's only degenerate-parabolic
+  source; the degenerate parabolic equation, the porous-medium tests and the CCD6
+  compact difference stay inline (no page) until a second source arrives.
+- cai-2026 (geometric conservation law beyond free-stream preservation) would also
+  fit a curvilinear and metric discretization bundle; ingested here because the scheme
+  is a WENO finite-volume rezoning method on SSPRK3.
+
+### Decisions for the human
+
+1. **Status of [transport polynomial exactness](/properties/transport-polynomial-exactness.md):**
+   set to `hypothesis` because its only source is an arXiv preprint (repo law:
+   `established` = published, peer-reviewed). Confirm, or overrule.
+2. **The erratum (zhao-2025):** download the parent paper, Zhao, Tao & Zhang, J. Sci.
+   Comput. 102:32 (2025), doi:10.1007/s10915-024-02756-2; it will be ingested together
+   with the erratum (the erratum corrects typesetting of Eqs. (1.1), (2.1)–(2.13),
+   (3.1)–(3.7)). Until then the worklist lists the erratum file as pending.
+3. **Canuto key:** rename `canuto-2007-b` to `canuto-2006` (and update citers), or keep.
+4. **Tag near-synonyms** reported again by the auditors: compact-scheme/compact-stencil
+   (kept distinct by the chunk-1 ruling), positivity/bound-preserving, eno/eno-property,
+   tvd/total-variation, high-order/very-high-order, the singleton `remapping`.
+
 ## Chunk 12 — founding papers: MUSCL, TVD, ENO, TVD Runge–Kutta, WENO, WENO-Z, the WENO review, Zhang–Shu positivity, TENO (2026-10-30)
 
 Sources (10): vanleer-1979, harten-1983, harten-1987, shu-1988, liu-1994,

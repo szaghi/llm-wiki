@@ -5,7 +5,7 @@ description: "The Cauchy–Kowalewski (Lax–Wendroff) procedure expands the sol
 status: established
 aliases: [Cauchy–Kovalevskaya procedure, Cauchy-Kowalewski procedure, Lax–Wendroff procedure, Lax–Wendroff-type time discretization, local space–time Taylor expansion, Cauchy–Kowalewski predictor]
 tags: [finite-volume, reconstruction, numerical-flux, riemann-solver, finite-difference]
-timestamp: 2026-10-30T08:40:00Z
+timestamp: 2026-11-01T18:42:00Z
 ---
 
 # Cauchy–Kowalewski procedure
@@ -92,6 +92,27 @@ valid one-sided expansion (§4, pp. 252–253; §7 A2, p. 274).
   $\partial_tu=-A\,\partial_xu-A^{(2)}\partial_yu-(\nabla\cdot B)\,S_{\mathrm P}(u)$, $S_{\mathrm P}$ the Powell vector
   (page-local), and their HLL-GRP flux uses $\partial_t\tilde u=-A\,\partial_xu$ in the region of the fan
   (Eqs. (65)–(66); [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+- **Second order in 2D, without a Riemann problem.** In the one-step Hermite WENO scheme on triangles of
+  [Luo et al. (2026)](/sources/luo-2026.md) (§2.1, after Eq. (2.5); arXiv v1;
+  [ADER schemes](/methods/ader-scheme.md)) the interface traces are expanded to second order in time and
+  the procedure is written out for $\partial_tu+\partial_xf^{(1)}(u)+\partial_yf^{(2)}(u)=0$. With
+  $A^{(d)}=\partial f^{(d)}/\partial u$ and the Hessian tensor $\partial^2f^{(d)}/\partial u^2$ applied to two
+  vectors as a symmetric bilinear form $\mathcal B^{(d)}(a,b)$ (page-local, not the $\mathsf H^{(k)}$ of the Toro–Titarev bullet; the source writes
+  $\big(\frac{\partial^2f}{\partial W^2}\partial_xW\big)(\partial_xW)$):
+  $$\begin{aligned}
+  \partial_tu&=-A^{(1)}\partial_xu-A^{(2)}\partial_yu,\\
+  \partial_x\partial_tu&=-\mathcal B^{(1)}(\partial_xu,\partial_xu)-A^{(1)}\partial_x^2u-\mathcal B^{(2)}(\partial_xu,\partial_yu)-A^{(2)}\partial_x\partial_yu,\\
+  \partial_y\partial_tu&=-\mathcal B^{(1)}(\partial_yu,\partial_xu)-A^{(1)}\partial_x\partial_yu-\mathcal B^{(2)}(\partial_yu,\partial_yu)-A^{(2)}\partial_y^2u,\\
+  \partial_t^2u&=-\mathcal B^{(1)}(\partial_tu,\partial_xu)-A^{(1)}\partial_x\partial_tu-\mathcal B^{(2)}(\partial_tu,\partial_yu)-A^{(2)}\partial_y\partial_tu.
+  \end{aligned}$$
+  All spatial derivatives at an edge Gauss point are those of the cell's
+  [Hermite WENO](/methods/hermite-weno.md) polynomial, differentiated term by term; the expansion is
+  evaluated on each side of the edge separately and the two traces meet only in a local Lax–Friedrichs
+  flux, with no generalized Riemann problem. *(Compiler check, not in the sources: the four lines follow
+  from $\partial_x\big(A^{(d)}(u)\,v\big)=\mathcal B^{(d)}(\partial_xu,v)+A^{(d)}\partial_xv$; and since the
+  three small candidates of the reconstruction are linear, the second derivatives come from the central
+  quadratic alone.)* Re-evaluated at $\tau=\Delta t$, the same expansions also supply, through the
+  divergence theorem, the derivative averages of the next step.
 - **Characteristic time derivatives.** [Van Leer (1979)](/sources/vanleer-1979.md) (§2.3, Eqs. (64)–(66))
   obtains the first time derivatives of the resolved interface state from the characteristic
   equations on both sides of the contact, not by differentiating the conservation laws, and advances
@@ -126,3 +147,4 @@ schemes in two dimensions (§7 C4).
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §2.1 (Eqs. (6)–(20)), §7.2 (Fig. 13), §8 (Table 5), §9.
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §3.2.1–§3.2.2, Eqs. (65)–(70).
 - [Van Leer (1979)](/sources/vanleer-1979.md) — §2.3, Eqs. (64)–(66).
+- [Luo et al. (2026)](/sources/luo-2026.md) — arXiv v1: §2.1 (Eqs. (2.4)–(2.5) and the derivative formulas after them); §2.3 (Eqs. (2.11)–(2.15)).

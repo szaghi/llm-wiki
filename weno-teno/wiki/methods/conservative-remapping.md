@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Conservative remapping for ALE schemes"
-description: "Conservative remapping transfers cell averages from a Lagrangian mesh to another mesh; the page records van Leer's 1979 least-squares remap of a Lagrangean step back to the Eulerian grid in MUSCL, and Gu et al.'s ALE remap as a moving-mesh solve of a trivial equation with third-order multi-resolution WENO and proved positivity."
+description: "Conservative remapping transfers cell averages from one mesh to another; the page records van Leer's 1979 Lagrangean-to-Eulerian remap in MUSCL, Gu et al.'s ALE remap as a moving-mesh solve of a trivial equation with proved positivity, and Cai et al.'s remap with evolved geometric moments, exact on quadratics with O(1) pseudo-time levels."
 status: established
-aliases: [remapping, remap, conservative interpolation, ALE remapping, WENO remapping, P-WENO remapping, rezone and remap, Lagrange-plus-remap, Eulerian remap]
-tags: [finite-volume, weno, positivity, bound-preserving, reconstruction]
-timestamp: 2026-10-30T08:43:00Z
+aliases: [remapping, remap, conservative interpolation, ALE remapping, WENO remapping, P-WENO remapping, rezone and remap, Lagrange-plus-remap, Eulerian remap, advection-based remapping, TPE(2) remapping]
+tags: [finite-volume, weno, positivity, bound-preserving, reconstruction, moving-mesh]
+timestamp: 2026-11-01T18:56:00Z
 ---
 
 # Conservative remapping for ALE schemes
@@ -204,6 +204,123 @@ remap is needed: without it negative internal energy and pressure stop
 the code; the limited cells are marked in Fig. 17, and no run without
 the limiter is displayed.
 
+## Exact remapping with evolved geometric moments
+
+[Cai, Cheng, Wu & Qiu (2026)](/sources/cai-2026.md) (arXiv v1) use the
+same transport formulation inside a rezoning moving-mesh scheme, where
+every physical step is an evolution on the fixed mesh, a rezoning and a
+remap ([adaptive moving mesh](/methods/adaptive-moving-mesh.md)). They
+group the remaps as Gu et al. do: intersection-based remaps (Dukowicz;
+Dukowicz & Kodis) and swept- or flux-based ones (Dukowicz & Baumgardner)
+need no smooth mesh velocity but "rely on complex and robust geometric
+operations" on general polygonal or curvilinear cells; advection-based
+remaps avoid those operations (§1.2, as recalled).
+
+**The bottleneck they address** (§1.2). An advection-based remap is "in
+essence, an ALE discretization" of $\partial_{\tau_{\mathrm p}}u=0$ (page-local
+pseudo-time $\tau_{\mathrm p}$, Gu et al.'s $t$) and inherits the ALE need
+for a regular mesh velocity; as recalled from Anderson et al., its
+convergence "is observed only for 'smooth' problems". Solution-driven
+rezoning produces mesh velocities that are bounded but discontinuous. The
+mesh can then be smoothed, which limits the resolution of the adapted mesh,
+or the remap can take many pseudo-time levels: a fixed final pseudo-time
+$T_{\mathrm r}=1$ with $\Delta\tau_{\mathrm p}=O(\Delta x)$ (Lipnikov &
+Morgan, as recalled), or Gu et al.'s adapted $T_{\mathrm r}$ above. With a
+bounded but discontinuous mesh velocity both need $N_\ell=O(\Delta x^{-1})$
+pseudo-time levels per physical step (page-local $N_\ell$); with
+$\Delta t=O(\Delta x)$ that is the cost of an effective time step
+$O(\Delta x^2)$.
+
+**Scheme** (§3.1). The vertices move on straight lines,
+$x_P(\tau_{\mathrm p})=x^n_P+\tau_{\mathrm p}v_{\mathrm g,P}$ with
+$v_{\mathrm g,P}=(x^{n+1}_P-x^n_P)/T_{\mathrm r}$, and $v_{\mathrm g}$ is
+interpolated linearly along the edges, as in Gu et al. (Eqs. (3.8),
+(3.17)). The evolved unknowns are the cell integrals
+$\mathfrak V_{i,j}=\int_{I_{i,j}}u\,dx\,dy$ (page-local), updated with a
+three-point Gauss–Lobatto sum on each edge $l_e$ (page-local points
+$x_{e,g}$, weights $\mathsf w_g=\tfrac16,\tfrac23,\tfrac16$) and a local
+[Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) for the remap flux
+$-u\,(v_{\mathrm g}\cdot n_e)$,
+
+$$\frac{d\mathfrak V_{i,j}}{d\tau_{\mathrm p}}=\sum_{e=1}^4\lvert l_e\rvert\sum_{g=1}^3\mathsf w_g\,\tfrac12\Big[(u^{\mathrm{in}}+u^{\mathrm{out}})(v_{\mathrm g}\cdot n_e)+a_e\,(u^{\mathrm{out}}-u^{\mathrm{in}})\Big]_{e,g},\qquad a_e=\max_g\lvert v_{\mathrm g}\cdot n_e\rvert ,$$
+
+*(written out from the source's Eqs. (3.10)–(3.11), where the flux tensor
+is $-u\otimes v_{\mathrm g}$ and the sum carries a minus sign; compiler
+rearrangement)*. The new ingredient is that every geometric moment the
+reconstruction needs, $\int_{I_{i,j}}x^sy^r\,dx\,dy$ with $s+r\le2$, is
+evolved by its own Reynolds-transport equation with the same edge rule and
+the same Runge–Kutta stages, instead of being computed from the cell
+geometry; these **evolved geometric moments** replace the exact moments in
+the reconstruction, and the cell averages are $\mathfrak V_{i,j}$ divided by
+the evolved volume (Eqs. (3.7), (3.9), (3.15);
+[transport polynomial exactness](/properties/transport-polynomial-exactness.md)).
+The remap starts from $\mathfrak V^0_{i,j}=\bar u^{n+1,0}_{i,j}\widetilde{\mathfrak M}^0_{0,0,i,j}$
+with the evolved moments inherited from the previous step (§3.1.4). It runs
+[SSP-RK3](/methods/ssp-runge-kutta.md) jointly on moments and integrals,
+with the stage geometries at $\tau_{\mathrm p}$,
+$\tau_{\mathrm p}+\Delta\tau_{\mathrm p}$ and
+$\tau_{\mathrm p}+\tfrac12\Delta\tau_{\mathrm p}$ (Eqs. (3.14), (3.18)). The
+reconstruction is a [hybrid WENO](/methods/hybrid-weno.md): the optimal
+least-squares quadratic in cells the KXRCF
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md) leaves
+unflagged, Zhu & Qiu's third-order WENO otherwise, with the smoothness
+indicators divided by the local variance for
+[affine invariance](/methods/affine-invariant-weno.md) (§3.4, Remark 3.6).
+
+**Exactness.** The remap reproduces the averages of any quadratic for any
+mesh motion and any $\Delta\tau_{\mathrm p}$ (Thm. 4.3, Prop. 4.4), and with
+SSP-RK3 at those stage geometries the evolved moments equal the exact ones
+(Thm. 4.7). Because the evolved volume is the evolved zeroth moment, the
+scheme also satisfies the classical geometric conservation law, which Gu et
+al. do not discuss.
+
+**Pseudo-time step** (§4.5). Since accuracy no longer depends on
+$\Delta\tau_{\mathrm p}$, only stability limits it (Eqs. (4.14)–(4.15)):
+
+$$\Delta\tau_{\mathrm p}\le C_{\mathrm{CFL}}\min_{i,j}\frac{\lvert I_{i,j}\rvert}{\max_ea_e\lvert l_e\rvert},\qquad N_\ell\ge\max_{i,j}\frac{\max_P\lvert\delta x_P\rvert\,\max_e\lvert l_e\rvert}{C_{\mathrm{CFL}}\,\lvert I_{i,j}\rvert},$$
+
+with $\delta x_P$ the vertex displacements and $C_{\mathrm{CFL}}$ the CFL
+number (page-local), using $\lvert v_{\mathrm g}\rvert\le\max_P\lvert\delta x_P\rvert/T_{\mathrm r}$.
+With $\lvert l_e\rvert=O(\Delta x)$, $\lvert I_{i,j}\rvert=O(\Delta x^2)$,
+$\Delta t=O(\Delta x)$ and a bounded physical mesh velocity
+$\lvert\delta x_P\rvert/\Delta t$, this gives $N_\ell=O(1)$. The update depends
+only on $v_{\mathrm g}\Delta\tau_{\mathrm p}$, so the solution does not depend
+on $T_{\mathrm r}$, which is set to $\Delta t$ (Remark 4.12);
+$C_{\mathrm{CFL}}\le\tfrac14$ keeps the evolved volume positive (Remark
+4.13).
+
+**Evidence** (§5.2, Tables 2–3). Euler [density wave](/benchmarks/density-wave-advection.md)
+on randomly rezoned meshes ($C_r=0.5$, drift $(-0.6,-0.8)$), $t=0.1$, C++ on
+an Intel Xeon Gold 6348 at 2.60 GHz. "ol" takes $T_{\mathrm r}=\Delta t$
+and the step above; "rl" follows Gu et al.'s choice of $T_{\mathrm r}$ and
+$\Delta\tau_{\mathrm p}$.
+
+| remap | $N_\ell$, $80^2\to320^2$ | $L^1$ behaviour | total / remap CPU at $320^2$ (s) |
+|---|---|---|---|
+| evolved moments, ol | 2.0 at every mesh | orders 2.93–2.98 | 5795.1 / 3942.6 |
+| GCL only (evolved volume, exact higher moments), ol | 2.0 | orders 2.24–2.91; $L^\infty$ orders down to $-0.55$ | 6211.8 / 4365.8 |
+| exact moments, ol | 2.0 | no convergence, about $1.5$–$1.7\times10^{-3}$ | 16490.4 / 10975.8 |
+| exact moments, rl (Gu et al.'s strategy) | 4.7, 7.0, 9.4, 12.0, 14.4, 17.1, 19.7 | orders 2.91–3.36, errors above the evolved-moment scheme | 67168.3 / 64781.5 |
+
+The rl strategy holds the measured Lipschitz constant of the mesh velocity
+at 10.0, the value of Gu et al.'s bound $C_{0,1}$ above, while under ol it
+grows from 1874.9 to 8443.5. The remap takes 68.0 %, 70.3 %, 66.6 % and
+96.4 % of the run. The exact-moment ol scheme costs about three times the
+evolved-moment one (16490.4/5795.1 = 2.85 *(compiler check)*) because,
+according to the authors, the geometric mismatch creates oscillations that
+make the KXRCF indicator flag smooth cells and switch on the expensive WENO
+branch. On a 2D Riemann problem ($400^2$, $t=0.25$) the evolved-moment remap
+with $N_\ell=2$ matches the exact-moment remap with $N_\ell=6$ and changes
+little with $N_\ell$ (Fig. 6;
+[two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md));
+the [double Mach reflection](/benchmarks/double-mach-reflection.md) on
+$1920\times480$ extreme random meshes runs without mesh-induced artifacts
+(Fig. 7), and with ALE rezoning the
+[Woodward–Colella](/benchmarks/woodward-colella-blast-wave.md) and
+[Shu–Osher](/benchmarks/shu-osher-problem.md) problems are resolved better
+than on a fixed $400\times10$ mesh (Figs. 4–5). These comparisons are
+visual.
+
 ## Relation to other mesh-motion strategies
 
 The remap is a moving-mesh finite-volume solve with a prescribed,
@@ -241,9 +358,35 @@ and Gu et al. do not discuss it.
   a four-component state $(\rho,v_1,v_2,e)$ on the left (§3.5.4); the
   [Leblanc page](/benchmarks/leblanc-shock-tube.md) records the printed
   variants of that problem.
+- **Cai et al.'s "tenfold".** Cai et al. write that the rl strategy reaches
+  $N_\ell\approx20$ "and results in roughly a tenfold increase in remapping
+  time" (§6); §5.2 says "nearly a tenfold increase" in $N_\ell$ and an
+  "order of magnitude slower" remap. Their Table 3 gives
+  $64781.5/3942.6=16.4$ for the remapping time and $19.7/2.0=9.85$ for the
+  levels *(compiler check, not in the sources)*: "tenfold" fits the level
+  ratio, and the measured remapping-time ratio is larger.
+- **Two settings for the pseudo-time levels.** Gu et al. report three
+  pseudo-time steps per remap at every resolution for a mild motion (nodes
+  within one cell, Table 3.4), Cai et al. 4.7 to 19.7 levels with Gu et
+  al.'s strategy under random rezoning at every physical step (Table 2).
+  The motions differ, and Cai et al. attribute the growth to the
+  discontinuous mesh velocity; the two tables do not contradict each
+  other. Cai et al.'s "exact moments" comparison takes Gu et al.'s
+  geometric treatment and pseudo-time strategy with Cai et al.'s own hybrid
+  WENO, not Gu et al.'s multi-resolution WENO.
+- **Stage geometry.** For the half-step stage of SSP-RK3 Cai et al. use
+  the actual cell at $\tau_{\mathrm p}+\tfrac12\Delta\tau_{\mathrm p}$, where Gu
+  et al. take the mean of the old and new areas (see the qualification on the
+  quadratic area above).
+- **Scope of Cai et al.'s remap.** Two-dimensional convex quadrilaterals
+  with straight edges (Assumption 3.4); the paper prints no positivity
+  treatment of the conserved variables, only the positivity of the evolved
+  volume (Remark 4.13). It is an arXiv preprint without a journal version
+  as of 2026-11-01.
 
 # Citations
 
 - [Van Leer (1979)](/sources/vanleer-1979.md) — §3.2 (Eqs. (92)–(100.5), Figs. 1–2), §3.3 (Eqs. (102)–(103), Fig. 4), App. B, Acknowledgments: Lagrange-plus-remap MUSCL.
 - [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §1; §2.1–2.6, Eqs. (2.1)–(2.12), Theorems 2.1–2.2; §3.1–3.5, Tables 3.1–3.4, Figs. 6–20.
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §6.1, Eqs. (41)–(46) (ALE without remap; arXiv v2).
+- [Cai, Cheng, Wu & Qiu (2026)](/sources/cai-2026.md) — §1.2; §3.1 Eqs. (3.7)–(3.18); §3.4 Remark 3.6; §4.2 Thm. 4.3, Prop. 4.4; §4.4 Thm. 4.7; §4.5 Eqs. (4.14)–(4.15), Remarks 4.12–4.13; §5.2 Tables 2–3; §5.3–5.4 Figs. 4–7; §6 (arXiv v1).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "ADER schemes"
-description: "ADER schemes advance a DG or finite-volume solution in one step: an element-local space–time predictor, solved by fixed-point iteration without neighbour data, feeds a corrector that integrates fluxes in time by quadrature; the page gives the two ADER-DG formulations, their time-step limits, a posteriori subcell limiting, the uses of the predictor and GRP-based finite-volume ADER to tenth order."
+description: "ADER schemes advance a DG or finite-volume solution in one step: an element-local space–time predictor, solved by fixed-point iteration without neighbour data, feeds a corrector that integrates fluxes in time by quadrature; the page covers both ADER-DG formulations, their time-step limits, subcell limiting, uses of the predictor, GRP-based finite-volume ADER to tenth order and predictor-free Taylor ADER for Hermite WENO."
 status: established
-aliases: [ADER, ADER-DG, ADER-FV, ADER predictor–corrector, local space–time predictor, one-step ADER]
+aliases: [ADER, ADER-DG, ADER-FV, ADER predictor–corrector, local space–time predictor, one-step ADER, ADER-HWENO]
 tags: [dg, finite-volume, limiting, immersed-boundary, multiphase]
-timestamp: 2026-10-30T08:44:00Z
+timestamp: 2026-11-01T18:56:00Z
 ---
 
 # ADER schemes
@@ -27,7 +27,10 @@ discretization on which their contribution, a boundary treatment and a
 primitive-variable formulation respectively, is built. The finite-volume
 branch of the family, ADER with a generalized Riemann problem solver at each
 interface instead of a cell-local predictor, is run to tenth order in 1D by
-[Yajaman et al. (2025)](/sources/yajaman-2025.md) (section below).
+[Yajaman et al. (2025)](/sources/yajaman-2025.md) (section below). A third
+variant expands the reconstructed interface values in time directly
+and needs neither a predictor nor a Riemann problem for derivatives
+([Luo et al. (2026)](/sources/luo-2026.md); section below).
 
 Page-local symbols: $q_h$ the predictor and $\hat q_\ell$ its modal
 coefficients; $\mathsf b_\ell(x,t)$ the space–time basis functions;
@@ -180,6 +183,55 @@ The authors call theirs "the first study to investigate the Euler equations usin
 ADER schemes of order 8 or higher" (§9), against earlier nonlinear ADER studies to order 7 and
 linear ADER to order 16 that they cite.
 
+## Taylor-expansion ADER for Hermite finite volumes on triangles
+
+[Luo et al. (2026)](/sources/luo-2026.md) (Luo, Zhao, Qiu & Chen; arXiv v1, part II of a structured-mesh
+paper) build a one-step, third-order finite-volume scheme on triangles, ADER-HWENO, from the
+[Hermite WENO](/methods/hermite-weno.md) reconstruction of the cell average $\bar u_K$ and of the
+derivative averages $\overline{\partial_xu}_K$, $\overline{\partial_yu}_K$ (page-local notation). Page-local
+here: $x_{G_e}$, $\mathsf w_{G_e}$ the Gauss points and weights of edge $e$, $\lambda_q\Delta t$ and
+$\mathsf w^t_q$ the time nodes and weights, $u^{\mathrm{int}}$, $u^{\mathrm{ext}}$ the traces from inside and
+outside $K$, $n=(n_x,n_y)$ the outward normal.
+
+- **Update** (§2.1, Eqs. (2.1)–(2.3)). The exact space–time integral over $K\times[t^n,t^{n+1}]$ gives
+  $\bar u^{n+1}_K=\bar u^n_K-\frac{\Delta t}{\lvert K\rvert}\sum_e\sum_{G_e}\sum_q\mathsf w^t_q\,
+  h\big(u^{\mathrm{int}}(x_{G_e},\lambda_q\Delta t),u^{\mathrm{ext}}(x_{G_e},\lambda_q\Delta t)\big)\,\mathsf w_{G_e}\lvert e\rvert$,
+  with $h$ the local [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) of the normal flux, whose
+  speed is the largest eigenvalue modulus of the normal Jacobian at the cell averages of the two
+  neighbours, not at the reconstructed states.
+- **No predictor.** Each trace is a Taylor polynomial in the local time $\tau\in[0,\Delta t]$,
+  $u^{\mathrm{int}}(x_{G_e},\tau)=u^{\mathrm{int}}(x_{G_e},0^+)+\sum_{k=1}^{2}\partial^k_tu^{\mathrm{int}}(x_{G_e},0^+)\,\tau^k/k!$
+  (Eqs. (2.4)–(2.5)), truncated at $k=2$ for third order in time. The time derivatives come from the PDE by
+  the [Cauchy–Kowalewski procedure](/methods/cauchy-kowalewski-procedure.md), with every spatial
+  derivative taken from the reconstruction polynomial of the cell at the point: there is no local
+  space–time solve, which distinguishes this from the predictor of ADER-DG above, and no derivative
+  Riemann problem, which distinguishes it from the GRP-based finite volumes above. The authors cite their
+  part I and Titarev & Toro's ADER paper for the approach (§2, refs. [27], [35] there).
+- **Derivative averages without an evolution equation** (§2.3, Eqs. (2.11)–(2.15)). The derivative
+  averages at $t^{n+1}$ are not advanced by their own PDE, as in moment- or derivative-based HWENO, but
+  recomputed by the divergence theorem,
+  $\overline{\partial_xu}^{\,n+1}_K\approx\frac1{\lvert K\rvert}\sum_e\sum_{G_e}\tfrac12\big(u^{\mathrm{int}}+u^{\mathrm{ext}}\big)(x_{G_e},t^{n+1})\,n_x\,\mathsf w_{G_e}\lvert e\rvert$
+  and likewise with $n_y$, from the same Taylor polynomials evaluated at $\tau=\Delta t$; with a
+  Gauss–Lobatto rule in time these values are already flux nodes. The idea is credited to a compact
+  gas-kinetic scheme ([gas-kinetic schemes](/methods/gas-kinetic-scheme.md)). The interface value is the
+  plain mean of the two traces, without upwinding.
+- **One reconstruction per step.** Against the moment-based Runge–Kutta HWENO on triangles of Zhao & Qiu
+  (RK-HWENO, the comparator), the scheme solves no extra equations and reconstructs once per step instead
+  of once per stage; against ADER-WENO the authors claim a more compact stencil at equal order, since
+  derivative data replace wider stencils (§1, §4). No ADER-WENO run is shown.
+
+**Evidence** (§3; CFL 0.5 throughout). Third order on 2D Burgers ($268$ to $274432$ triangles; $L_1$
+orders 2.87–3.25, finest $L_1=1.85\times10^{-7}$ against $2.70\times10^{-7}$ for RK-HWENO, smaller
+errors on every mesh in both norms; Table 3.1), on the Euler density wave ($L_1$ orders 2.95–3.24;
+Table 3.2) and on the [isentropic vortex](/benchmarks/isentropic-vortex.md) on irregular GMSH meshes
+($L_1$ orders 2.08–2.98; Table 3.3). The authors call ADER-HWENO more efficient than RK-HWENO in
+$L_\infty$ error against CPU time (Fig. 3.3; hardware not stated). Shock tests (Lax,
+[Shu–Osher](/benchmarks/shu-osher-problem.md), [blast waves](/benchmarks/woodward-colella-blast-wave.md),
+[double Mach reflection](/benchmarks/double-mach-reflection.md) in the rectangle and on a $30^\circ$ wedge,
+[forward step](/benchmarks/forward-facing-step.md) without a corner fix) are judged by figure: comparable
+or higher resolution than RK-HWENO. The [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)
+is applied "in some extreme cases", not identified; no characteristic decomposition is mentioned.
+
 ## Uses of the space–time predictor
 
 The predictor is a space–time polynomial available before any flux is
@@ -252,6 +304,14 @@ $h\approx0.9$–$1.9$ (Table 1).
   nonlinear-reconstruction finite volumes. Their text gives the onset of WENO's efficiency
   advantage on Euler as "beyond the seventh-order" (§7.2) and the loss of efficiency as "above the
   eighth-order" (§8), and cites ADER-TR once to a journal paper and once to a thesis.
+- **Luo et al. (2026): abstract against tables.** The abstract claims "smaller numerical errors" than
+  RK-HWENO; Table 3.2 gives RK-HWENO the smaller $L_1$ error on the three finest meshes ($5.81\times10^{-5}$,
+  $6.26\times10^{-6}$, $7.93\times10^{-7}$ against $6.27\times10^{-5}$, $7.95\times10^{-6}$, $1.00\times10^{-6}$),
+  while the text of that example claims only the $L_\infty$ advantage, which holds on every mesh. The same
+  table prints the RK-HWENO $L_1$ order at 17152 triangles as 2.981 *(compiler check, not in the sources:
+  $\log_2(5.81\times10^{-5}/6.26\times10^{-6})=3.21$; the other printed orders reproduce)*. The paper
+  states neither the time quadrature (number of nodes, Gauss or Gauss–Lobatto) nor the number of edge
+  Gauss points, and writes the time node once as $\lambda_\alpha$ for $\lambda_s$.
 - **Scope.** The two ADER-DG sources are 2D, explicit and on unstructured triangles or
   polygons; neither compares ADER with Runge–Kutta time stepping at equal
   cost, and the cost statement above concerns the boundary treatment, not
@@ -263,3 +323,4 @@ $h\approx0.9$–$1.9$ (Table 1).
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §1; §3.1–3.4 Eqs. (19)–(41); §4.4; §5 Table 1, Figs. 3, 6, 8.
 - [Balsara et al. (2023)](/sources/balsara-2023.md) — §7.
 - [Yajaman et al. (2025)](/sources/yajaman-2025.md) — §2 (Eqs. (2)–(20)), §2.2, §6, §7.1–7.2 (Fig. 15), §8 (Table 5), §9, Table A.7.
+- [Luo et al. (2026)](/sources/luo-2026.md) — arXiv v1: Abstract; §1; §2.1 (Eqs. (2.1)–(2.5)); §2.3 (Eqs. (2.11)–(2.15)); §3, Tables 3.1–3.3, Figs. 3.3–3.12; §4.

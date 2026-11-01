@@ -3,9 +3,9 @@ type: Method
 title: "Hybrid central-WENO schemes"
 description: "Hybrid schemes use a cheap linear (central, energy-preserving or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, or switch between flux and state reconstruction; they cut dissipation and cost, restore order or add robustness by a first-order fallback, but hinge on the sensor and its threshold."
 status: established
-aliases: [hybrid WENO, TENO-S, TENO-E, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC]
+aliases: [hybrid WENO, TENO-S, TENO-E, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC, SHMR-WENO, KXRCF-switched hybrid WENO]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-01T18:56:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -289,6 +289,78 @@ smooth extremum of the density, so the nonlinear branch runs at the crests of th
 tests; and a jump across which $g$ stays monotonic in the target cell is detected only through the
 oscillations of the interpolant.)*
 
+## A quadratic extreme-point test: SHMR-WENO
+
+[Zhang et al. (2026a)](/sources/zhang-2026.md) (Zhang, Tao, Zhu & Qiu; §2.2, Remarks 1–3) go the other
+way from Zuo & Zhu: instead of raising the degree of the interpolant they lower it to two. Their
+fifth-order finite-difference scheme SHMR-WENO, with Lax–Friedrichs flux splitting and SSP-RK3 at CFL 0.6,
+takes in troubled cells the five-point [multi-resolution WENO](/methods/multi-resolution-weno.md) of
+Zhu & Shu (linear weights proportional to $1,10,100$, a WENO-Z-type global indicator), with
+[characteristic decomposition](/methods/characteristic-decomposition.md) for systems; elsewhere it takes
+the linear upwind-biased value of the degree-four polynomial on the five-cell central stencil,
+componentwise, so that both the weights and the characteristic projection are skipped (Remark 2). The
+indicator interpolates the three point values $u_{i-1},u_i,u_{i+1}$ (the density for the Euler equations,
+Remark 3) by a quadratic and flags $I_i$ when the quadratic has an extreme point in
+$[x_{i-3/2},x_{i+3/2}]$; since its derivative is linear, the signs at the two ends decide, with a margin of
+$\pm\Delta x$ in the printed criterion (the exact test and its explicit form are on
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md)). In 2D the test and the
+reconstruction run dimension by dimension and a cell flagged in either direction is troubled (Remark 1).
+The quadratic replaces the quartic of the Wang, Tian, Zhu & Zhao (2023) hybrid, whose extreme points are
+found numerically, as Zhang et al. (2026a) recall it (§1); Zhao, Chen & Qiu's hybrid Hermite WENO is cited as an
+earlier use of a quadratic indicator polynomial.
+
+**Two meanings of "HMR-WENO".** Zhang et al. (2026a) call their baseline **HMR-WENO**: the same MR-WENO
+switched by the quartic indicator of Wang, Tian, Zhu & Zhao (2023), which those authors had introduced
+for an unequal-sized (US-) WENO hybrid (§1, §3). This is a different scheme from the hierarchical-bisection
+HMR-WENO of Zuo & Zhu (2024b) recorded in the section above, which Zhang et al. (2026a) do not cite. Wherever this
+page writes HMR-WENO without qualification it means Zuo & Zhu's scheme; Zhang et al. (2026a)'s baseline is written
+"the Wang et al. (2023) hybrid".
+
+**Evidence** (§3, Tables 1–3). On the 2D Euler accuracy test with $\gamma=3$, whose density is a 2D
+[Burgers](/benchmarks/burgers-equation-tests.md) solution, MR-WENO, SHMR-WENO and the Wang et al. hybrid
+print identical errors on every grid ($L_1=5.84\times10^{-8}$, order 4.94, and
+$L_\infty=1.26\times10^{-6}$, order 5.03, at $200^2$), the hybrids flag no cell, and SHMR-WENO is the
+cheapest in the error–CPU plot (Table 1, Fig. 1). On seven discontinuous problems:
+
+| test | flagged cells, SHMR / Wang et al. hybrid | CPU time relative to MR-WENO, SHMR / Wang et al. hybrid |
+|---|---|---|
+| 1D Burgers, $N=80$ | 2.03 % / 3.26 % | 0.78 / 0.88 |
+| [Lax tube](/benchmarks/sod-and-lax-shock-tubes.md), $N=200$ | 5.67 % / 7.49 % | 0.54 / 0.60 |
+| [Shu–Osher](/benchmarks/shu-osher-problem.md), $N=400$ | 5.61 % / 6.46 % | 0.49 / 0.54 |
+| [blast waves](/benchmarks/woodward-colella-blast-wave.md), $N=800$ | 3.42 % / 4.54 % | 0.49 / 0.54 |
+| 2D Burgers, $200^2$ | 0.73 % / 1.14 % | 0.76 / 0.84 |
+| [double Mach reflection](/benchmarks/double-mach-reflection.md), $1920\times480$ | 2.94 % / 3.60 % | 0.42 / 0.48 |
+| [forward step](/benchmarks/forward-facing-step.md), $960\times320$ | 7.69 % / 9.21 % | 0.42 / 0.48 |
+
+(Tables 2–3; no hardware, compiler or parallel setting stated). *(Compiler check, not in the sources:
+the printed ratios follow from the printed times, e.g. $47482/113153=0.42$ and $0.0286/0.0365=0.78$.)*
+The resolution claims, "slightly better" on the double Mach reflection and "superior" fine structures on
+the forward step against both MR-WENO and the Wang et al. hybrid, and closer agreement with the reference
+at $x\in[0.75,0.8]$ for both hybrids on the blast waves, rest on figures (Examples 3.5, 3.7–3.8). No
+theorem is stated.
+
+## A hybrid that keeps polynomial exactness on moving meshes
+
+[Cai et al. (2026)](/sources/cai-2026.md) (Cai, Cheng, Wu & Qiu; arXiv v1; §3.4, Eq. (3.22)) hybridize for
+**exactness** rather than for dissipation or cost. Their third-order finite-volume scheme on moving
+quadrilaterals must reproduce quadratic data exactly for its
+[transport polynomial exactness](/properties/transport-polynomial-exactness.md) proofs, and a WENO
+reconstruction "may compromise" that. They therefore take, in a cell with KXRCF flag 0, the optimal
+quadratic fitted by least squares to the averages of all stencil cells, which is 2-exact by
+construction, and in a cell with flag 1 the third-order WENO of Zhu & Qiu, in the hybrid setting of
+Li & Qiu ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)). If the data come from a
+quadratic, they state, the indicator "automatically" returns 0, so the reconstruction is 2-exact and the
+remap and the evolution are exact on quadratics for any mesh motion (§3.4, Thms. 4.3, 4.6;
+[conservative remapping](/methods/conservative-remapping.md),
+[adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
+
+The same switch makes the cost depend on geometric consistency. On the smooth density wave at $320^2$ on
+randomly moving meshes, the variant with exactly integrated geometric moments (NonGCL-ol) takes 16490.4 s
+against 5795.1 s for the scheme with evolved moments (TPE(2)-ol), "nearly three times" (Table 3, Xeon Gold
+6348, C++). The authors attribute the gap to spurious oscillations from the mismatch between evolved cell
+integrals and exact moments, which make KXRCF flag smooth cells and so force the WENO branch (§5.2); the
+fraction of flagged cells is not printed. *(Compiler check, not in the sources: $16490.4/5795.1=2.85$.)*
+
 ## Energy-preserving central / WENO-TENO hybrids in LES
 
 De Vanna, Baldan, Picano & Benini (2023a) make the hybridization level the parameter of a study of
@@ -523,6 +595,22 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
   The paper discusses neither point.
 - The factor-four speed-up of the hybrid TENO is quoted from earlier work in a review; neither the
   hardware nor the share of flagged points is given in the review.
+- **How wide the test interval must be.** Zhang et al. (2026a, §2.2) state that testing only the target
+  cell $[x_{i-1/2},x_{i+1/2}]$ "would result in unphysical oscillations due to the insufficient number of
+  troubled-cells", and show no run that tests it; Zuo & Zhu (2024a, 2024b) test exactly the target cell and
+  report non-oscillatory results. The two statements concern different interpolants (a quadratic of three
+  values against a quartic or higher of five or more), so they are recorded as a difference of scope, not
+  as a contradiction.
+- Zhang et al. (2026a) attribute SHMR-WENO's advantage on the smooth test to "the lower-degree polynomial";
+  since neither hybrid flags a cell there and their errors are identical to MR-WENO's, the gain on that test
+  is a cost saving of the linear branch and of the cheaper indicator, not an accuracy gain. The paper calls
+  the Wang et al. (2023) hybrid's indicator a numerical search for extreme points but prints no cost split
+  between indicator and reconstruction.
+- Cai et al. (2026) assert, without proof, that KXRCF never fires on quadratic data (§3.4); their TPE(2)
+  theorems hold for the linear branch, so they cover the hybrid only under that assertion. *(Compiler check,
+  not in the sources: if the indicator reads the 2-exact optimal polynomials and every cell reconstructs the
+  same global quadratic, the jumps across cell boundaries vanish and the flag is 0 for any positive
+  threshold.)*
 
 # Citations
 
@@ -555,3 +643,5 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, Eqs. (46)–(49), Algorithm 1.
 - [Zhang et al. (2024d)](/sources/zhang-2024-d.md) — §1; §2.3; §3.2–3.3, Eqs. (40)–(43), Remark 1, Algorithm 1; §4, Tables 1–7, Figs. 3–14; §5 (arXiv v1).
 - [Liang et al. (2025)](/sources/liang-2025.md) — §3.2; §3.3.2–3.3.5, Eqs. (19)–(28); §4, Tables 2–4, §§4.7, 4.9: TENO-E linear/TENO hybrid with a jump-variance sensor on unstructured meshes, cost against CWENO.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §1; §2.1–2.2, Remarks 1–3; §3, Tables 1–3, Examples 3.1–3.8: SHMR-WENO, MR-WENO switched by a quadratic extreme-point indicator; the other "HMR-WENO".
+- [Cai et al. (2026)](/sources/cai-2026.md) — arXiv v1: §3.4, Eq. (3.22); §4.3, Thm. 4.6; §5.2, Table 3: KXRCF-switched optimal-quadratic/WENO hybrid for 2-exactness on moving meshes.

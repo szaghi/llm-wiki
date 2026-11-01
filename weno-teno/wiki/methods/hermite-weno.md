@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Hermite WENO"
-description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plus derivative or first-moment data on compact stencils; the page covers moment-based finite-volume HWENO with moment modification, unified stencils (HWENO-U), positivity preservation and the OE-HWENO filter, Hermite candidates for spectral-difference limiting, finite-difference HWENO-R, and HWENO as a finite-element sensor."
+description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plus derivative or first-moment data on compact stencils; the page covers moment-based finite-volume HWENO with moment modification, unified stencils (HWENO-U), positivity preservation, the OE-HWENO filter, derivative-average HWENO with adaptive linear weights, ADER-HWENO on triangles, Hermite candidates for spectral-difference limiting, finite-difference HWENO-R and compact CHWENO, and HWENO as a finite-element sensor."
 status: established
-aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO, HWENO-U, HWENO-M, unified-stencil HWENO]
+aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO, HWENO-U, HWENO-M, unified-stencil HWENO, HWENO-FLW, HWENO-ALW-I, HWENO-ALW-II, HWENO-MR, CHWENO, compact HWENO, ADER-HWENO, RK-HWENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-30T07:53:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Hermite WENO
@@ -307,6 +307,122 @@ contrast HWENO-U with the oscillation-free OF-HWENO of Zhao & Qiu, sixth order w
 with an empirical, problem-dependent damping parameter and stiff damping that needs small steps or
 exponential Runge–Kutta on extreme problems (Remark 2.2).
 
+## Sixth-order derivative-average HWENO with adaptive linear weights (HWENO-FLW, HWENO-ALW)
+
+[Zhang et al. (2026b)](/sources/zhang-2026-b.md) (Zhang, Tao & Zhu) return to the Qiu–Shu data: each cell
+carries $\bar u_i$ and the cell average $\bar v_i$ (page-local) of the derivative $v=\partial_xu$, which obeys
+$\partial_tv+\partial_x\big(f'(u)v\big)=0$; both are advanced by finite-volume updates with local Lax–Friedrichs
+fluxes sharing one speed $a$ (§2.1, Eqs. (2.2), (2.5)–(2.7); [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
+This is the derivative-average form, not the moment-based one above, and it is distinct from the point
+derivative $v_i$ of the finite-difference schemes below.
+
+- **Candidates** (§2.1.1). On $\{I_{i-1},I_i,I_{i+1}\}$: a quintic $p_3$ matching the three averages and the
+  three derivative averages (six conditions, six unknowns) and two linear polynomials $p_1$, $p_2$ on
+  $\{I_{i-1},I_i\}$ and $\{I_i,I_{i+1}\}$ (page-local indices, $p_3$ the big polynomial), combined in the
+  [CWENO](/methods/cweno.md) form $\omega_3\big(p_3-d_1p_1-d_2p_2\big)/d_3+\omega_1p_1+\omega_2p_2$ (Eq. (2.14)).
+- **Weights** (Eqs. (2.11)–(2.13)). Jiang–Shu indicators and
+  $$\alpha_k=d_k\Big(1+\frac{\tau}{\beta_ku_{\mathrm{hp}}+\epsilon\,u_{\mathrm{hp}}^2}\Big),\qquad
+  \tau=\Big(\frac{|\beta_3-\beta_1|+|\beta_3-\beta_2|}2\Big)^2,\qquad
+  u_{\mathrm{hp}}=\Big(\frac{|\bar u_{i-1}|+|\bar u_i|+|\bar u_{i+1}|}3\Big)^2+10^{-40},$$
+  $\epsilon=10^{-10}$ (page-local $\tau$, $u_{\mathrm{hp}}$), after Don et al. and Fan et al. (2025a); Remark 1
+  proves $\omega_k[\sigma u]=\omega_k[u]$ for $\sigma>0$ ([scale invariance](/properties/scale-invariance.md),
+  [WENO-Z](/methods/weno-z.md)). For the Euler equations $u_{\mathrm{hp}}$ of every component is computed from
+  the density, and the characteristic projection of $f'(u)$ acts on both $u$ and $v$ (Remarks 3, 6;
+  [characteristic decomposition](/methods/characteristic-decomposition.md)).
+- **Derivative interface values** are taken linearly, $v^-_{i+1/2}=p_3'(x_{i+1/2})$, with no nonlinear weighting
+  (§2.1.1).
+- **Fixed linear weights (HWENO-FLW).** Unnormalized $\bar d_1=\bar d_2=1$, $\bar d_3=10^2$ (page-local
+  $\bar d_k$, $d_k=\bar d_k/\sum_l\bar d_l$). Remark 2 argues sixth order: with
+  $\beta_3-\beta_k=O(\Delta x^3)$ or $O(\Delta x^4)$, $\tau=O(\Delta x^6)$ or $O(\Delta x^8)$ and
+  $\omega_k-d_k=O(\Delta x^4)$, the error is $O(\Delta x^6)+O(\Delta x^4)O(\Delta x^2)$.
+- **Adaptive linear weights (HWENO-ALW-I, -II)** (§2.1.2–2.1.3). The big weight is switched cell by cell
+  through the ratio (page-local)
+  $$\mathrm{pf}=\frac{\sqrt\tau}{\tfrac12(\beta_1+\beta_2)},\qquad
+  \bar d_3=\begin{cases}10^2,&\mathrm{pf}>10^3,\\10^4,&1<\mathrm{pf}\le10^3,\\10^6,&\mathrm{pf}\le1,\end{cases}$$
+  (ALW-I, Eqs. (2.15)–(2.16)), or $10^2$ for $\mathrm{pf}>50$ and $10^6$ otherwise (ALW-II); $\bar d_3=10^6$ is set
+  directly when $\beta_1=\beta_2=0$ (Remark 4). The authors' "informal" expansions give $\mathrm{pf}=O(\Delta x)$
+  where $u'\ne0$, $\mathrm{pf}\to\tfrac{10}3$ at $u'=0\ne u''$ and $\mathrm{pf}\to\tfrac{3004}{125}\approx24.03$ at
+  $u'=u''=0\ne u'''$, so $\bar d_3\in\{10^6,10^4\}$ in smooth regions; for a step inside $I_i$
+  $\mathrm{pf}\ge\tfrac{1298903}{560}\approx2319.47$ ($\bar d_3=10^2$), and for a step in $I_{i+1}$
+  $\mathrm{pf}\ge94.91$, with $\bar d_3=10^4$ only for jump positions in about $[0.57,0.72]$ of that cell and
+  $10^2$ otherwise (Cases 1–4.2). Two further triplets, $(10^2,10^5,10^8)$ and $(10^1,10^5,10^9)$ with the same
+  thresholds, give "comparable" results (§3.2). The criterion reuses $\tau$ and $\beta_k$, whereas the adaptive
+  weights of Lin et al. (2023) and [Lin & Zhu (2024)](/sources/lin-2024-b.md) (their refs. [17, 18]) are "based on
+  both point values and cell averages", the point values being recalculated several times, and Lin et al. (2023)
+  work dimension by dimension in 2-D (Remark 7); the a-posteriori scheme of Lin & Zhu (2024) on triangles is on
+  the [CWENO](/methods/cweno.md) page. *(Compiler check, not in the sources: $\sqrt\tau$ and the $\beta_k$ both scale
+  as $\sigma^2$ under $u\mapsto\sigma u$, so $\mathrm{pf}$, and with it the choice of $\bar d_3$, is scale-invariant
+  as well.)*
+- **2-D** (§2.2). On the $3\times3$ block a quintic in $x,y$ (21 coefficients) fits the nine averages, seven
+  $x$-derivative averages and seven $y$-derivative averages, and four linear polynomials the four $2\times2$
+  sub-blocks; all fits keep $\bar u_{i,j}$ exactly and the rest in least squares, so the reconstruction is
+  "truly two-dimensional". The weights use $\tau=\big(\tfrac14\sum_{k=1}^4|\beta_k-\beta_5|\big)^2$ (big index 5),
+  $u_{\mathrm{hp}}$ from the nine averages, and $\mathrm{pf}=\sqrt\tau/\big(\tfrac14\sum_{k\le4}\beta_k\big)$; values are
+  taken at three Gauss points per edge (Eqs. (2.27)–(2.33)). Remark 8 derives reflective boundary values for
+  the derivative averages from the parity of each conserved variable.
+
+Results (SSP-RK3 at CFL 0.6, $\Delta t\propto\Delta x^2$ in the accuracy tests; §3): all four schemes reach the
+design order on 1-D and 2-D [Burgers](/benchmarks/burgers-equation-tests.md) and $\gamma=3$ Euler data, the
+adaptive ones being the most efficient in error against CPU time (e.g. 1-D Burgers, $N=200$, $L^1$
+$6.08\times10^{-11}$ for the multi-resolution HWENO of Li, Shu & Qiu (their ref. [15], "HWENO-MR"),
+$3.96\times10^{-10}$ FLW, $6.00\times10^{-11}$ ALW-I, $5.68\times10^{-11}$ ALW-II; Tables 1–4, Figs. 4–7). ALW-I
+resolves the [Shu–Osher](/benchmarks/shu-osher-problem.md) waves, the
+[2-D Riemann problem](/benchmarks/two-dimensional-riemann-problems.md), the
+[double Mach reflection](/benchmarks/double-mach-reflection.md) and the
+[Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md) best of the four (figures). On the
+double Mach reflection at $1920\times480$ it takes 45.44 h against 36.35 h for the multi-resolution WENO of Zhu
+& Shu (125 %), and that WENO needs a $3324\times831$ mesh, about the same number of unknowns, and 187.62 h
+(413 % of ALW-I) for comparable resolution (Fig. 19; hardware not stated). HWENO-MR with its standard linear
+weights $10^{l-1}$ "fails" on the Rayleigh–Taylor problem and is run with $4^{l-1}$ (Example 3.12; failure not
+plotted; [multi-resolution WENO](/methods/multi-resolution-weno.md)). On the Lax problem scaled by $10^{-6}$ the
+schemes without the $u_{\mathrm{hp}}$ normalization oscillate (Fig. 11;
+[Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)).
+
+## Compact simple HWENO with ADER time stepping on triangles (ADER-HWENO)
+
+[Luo et al. (2026)](/sources/luo-2026.md) (Luo, Zhao, Qiu & Chen; arXiv v1 read) carry their structured-mesh
+scheme (Part I, cited as an arXiv preprint) to triangles: a third-order finite volume that stores, per
+triangle $K$, the averages of $u$, $\partial_xu$ and $\partial_yu$ (page-local $\bar v_K$, $\bar w_K$ for the
+derivative averages), with a one-stage [ADER](/methods/ader-scheme.md) step (§2).
+
+- **Time.** Interface values at edge Gauss points are Taylor-expanded to second order in time, the time
+  derivatives $\partial_tu$, $\partial_{tx}u$, $\partial_{ty}u$, $\partial_{tt}u$ being converted into space
+  derivatives of the reconstruction polynomial by the
+  [Cauchy–Kowalewski procedure](/methods/cauchy-kowalewski-procedure.md) with the flux Jacobians and Hessians;
+  the flux is integrated by Gauss-type rules in time and space with a local Lax–Friedrichs flux whose speed comes
+  from the two cell averages (Eqs. (2.1)–(2.5)). The number of temporal and edge points is not stated.
+- **No derivative equation.** $\bar v_K$, $\bar w_K$ are not evolved: at $t^{n+1}$ they are recomputed by the
+  divergence theorem, $\bar v_K=\frac1{|K|}\oint_{\partial K}u\,n_x\,ds$, from the central average
+  $\tfrac12(u^{\mathrm{int}}+u^{\mathrm{ext}})$ of the Taylor values at the edge Gauss points (page-local traces;
+  Eqs. (2.11)–(2.15)), an idea the authors take from their Part I and from compact gas-kinetic schemes
+  ([gas-kinetic scheme](/methods/gas-kinetic-scheme.md);
+  [unstructured gradient reconstruction](/methods/unstructured-gradient-reconstruction.md)).
+- **Reconstruction** (§2.2, Steps 1–6). On the target $K_0$ and its three edge neighbours a quadratic matches the
+  four averages exactly and six derivative conditions on the unions $K_0\cup K_\ell$ in least squares; three
+  linear polynomials on $\{K_0,K_\ell\}$ keep $\bar u_{K_0}$ exactly and fit the neighbour's average and
+  derivative averages in least squares, so they do not use the target's own derivative averages. They are
+  combined in the [CWENO](/methods/cweno.md) form with $d=(0.94,0.02,0.02,0.02)$ (big first), indicators made of
+  the polynomial derivatives at the barycentre scaled by $|K_0|^{|s|}$ (page-local multi-index $s$;
+  [smoothness indicators](/definitions/smoothness-indicator.md)) and weights taken from Zhao & Qiu,
+  $$\alpha_\ell=d_\ell\Big(1+\frac{\tau}{\epsilon\,\bar u_{\mathrm{ave}}^4+\bar u_{\mathrm{ave}}^2\beta_\ell}\Big),\qquad
+  \tau=\Big(\tfrac13\sum_{\ell=2}^4|\beta_1-\beta_\ell|\Big)^2,\qquad \epsilon=10^{-8},$$
+  $\bar u_{\mathrm{ave}}$ the mean of the four averages plus $10^{-30}$ (page-local $\tau$, $\bar u_{\mathrm{ave}}$;
+  the source's $\kappa$, $W_{ave}$; Eq. (2.9)). The reconstruction is "a direct two dimensional procedure", and
+  one reconstruction per time step serves fluxes, time derivatives and derivative averages. No characteristic
+  decomposition is mentioned; a [Zhang–Shu scaling](/methods/zhang-shu-scaling-limiter.md) is applied "in some
+  extreme cases", not identified (§3).
+
+Against the Runge–Kutta moment-based HWENO on triangles of Zhao & Qiu ("RK-HWENO"), which evolves extra
+equations and reconstructs at every stage, the authors claim smaller errors and lower cost, and against ADER-WENO
+a more compact stencil at equal order (Abstract, §1). Evidence (CFL 0.5): third order on 2-D Burgers
+($L^1$ $1.85\times10^{-7}$ against $2.70\times10^{-7}$ for RK-HWENO at 274432 triangles, smaller at every mesh;
+Table 3.1), on the Euler [density wave](/benchmarks/density-wave-advection.md) (Table 3.2) and on the
+[isentropic vortex](/benchmarks/isentropic-vortex.md) on GMSH meshes ($L^1$ orders 2.08–2.98; Table 3.3); an
+$L^\infty$-against-CPU plot in its favour (Fig. 3.3, no hardware stated); and comparable or sharper resolution on
+the Lax, Shu–Osher, blast-wave, double Mach reflection (rectangular and $30^\circ$ wedge) and
+[forward-facing step](/benchmarks/forward-facing-step.md) problems, the last without corner treatment or local
+refinement (§3).
+
 ## Hermite candidates for nodal spectral-difference limiting
 
 Chen & Fu (2024) build a compact limiter for the nodal spectral difference (SD) method at third and
@@ -379,6 +495,46 @@ at equal CPU time (CPU ratios 1.2–1.8, error ratios about 1/5), slightly cheap
 the [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md) at $120\times480$ comparable
 to WENO-ZQ at $240\times960$ (Example 3.13). Fan et al. (2023, §1) count three points for fifth-order HWENO
 against five for WENO.
+
+## Compact HWENO with compact-difference derivatives (CHWENO)
+
+[Yang & Qiu (2026)](/sources/yang-2026.md) build a finite-difference HWENO for degenerate parabolic equations
+$\partial_tu+\partial_xf(u)=\partial_x^2g(u)$, $g'\ge0$ vanishing on a set of states, whose solutions have
+fronts moving at finite speed (§1; peripheral to this bundle, recorded for its reconstruction). The
+convection term is differenced through the Shu–Osher function and the diffusion term through a second
+implicit function defined by a double cell average ([conservative finite-difference
+scheme](/definitions/conservative-finite-difference-scheme.md)). The derivative data are **not evolved**: at
+every Runge–Kutta stage $h^+_i\approx\partial_xf^+$ and $\phi_i\approx\partial_xg$ (page-local) are computed by
+Lele's sixth-order tridiagonal compact central difference,
+$\tfrac13h^+_{i-1}+h^+_i+\tfrac13h^+_{i+1}=\tfrac7{9\Delta x}(f^+_{i+1}-f^+_{i-1})+\tfrac1{36\Delta x}(f^+_{i+2}-f^+_{i-2})$,
+solved by a circulant LU or the Thomas algorithm, an idea credited to Ma & Wu (2018) (§2.1 Step 3, Eq. (2.19)).
+
+- **Convective flux** (Step 1, Eqs. (2.7)–(2.13)). A quartic matching $f^+_{i-1},f^+_i,f^+_{i+1}$ as cell averages
+  and $h^+_{i\pm1}$, with
+  $p_0(x_{i+1/2})=\tfrac1{120}\big(-23f^+_{i-1}+76f^+_i+67f^+_{i+1}-9\Delta x\,h^+_{i-1}-21\Delta x\,h^+_{i+1}\big)$,
+  and two linear polynomials, in the CWENO combination with "artificial" linear weights $(0.98,0.01,0.01)$ and
+  Z-type weights $d_k\big(1+\tau/(\epsilon+\beta_k)\big)$, $\tau=\tfrac14\big(|\beta_0-\beta_1|+|\beta_0-\beta_2|\big)^2$,
+  $\epsilon=10^{-6}$; fifth order. *(Compiler check, not in the sources: $\tfrac{76}{120}=\tfrac{19}{30}$,
+  $\tfrac9{120}=\tfrac3{40}$, $\tfrac{21}{120}=\tfrac7{40}$, so this is the HWENO-R quartic value of Fan et al.
+  (2023) with the sign of the $h^+_{i+1}$ term as corrected in the Qualifications.)*
+- **Diffusive flux** (Step 2, Eqs. (2.14)–(2.18)). A quintic on four points with $\phi_i,\phi_{i+1}$ under
+  double-average conditions and two quadratics, combined the same way; the linear interface value is
+  $-\tfrac1{36}g_{i-1}-\tfrac94g_i+\tfrac94g_{i+1}+\tfrac1{36}g_{i+2}-\tfrac{2\Delta x}3(\phi_i+\phi_{i+1})$; sixth order.
+- **Linear stability** (§2.3). For $u_t+au_x=\varepsilon u_{xx}$ with linear weights and SSP-RK3 the authors
+  print $\nu\le0.4159$ for advection and $\varepsilon\Delta t/\Delta x^2\le0.2827$ for diffusion (page-local
+  diffusion coefficient), and adopt the latter. *(Compiler check, not in the sources: with their symbols (2.27),
+  which agree with the Fourier transform of the operators (2.23) to round-off, the RK3 factor
+  $1+z+z^2/2+z^3/6$ stays in the unit disc up to $\varepsilon\Delta t/\Delta x^2=0.2827$, reproduced, and up to
+  $\nu\approx1.114$ for advection, not 0.4159; the adopted diffusive bound is the binding one either way.)*
+
+All tests run at $C_{\mathrm{cfl}}=0.15$ for every scheme. Sixth order holds on heat and manufactured
+reaction–diffusion problems (Tables 2–3, 5–6), which have no convection, so the fifth-order convective flux is
+not tested on smooth data. Against the derivative-evolving FD-HWENO of Ahmat et al. the CPU ratio is 0.53–0.73
+in 1-D and 0.45–0.64 in 2-D (Tables 4, 7); against the DWENO of Liu, Shu & Zhang, which has negative linear
+weights for the diffusion flux ([negative linear weights](/methods/negative-linear-weights.md)), CHWENO is more
+accurate and slower (§4). Porous-medium, viscous [Buckley–Leverett](/benchmarks/buckley-leverett-problem.md) and
+strongly degenerate tests show no visible oscillations (§3). The modified-wavenumber comparison is on the
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md) page.
 
 ## HWENO candidates on a finite element mesh
 
@@ -540,6 +696,26 @@ are given in the ingested sources.
   $X_s=-\tfrac12\cos\big(\tfrac{2s-1}{2N}\pi\big)$ on $[-\tfrac12,\tfrac12]$, Chebyshev–Gauss points *(compiler
   check, not in the sources: for $N=3$ these are $0,\pm\sqrt3/4$, against $0,\pm\sqrt{15}/10$ for Gauss–Legendre)*; the linear
   weights depend on this choice.
+- **HWENO-FLW/ALW observations** (Zhang et al. 2026b). The four schemes print digit-for-digit identical errors in
+  every column of Table 4 (2-D Euler), and HWENO-ALW-II equals HWENO-MR in every entry of Table 2; the paper does
+  not comment. "All schemes reach the designed order" (Examples 3.1, 3.4) sits beside erratic FLW orders in
+  Table 1 ($L^1$ 6.71–9.52, $L^\infty$ 4.04–10.01). The scale-invariance proof drops the $10^{-40}$ in
+  $u_{\mathrm{hp}}$, and the analysis of $\mathrm{pf}$ is for a single step from a constant state. The
+  Rayleigh–Taylor boundary values are printed as "$(2,0,0,1)$ and $(1,0,0,2.5)$" at "the top and bottom",
+  respectively. *(Compiler check, not in the sources: the printed initial data give $\rho=2$, $p(0)=1$ at the
+  bottom and $\rho=1$, $p(1)=2.5$ at the top, so the order is reversed.)*
+- **ADER-HWENO** (Luo et al. 2026). The Abstract's "smaller numerical errors" than RK-HWENO holds for both norms
+  on Burgers and for $L^\infty$ on the density wave, while RK-HWENO has the smaller $L^1$ error on the three
+  finest density-wave meshes ($1.00\times10^{-6}$ against $7.93\times10^{-7}$ at 68608 triangles; Table 3.2), whose
+  text claims only the $L^\infty$ advantage. The RK-HWENO $L^1$ order at 17152 triangles is printed 2.981.
+  *(Compiler check, not in the sources: $\log_2(5.81\times10^{-5}/6.26\times10^{-6})=3.21$.)* The derivative
+  averages are refreshed with an unupwinded central trace and no linear stability analysis is given.
+- **CHWENO** (Yang & Qiu 2026). The normalization of the convective weights is printed from $m=1$ (Eq. (2.13));
+  §3 indexes the linear weights $\gamma_1=0.98$, $\gamma_2=\gamma_3=0.01$ for the scheme's $\gamma_0,\gamma_1,\gamma_2$;
+  the compact derivative is a global linear operator applied to possibly discontinuous $f^\pm$ and $g$, a point
+  the paper does not discuss. The efficiency comparison is at equal $\Delta t$ (CFL 0.15), not at each scheme's
+  stability limit (Yang & Qiu give 0.2827 for CHWENO and 0.43 for DWENO, "consistent with" Liu, Shu & Zhang;
+  §3, p. 12).
 - Li et al. (2022b, Eq. (8)) — the WENO-ZN paper — call the rescaled Legendre basis used by Balsara et
   al. for smoothness indicators "Hermite polynomials"; that reconstruction is not Hermite WENO.
 - The nonlinear HWENO reconstruction of Kuzmin & Vedral is printed once with a tilde
@@ -562,3 +738,6 @@ are given in the ingested sources.
 - [Fan & Wu (2024)](/sources/fan-2024.md) — §1; §2.1–2.4, Eqs. (2.2)–(2.57), Theorems 1–11, Remarks 1–5; §3, Tables 3.1–3.2, Examples 1–12; App. A–C (arXiv v1).
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §1; §2, Eq. (3); §5, Eqs. (36)–(69); §6–§7, Eqs. (70)–(75); §9.1, Table 1.
 - [Fan et al. (2025a)](/sources/fan-2025.md) — §1; §2.1–2.3, Eqs. (2.2)–(2.33), Theorems 2.1–2.2, Remarks 2.1–2.5; §3, Tables 1–7, Examples 3.1–3.13; §4; App. A.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §1; §2.1–2.2, Eqs. (2.2)–(2.33), Remarks 1–8; §3, Tables 1–4, Examples 3.1–3.12, Figs. 4–20; §4.
+- [Luo et al. (2026)](/sources/luo-2026.md) — Abstract; §1; §2.1–2.3, Eqs. (2.1)–(2.15); §3, Tables 3.1–3.3, Fig. 3.3, Examples 3.1–3.8; §4 (arXiv v1).
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §1; §2.1, Eqs. (2.1)–(2.19); §2.3, Eqs. (2.22)–(2.28); §3, Tables 2–7; §4.

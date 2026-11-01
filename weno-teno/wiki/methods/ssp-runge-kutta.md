@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-30T09:00:00Z
+timestamp: 2026-11-01T18:56:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -111,6 +111,10 @@ with it:
 | [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) | bound-preserving generalized Active Flux | $\Delta t=\nu/\max_i(\varrho(\bar u_i)/\Delta x_i)$ with $\varrho$ the spectral radius (page-local), $\nu$ 0.1 to 0.4 by splitting and test; step halved and restarted when a stage fails the bound-preserving conditions (Eq. (15), Remark 4.2) |
 | [Barsukow et al. (2026)](/sources/barsukow-2026.md) | arbitrary-order 2D Active Flux, linear advection | maximal 0.27, 0.20, 0.17, 0.12, 0.088 for orders 3–7 (Table 3; below) |
 | [Chu et al. (2025c)](/sources/chu-2025-c.md) | new low-dissipation central-upwind FV | 0.475 (§3) |
+| [Zhang et al. (2026a)](/sources/zhang-2026.md) | FD hybrid multi-resolution WENO (SHMR-WENO) | 0.6; $\Delta t\propto\Delta x^{5/3}$ in the accuracy test, $\Delta t=\nu/(a^{(1)}/\Delta x+a^{(2)}/\Delta y)$ in 2D (§3) |
+| [Zhang et al. (2026b)](/sources/zhang-2026-b.md) | sixth-order FV Hermite WENO | 0.6; $\Delta t\propto\Delta x^2$ in the accuracy tests, "to ensure that spatial errors dominate" (§3) |
+| [Yang & Qiu (2026)](/sources/yang-2026.md) | FD compact Hermite WENO, degenerate parabolic equations | 0.15 for every scheme compared, in $\Delta t=\nu/(\max\lvert f'\rvert/\Delta x+\max\lvert g'\rvert/\Delta x^2)$ ($g$ the diffusion flux of $u_t+f(u)_x=g(u)_{xx}$, page-local), against a linear bound 0.2827 (below) |
+| [Cai et al. (2026)](/sources/cai-2026.md) | moving-mesh FV with remapping in pseudo-time | pseudo-time step $\Delta\tau_{\mathrm p}$ (page-local) from a CFL bound with $C_{\mathrm{CFL}}\le\tfrac14$ for positive evolved volumes; physical CFL not printed (§4.5; below) |
 
 [Fu (2023)](/sources/fu-2023.md), [Cui et al. (2024)](/sources/cui-2024.md) (Exs. 2–5) and
 the variants A and C of [Active Flux](/methods/active-flux.md)
@@ -275,8 +279,49 @@ these "should not be used even if the problem is steady state".
   semi-discrete and does not depend on the time integrator, and no fully discrete entropy
   inequality is claimed.
 
+## Exactness on polynomial data and Simpson's rule
+
+[Cai et al. (2026)](/sources/cai-2026.md) (Cai, Cheng, Wu & Qiu; arXiv v1; §4) use two exactness
+properties of the three-stage scheme in their proof that a moving-mesh finite-volume method is exact
+on transported quadratics ([transport polynomial exactness](/properties/transport-polynomial-exactness.md)):
+
+- **Exact exponential on nilpotent data** (Prop. 4.1). On linear advection with quadratic data the
+  semi-discrete operator, with three-point Gauss–Lobatto edge quadrature and a 2-exact reconstruction, is
+  the exact one, and $\mathcal L^3u^n=0$; the stability polynomial $1+z+\tfrac12z^2+\tfrac16z^3$ then equals
+  $e^{\Delta t\mathcal L}$ on that data, so the fully discrete step is exact for any $\Delta t$ (with a
+  3-exact reconstruction the conclusion extends to cubic data, Remark 4.2).
+- **Reduction to Simpson's rule** (Lemma 4.10, Eq. (4.12)). For a right-hand side that depends on time only,
+  $du/d\tau_{\mathrm p}=f(\tau_{\mathrm p})$ ($\tau_{\mathrm p}$ the pseudo-time of the remap, page-local; not the
+  registry's $\tau$), with the stage geometries placed at $\tau_{\mathrm p}^n$, $\tau_{\mathrm p}^n+\Delta\tau_{\mathrm p}$ and
+  $\tau_{\mathrm p}^n+\tfrac12\Delta\tau_{\mathrm p}$, the scheme gives
+  $u^{n+1}-u^n=\tfrac{\Delta\tau_{\mathrm p}}6\big[f(\tau_{\mathrm p}^n)+4f(\tau_{\mathrm p}^n+\tfrac12\Delta\tau_{\mathrm p})+f(\tau_{\mathrm p}^n+\Delta\tau_{\mathrm p})\big]$,
+  Simpson's rule, exact for cubic $f$. *(Compiler check, not in the sources: the stages give
+  $u^{(2)}=u^n+\tfrac{\Delta\tau_{\mathrm p}}4\big(f(\tau_{\mathrm p}^n)+f(\tau_{\mathrm p}^n+\Delta\tau_{\mathrm p})\big)$ and then the line above; this is the
+  increment form of Zheng et al. (2021) recorded earlier on this page, with stage times $0$, $1$,
+  $\tfrac12$.)* Because the geometric moments $\int x^sy^r$ of a quadrilateral whose vertices move linearly
+  in time are polynomials of degree at most $s+r+2$, their time derivatives are at most cubic for $s+r\le2$, and
+  moments evolved by SSP-RK3 equal the exact moments at every step (Thm. 4.7), which the authors call a
+  "fourth-order superconvergence" of a nominally third-order scheme
+  ([conservative remapping](/methods/conservative-remapping.md)). Ketcheson's ten-stage fourth-order SSP
+  method reaches the same exactness for $s+r\le2$ without this superconvergence, at higher cost (Remark 4.11).
+- **Convex combination again** (Prop. 4.4). The exactness of one forward-Euler remap step under any mesh
+  motion (Thm. 4.3) carries over to SSP-RK3 because each stage is a convex combination of forward-Euler
+  steps, the same argument as for bound preservation (section above).
+
 ## Sizing the time step
 
+- **Advection–diffusion with a linear bound.** [Yang & Qiu (2026)](/sources/yang-2026.md) (§2.3,
+  Eqs. (2.22)–(2.28)) apply von Neumann analysis to their linear compact Hermite WENO scheme for
+  $u_t+au_x=\varepsilon u_{xx}$ ($\varepsilon>0$ the diffusion coefficient, page-local) with the SSP-RK3 amplification factor $1+z+\tfrac12z^2+\tfrac16z^3$, and print
+  the advective bound $a\Delta t/\Delta x\le0.4159$ and the diffusive bound $\varepsilon\Delta t/\Delta x^2\le0.2827$;
+  they take the smaller, 0.2827, as the CFL number of a combined condition
+  $\Delta t(\max\lvert f'\rvert/\Delta x+\max\lvert g'\rvert/\Delta x^2)\le0.2827$, and run every test at 0.15,
+  with all compared schemes at the same step (§3). *(Compiler check, not in the sources: the printed
+  diffusive symbol reaches $-80/9$ at $\vartheta=\pi$, and SSP-RK3 is stable on the negative real axis down
+  to $z\approx-2.5127$, so $2.5127\cdot9/80=0.2827$ reproduces; with the printed advective symbol (2.27),
+  sampled on $2\times10^5$ wavenumbers, $\lvert\mathcal G\rvert\le1$ holds up to $a\Delta t/\Delta x\approx1.114$,
+  not 0.4159. The binding bound is the diffusive one either way.)* The step scales as $\Delta x^2$, which the
+  authors propose to remove in future work with explicit–implicit–null time marching (§4).
 - **For accuracy tests.** A third-order integrator caps the observed order of a higher-order
   spatial scheme unless $\Delta t$ shrinks faster than $\Delta x$.
   [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) (§4.1, Eqs. (39)–(40), Fig. 2)
@@ -520,6 +565,18 @@ these "should not be used even if the problem is steady state".
   convex-combination argument costs for the three-stage scheme; neither side prints the SSP
   coefficient it relies on. Fan et al.'s working step, $\Delta x/(12a)$ with $a$ the maximum
   of $\lvert v\rvert+c$, carries no factor one third and relies on halving and restarting.
+- **What the Simpson reduction covers.** Cai et al.'s superconvergence is a property of SSP-RK3 as a
+  quadrature, for right-hand sides that depend on time only and with the stage times $0$, $1$, $\tfrac12$;
+  it is not a statement about SSP-RK3 on general ODEs. Their Remark 4.5 extends the exactness of the remap to
+  degree $k$ "with any SSP time discretization". *(Compiler check, not in the sources: for $s+r=3$ the
+  exact moment has degree 5 in time, its derivative degree 4, and Simpson's rule is not exact for quartics,
+  nor is three-point Gauss–Lobatto edge quadrature exact for the degree-4 integrand; for $k\ge3$ the evolved
+  moments therefore differ from the exact ones, and the extension holds in the sense of the evolved moments,
+  not as exactness against the projection of the exact solution.)*
+- Yang & Qiu (2026) list maximum CFL numbers of 0.2827 for their scheme, 0.43 for the DWENO comparator
+  ("consistent with" its original paper) and 0.15 for the HWENO comparator, then run all three at 0.15 "to
+  isolate potential errors introduced by variations in time step size" (§2.3, §3); their CPU comparisons
+  are therefore at equal step, not at each scheme's largest stable step.
 
 # Citations
 
@@ -608,3 +665,7 @@ these "should not be used even if the problem is steady state".
 - [Barsukow et al. (2026)](/sources/barsukow-2026.md) — §4.2 (Eqs. (40)–(46), Table 3, Figs. 7–8), §5.1 (arXiv v2).
 - [Chu et al. (2025c)](/sources/chu-2025-c.md) — §3 (arXiv v1).
 - [Cao et al. (2026)](/sources/cao-2026.md) — §2.1, Eq. (26); §6.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §2, Eq. (2.4); §3 (time step).
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §2.1, Eq. (2.9); §3 (time step).
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §2.2, Eq. (2.21); §2.3, Eqs. (2.22)–(2.28); §3; §4.
+- [Cai et al. (2026)](/sources/cai-2026.md) — arXiv v1: §3.1.4, Eq. (3.14); §4.1, Prop. 4.1, Remark 4.2; §4.2, Thm. 4.3, Prop. 4.4, Remark 4.5; §4.4, Thm. 4.7, Lemmas 4.8–4.10, Remark 4.11; §4.5, Eqs. (4.14)–(4.15), Remark 4.13.

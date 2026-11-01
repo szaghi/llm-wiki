@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Scale and affine invariance
@@ -190,6 +190,34 @@ and oscillate on the 2D Sedov problem even with a positivity limiter; the normal
 and the double Mach reflection with data scaled by $\sigma\in\{10^{-7},1,10^7\}$ gives consistent
 results (Ex. 3.5, 3.10, 3.12; Figs. 8–9, 15, 17).
 
+[Zhang et al. (2026b)](/sources/zhang-2026-b.md) (§2.1.1, Eqs. (2.11)–(2.13), Remark 1) use the same weight
+for their derivative-average Hermite WENO, $\beta_k\mathsf m^2+\epsilon\,\mathsf m^4$ in the denominator with
+$\mathsf m^2$ (their $u_{\mathrm{hp}}$) the squared mean absolute average plus $10^{-40}$ and $\epsilon=10^{-10}$,
+citing Don et al. and Fan et al.; they define a scheme as scale-invariant when $u$ and $\sigma u$, $\sigma\ne0$,
+receive the same weights, and prove it for $\sigma>0$ by the scaling count above, the floor ignored. Two
+choices differ from Fan et al.: for the Euler equations $\mathsf m$ comes from the **density** for every
+component (Remarks 3, 6), so the invariance covers scalings of all conserved variables by one factor, as in their
+scaled Lax test $(\sigma\rho,v,\sigma p)$; and the adaptive choice of the linear weights uses the ratio
+$\sqrt{\tau}/\tfrac12(\beta_1+\beta_2)$ ([Hermite WENO](/methods/hermite-weno.md)). *(Compiler check, not in the
+sources: numerator and denominator of that ratio both scale as $\sigma^2$, so the adaptive linear weights are
+scale-invariant too.)* At $\sigma=10^{-6}$ the schemes without the normalization oscillate "significantly" and
+the normalized ones are "almost oscillation-free"; at $\sigma=10^6$ all are non-oscillatory (Example 3.6, Fig. 11).
+
+[Luo et al. (2026)](/sources/luo-2026.md) (§2.2, Step 5, Eq. (2.9); arXiv v1) take from Zhao & Qiu weights of the
+same structure on triangles, $d_\ell\big(1+\tau/(\epsilon\,\bar u_{\mathrm{ave}}^4+\bar u_{\mathrm{ave}}^2\beta_\ell)\big)$,
+$\epsilon=10^{-8}$, with $\bar u_{\mathrm{ave}}$ the plain mean of the four cell averages plus $10^{-30}$ (page-local),
+and do not call them scale-invariant. *(Compiler check, not in the sources: the ratio is invariant under
+$u\mapsto\sigma u$ up to the floor, not under an added constant; because the mean is not of absolute values,
+$\bar u_{\mathrm{ave}}$ can vanish on sign-changing data, leaving only the $10^{-30}$ floor; how $\bar u_{\mathrm{ave}}$
+is taken for systems is not stated.)*
+
+**A dimensional threshold.** The troubled-cell test of Zhang et al. (2026a, §2.2) compares the scaled
+derivative $\Delta x\,\phi'$ of a quadratic interpolant $\phi$ (page-local) of the point values (the density for
+Euler) with $\pm\Delta x$ ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)); the paper does not
+discuss scaling. *(Compiler check, not in the sources: $\Delta x\,\phi'$ carries the units of $u$ and the threshold
+those of length, so the flags change under $u\mapsto\sigma u$ at fixed
+$\Delta x$, so the hybrid switch, though not the MR-WENO weights it selects, is not scale-invariant.)*
+
 **Normalised variables.** In a compact three-cell stencil, a reconstruction that depends on the
 data only through the normalized cell average $\tilde u_i=(\bar u_i-\bar u_{i-1})/(\bar u_{i+1}-\bar u_{i-1})$
 is called *normalisable*, $\tilde u_{i+1/2}=\mathcal R(\tilde u_i)$, and Deng (2023, Proposition 2) proves
@@ -362,3 +390,6 @@ problem scaled by 100 OF-HWENO "excessively smears" (Ex. 9, Fig. 3.8).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.2, Eq. (3.16), Theorem 3.2: locally normalized ESOFDG damping coefficient, invariance stated.
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §3.1.1, Eqs. (24)–(26), Fig. 4; §3.2, Eq. (36): scale-variant input of a learned weighting.
 - [Cao et al. (2026)](/sources/cao-2026.md) — §2.1, Eqs. (5)–(11), Properties 2.3, 2.5; §2.3; Ex. 6.8, Figs. 2, 9: locally scale-invariant COS damping.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §2.1.1, Eqs. (2.11)–(2.13), Remarks 1, 3, 6; §2.1.2, Eq. (2.15); Example 3.6, Fig. 11.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §2.2, Step 5, Eq. (2.9) (arXiv v1).
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §2.2: dimensional threshold of the troubled-cell test.

@@ -3,9 +3,9 @@ type: Definition
 title: "Troubled-cell and shock indicators"
 description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme is limited, blended or switched; the page defines modal, KXRCF-type, TVB, minmod-jump, BVD, admissibility, time-reversibility, residual, WENO- and TENO-type, undivided-difference, derivative-ratio, divergence and physical (discontinuity-feedback) indicators, with parameters and limits."
 status: established
-aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor, minmod-based smoothness indicator, weak local residual, relaxed BVD indicator, discontinuity feedback factor, PAD, NAD]
+aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor, minmod-based smoothness indicator, weak local residual, relaxed BVD indicator, discontinuity feedback factor, PAD, NAD, extreme-point indicator, simplified troubled-cell indicator]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-11-01T18:56:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -266,7 +266,16 @@ threshold 1. [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3.1.3, §4.1,
 arXiv v1) apply KXRCF to a finite-volume Hermite WENO scheme for
 relativistic hydrodynamics, direction by direction in 2D, a cell being
 troubled if it is flagged in either direction; its threshold is not
-printed.
+printed. [Cai et al. (2026)](/sources/cai-2026.md) (§3.4, Eq. (3.22);
+arXiv v1) use KXRCF, in the hybrid-WENO setting of Li & Qiu, to choose
+between a 2-exact least-squares quadratic and a third-order WENO on moving
+quadrilaterals, again without printing the threshold or the normalization.
+They state that the indicator returns 0 "automatically" on quadratic data,
+and report that an inconsistency between evolved cell integrals and exactly
+computed geometric moments produces spurious oscillations that make KXRCF
+flag smooth cells, about tripling the run time (§5.2, Table 3;
+[hybrid schemes](/methods/hybrid-weno.md)): a false-positive mechanism that
+comes from the geometry of the mesh, not from the flow.
 
 **Absolute-jump indicator that also sets the blend (RKDG).**
 [Wei & Xia (2024)](/sources/wei-2024.md) (§3.1–3.2, Eqs. (7)–(11)), in a
@@ -960,6 +969,41 @@ fifth-order rates where the non-hybrid scheme's rates oscillate
 (2.52–8.66 in $L^1$ in 2D, Table 3.3). Both papers call their indicators
 free of problem-dependent parameters (Abstracts).
 
+**Quadratic interpolant over three cells (fifth order).**
+[Zhang et al. (2026a)](/sources/zhang-2026.md) (Zhang, Tao, Zhu & Qiu;
+§2.2, p. 4–5) take the opposite direction: they interpolate the three point
+values $u_{i-1},u_i,u_{i+1}$ (density for the Euler equations, Remark 3) by
+a quadratic, $n_{\mathrm g}=2$,
+$g(x)=a_0+a_1\frac{x-x_i}{\Delta x}+a_2\big(\frac{x-x_i}{\Delta x}\big)^2$
+(page-local $g$, $a_k$ as above; the source writes $\phi$), and flag $I_i$
+when $g$ has an extreme point in $[x_{i-3/2},x_{i+3/2}]$. Since $g'$ is
+linear, the signs of the scaled end derivatives
+$D_{\mathrm L}=\Delta x\,g'(x_{i-3/2})$, $D_{\mathrm R}=\Delta x\,g'(x_{i+3/2})$
+(page-local) decide; the printed criterion is
+$$\big(D_{\mathrm L}-\Delta x\big)\big(D_{\mathrm R}-\Delta x\big)<0\quad\text{and}\quad\big(D_{\mathrm L}+\Delta x\big)\big(D_{\mathrm R}+\Delta x\big)<0 .$$
+The scaling by $\Delta x$ is introduced "to avoid the situation where the
+denominator $\Delta x$ is very small"; the $\pm\Delta x$ shifts are not
+discussed. *(Compiler check, not in the sources: interpolation gives
+$a_1=\tfrac12(u_{i+1}-u_{i-1})$, $a_2=\tfrac12(u_{i+1}-2u_i+u_{i-1})$, hence
+$D_{\mathrm L}=a_1-3a_2=-u_{i+1}+3u_i-2u_{i-1}$ and
+$D_{\mathrm R}=a_1+3a_2=2u_{i+1}-3u_i+u_{i-1}$. The two products are
+negative together exactly when the larger of the two end values exceeds
+$\Delta x$ and the smaller is below $-\Delta x$: a sign change with a dead
+band of half-width $\Delta x$, not the plain sign test the prose describes.
+Their difference is $3(u_{i+1}-2u_i+u_{i-1})$, so a flag needs
+$3\lvert u_{i+1}-2u_i+u_{i-1}\rvert>2\Delta x$; for smooth data the end
+values are about $\Delta x\,u'(x_{i\mp3/2})$, so $u'$ must swing from above
+$1$ to below $-1$ within three cells, which only under-resolved or
+discontinuous data do — consistent with no flag on their smooth test.)* In
+2D the test runs in each direction and a cell flagged in either is troubled
+(Remark 1). It switches the SHMR-WENO
+[hybrid](/methods/hybrid-weno.md) between linear and multi-resolution
+reconstruction and flags 0.73–7.69 % of the cells of seven shock problems,
+against 1.14–9.21 % for the quartic, numerically searched indicator of
+Wang, Tian, Zhu & Zhao (2023) as recalled (Table 2). The paper cites Zhao,
+Chen & Qiu's hybrid Hermite WENO as an earlier use of a quadratic
+indicator polynomial (§1).
+
 ## Finite-volume and subcell indicators
 
 **Variance of relative jumps (unstructured finite volumes).**
@@ -1208,7 +1252,10 @@ Several sources use an indicator without defining or analysing it:
 - **Thresholds that remain.** Zuo & Zhu (2024a) test the bounds against
   the margin $\pm\Delta x$, a length compared with a quantity of the size
   of the density differences, so the test changes under a rescaling of
-  the density *(compiler check, not in the sources)*. Wei & Xia state
+  the density *(compiler check, not in the sources)*; the quadratic test of
+  Zhang et al. (2026a) carries the same margin and the same dependence on
+  the units of the density and of the length *(compiler check, not in the
+  sources)*, which the paper does not discuss. Wei & Xia state
   that "setting $C_\beta=1$ is effective enough" and that the choice is
   not sensitive (§3.1, §4.2), while their runs use four values from $1/4$
   to 5 and no sensitivity study is shown.
@@ -1360,6 +1407,14 @@ Several sources use an indicator without defining or analysing it:
   the sources)*. The pairing of the signs in $\pm\Delta x$ is not stated.
 - Zuo & Zhu (2024b) apply a bisection to the linear $g^{(n_{\mathrm g}-1)}$, whose
   zero is explicit, and give no tolerance or iteration count.
+- **Width of the test interval.** Zhang et al. (2026a, §2.2) state that
+  testing the quadratic only on the target cell "would result in unphysical
+  oscillations due to the insufficient number of troubled-cells", without a
+  run that shows it, whereas Zuo & Zhu (2024a, 2024b) test only the target
+  cell with interpolants of degree 4 to 8 and report non-oscillatory
+  results. The interpolants differ, so this is a difference of scope, not a
+  contradiction. Zhang et al. (2026a) do not say which cell's flag decides the
+  mirrored flux $\hat f^-_{i+1/2}$, whose stencil is centred on $I_{i+1}$.
 - **Global data in a local weight.** Wei & Xia's weight uses
   $\max_k\eta^{\mathrm J}_k$ over all cells, so the blend in a cell depends
   on the strongest jump anywhere, and the cell with the largest jump is
@@ -1462,3 +1517,5 @@ Several sources use an indicator without defining or analysing it:
 - [Liang et al. (2025)](/sources/liang-2025.md) — §3.3.2, Eqs. (19)–(20); §3.3.3–3.3.4; §4.4, §4.8.
 - [Cao et al. (2026)](/sources/cao-2026.md) — §2.4, Eq. (23); §5.1; §6.
 - [Wang et al. (2026)](/sources/wang-2026.md) — §5.2, Eqs. (44)–(48); §5.3–5.4, Tables 4–5.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §1; §2.2, Remarks 1–3; §3, Table 2: quadratic extreme-point indicator over $[x_{i-3/2},x_{i+3/2}]$.
+- [Cai et al. (2026)](/sources/cai-2026.md) — arXiv v1: §3.4, Eq. (3.22); §5.2, Table 3: KXRCF in a hybrid for 2-exactness; false flags from geometric mismatch.

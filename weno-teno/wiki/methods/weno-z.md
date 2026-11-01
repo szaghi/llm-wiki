@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # WENO-Z weights
@@ -161,8 +161,16 @@ each time with a global indicator built against the largest candidate:
 | IMWENO-P ([smoothness indicators](/definitions/smoothness-indicator.md)) | squared undivided fourth difference $\tau^{\mathrm{IMP}}$ | $(\tau^{\mathrm{IMP}}/(\beta^{\mathrm{IMP}}_k+\epsilon))^q$, $q=1$, $\epsilon=10^{-40}$ | Zhong et al. 2023, Eqs. (23)–(26) |
 | third-order WCNS3-MR ([multi-resolution WENO](/methods/multi-resolution-weno.md)), stencils of 1 and 3 points | $\tau_{\mathrm{MR}}=\lvert\beta_2-\beta_1\rvert^2$ | $\tau_{\mathrm{MR}}/(\beta_m+\epsilon)$, $\epsilon=10^{-10}$ | Fan et al. 2025b, Eqs. (16)–(17), after Qin et al. |
 | compact gas-kinetic reconstruction ([WENO-AO](/methods/weno-ao.md)) | $\lvert3(\beta_1-\beta_2)+(\beta_3-\beta_2)\rvert$ (1-D), $\tfrac13\sum\lvert2\beta_0-\beta_k-\beta_l\rvert$ (triangles) | $(\tau/(\beta_k+\epsilon))^2$, $\epsilon=10^{-5}$ | Zhao, Ji, Shyy & Xu 2023, Eqs. (29), (31)–(32) |
+| fifth-order MR-WENO in the troubled cells of SHMR-WENO ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | as in the first row; the base slopes use $\lvert\beta_{\mathrm R}-\beta_{\mathrm L}\rvert^2$ | $\tau/(\beta_l+\epsilon)$, $\epsilon=10^{-10}$ | Zhang et al. 2026a, §2.1, "similar to" WENO-Z (Castro, Costa & Don) |
+| sixth-order derivative-average HWENO ([Hermite WENO](/methods/hermite-weno.md)), quintic and two linear | $\big(\tfrac12(\lvert\beta_3-\beta_1\rvert+\lvert\beta_3-\beta_2\rvert)\big)^2$ | $\tau/(\beta_ku_{\mathrm{hp}}+\epsilon u_{\mathrm{hp}}^2)$, $\epsilon=10^{-10}$, $u_{\mathrm{hp}}$ the squared mean absolute average | Zhang et al. 2026b, Eqs. (2.11)–(2.13) |
+| finite-difference CHWENO ([Hermite WENO](/methods/hermite-weno.md)), quartic and two linear | $\tfrac14(\lvert\beta_0-\beta_1\rvert+\lvert\beta_0-\beta_2\rvert)^2$ | $\tau/(\epsilon+\beta_k)$, $\epsilon=10^{-6}$ | Yang & Qiu 2026, Eqs. (2.13), (2.16) |
+| ADER-HWENO on triangles ([Hermite WENO](/methods/hermite-weno.md)), quadratic and three linear | $\big(\tfrac13\sum_{\ell\ge2}\lvert\beta_1-\beta_\ell\rvert\big)^2$ | $\tau/(\epsilon\bar u_{\mathrm{ave}}^4+\bar u_{\mathrm{ave}}^2\beta_\ell)$, $\epsilon=10^{-8}$, $\bar u_{\mathrm{ave}}$ the mean average | Luo et al. 2026, Eq. (2.9), after Zhao & Qiu |
 
-All the $\tau$ in the table are page-local and none is the registry's $\tau_5$. The same construction,
+All the $\tau$ in the table are page-local and none is the registry's $\tau_5$. In the Hermite rows of
+Zhang et al. (2026b) and Luo et al. (2026) the denominator carries a squared mean of the data, so that the
+ratio, quartic over quartic in the data, is invariant under $u\mapsto\sigma u$ (Zhang et al. 2026b, Remark 1).
+*(Compiler check, not in the sources: the same scaling count holds for Luo et al., and in both rows a constant
+added to the data changes the mean and hence the weights.)* See [scale invariance](/properties/scale-invariance.md). The same construction,
 with the mean of $(\beta_0-\beta_r)^2$ over four small stencils of a six-point stencil, drives the
 smooth discontinuity indicator of Zheng, Shu & Qiu (2021, §2.2.4), who cite Zhu & Qiu for it rather
 than Borges et al. ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)). For the
@@ -386,3 +394,7 @@ WENO-M in further codes and hardware, or the implementation behind Brehm et al.'
 - [Ren et al. (2025)](/sources/ren-2025.md) — §2.2, Eqs. (6)–(13); §4.1–4.4, Tables 2–3: finite-volume WENO-Z in the matrix stability analysis of strong shocks.
 - [Liang & Fu (2026)](/sources/liang-2026.md) — §5, Figs. 5–26, Table 1: FV WENO5-Z as steady-state comparator.
 - [Chen & Chen (2026)](/sources/chen-2026.md) — §3.2, Figs. 11–13: WENO-Z with an immersed boundary as comparator.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §2.1: Z-type weights of MR-WENO.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §2.1.1, Eqs. (2.11)–(2.13); Remark 1: scale-normalized Z-type weights.
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §2.1, Eqs. (2.13), (2.16).
+- [Luo et al. (2026)](/sources/luo-2026.md) — §2.2, Step 5, Eq. (2.9) (arXiv v1).

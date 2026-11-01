@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Density-wave advection"
-description: "Smooth density (entropy) wave carried at uniform velocity and pressure, the exact Euler solution being pure translation; used as a 1D and 2D order-of-accuracy test of Euler, Navier–Stokes and ideal-MHD schemes, as a long-time dissipation test, and as a probe of pressure-equilibrium and entropy conservation of kinetic-energy-preserving fluxes."
+description: "Smooth density (entropy) wave carried at uniform velocity and pressure, the exact Euler solution being pure translation; used as a 1D and 2D order-of-accuracy test of Euler, Navier–Stokes and ideal-MHD schemes, on triangles and on randomly moving meshes, as a long-time dissipation test, and as a probe of pressure-equilibrium and entropy conservation of kinetic-energy-preserving fluxes."
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-10-30T08:08:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Density-wave advection
@@ -54,6 +54,8 @@ property, and conserves entropy.
 | [Wang et al. (2023a)](/sources/wang-2023.md) §4.1 | $1+0.1\sin(\pi x)$ | 1, 1 | $[0,2]$ (periodicity not stated) | $N=20$–320, $\Delta t\le\Delta x^{5/3}$; $t=2$ | fifth order of A-WENO with LLF and LLF-M fluxes |
 | [Wang et al. (2026)](/sources/wang-2026.md) §6.1, Eq. (60) | $1+0.2\sin(2\pi x)$ | 1, 1 | $[0,1]$, two-level AMR refined where $\rho>1.19$ | $N=32$–256, $\delta t=0.2\Delta x^2$; $t=1$ | space–time order and conservation error of high-order AMR transfers |
 | [Stone et al. (2026)](/sources/stone-2026.md) §3.1 | exact linear entropy-wave eigenmode, amplitude not printed | not printed | 1D | one wave period, grid series | convergence of the reconstructions of [AthenaK](/software/athenak.md) |
+| [Luo et al. (2026)](/sources/luo-2026.md) Ex. 3.2 | $1+0.2\sin(0.5\pi(x+y))$ | $(1,1)$, 1 | $(-2,2)^2$, periodic, triangles | 268–68,608 triangles (each level ×4), CFL 0.5; $t=1$ | third order of a one-stage ADER Hermite WENO against an RK Hermite WENO, and cost |
+| [Cai et al. (2026)](/sources/cai-2026.md) §5.2 | $1+0.2\sin(2\pi(x+y))$ | $(1,1)$, 1 | $[0,1]^2$, periodic; interior vertices randomly rezoned at every step, boundary vertices moving with $(-0.6,-0.8)$ | $80^2$–$320^2$; $t=0.1$; physical-step CFL not printed | third order of a moving-mesh remap under discontinuous mesh velocity, and cost |
 
 All with $\gamma=1.4$ (Lin & Zhu, Zhang & Zhu and, for this test, Zhang & Shu (2010b) print no $\gamma$; Chudzik
 et al.'s background primes, page-local, are those of their linearized
@@ -337,6 +339,63 @@ reuse of interface fluxes, and the similar 2D cost of HWENO-M to its
 dimension-by-dimension modification of the first moments, which they
 call hard to extend to unstructured meshes (Ex. 3.4).
 
+**Hermite WENO on triangles with one-stage ADER.** Luo et al. (2026)
+compare their compact [Hermite WENO](/methods/hermite-weno.md)
+finite-volume scheme with one-stage [ADER](/methods/ader-scheme.md)
+time stepping (ADER-HWENO), whose derivative averages are recomputed
+from Taylor-extrapolated edge values instead of evolved, with the
+Runge–Kutta moment-based HWENO of Zhao & Qiu (RK-HWENO), as they cite
+it, on the mesh sequence of that paper. Both reach third order in the
+density cell averages (Table 3.2):
+
+| Triangles | 268 | 1072 | 4288 | 17152 | 68608 |
+|---|---|---|---|---|---|
+| ADER-HWENO $L_1$ | 4.59e-3 | 4.86e-4 (3.24) | 6.27e-5 (2.95) | 7.95e-6 (2.98) | 1.00e-6 (2.99) |
+| ADER-HWENO $L_\infty$ | 1.58e-2 | 2.12e-3 (2.90) | 1.66e-4 (3.68) | 1.64e-5 (3.34) | 2.44e-6 (2.75) |
+| RK-HWENO $L_1$ | 1.67e-2 | 2.14e-3 (2.97) | 5.81e-5 (5.20) | 6.26e-6 (printed 2.981) | 7.93e-7 (2.98) |
+| RK-HWENO $L_\infty$ | 4.04e-2 | 9.11e-3 (2.15) | 4.58e-4 (4.31) | 2.18e-5 (4.39) | 3.59e-6 (2.60) |
+
+The text claims the smaller $L_\infty$ error for ADER-HWENO at every
+mesh, which the table bears out; in $L_1$ RK-HWENO is smaller on the
+three finest meshes. An $L_\infty$-error-against-CPU-time plot shows
+ADER-HWENO "more efficient" and its CPU time "substantially less" at
+equal mesh (Fig. 3.3), with no hardware stated. The authors credit the
+saving to one reconstruction per time step, against one per Runge–Kutta
+stage, and to the absence of evolution equations for the derivative
+data (§1, §4).
+
+**Moving meshes with discontinuous mesh velocity.** Cai et al. (2026)
+run the 2D wave on a mesh whose interior vertices are perturbed at
+random at every physical step, vertex position $x^n=x^0+C_{\mathrm r}(U_1\Delta x,U_2\Delta y)+bt$ with
+$U_1,U_2$ uniform on $(-0.5,0.5)$, $C_{\mathrm r}=0.5$ and $b=(-0.6,-0.8)$
+(their symbols, page-local), a bounded but discontinuous mesh velocity,
+to test the
+[conservative remapping](/methods/conservative-remapping.md) of their
+rezoning [moving-mesh](/methods/adaptive-moving-mesh.md) scheme with a
+2-exact hybrid third-order WENO reconstruction. With evolved geometric
+moments, the scheme with [transport polynomial
+exactness](/properties/transport-polynomial-exactness.md) TPE(2)
+converges at third order with two pseudo-time levels per step on every
+mesh, $L_1$ density errors $1.11\times10^{-4}$ ($80^2$) to
+$1.82\times10^{-6}$ ($320^2$), orders 2.93–2.98, $L_\infty$ orders
+2.32–3.73, although the mesh-velocity Lipschitz constant grows like
+$h^{-1}$, from 1874.9 to 8443.5 (Table 2). Enforcing only the classical
+geometric conservation law (GCL-ol) loses order in $L_\infty$ (printed
+orders 2.78, 1.06, $-0.00$, $-0.55$, 2.37, 1.49); exact geometric
+moments without that consistency (NonGCL-ol) do not converge ($L_1$
+about $1.5$–$1.7\times10^{-3}$ on every mesh); and the resolution-dependent
+pseudo-time strategy of Gu et al., as they cite it (NonGCL-rl),
+recovers third order in $L_1$ with 4.7 to 19.7 pseudo-time levels per
+step. On $320^2$ the total CPU times are 5795.1 s (TPE(2)-ol), 6211.8 s
+(GCL-ol), 16490.4 s (NonGCL-ol) and 67168.3 s (NonGCL-rl), the
+remapping times 3942.6 s and 64781.5 s for the first and the last (Intel
+Xeon Gold 6348, C++; Table 3). The authors trace NonGCL-ol's extra cost
+to spurious oscillations that make the KXRCF
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md) flag
+smooth cells and switch the [hybrid WENO](/methods/hybrid-weno.md) to its
+nonlinear stencils (§5.2). See
+[free-stream preservation](/properties/free-stream-preservation.md).
+
 **Very high orders with ADER.** Yajaman, Toro & Demattè's
 [ADER](/methods/ader-scheme.md) finite volumes with their
 [AENO-C reconstruction](/methods/aeno-reconstruction.md) reach the
@@ -393,6 +452,22 @@ Their entropy and sound waves are run together; the sound waves are on
   (1.43E+04 s, 8.83E+03 s); the paper gives no other value to settle
   the entry.
 
+- Luo et al. (2026) print the RK-HWENO $L_1$ order at 17,152
+  triangles as "2.981"; their printed errors give
+  $\log_2(5.81\times10^{-5}/6.26\times10^{-6})=3.21$ *(compiler check,
+  not in the sources)*, and every other order of their Table 3.2 agrees
+  with the printed errors. Their abstract claims "smaller numerical
+  errors" than RK-HWENO, while their own Table 3.2 gives RK-HWENO the
+  smaller $L_1$ error on the three finest meshes; the text of Ex. 3.2
+  claims only the $L_\infty$ advantage.
+- Cai et al. (2026) call NonGCL-rl's $N_\ell=19.7$ pseudo-time levels per step
+  ($N_\ell$ page-local) "nearly a tenfold
+  increase" over the "ol" strategy and its remapping "an order of
+  magnitude slower" (§5.2), and write in §6 that it "results in roughly
+  a tenfold increase in remapping time". Their Table 3 gives
+  $64781.5/3942.6=16.4$ for the remapping time; the near-tenfold ratio
+  is that of the pseudo-time levels, $19.7/2.0=9.85$ *(compiler check,
+  not in the sources)*.
 - Trojak & Dzanic's printed rates are least-squares slopes over all
   grids; pairwise rates are irregular (for example 5.85 for $\mathbb P^3$
   from 32 to 64 elements), so the data are pre-asymptotic *(compiler
@@ -458,6 +533,8 @@ Their entropy and sound waves are run together; the sound waves are on
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §4.4, Table 1, Eq. (97), Figs. 4–5 (arXiv v1).
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §4.1, Tables 1–2.
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §3.1, Eq. (46), Tables 1–4 (arXiv v1).
+- [Luo et al. (2026)](/sources/luo-2026.md) — Abstract; §3, Ex. 3.2, Eq. (3.1), Table 3.2, Fig. 3.3 (arXiv v1).
+- [Cai et al. (2026)](/sources/cai-2026.md) — §5, §5.2, Tables 2–3; §6 (arXiv v1).
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.1.1, Eqs. (36a)–(36e), Tables 1–2 (arXiv v1).
 - [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.2, Table 3.3.
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.3–3.4, Tables 3.6–3.9.

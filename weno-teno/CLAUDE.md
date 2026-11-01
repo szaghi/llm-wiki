@@ -33,7 +33,7 @@ here, in this bundle's notation.
 
 - Primary archive: `~/papers/mosaic/weno-teno/*.pdf` (read-only; Layer 1),
   207 PDFs at founding (217 after the human added ten founding papers on
-  2026-10-30, ingested as chunk 12), named `year_Crossref_Journal_Surname_Title-prefix.pdf`.
+  2026-10-30, ingested as chunk 12; 224 files after six more on 2026-11-01, chunk 13), named `year_Crossref_Journal_Surname_Title-prefix.pdf`.
   The year in the filename is the online year, the surname is sometimes
   a given name (`Dinshaw` for Balsara, `C` for C. B. Sousa), and roughly a
   third of the files are arXiv, HAL or SSRN preprints despite the "Crossref" in
@@ -103,6 +103,14 @@ here, in this bundle's notation.
 - Commits: `docs(weno-teno): ingest chunk N: <slugs>`.
 
 ## Status
+
+**Chunk 13 staged 2026-11-01:** five 2026 papers added by the human (Zhang et
+al. 2026a/b, Yang & Qiu 2026, Luo et al. 2026, Cai et al. 2026; the last two read
+as arXiv preprints); 219 ingested, 235 concept pages plus the registry (new:
+transport polynomial exactness, `status: hypothesis`), 5781 bibliography entries,
+eight contradictions open (none new). Not ingested: feng-2026, li-2024, wu-2023
+(re-download) and the erratum of Zhao, Tao & Zhang (2025), whose parent paper
+(J. Sci. Comput. 102:32) is not in the archive yet.
 
 **Chunk 12 committed 2026-10-30 (d2d189f; rulings 089037e):** ten
 founding papers added by the human (van Leer 1979, Harten 1983, Harten et

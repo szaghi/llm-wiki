@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a possibly nonlinear s
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-01T18:40:00Z
 ---
 
 # Approximate dispersion relation
@@ -608,6 +608,21 @@ is meant.
   against WCNS3-JS, WCNS3-MR and the linear third-order WCNS: WCNS3-MR-NN has the better
   dispersion over a wide wavenumber range and the lower dissipation of the nonlinear schemes.
   The comparison is given by the curves only; no cut-off wavenumbers or values are printed.
+- **Hermite data with compact-difference derivatives.** [Yang & Qiu (2026)](/sources/yang-2026.md)
+  (§2.3, Fig. 1, Table 1) compare the *linear* first-derivative operators of their finite-difference
+  CHWENO (a Hermite quartic on three points with derivatives from Lele's sixth-order compact difference),
+  of the DWENO of Liu, Shu & Zhang and of the compact difference itself
+  ([Hermite WENO](/methods/hermite-weno.md)). They write the modified wavenumber with the real part as the
+  dissipation and the imaginary part as the dispersion, exact values $0$ and $\vartheta$, i.e. the roles of the
+  registry's $\tilde\vartheta_i$ and $\tilde\vartheta_r$ exchanged. Resolved reduced wavenumbers, errors at most
+  0.5 % and 0.1 % (dissipation; dispersion $1-\tilde\vartheta_r/\vartheta$): CHWENO 1.0704, 1.2274 and 0.8055, 0.9285;
+  DWENO 0.8430, 0.9717 and 0.6364, 0.7333. From the dispersion limits they give 5.12 and 6.77 points per
+  wavelength for CHWENO against 6.47 and 8.57 for DWENO, a ratio 0.79 in 1-D and about 0.62 in 2-D, read as
+  a saving in grid points. *(Compiler check, not in the sources: $2\pi/0.9285=6.77$ and $2\pi/0.7333=8.57$; the
+  dissipation limits are the smaller wavenumbers in every case, so points per wavelength from them would be
+  larger, e.g. $2\pi/0.8055=7.80$ for CHWENO at 0.1 %; $0.79^2=0.62$.)* One sentence of §2.3 exchanges the two
+  parts again for the compact difference; the paper's own definition, Fig. 1 and Table 1 fix the reading above.
+  The analysis is of the linear operators only.
 
 ## Qualifications
 
@@ -685,3 +700,4 @@ is meant.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.2, Fig. 3: ADR of a Gaussian-RBF TENO.
 - [Wang et al. (2026)](/sources/wang-2026.md) — §§4.1–4.4, Eqs. (14)–(42), Figs. 4–6: Bloch-wave analysis of AMR closures, global spectra, SSP-RK3 CFL bound.
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.2, Fig. 9: ADR of WCNS3-MR-NN against WCNS3-JS, WCNS3-MR and linear WCNS3.
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §2.3, Fig. 1, Table 1: linear CHWENO, DWENO and compact-difference operators.

@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu sett
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-11-01T18:46:00Z
 ---
 
 # Rayleigh–Taylor instability
@@ -19,7 +19,7 @@ spike whose flanks are Kelvin–Helmholtz unstable. The test serves two
 purposes: the amount of secondary roll-up is a visual gauge of
 [numerical dissipation](/definitions/numerical-dissipation.md), and the
 exact left–right mirror symmetry of the data probes
-[symmetry preservation](/properties/symmetry-preservation.md). Twenty-five
+[symmetry preservation](/properties/symmetry-preservation.md). Twenty-six
 sources of the bundle discuss it (one of them only in a
 three-dimensional magnetized variant, one only in a three-dimensional
 two-species viscous variant, one only in a diffuse-interface variant,
@@ -48,7 +48,8 @@ The common data, printed by [Fu (2021)](/sources/fu-2021.md) §5.5.2,
 [Zhou et al. (2023)](/sources/zhou-2023.md) §5.7, Eq. (42),
 [Tang (2024)](/sources/tang-2024.md) §4.4.5, Eq. (37),
 [Chu et al. (2025a)](/sources/chu-2025.md) Example 6 (arXiv v1),
-[Huang et al. (2025a)](/sources/huang-2025.md) §5.7, Eqs. (49)–(50) and, for a
+[Huang et al. (2025a)](/sources/huang-2025.md) §5.7, Eqs. (49)–(50),
+[Zhang et al. (2026b)](/sources/zhang-2026-b.md) Example 3.12 and, for a
 particle method, [Jiang et al. (2024)](/sources/jiang-2024.md) §5.2.1, with
 $c=\sqrt{\gamma p/\rho}$:
 
@@ -97,7 +98,8 @@ gravity "acting in the positive direction of the y-axis".
 [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) Eq. (48) print the
 source $(0,0,\rho g,\rho v_2g)$ with $g=1$ (gravity magnitude, page-local) on the right-hand side, the
 same convention, and so do Huang et al. (2025a), Eq. (49), with the
-source $(0,0,\rho g,\rho v_2g)$, $g=1$. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
+source $(0,0,\rho g,\rho v_2g)$, $g=1$, and Zhang et al. (2026b), with the
+source $(0,0,g\rho,g\rho v_2)$, $g=1$. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
 "gravity source terms" without writing them, and
 [Liang et al. (2022)](/sources/liang-2022.md) and Tang, whose governing
 Eq. (32) is the homogeneous Euler system, do not write the gravity
@@ -158,6 +160,7 @@ width, as the common setup *(compiler check, not in the sources)*.
 | [Huang et al. (2025a)](/sources/huang-2025.md) §5.7 | $\mathbb P^2$ RKDG with the [TENO-THINC limiter](/methods/weno-limiter-dg.md) vs the Zhong–Shu simple WENO limiter, both in cells flagged by a TENO indicator; LLF, SSP-RK3, CFL 0.15 | $150\times600$, $300\times1200$ | 1.95; 43 contours 0.9–2.2 |
 | [Danis et al. (2025)](/sources/danis-2025.md) §5.8 | [tensor-train](/methods/tensor-train-weno.md) component-wise finite-difference WENO5-JS, global LF splitting, TT-SSPRK3 | $60\times240\times60$, $120\times480\times120$ | 1.95; 15 contours 0.952269–2.14589 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO5-JS; LLF, characteristic | $128\times512$, $256\times1024$ | 1.95; 20 contours 0.85–2.25 |
+| [Zhang et al. (2026b)](/sources/zhang-2026-b.md) Example 3.12 | sixth-order finite-volume [Hermite WENO](/methods/hermite-weno.md) with fixed (HWENO-FLW) or adaptive (HWENO-ALW-I, -II) linear weights vs the multi-resolution HWENO-MR; third-order TVD RK, CFL 0.6 | $240\times960$ | 1.95; 15 contours 0.952269–2.14589 |
 
 ## Findings across sources
 
@@ -228,6 +231,17 @@ tolerance as a limitation for such localized features (§5.8).
 Huang et al. (2025a) find "significantly richer small-scale structures"
 with their TENO-THINC limiter for DG than with the simple WENO limiter on
 both grids (Fig. 8).
+
+Zhang et al. (2026b) find that HWENO-ALW-I, whose big-stencil linear
+weight is switched among $10^2$, $10^4$ and $10^6$ by a smoothness
+ratio, captures the spikes and bubbles "exhibiting higher resolution
+than the other schemes" (Fig. 20). The case is also a robustness claim
+against the [multi-resolution](/methods/multi-resolution-weno.md)
+HWENO-MR of Li, Shu & Qiu, as they cite it: with its standard
+unnormalized linear weights $10^{l-1}$ on the level-$l$ polynomial,
+HWENO-MR "fails to simulate this problem correctly", and its plotted
+result uses the reduced weights $4^{l-1}$ ($l$ page-local). No plot of
+the failure is shown.
 
 **Cost of resolution on adaptive meshes.** Ramani & Shkoller compare
 their SAM-ALE run on $64\times128$ (target mesh concentrated at the
@@ -359,6 +373,12 @@ sources)*.
   the one printed by Fu (2021), Takagi et al., Ye et al., Li et al. (2022b),
   Chertock et al. and Wang et al. (2023b). The gravity term is not given, so the run actually computed
   cannot be reconstructed from the paper.
+- Zhang et al. (2026b) print the common initial data but write that
+  the top and bottom boundaries are set to $(2,0,0,1)$ and
+  $(1,0,0,2.5)$ "respectively", the reverse of what their own initial
+  data give at $y=1$ ($\rho=1$, $p=2.5$) and $y=0$ ($\rho=2$, $p=1$)
+  *(compiler check, not in the sources)*; read with the initial data,
+  the states are those of the common setup.
 - Hong et al. print the domain as "$[0,0.25]\times[0,1][0,1]$", a
   duplicated interval.
 - Li et al. (2022b) print the domain as "$[0,0.25]\times[0.1]$"; Eq. (45) and
@@ -400,3 +420,4 @@ sources)*.
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §4.2, Example 6, Remark 4.2, Figs. 4.9–4.10 (arXiv v1).
 - [Danis et al. (2025)](/sources/danis-2025.md) — §5.8, Eq. (42), Fig. 12 (arXiv v1).
 - [Huang et al. (2025a)](/sources/huang-2025.md) — §5.7, Eqs. (49)–(50), Fig. 8.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §3.2, Example 3.12, Fig. 20.

@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-11-01T18:40:00Z
 ---
 
 # Conservative finite-difference scheme
@@ -127,6 +127,23 @@ RBF-based WENO, and Li, Chen & Ren (2022a, Eqs. (2)–(4)) for linear six-point 
   Eqs. (2.2)–(2.3)) evolves $u$ and $v=\partial_xu$ with
   $\partial_tv+\partial_x\big(f'(u)v\big)=0$, both in flux-difference form, with one implicit function
   for $f$ and one for $f'(u)v$, both Lax–Friedrichs split ([Hermite WENO](/methods/hermite-weno.md)).
+- **Second derivatives.** For $\partial_tu+\partial_xf(u)=\partial_x^2g(u)$, [Yang & Qiu (2026)](/sources/yang-2026.md)
+  (§2.1, Eqs. (2.1)–(2.5)), following Liu, Shu & Zhang, write
+  $$\frac{du_i}{dt}=-\frac{\hat f_{i+1/2}-\hat f_{i-1/2}}{\Delta x}+\frac{\hat g_{i+1/2}-\hat g_{i-1/2}}{\Delta x^2},$$
+  with $\phi$ for the convective flux as above and a second implicit function $\Omega$ defined by a **double**
+  cell average, $g(u(x))=\frac1{\Delta x^2}\int_{x-\Delta x/2}^{x+\Delta x/2}\int_{\eta-\Delta x/2}^{\eta+\Delta x/2}\Omega(\theta)\,d\theta\,d\eta$
+  (page-local $\Omega$, $\Psi$). With $\Psi(x)=\Omega(x+\Delta x/2)-\Omega(x-\Delta x/2)$ the identity
+  $\partial_x^2g|_{x_i}=\big(\Psi(x_{i+1/2})-\Psi(x_{i-1/2})\big)/\Delta x^2$ is exact, so $\hat g_{i+1/2}$ must
+  approximate $\Psi(x_{i+1/2})$; if $\hat f=\phi+O(\Delta x^r)$ and $\hat g=\Psi+O(\Delta x^s)$ the scheme is of
+  order $r$ for $r\le s$. The diffusive flux is not split, since it "does not involve directional dependence".
+  Their Hermite reconstruction reaches fifth order for $\hat f$ and sixth for $\hat g$ with derivative data from a
+  compact difference ([Hermite WENO](/methods/hermite-weno.md)). *(Compiler check, not in the sources: $g$ is the
+  convolution of $\Omega$ with a hat kernel of half-width $\Delta x$ and unit mass, which is why one difference of
+  $\Psi$ gives the second derivative.)*
+- **Recalled framework.** Zhang et al. (2026a, §2, Eqs. (2.1)–(2.2)) recall the implicit-function construction
+  ("if $\hat f_{i+1/2}=\phi(x_{i+1/2})+O(\Delta x^r)$ the scheme is $r$th order") for the global Lax–Friedrichs split
+  fluxes of their hybrid multi-resolution scheme, which reconstructs $\hat f^\pm$ from the point fluxes read as cell
+  averages ([multi-resolution WENO](/methods/multi-resolution-weno.md), [hybrid schemes](/methods/hybrid-weno.md)).
 - **Positivity analysis.** Because the point values are cell averages of $\phi$, the forward-Euler
   update can be decomposed like a finite-volume one. Fan, Zhang & Qiu (2022, §3.2) build on this the
   sufficient positivity conditions of a finite-difference WENO scheme for the Navier–Stokes equations:
@@ -391,3 +408,5 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §2, Eqs. (14)–(15); §3.2, Eqs. (42)–(45); §4, Table 3; §5.
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2, Eqs. (5)–(7); §2.4, Eqs. (28)–(32); §3, Table 1.
 - [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §3.2–3.5, Eqs. (55)–(65); §4.1, Table 1 (arXiv v3).
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §2.1, Eqs. (2.1)–(2.6): double-average implicit function for $\partial_x^2g(u)$.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §2, Eqs. (2.1)–(2.3).

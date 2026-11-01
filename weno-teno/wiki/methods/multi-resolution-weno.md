@@ -3,9 +3,9 @@ type: Method
 title: "Multi-resolution WENO"
 description: "Multi-resolution WENO combines polynomials on nested central stencils, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy to ninth order, ghost candidates, the Wang et al. variant, scale-invariant MR-AWENO, WCNS, learned, shock-detector (MR-WENO-SD), hybrid, moving-mesh, Hermite, entropy-stable and steady-state uses."
 status: established
-aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR, MR-WCNS, hybrid MR-WCNS, GMR-WENO, ghost multi-resolution WENO, MMR-WENO, HMR-WENO, MR-WENO-SD, WCNS3-MR]
+aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR, MR-WCNS, hybrid MR-WCNS, GMR-WENO, ghost multi-resolution WENO, MMR-WENO, HMR-WENO, MR-WENO-SD, WCNS3-MR, SHMR-WENO, HWENO-MR]
 tags: [weno, cweno, reconstruction, finite-difference, multi-resolution]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Multi-resolution WENO
@@ -388,6 +388,34 @@ $\alpha_m=d_m\big(1+\tau/(\beta_m+\epsilon)\big)$ with
 $\tau=\big(\tfrac13\sum_{l=1}^3|\beta_4-\beta_l|\big)^2$, $\epsilon=10^{-10}$ (Eqs. (2.21)–(2.22)), and
 the reconstruction is the convex combination $\sum_m\omega_m\tilde P_m$ (Eq. (2.23)).
 
+## Recalled again as the nonlinear part of a hybrid (Zhang et al. 2026a)
+
+[Zhang et al. (2026a)](/sources/zhang-2026.md) (Zhang, Tao, Zhu & Qiu, §2.1, Eqs. (2.5)–(2.8)) reprint the
+fifth-order Zhu–Shu scheme in its original equivalent-polynomial form, the one Wang et al. (2021) criticize
+above: nested central polynomials of degree 0, 2, 4 on cell averages read from the split fluxes, unnormalized
+level-wise weights $1$, $10$, $100$ (normalized $\tfrac1{11},\tfrac{10}{11}$ and $\tfrac1{111},\tfrac{10}{111},\tfrac{100}{111}$),
+Jiang–Shu indicators on the equivalent polynomials, the base indicator of Li, Shu & Qiu (2022d) above
+(two one-sided slopes weighted by Z-type weights whose linear weights $\tfrac{10}{11}$, $\tfrac1{11}$ go to the
+smoother side, $\tau=|\beta_{\mathrm R}-\beta_{\mathrm L}|^2$, page-local), the global indicator of Step 4 and
+$\epsilon=10^{-10}$. It runs only in troubled cells of their hybrid SHMR-WENO; elsewhere the flux is the linear
+quartic value, without characteristic projection ([hybrid schemes](/methods/hybrid-weno.md),
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md)). On the 2-D $\gamma=3$ Euler accuracy test
+MR-WENO and both hybrids print identical errors (fifth order, $L^1$ $5.84\times10^{-8}$ at $200^2$; Table 1), and the
+hybrids take 0.42–0.78 of its CPU time on the shock tests (Table 3).
+
+**Two schemes called HMR-WENO.** Zhang et al. (2026a) call "HMR-WENO" this MR-WENO combined with the
+quartic-interpolant indicator of Wang, Tian, Zhu & Zhao (2023), and name their own scheme SHMR-WENO; Zuo & Zhu
+(2024b) use "HMR-WENO" for their hierarchical-bisection hybrid of the previous sections. The alias on this page
+refers to both; they are different schemes.
+
+**As comparator of Hermite schemes.** [Zhang et al. (2026b)](/sources/zhang-2026-b.md) compare their sixth-order
+Hermite reconstruction with the multi-resolution HWENO of Li, Shu & Qiu (their ref. [15], "HWENO-MR", linear
+weights $10^{l-1}$ at levels 2 to 4) and with Zhu & Shu's WENO-MR on double Mach reflection, where WENO-MR needs
+about the same number of unknowns and 4.1 times the CPU time for comparable resolution (Example 3.11). HWENO-MR
+with the standard weights "fails" on the Rayleigh–Taylor problem and runs with $4^{l-1}$ (Example 3.12; failure not
+plotted; compare *Linear weights and robustness* below; [Hermite WENO](/methods/hermite-weno.md)). Yang & Qiu (2026, §1) and
+Luo et al. (2026, §1) only cite multi-resolution WENO and HWENO among the arbitrary-weight reconstructions.
+
 ## Fixes at low and high order
 
 Balsara et al. (2024, §VII.a, App. D) found that the published **third-order** multi-resolution WENO
@@ -547,3 +575,7 @@ Subramanian (2023, §6.3) name the Zhu–Shu scheme as an efficient alternative 
 - [Fan & Wu (2024)](/sources/fan-2024.md) — §2.2.1, App. A (arXiv v1).
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §2.2, Eqs. (10)–(18), Remarks 1–2; §3, Eqs. (19)–(21): third-order WCNS3-MR and its candidate-weight form.
 - [Ren et al. (2025)](/sources/ren-2025.md) — §5.1.1, Eqs. (41)–(49), Tables 4–6, Figs. 32–34; §5.2, Table 7, Figs. 35–42: weights inside the numerical shock structure, MR-WENO-SD.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §1; §2.1, Eqs. (2.5)–(2.8); §3, Tables 1, 3: fifth-order MR-WENO recalled; the HMR-WENO name.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §3, Examples 3.11–3.12: HWENO-MR and WENO-MR as comparators.
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §1.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §1 (arXiv v1).

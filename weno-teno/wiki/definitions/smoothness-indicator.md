@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Smoothness indicators
@@ -507,6 +507,33 @@ the Jiang–Shu form over the target cell (Eq. (56); [Hermite WENO](/methods/her
   those of the quartic indicator of Wang et al. (2021) and Li, Duan & Tang (2022c) above.)* Their weights normalize the indicators by
   the stencil's mean absolute average for [scale invariance](/properties/scale-invariance.md)
   ([Hermite WENO](/methods/hermite-weno.md)).
+  For the same kind of quartic in finite differences (three point fluxes as cell averages and the two outer
+  derivative values), [Yang & Qiu (2026)](/sources/yang-2026.md) (§2.1, Eq. (2.11)) print, in the monomial
+  coefficients $\mathsf c_l$ of $X=(x-x_i)/\Delta x$,
+  $\beta_0=(\mathsf c_1+\tfrac14\mathsf c_3)^2+\tfrac{13}3(\mathsf c_2+\tfrac{63}{130}\mathsf c_4)^2+\tfrac{781}{20}\mathsf c_3^2+\tfrac{1421461}{2275}\mathsf c_4^2$,
+  the form of the compiler check above, and $\beta_k=\mathsf c_{k,1}^2$ for the linear candidates. For the
+  diffusive flux of the same paper the indicators integrate the derivatives of the flux-difference polynomial
+  $\varphi_k(x)=q_k(x+\Delta x/2)-q_k(x-\Delta x/2)$ over $[x_i,x_{i+1}]$, not over a cell, giving four squares with
+  prefactors $1,39,\tfrac{3124}5,\tfrac{1421461}{91}$ for the quintic and $4\mathsf c_{k,2}^2$ for the quadratics
+  (Eqs. (2.17)–(2.18); page-local $q_k$, $\varphi_k$, coefficients $\mathsf c_{k,l}$).
+- **Derivative-average Hermite data.** [Zhang et al. (2026b)](/sources/zhang-2026-b.md) (§2.1.1–2.1.2, Eq. (2.10))
+  use the Jiang–Shu form on a quintic fitted to three cell averages and three derivative averages, and print its
+  expansions: with $u'\ne0$, $\beta_{1,2}=u'^2\Delta x^2+O(\Delta x^3)$ for the linear candidates and
+  $\beta_3=u'^2\Delta x^2+O(\Delta x^4)$; with $u'=0$, $\beta_{1,2}=\tfrac14u''^2\Delta x^4+O(\Delta x^5)$ and
+  $\beta_3=\tfrac{13}{12}u''^2\Delta x^4+O(\Delta x^6)$, so that the squared mean difference
+  $\tau=O(\Delta x^6)$ or $O(\Delta x^8)$ (Remark 2). For a step of height $C_d$ (page-local) inside the cell, at
+  $x_{i-1/2}+a\Delta x$, they give $\beta_1=(1-a)^2C_d^2$, $\beta_2=a^2C_d^2$ and
+  $\beta_3=\tfrac{3898389-2158528a+2158528a^2}{3360}C_d^2$ (Case 4.1, p. 8). In 2-D each derivative of order $|\alpha|$ is weighted by $(\Delta x\Delta y)^{|\alpha|-1}$.
+  The ratio $\sqrt\tau/\tfrac12(\beta_1+\beta_2)$ of these indicators drives their adaptive linear weights
+  ([Hermite WENO](/methods/hermite-weno.md)).
+- **Barycentre derivatives on triangles.** [Luo et al. (2026)](/sources/luo-2026.md) (§2.2, Step 4, Eq. (2.8)),
+  after Zhao & Qiu, replace the cell integral by the derivatives at the barycentre $\mathbf x_{K_0}$,
+  $\beta_\ell=\sum_{1\le|s|\le k}|K_0|^{|s|}\big(\partial^sp_\ell(\mathbf x_{K_0})\big)^2$ (page-local multi-index
+  $s$, $k$ the degree). *(Compiler check, not in the sources: $|K_0|^{|s|}$ times a squared derivative of order
+  $|s|$ scales like the squared data, as the Jiang–Shu form does.)*
+- **Two-cell base indicator, again.** Zhang et al. (2026a, §2.1, Eq. (2.7)) reuse for the constant of
+  multi-resolution WENO the weighted one-sided slopes of Li, Shu & Qiu (2022d) above
+  ([multi-resolution WENO](/methods/multi-resolution-weno.md)).
 - **Central candidates.** In third-order [CWENO](/methods/cweno.md), Puppo et al. (2023, Eq. (9))
   compute the central indicator from the coefficients of the optimal parabola
   $\mathsf a+\mathsf b(x-x_i)+\mathsf c(x-x_i)^2$, not from the central polynomial, and the one-sided
@@ -768,3 +795,7 @@ Several sources use "smoothness indicator" for quantities of a different kind:
 - [Huang et al. (2025a)](/sources/huang-2025.md) — §3.1, Eqs. (11)–(14); §3.2.1, Eqs. (15)–(17): DG-polynomial indicator over the target cell.
 - [Chen & Chen (2026)](/sources/chen-2026.md) — §2.3.1, Eqs. (19)–(20); §2.3.2, Eqs. (23)–(25): TENO measure without $\tau$, Ren et al.'s first-order indicator.
 - [Liang et al. (2025)](/sources/liang-2025.md) — §1, §3.3.3–3.3.4, Eq. (22): over-sensitivity of high-order differences, unstructured TENO measure.
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §2.1, Eqs. (2.10)–(2.11), (2.17)–(2.18): Hermite indicators for convective and diffusive fluxes.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §2.1.1–2.1.2, Eq. (2.10), Remark 2, Cases 1–4; §2.2.1: derivative-average Hermite indicators and their expansions.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §2.2, Step 4, Eq. (2.8): barycentre indicators on triangles (arXiv v1).
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §2.1, Eq. (2.7): two-cell base indicator.

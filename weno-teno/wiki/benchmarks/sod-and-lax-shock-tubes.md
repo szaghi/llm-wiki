@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-11-01T18:55:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -186,6 +186,9 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Wang et al. (2023a)](/sources/wang-2023.md) §4.2 | not printed | 200 | 1.3 | LLF-M vs LLF fluxes in A-WENO; also data scaled by $10^{-7}$ |
 | [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.7 | $[-5,5]$, outflow | 200 cells | 1.3 | local [COS(DG)](/methods/cos-dg.md) vs seven DG limiters with the KXRCF indicator, OFDG and OEDG; Zhang–Shu positivity limiter |
 | [Wang et al. (2026)](/sources/wang-2026.md) §6.3.2 | not printed | two-level AMR | 0.1 | regridding every 10 steps; AMR-WENO vs AMR-HybridWENO |
+| [Zhang et al. (2026a)](/sources/zhang-2026.md) Ex. 3.3 | $[-0.5,0.5]$, inflow left, outflow right | 200 | 0.16 | finite-difference [hybrid](/methods/hybrid-weno.md) SHMR-WENO vs MR-WENO and their HMR-WENO; troubled cells in the $x$–$t$ plane |
+| [Zhang et al. (2026b)](/sources/zhang-2026-b.md) Ex. 3.6 | $[-0.5,0.5]$, inflow left, outflow right | 200 | 0.16 | sixth-order finite-volume [Hermite WENO](/methods/hermite-weno.md) with fixed or adaptive linear weights vs HWENO-MR; also data scaled to $(\zeta\rho,v,\zeta p)$, $\zeta\in\{10^{-6},10^6\}$ (page-local) |
+| [Luo et al. (2026)](/sources/luo-2026.md) Ex. 3.4 | strip $(-0.5,0.5)\times(-0.03,0.03)$, inflow/outflow in $x$, reflective in $y$ | nonuniform triangles, 100 edges in $x$ and 6 in $y$, CFL 0.5 | 0.16 | third-order [ADER](/methods/ader-scheme.md)-HWENO vs RK-HWENO; density along $y=0$ (arXiv v1) |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
 at $t=0.13$ under the scaling $x\mapsto(x+5)/10$, $t\mapsto t/10$
@@ -420,7 +423,25 @@ MMR-WENO "perform better overall" than the SHUS-WENO hybrid on Lax; both
 indicators detect the discontinuities, and theirs is called "more
 accurate" from the troubled-cell maps (Ex. 3.4, Figs. 3.4–3.5). Their
 MMR/MR CPU-time ratios are 36.8 %, 31.2 % and 35.7 % at orders 5, 7, 9
-(Table 3.1).
+(Table 3.1). Zhang et al. (2026a) find "equally good solutions" on Lax
+with MR-WENO, their hybrid SHMR-WENO and the hybrid they call HMR-WENO
+(MR-WENO with Wang, Tian, Zhu & Zhao's quartic indicator, as they cite
+it; not Zuo & Zhu (2024b)'s HMR-WENO) (Ex. 3.3, Fig. 3). SHMR-WENO's
+quadratic extreme-point test flags 5.67 % of the cells against 7.49 %
+(Table 2), and the run costs 0.3603 s against 0.3988 s and 0.6613 s for
+MR-WENO, ratios 0.54 and 0.60 (Table 3, no hardware stated); see
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md).
+
+**Hermite WENO with adaptive linear weights or one-stage time
+stepping.** Zhang et al. (2026b) find on the zoom $x\in[0.2,0.45]$ that
+the multi-resolution HWENO-MR and their HWENO-ALW-I, whose big-stencil
+linear weight is switched among $10^2$, $10^4$ and $10^6$ by a smoothness
+ratio, are closer to the exact solution than HWENO-FLW (fixed weights)
+and HWENO-ALW-II (two-level switch), and that HWENO-ALW-I with the weight
+sets $\{10^2,10^5,10^8\}$ and $\{10^1,10^5,10^9\}$ has "good resolution"
+too (Ex. 3.6, Figs. 9–10). Luo et al. (2026) find their third-order
+ADER-HWENO on triangles "comparable" to the Runge–Kutta moment-based
+RK-HWENO (Ex. 3.4, Fig. 3.5).
 
 **Robustness of Hermite WENO at high Reynolds number.** Fan, Zhang &
 Qiu run the Lax tube for the compressible Navier–Stokes equations. A
@@ -469,7 +490,15 @@ and D-type weights essentially identical and non-oscillatory on Lax and
 the [123 problem](/benchmarks/double-rarefaction-problem.md) (Fig. 7).
 Deng recalls, from an earlier study, that
 WENO-Z with $\epsilon=10^{-12}$ and WENO-JS with $\epsilon=10^{-6}$
-oscillate on Sod scaled by $\lambda=10^{-7}$ (§1). See [scale invariance](/properties/scale-invariance.md).
+oscillate on Sod scaled by $\lambda=10^{-7}$ (§1). Zhang et al. (2026b)
+scale the Lax density and pressure by $\zeta=10^{-6}$ and $10^6$, so that
+the exact density is $\zeta$ times the unscaled one: at $\zeta=10^{-6}$
+their HWENO schemes "without scale invariance have significant
+oscillations", while with their scale-invariant WENO-Z-type weights,
+whose denominator multiplies $\beta_k$ and $\epsilon$ by powers of the
+squared mean of $\lvert\bar u\rvert$ on the stencil, they have "almost
+no oscillations"; at $\zeta=10^6$ all are
+non-oscillatory (Ex. 3.6, Fig. 11). See [scale invariance](/properties/scale-invariance.md).
 
 **Learned and selected reconstructions.** Fan et al. (2025b) find their
 three-point WCNS3-MR-NN comparable in resolution to the five-point
@@ -868,6 +897,9 @@ single-gas Euler equations.
 - Danis et al. compute full-tensor reference timings only up to
   $160^3$ and extrapolate them to $320^3$ and $640^3$; their "1000 times"
   speedup rests on the extrapolation.
+- "Luo et al." without a year on this page is Luo, Absillis & Nourgaliev
+  (2021); [Luo et al. (2026)](/sources/luo-2026.md) is always written
+  with its year.
 - Cao et al. (2026) describe their multi-scale Lax data as the Lax
   setup combined with "a scaled version (by $10^{-4}$)"; the printed
   states are the Lax states scaled by $10^2$ and by $10^{-2}$, whose
@@ -966,3 +998,6 @@ single-gas Euler equations.
 - [Cao et al. (2026)](/sources/cao-2026.md) — Exs. 6.7–6.8, Figs. 7–9.
 - [Liu et al. (2026)](/sources/liu-2026.md) — §5.1.3, Eq. (5.9), Fig. 5.9 (arXiv v1).
 - [Wang et al. (2026)](/sources/wang-2026.md) — §6.3.1–6.3.2, Figs. 13–14.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §3.2, Ex. 3.3, Fig. 3, Tables 2–3.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §3.2, Ex. 3.6, Figs. 9–11.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §3, Ex. 3.4, Fig. 3.5 (arXiv v1).

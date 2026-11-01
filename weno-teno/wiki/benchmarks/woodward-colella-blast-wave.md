@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Woodward–Colella interacting blast waves"
-description: "One-dimensional Euler problem of two strong blast waves between reflecting walls, pressures 1000, 0.01 and 100, run to t=0.038; a one-dimensional robustness test whose resolution is measured by the resolution of the density peaks and contacts after the blasts collide, also run as a two-dimensional strip on triangles."
+description: "One-dimensional Euler problem of two strong blast waves between reflecting walls, pressures 1000, 0.01 and 100, run to t=0.038; a one-dimensional robustness test whose resolution is measured by the resolution of the density peaks and contacts after the blasts collide, also run as a two-dimensional strip on triangles or on a moving quadrilateral mesh."
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-30T08:01:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -18,7 +18,7 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Forty-five sources of the
+resolution against a fine-grid reference. Forty-nine sources of the
 bundle run it, the earliest Harten et al. (1987a), and three more run
 its left half as a single blast.
 
@@ -31,7 +31,8 @@ Wang et al. (2021), Bezgin et al., Fan et al. (2023), Hong, Ye & Ye, Hu,
 Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren, Liang et al., Zhou et
 al., Kolluru et al., Lin & Zhu, Zhang & Zhu, Zuo & Zhu (2024b), Chu et al. (2025a), Deng, Jiang & Yan, Fan et al. (2025a), Duan, Barsukow &
 Klingenberg, Fan et al. (2025b), Huang et al. (2025a), Wang et al.
-(2023a) and Cao et al. (2026) (Li et al. (2022b) differ in one value and the two Chamarthi papers in the position of
+(2023a), Cao et al. (2026), Zhang et al. (2026a), Zhang et al. (2026b),
+Luo et al. (2026) and Cai et al. (2026) (Li et al. (2022b) differ in one value and the two Chamarthi papers in the position of
 the right break, see Qualifications),
 in $(\rho,v,p)$ with $\gamma=1.4$:
 
@@ -92,6 +93,10 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (49) | 800; boundary conditions not stated | — | three-point WCNS3-MR-NN ([learned weights](/methods/learned-weno-weights.md)) vs WCNS3-JS, WCNS3-MR, WCNS5-JS |
 | [Wang et al. (2023a)](/sources/wang-2023.md) §4.3, Eq. (25) | 600, CFL 0.45 | AWENO with the LLF flux, 4000 | fifth-order [A-WENO](/methods/alternative-weno.md) with affine-invariant Z-type weights, adaptive-diffusion LLF-M flux vs [LLF](/methods/lax-friedrichs-flux.md) |
 | [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.9 | 400 cells, third order ($\mathbb P^2$), SSP-RK3 | LF scheme, 100,000 cells | global [COS(DG)](/methods/cos-dg.md) vs TVB ($M=100$), moment, MP, MMP, WENO and simple-WENO DG limiters with the KXRCF indicator, OFDG and [OEDG](/methods/oedg.md); Zhang–Shu positivity limiter |
+| [Zhang et al. (2026a)](/sources/zhang-2026.md) Ex. 3.5 | 800, TVD-RK3, CFL 0.6 | FD WENO5, 16,000 | finite-difference [hybrid](/methods/hybrid-weno.md) SHMR-WENO vs [MR-WENO](/methods/multi-resolution-weno.md) and the hybrid they call HMR-WENO (MR-WENO with the indicator of Wang, Tian, Zhu & Zhao, not Zuo & Zhu (2024b)'s HMR-WENO) |
+| [Zhang et al. (2026b)](/sources/zhang-2026-b.md) Ex. 3.8 | 800, TVD-RK3, CFL 0.6 | FD WENO5, 16,000 | sixth-order finite-volume [Hermite WENO](/methods/hermite-weno.md) HWENO-FLW, HWENO-ALW-I, HWENO-ALW-II vs HWENO-MR |
+| [Luo et al. (2026)](/sources/luo-2026.md) Ex. 3.6 | strip $(0,1)\times(-0.0075,0.0075)$, nonuniform triangles, 400 edges in $x$ and 6 in $y$, CFL 0.5 | FD WENO5, 81,920 | third-order [ADER](/methods/ader-scheme.md)-HWENO vs RK-HWENO (arXiv v1) |
+| [Cai et al. (2026)](/sources/cai-2026.md) §5.3.1 | strip $[0,1]$, $400\times10$, ten cells high | not stated in the text | rezoning [moving mesh](/methods/adaptive-moving-mesh.md) with ALE rezoning (TPE(2)-ol) vs the same scheme on a fixed mesh (arXiv v1) |
 
 ## Findings across sources
 
@@ -269,6 +274,27 @@ costs: 5274.56 s for ALW-MR-WENO-5 against 8343.94 s for MR-WENO-5
 (ratio 0.63; Lin & Zhu, Table 3.1, hardware not stated), and 1.3388,
 2.9974 and 7.9915 s for HMR-WENO against 3.7314, 6.6907 and 10.310 s for
 MR-WENO at orders 5, 7, 9 (Zuo & Zhu 2024b, Table 3.1, a laptop).
+Zhang et al. (2026a) find all of MR-WENO, their SHMR-WENO, whose
+quadratic extreme-point test switches MR-WENO on only in troubled
+cells, and their HMR-WENO comparator with good resolution, the two
+hybrids "closer to the reference solution at $x\in[0.75,0.8]$" than
+MR-WENO (Ex. 3.5, Fig. 5); SHMR-WENO flags 3.42 % of the cells against
+4.54 % (Table 2) and costs 12.815 s against 14.347 s and 26.381 s for
+MR-WENO, ratios 0.49 and 0.54 (Table 3, no hardware stated). The name
+HMR-WENO here is theirs for MR-WENO with Wang, Tian, Zhu & Zhao's
+indicator, as they cite it, a different scheme from Zuo & Zhu (2024b)'s
+HMR-WENO above.
+
+**Hermite WENO.** Zhang et al. (2026b) find all four sixth-order
+finite-volume HWENO variants with "good resolution": HWENO-ALW-I,
+whose big-stencil linear weight is switched among $10^2$, $10^4$ and
+$10^6$ by a smoothness ratio, is best near the transitional region
+$x\in[0.56,0.62]$, while the multi-resolution HWENO-MR "achieves
+slightly higher peak values" at $x\in[0.75,0.8]$; the weight sets
+$\{10^2,10^5,10^8\}$ and $\{10^1,10^5,10^9\}$ "perform well" too
+(Ex. 3.8, Figs. 14–15). Luo et al. (2026) find their one-stage
+ADER-HWENO on triangles of "higher resolution" than the Runge–Kutta
+moment-based RK-HWENO (Ex. 3.6, Fig. 3.7).
 
 **Bound preservation, limiters and learned weights.** Duan et al.'s
 Active Flux variants all blow up without bound-preserving limiting
@@ -330,7 +356,7 @@ than MUSCL-THINC-BVD at the strong contact (Fig. 7). The data also
 appear exactly in their training set (Table 6), so the run is not an
 out-of-sample test *(compiler check, not in the sources)*; see [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md).
 
-## Two-dimensional strip on triangles
+## Two-dimensional strips
 
 Zhao et al. §4.5 run the same data on $[0,1]\times[0,0.25]$ with
 reflecting boundaries on all sides, on a triangular mesh with $h=1/400$,
@@ -338,7 +364,20 @@ CFL 0.8, $t=0.038$, with their fourth-order compact gas-kinetic scheme,
 and plot density and velocity along the horizontal centreline against
 a reference, as a robustness test on unstructured meshes (Fig. 8). Lin
 & Zhu's Case 3.6 is likewise a thin strip of triangles, 401 vertices
-along $[0,1]$ and 11 across $[-0.0125,0.0125]$, run as a 1D problem.
+along $[0,1]$ and 11 across $[-0.0125,0.0125]$, run as a 1D problem, and
+so is Luo et al. (2026)'s Ex. 3.6, on $(0,1)\times(-0.0075,0.0075)$ with
+400 edges in $x$ and 6 in $y$.
+
+[Cai et al. (2026)](/sources/cai-2026.md) §5.3.1 run the data on a
+quadrilateral strip $[0,1]\times[-5\Delta x,5\Delta x]$, $400\times10$
+cells, reflecting at $x=0$ and $x=1$, to test whether their evolved
+geometric moments keep the resolution gain of an adaptive mesh: with ALE
+rezoning (a Lagrangian step followed by mesh optimization) their
+TPE(2)-ol [moving-mesh](/methods/adaptive-moving-mesh.md) scheme
+captures the discontinuities without spurious oscillations and resolves
+the structures in the zoom-in views with "significantly higher
+resolution" than the same scheme on a fixed mesh (Fig. 4). See
+[transport polynomial exactness](/properties/transport-polynomial-exactness.md).
 
 ## Scaled variant
 
@@ -451,3 +490,7 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Huang et al. (2025b)](/sources/huang-2025-b.md) — §4.2.3, Table 6, Fig. 7.
 - [Wang et al. (2023a)](/sources/wang-2023.md) — §4.3, Eq. (25), Figs. 7–8.
 - [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.9, Figs. 1, 10, Table 3.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §3.2, Ex. 3.5, Fig. 5, Tables 2–3.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §3.2, Ex. 3.8, Figs. 14–15.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §3, Ex. 3.6, Fig. 3.7 (arXiv v1).
+- [Cai et al. (2026)](/sources/cai-2026.md) — §5.3, §5.3.1, Fig. 4 (arXiv v1).

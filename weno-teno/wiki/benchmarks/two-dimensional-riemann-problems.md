@@ -5,7 +5,7 @@ description: "Four-quadrant Riemann problems of the two-dimensional Euler equati
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-11-01T18:55:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -225,6 +225,12 @@ boundaries, $400\times400$, $T=0.25$, local Mach number up to 1.14,
 with their second-order linearized all-Mach IMEX schemes at
 $\varepsilon=1$. Cao et al. (2026)'s Problem 3 has the decimal states of
 the table above, to $t=0.25$.
+[Cai et al. (2026)](/sources/cai-2026.md) §5.4.1 (arXiv v1), without a
+configuration number, print the same decimal states, split at
+$(0.5,0.5)$ of $[0,1]^2$, outflow boundaries, $400\times400$, $t=0.25$,
+23 density contours, on a mesh whose vertices are randomly displaced at
+every time step ("two stationary contact discontinuities and two
+shocks").
 
 ## Four-contact configurations
 
@@ -250,6 +256,10 @@ $300^2$ and $400^2$ elements: Li, Duan & Tang's problem shifted by $-0.5$
 [de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.3, case 3,
 print these same four states, quadrant by quadrant, as Lax–Liu
 configuration 6, on $(0,1)^2$ with $512^2$ cells.
+[Zhang et al. (2026b)](/sources/zhang-2026-b.md) Example 3.10 print them
+too, quadrant by quadrant and without a configuration number, on
+$[0,1]^2$ split at $(0.5,0.5)$, non-reflecting boundaries,
+$400\times400$, $t=0.8$, 30 density contours from 0.2 to 2.4.
 
 [Wang et al. (2023a)](/sources/wang-2023.md) §4.7 also call their
 second problem Configuration 6, on $[0,1]^2$ split at $(0.5,0.5)$,
@@ -406,10 +416,36 @@ takes 2 min 37 s. On the four-contact problem MM-WENOMR on $200^2$
 7.6 % more than MM-WENOJS, and resolves more small-scale roll-up
 (Ex. 5.3–5.4, Table 5.1).
 
+Cai et al. (2026) run configuration 12 on a mesh whose interior
+vertices are displaced at random at every time step, by up to a
+quarter of a cell width (their $C_{\mathrm r}=0.5$ times a variable uniform
+on $(-0.5,0.5)$, *compiler check, not in the sources*), an extreme
+distortion with a discontinuous mesh velocity, to see
+how many remapping pseudo-time levels $N_\ell$ (page-local) per step
+their rezoning [moving-mesh](/methods/adaptive-moving-mesh.md) scheme
+needs (§5.4.1, Fig. 6). The scheme with evolved geometric moments and
+[transport polynomial
+exactness](/properties/transport-polynomial-exactness.md) is already at
+$N_\ell=2$ comparable to the scheme with exact moments (NonGCL) at
+$N_\ell=6$, and changes little with more levels; NonGCL shows
+"significant distortion and loss of detail" at $N_\ell=2$, mitigated
+only at $N_\ell=6$. The comparison is visual, and the mesh motion is
+random, not solution-adaptive. See
+[conservative remapping](/methods/conservative-remapping.md).
+
 **Discontinuity location.** Fu (2023) uses configuration 12 to show
 that the TENO stencil-selection flags locate the discontinuities, the
 basis of the hybrid TENO scheme with a TENO-based indicator (§3.4,
 Fig. 7).
+
+**Adaptive linear weights in Hermite WENO.** On the four-contact
+states, Zhang et al. (2026b) find that their sixth-order finite-volume
+[Hermite WENO](/methods/hermite-weno.md) with adaptive linear weights
+HWENO-ALW-I, whose big-stencil weight is switched among $10^2$, $10^4$
+and $10^6$ by a smoothness ratio, "resolves finer structures" than the
+same reconstruction with fixed weights (HWENO-FLW), with the two-level
+switch HWENO-ALW-II, and than the multi-resolution HWENO-MR (Ex. 3.10,
+Fig. 17).
 
 **Scale invariance.** Peng, Sun & Wu multiply both configurations by a
 factor $\lambda=100$ (page-local symbol): the OFDG damping grows, they state, to "$\lambda^2$ times
@@ -645,6 +681,8 @@ entropy-stable DG with oscillation-eliminating damping gives results
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.6, Fig. 5.12.
 - [Pazner (2021)](/sources/pazner-2021.md) — §5.5–5.6, Figs. 11–12 (arXiv v1).
 - [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Ex. 5.3–5.4, Table 5.1 (arXiv v1).
+- [Cai et al. (2026)](/sources/cai-2026.md) — §5.4, §5.4.1, Fig. 6 (arXiv v1).
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §3.2, Example 3.10, Fig. 17.
 - [Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md) — §5.2, Figs. 4–5 (arXiv v1).
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.1, Eq. (5.7), Fig. 12.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Exs. 4.6–4.7, Figs. 10–11 (arXiv v1).

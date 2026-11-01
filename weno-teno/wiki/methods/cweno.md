@@ -5,7 +5,7 @@ description: "Central WENO schemes subtract weighted low-order candidates from o
 status: established
 aliases: [CWENO, central WENO, CWENOZ, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit, ALW-MR-WENO, adaptive linear weights]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-30T08:44:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Central WENO (CWENO)
@@ -262,6 +262,24 @@ application of only two unequal-sized stencils are obtained on triangular meshes
 sources: the unstructured CWENO above combines a central stencil with several directional ones, so the claim
 rests on the count "only two".)*
 
+**Two meanings of "adaptive linear weights".** Lin & Zhu's ALW-MR-WENO above lowers the high-order weight *a
+posteriori*, by testing tentative boundary values. [Zhang et al. (2026b)](/sources/zhang-2026-b.md)
+(§2.1.2–2.1.3) use the same name, HWENO-ALW, for an *a priori* switch of the unnormalized big weight among
+$10^2$, $10^4$, $10^6$ by the ratio of $\sqrt\tau$ to the mean small-stencil indicator, inside a sixth-order
+Hermite CWENO combination of one quintic and two linear polynomials (Remark 7 sets it against the criteria of
+Lin et al. (2023) and [Lin & Zhu (2024)](/sources/lin-2024-b.md), its refs. [17, 18], "based on both point values
+and cell averages"); it is recorded on [Hermite WENO](/methods/hermite-weno.md). The two are different rules
+with one name.
+
+**Hermite data.** The CWENO combination with arbitrary positive linear weights is the common skeleton of the
+recent Hermite schemes: the quintic plus two linear polynomials of Zhang et al. (2026b, Eq. (2.14)), the quartic
+plus two linear polynomials of the finite-difference CHWENO of [Yang & Qiu (2026)](/sources/yang-2026.md)
+(Eq. (2.12), weights $(0.98,0.01,0.01)$), and on triangles the quadratic plus three linear polynomials of
+[Luo et al. (2026)](/sources/luo-2026.md) (Eqs. (2.7), (2.10), weights $(0.94,0.02,0.02,0.02)$), whose identity
+(2.7) the authors note "holds for any" weights with a nonzero big weight. Luo et al. differentiate the same
+combination to obtain the space derivatives that their ADER step needs, so one set of nonlinear weights serves
+values and derivatives ([Hermite WENO](/methods/hermite-weno.md), [ADER schemes](/methods/ader-scheme.md)).
+
 ## Position in the WENO family
 
 - **Stability before accuracy.** Balsara et al. (2024, §I) place CWENO in a trend of scheme design
@@ -365,3 +383,6 @@ cognate unequal-stencil approaches when introducing TENO-AA
 - [Gu et al. (2023)](/sources/gu-2023.md) — §2.4.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.1.2, Eqs. (23)–(28); §3.2.2; §3.3; §4.3–4.5, §4.8–4.9, Tables 6–7.
 - [Lin & Zhu (2024)](/sources/lin-2024-b.md) — Abstract; §1; §2, Steps 1–6, Eqs. (2.2)–(2.17); §3, Tables 3.1–3.3, Cases 3.1–3.11.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §2.1.1–2.1.3, Eqs. (2.14)–(2.16); Remark 7.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §2.2, Steps 3 and 6, Eqs. (2.7), (2.10) (arXiv v1).
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §2.1, Eq. (2.12).

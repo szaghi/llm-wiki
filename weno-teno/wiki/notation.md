@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-01T18:57:00Z
 ---
 
 # Notation registry
@@ -263,6 +263,10 @@ uses the same letter.
 | $\Delta t_{\mathrm{FE}}$ | step bound under which forward Euler $u+\Delta t\,\mathcal L(u)$ is TVD (or bound preserving); Shu & Osher's $\lambda_0$ | SSP Runge–Kutta; Source page shu-1988 |
 | $\eta_{\mathrm b}$ | blending parameter of the optimized TENO background $\eta_{\mathrm b}g^{(1)}+(1-\eta_{\mathrm b})g^{(2)}$ of two order-$(K-1)$ sub-schemes (Fu et al. 2016) | TENO, approximate dispersion relation; Source pages fu-2016, hong-2022 |
 | $\mu_{\mathrm{ZS}}$, $\mathsf a_{\mathrm{PS}}$, $M_{\mathrm d}$ | Zhang & Shu (2010b)'s 2D blending denominator $a^{(1)}\frac{\Delta t}{\Delta x}+a^{(2)}\frac{\Delta t}{\Delta y}$, Perthame & Shu's parameter $\mathsf a_{\mathrm{PS}}\in(0,1]$, and the distance $M_{\mathrm d}$ of the exact solution from the boundary of $G^\varepsilon$ in the limiter's accuracy assumption | optimal cell-average decomposition ($\mu_{\mathrm{ZS}}$); bound preservation ($\mathsf a_{\mathrm{PS}}$); Zhang–Shu limiter ($M_{\mathrm d}$); Source page zhang-2010-b (all three) |
+| $\tau_{\mathrm p}$, $\Delta\tau_{\mathrm p}$, $N_\ell$ | pseudo-time of an advection-based remap, its step, and the number of pseudo-time levels per remap | conservative remapping, transport polynomial exactness, adaptive moving mesh, free-stream preservation, SSP Runge–Kutta, density-wave advection, two-dimensional Riemann problems |
+| $v_{\mathrm g}$ | mesh (grid) velocity of a moving or rezoned mesh | conservative remapping, transport polynomial exactness |
+| $\mathfrak M_{s,r}$, $\widetilde{\mathfrak M}_{s,r}$ | exact and evolved geometric moments of a cell | transport polynomial exactness, conservative remapping |
+| $u_{\mathrm{hp}}$ | data-scale factor that makes Z-type HWENO weights scale-invariant | Hermite WENO, scale invariance, WENO-Z |
 
 $\mathcal T$, $\mathcal C$, $\zeta$ and $\mu$ carry two family meanings
 (THINC/shift, non-conservative/convective matrix, Z+/characteristic

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Buckley–Leverett problem"
-description: "Scalar conservation law with the non-convex S-shaped flux used to model porous-media flow, run as Riemann or step data against fine reference solutions; the founding ENO and WENO papers use its step data to show convergence to the entropy solution, later sources to test subcell-limited DG, implicit CWENO, a multi-block WCNS and a bound-preserving PAMPA scheme."
+description: "Scalar conservation law with the non-convex S-shaped flux used to model porous-media flow, run as Riemann or step data against fine reference solutions; the founding ENO and WENO papers use its step data to show convergence to the entropy solution, later sources to test limited DG, implicit CWENO, WCNS and PAMPA schemes and, with degenerate viscosity, a compact HWENO scheme."
 status: established
 aliases: [Buckley–Leverett equation, Buckley–Leverett test]
-tags: [benchmark, limiting, cweno, dg]
-timestamp: 2026-10-30T07:58:00Z
+tags: [benchmark, limiting, cweno, dg, weno]
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Buckley–Leverett problem
@@ -40,12 +40,32 @@ a fine reference solution.
 | [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) §4.4, Eqs. (38)–(39) | $1/3$ | $u_0=0.5$ on $-0.25\le x\le0.25$, $0$ otherwise | "periodic domain $\Omega=[0,1]$" | 100 cells, $\Delta t=1.1h$ and $4.4h$ | 0.085 |
 | [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 3 | $1/4$ (printed as $4u^2/(4u^2+(1-u)^2)$) | $u_0=1$ on $[-\tfrac12,0]$, $0$ otherwise | $[-1,1]$, periodic | 200 cells, SSP-RK3, CFL 0.2 | 0.4 |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.3, Eqs. (30)–(31) | $1/4$ (printed as $4u^2/(4u^2+(1-u)^2)$) | $u_0=1$ on $[-0.5,1]$, $0$ elsewhere | $[-1,1]$, two blocks with interface at $x=0.5$ | 160 points on $[-1,0.5]$, 80 on $[0.5,1]$; reference: 4000 points, single block | 0.31, 0.4 |
+| [Yang & Qiu (2026)](/sources/yang-2026.md) Ex. 5, Eqs. (3.36)–(3.42), viscous | $1$, and the gravity flux $f(u)\big(1-5(1-u)^2\big)$ | (3.41) $u_0=1-3x$ on $[0,\tfrac13]$, $0$ on $(\tfrac13,1]$; (3.42) $u_0=0$ for $x<1-1/\sqrt2$, $1$ otherwise | $[0,1]$, inflow/outflow | $N_x=200$; reference CHWENO with $N_x=1000$; $C_{cfl}=0.15$, for (3.42) $\Delta t=10^{-4}$ | (3.41): 0.2, 0.5; (3.42): 0.1, 0.2 |
+| [Yang & Qiu (2026)](/sources/yang-2026.md) Ex. 11, Eqs. (3.52)–(3.54), 2D viscous | $1$ in $x$; gravity flux in $y$ | $u_0=1$ in $x^2+y^2<0.5$, $0$ otherwise | $[-1.5,1.5]^2$, homogeneous Dirichlet | $200\times200$, $C_{cfl}=0.15$ | 0.25, 0.5 |
 
 Puppo et al. take the setup from Arbogast et al. ("the same setup as
 in [3]"); $h$ is their cell width. With $M_{\mathrm{BL}}=1/3$ the largest
 characteristic speed is $\max f'\approx2.21$ (at $u\approx0.33$), so the
 two time steps correspond to Courant numbers of about 2.4 and 9.7
 *(compiler check, not in the sources)*.
+
+**The viscous, degenerate variant.** Yang & Qiu (2026) run the
+equation with a degenerate diffusion term,
+$\partial_tu+\partial_xf(u)=\varepsilon\,\partial_x\big(\nu_{\mathrm{BL}}(u)\partial_xu\big)$,
+$\varepsilon=0.01$, with $\nu_{\mathrm{BL}}(u)=4u(1-u)$ on $[0,1]$ and $0$
+otherwise (page-local symbol), "a prototype model for oil reservoir
+simulations involving two-phase flow" (Ex. 5, Eqs. (3.36)–(3.38)); the
+diffusion is written as $\partial_{xx}g(u)$ with
+$g=\varepsilon(2u^2-\tfrac43u^3)$ on $[0,1]$, $0$ for $u<0$ and
+$2\varepsilon/3$ for $u>1$. Since $\nu_{\mathrm{BL}}$ vanishes at $u=0$ and
+$u=1$, the equation degenerates to the hyperbolic law there. Their
+convective flux is the one above with $M_{\mathrm{BL}}=1$ ("without
+gravitational effects", Eq. (3.39)), or that flux times $1-5(1-u)^2$
+("with gravitational effects", Eq. (3.40)). The 2D version (Ex. 11,
+Eqs. (3.52)–(3.54)) uses the first flux in $x$, the gravity flux in $y$,
+and the diffusion $g=\varepsilon u$ in both directions. The time step is
+the parabolic one, $\Delta t=C_{cfl}/\big(\max|f'|/\Delta x+\max|g'|/\Delta x^2\big)$
+in 1D, with $C_{cfl}=0.15$ for every scheme compared.
 
 ## Findings
 
@@ -108,6 +128,22 @@ they cite it (Fig. 3). Their step data, like Qin et al.'s, lie in
 $[0,1]$, with the flux of Pazner and Qin et al.; data, domain and final
 time are those of Liu et al. (1994).
 
+**A compact Hermite WENO scheme for degenerate parabolic equations.**
+Yang & Qiu (2026) use the viscous variant to test their finite-difference
+compact [Hermite WENO](/methods/hermite-weno.md) scheme (CHWENO), which
+takes the derivative values from a sixth-order compact central difference
+instead of evolving them, against the HWENO scheme of Ahmat et al. and the
+DWENO scheme of Liu, Shu & Zhang, as they cite them. In 1D (Figs. 8–9)
+the CHWENO solutions on $N_x=200$ "agree well" with both comparators and
+with the $N_x=1000$ CHWENO reference, with and without gravity, and
+capture "large gradients with high resolution", which the authors read
+as nonlinear stability. The 2D run (Figs. 14–15, CHWENO and HWENO only)
+shows the initial cylinder spreading "in a spiral pattern" with decaying
+amplitude. The CPU ratio CHWENO/HWENO is 0.70–0.73 over the eight 1D runs
+(Table 4) and 0.64 and 0.62 at $T=0.25$ and $0.5$ in 2D (Table 7). The
+evidence for resolution is visual, and the reference solutions are
+computed with CHWENO itself.
+
 ## Qualifications
 
 - Pazner's printed Riemann data, $\mp3$, lie outside the range $[0,1]$
@@ -118,7 +154,14 @@ time are those of Liu et al. (1994).
   $[0,0.25]\cup[0.75,1]$, and their Fig. 10 is plotted on $[0,1]$.
 - Qin et al. use the same flux as Pazner ($M_{\mathrm{BL}}=1/4$) but data
   in $[0,1]$, so their run, unlike Pazner's, can be read from the paper.
-- Evidence in all seven papers is visual. Abgrall et al.'s Fig. 3
+- Yang & Qiu's runs are not the inviscid problem of the other sources:
+  the diffusion smooths the shock wherever $\nu_{\mathrm{BL}}>0$, and
+  their flux has $M_{\mathrm{BL}}=1$ (no gravity) or is not of the
+  $M_{\mathrm{BL}}$ form at all (gravity). Their 2D diffusion
+  $g=\varepsilon u$ is linear, so the diffusion of Ex. 11 never
+  vanishes *(compiler check, not in the sources)*, although the authors
+  speak of "the degenerated edge of the spiral" there.
+- Evidence in all eight papers is visual. Abgrall et al.'s Fig. 3
   caption writes "restrict GMP" for the strict global maximum
   principle.
 
@@ -131,3 +174,4 @@ time are those of Liu et al. (1994).
 - [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) — §4.4, Eqs. (38)–(39), Fig. 10 (arXiv v2).
 - [Qin et al. (2023)](/sources/qin-2023.md) — §3.3, Eqs. (30)–(31), Fig. 5: two-block WCNS run.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §3, §4, Ex. 3, Fig. 3.
+- [Yang & Qiu (2026)](/sources/yang-2026.md) — §3.1 Ex. 5, Eqs. (3.36)–(3.42), Figs. 8–9, Table 4; §3.2 Ex. 11, Eqs. (3.52)–(3.54), Figs. 14–15, Table 7: viscous variant.

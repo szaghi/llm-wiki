@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Free-stream preservation"
-description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers DGSEM and subcell metrics, warped-mesh tests, geometric conservation laws on moving meshes, constant states under divergence-free transport, gradient-based finite differences, and an untested TENO claim."
+description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers DGSEM and subcell metrics, warped-mesh tests, moving-mesh geometric conservation laws (TPE(0) of transport polynomial exactness), constant states under divergence-free transport, gradient-based finite differences, and an untested TENO claim."
 status: established
-aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization, constant-state preservation]
+aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization, constant-state preservation, TPE(0)]
 tags: [dg, finite-difference, limiting, entropy-stable, reconstruction]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-11-01T18:41:00Z
 ---
 
 # Free-stream preservation
@@ -288,6 +288,55 @@ fail to preserve the free-stream" on dynamic adaptive meshes (§6.1.3);
 the sources above instead distinguish the GCL from the discrete metric
 identities that a nonlinear reconstruction can break.
 
+## Beyond constants: free-stream preservation as TPE(0)
+
+[Cai, Cheng, Wu & Qiu (2026)](/sources/cai-2026.md) (arXiv v1) place
+free-stream preservation at the bottom of a hierarchy. A moving-mesh scheme
+is TPE($k$), [transport polynomial exactness](/properties/transport-polynomial-exactness.md)
+of order $k$, if it reproduces the projection of the exact solution of
+linear advection for every polynomial initial datum of degree $k$
+(Def. 2.1); TPE(0) "reduces to free-stream preservation and is precisely the
+property enforced by the classical GCL" (§1.3). Their finite-volume setting
+is a remap between two quadrilateral meshes in pseudo-time, an
+arbitrary-Lagrangian–Eulerian solve of $\partial_{\tau_{\mathrm p}}u=0$
+([conservative remapping](/methods/conservative-remapping.md)), and their
+GCL is the consistency of the numerically evolved cell volume with the mesh
+motion: the zeroth geometric moment $\int_{I_{i,j}}1\,dx\,dy$, evolved by
+its Reynolds-transport equation with the discretization of the conserved
+variables (§3.1.1).
+
+- **The GCL is not enough for high order.** A reconstruction of degree $k$
+  also needs the moments $\int_{I_{i,j}}x^sy^r\,dx\,dy$, $s+r\le k$. Cai et
+  al. evolve all of them like the volume ("evolved geometric moments") and
+  prove that the remap, the fixed-mesh evolution and the whole rezoning
+  moving-mesh scheme are TPE(2) for any mesh motion and any time or
+  pseudo-time step (Thm. 4.3, Props. 4.1, 4.4, Thm. 4.6).
+- **Evidence.** On $40\times40$ randomly rezoned meshes, a scheme that
+  enforces only the GCL (evolved volume, exact higher moments) is exact to
+  $5.00\times10^{-15}$ ($L^1$) for constant data but has errors
+  $1.06\times10^{-4}$ and $1.88\times10^{-4}$ for linear and quadratic data,
+  while the scheme with all moments evolved stays below $7.2\times10^{-15}$
+  in every case; a scheme with all moments computed exactly from the
+  geometry, which violates the GCL, has an error of $5.85\times10^{-3}$ even
+  for constants (Table 1). On the Euler density wave the GCL-only scheme
+  loses order in $L^\infty$ under discontinuous mesh velocity (Table 2).
+  The authors conclude that "while the GCL ensures free-stream preservation
+  (TPE(0)), it is insufficient to prevent order degradation in high-order
+  methods under extreme conditions" (§6).
+- **The same proof pattern.** Their exactness proof for the remap is a
+  forward-Euler step that preserves the relation between conserved
+  integrals and moments, extended to SSP-RK3 as a convex combination of
+  forward-Euler steps (Thm. 4.3, Prop. 4.4), the pattern of Duan & Tang's
+  free-stream proof above (Prop. 3.2) *(compiler check, not in the
+  sources)*. The SSP-RK3 stages are taken at the actual stage geometries,
+  and the evolved moments of degree at most two then equal the exact ones
+  (Thm. 4.7).
+
+Ramani & Shkoller's statement that the GCL is equivalent to free-stream
+preservation for their system and Cai et al.'s statement that it enforces
+TPE(0) agree; Cai et al. add that free-stream preservation is a
+zeroth-order exactness and does not imply the higher ones.
+
 ## Constant states under variable-velocity transport
 
 A related property holds on Cartesian grids for
@@ -411,7 +460,10 @@ the source.
   mixed-degree DG with finite-volume subcells, without a proof. Ramani &
   Shkoller (2023) argue it from linearity and test it on a moving mesh;
   Calhoun et al. (2023) prove constant-state preservation for their
-  variable-velocity Active Flux schemes (Thm. 4.2, Cor. 4.3).
+  variable-velocity Active Flux schemes (Thm. 4.2, Cor. 4.3). Cai et al.
+  (2026) prove the stronger TPE(2) for their moving-mesh finite volumes
+  and test TPE(0)–TPE(2) on random meshes, in an arXiv preprint without a
+  journal version (Thms. 4.3–4.7, Table 1).
 - **Chandravamsi et al.'s proof.** The metric-identity cancellation is
   shown symbolically, partly in a supplementary notebook, for MEG6 only;
   for MIG4 it is asserted (§7). The first lines of their Eqs. (41)–(42)
@@ -454,3 +506,4 @@ the source.
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §2 Eqs. (14)–(15), §3.3 Eq. (40), §6.1 Thm. 6.1 Eq. (51), §7.3 Eq. (60), Tables 2–3.
 - [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.1 (arXiv v1).
 - [Deng et al. (2025)](/sources/deng-2025.md) — §4.7.
+- [Cai, Cheng, Wu & Qiu (2026)](/sources/cai-2026.md) — §1.3, §3.1.1, Def. 2.1, Props. 4.1, 4.4, Thms. 4.3, 4.6, 4.7, §5.1 Table 1, §5.2 Table 2, §6 (arXiv v1).

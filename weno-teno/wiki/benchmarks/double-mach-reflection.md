@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-30T08:08:00Z
+timestamp: 2026-11-01T18:55:00Z
 ---
 
 # Double Mach reflection
@@ -21,11 +21,13 @@ a slip line from the primary triple point and a wall jet. The slip line
 is Kelvin–Helmholtz unstable, and the amount of roll-up a scheme
 resolves on a given grid is the visual gauge of its
 [numerical dissipation](/definitions/numerical-dissipation.md) in every
-source that runs it. Fifty-nine sources of the bundle run it,
-fifty-five in the Woodward–Colella form (one of them on a randomly
-distorted curvilinear grid, one extruded to three dimensions) and four in a variant (two
+source that runs it. Sixty-three sources of the bundle run it,
+fifty-nine in the Woodward–Colella form (one of them on a randomly
+distorted curvilinear grid, one on a mesh randomly moved at every step,
+one extruded to three dimensions) and four in a variant only (two
 wedges in the physical frame on unstructured meshes, a relativistic
-version, a dimensional ramp with an immersed boundary); most cite Woodward & Colella (1984)
+version, a dimensional ramp with an immersed boundary); Luo et al.
+(2026) run both the common form and a physical-frame wedge; most cite Woodward & Colella (1984)
 for it, while Peng, Sun & Wu cite no source for the setup. A Mach 10
 reflection-and-diffraction relative over a backward step is recorded
 under Variants.
@@ -227,6 +229,14 @@ describe one configuration *(compiler check, not in the sources)*.
   the origin, and a Mach 10 shock along $x$ with
   $(\rho,v_1,v_2,p)=(8,8.25,0,116.5)$ for $x\le0$ and $(\gamma,0,0,1)$
   for $x>0$, $t=0.2$.
+  [Luo et al. (2026)](/sources/luo-2026.md) Ex. 3.7 (arXiv v1), "Mach 10
+  shock on a $30^\circ$ wedge", use the domain $(-1/6,2.5)\times(0,2)$
+  containing a $30^\circ$ wedge from $x=0$, with
+  $(\rho,v_1,v_2,p)=(8,8.25,0,116.5)$ for $x<0$ and $(1.4,0,0,1)$
+  otherwise; exact post-shock state on the bottom from $-1/6$ to 0,
+  exact shock motion on top, inflow left, outflow right, reflective
+  elsewhere; $t=0.2$; GMSH triangulations with $h=1/160$ (209,938
+  triangles) and $h=1/320$ (837,673), 30 contours 2–22.
 - **Relativistic double Mach reflection.**
   [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.8 (arXiv v1) run
   the special-relativistic version, also without rotation, on the wedge
@@ -322,6 +332,10 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Wang et al. (2023a)](/sources/wang-2023.md) §4.6 | fifth-order characteristic-wise [A-WENO](/methods/alternative-weno.md) with affine-invariant Z-type weights, adaptive-diffusion LLF-M flux vs [LLF](/methods/lax-friedrichs-flux.md); TVD-RK3, CFL 0.45 | $[0,4]\times[0,1]$, $800\times200$ | cost table |
 | [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.14 | [COS(DG)](/methods/cos-dg.md) $\mathbb P^1$–$\mathbb P^3$, global and local (Lax-type shock criterion) variants, with the Zhang–Shu positivity limiter; SSP-RK3 | $[0,4]\times[0,1]$, $960\times240$ | — |
 | [Wang et al. (2026)](/sources/wang-2026.md) §6.4.2 | FD WENO-JS5 on three-level [AMR](/methods/adaptive-mesh-refinement.md) (ratio 2 per level) with AMR-HybridWENO inter-level transfers vs pure WENO and Lagrange interpolation | $[0,3]\times[0,1]$, base $720\times240$ | setup above |
+| [Zhang et al. (2026a)](/sources/zhang-2026.md) Ex. 3.7 | finite-difference [hybrid](/methods/hybrid-weno.md) SHMR-WENO (MR-WENO with characteristic decomposition only in cells flagged by a quadratic extreme-point test) vs [MR-WENO](/methods/multi-resolution-weno.md) and the hybrid they call HMR-WENO (MR-WENO with Wang, Tian, Zhu & Zhao's indicator, not Zuo & Zhu (2024b)'s HMR-WENO); TVD-RK3, CFL 0.6 | $[0,4]\times[0,1]$, $1920\times480$, plotted $[0,3]\times[0,1]$ | 30 contours 1.5–22.7; zoom $[2.2,2.8]\times[0,0.6]$; troubled-cell map; cost table |
+| [Zhang et al. (2026b)](/sources/zhang-2026-b.md) Ex. 3.11 | sixth-order finite-volume [Hermite WENO](/methods/hermite-weno.md) HWENO-FLW, HWENO-ALW-I, HWENO-ALW-II vs HWENO-MR; HWENO-ALW-I vs WENO-MR; TVD-RK3, CFL 0.6 | $[0,4]\times[0,1]$, $1920\times480$; WENO-MR also $3324\times831$ | 30 contours 1.5–22.7 in $[0,3]\times[0,1]$; cost comparison |
+| [Luo et al. (2026)](/sources/luo-2026.md) Ex. 3.7 | third-order compact [Hermite WENO](/methods/hermite-weno.md) with one-stage [ADER](/methods/ader-scheme.md) time stepping (ADER-HWENO) vs RK-HWENO; CFL 0.5 | $(0,4)\times(0,1)$, 589,312 triangles (295,857 vertices); wedge variant above | 30 contours 1.5–22 in $(0,3)\times(0,1)$ (arXiv v1) |
+| [Cai et al. (2026)](/sources/cai-2026.md) §5.4.2 | rezoning [moving mesh](/methods/adaptive-moving-mesh.md) with evolved geometric moments and a 2-exact hybrid third-order WENO (TPE(2)-ol) | $[0,4]\times[0,1]$, $1920\times480$, interior vertices randomly displaced at every step | "standard setup" of two cited papers (arXiv v1) |
 
 ## What the benchmark measures
 
@@ -687,6 +701,47 @@ Wang et al. (2023a, Table 3; Fortran 90, Intel ifort -O3, Intel
 i7-9700 at 3.00 GHz) time the $800\times200$ run at 954 s with LLF and
 1004 s with LLF-M, a ratio of 1.05.
 
+Zhang et al. (2026a, Table 3, hardware not stated) time their hybrid
+SHMR-WENO at 47482 s against 54055 s for their HMR-WENO comparator and
+113153 s for MR-WENO, ratios 0.42 and 0.48; SHMR-WENO flags 2.94 % of
+the cells against 3.60 % (Table 2) and has, they state, "slightly
+better resolution" than both (Ex. 3.7, Figs. 7–9). Zhang et al. (2026b)
+compare HWENO-ALW-I with Zhu & Shu's WENO-MR, as they cite it: on the
+same $1920\times480$ mesh HWENO-ALW-I has "noticeably higher
+resolution" at 45.44 h, about 125 % of WENO-MR's 36.35 h; WENO-MR on the
+$3324\times831$ mesh, refined by $\sqrt3$ in each direction to about the
+same number of degrees of freedom as the Hermite scheme, reaches
+comparable resolution at 187.62 h, about 413 % of HWENO-ALW-I's time
+(Ex. 3.11, Fig. 19; hardware not stated). They also find HWENO-ALW-I
+the best of their four HWENO variants (Fig. 18). The degrees of freedom
+match: $3324\cdot831=2{,}762{,}244$ against $3\cdot1920\cdot480=2{,}764{,}800$,
+with three unknowns per cell for the Hermite scheme in 2D (the cell
+average and the averages of the two first derivatives) *(compiler
+check, not in the sources)*.
+
+**Hermite WENO on triangles.** Luo et al. (2026) find their one-stage
+ADER-HWENO and the Runge–Kutta moment-based RK-HWENO of "comparable
+resolution" on 589,312 triangles (Ex. 3.7, Fig. 3.8), and on the
+physical-frame wedge the ADER-HWENO resolution improves clearly from
+$h=1/160$ to $h=1/320$ (Fig. 3.10, no comparator). They print the
+common data in conserved variables, $(8,57.1597,-33.0012,563.544)$
+behind the front $y\ge\sqrt3(x-1/6)-20t$ (at $t=0$) and
+$(1.4,0,0,2.5)$ ahead; with $\gamma=1.4$ these are
+$(\rho,v_1,v_2,p)\approx(8,7.1450,-4.1252,116.51)$ and $(1.4,0,0,1)$
+*(compiler check, not in the sources)*.
+
+**Randomly moving meshes.** Cai et al. (2026) run the problem on a mesh
+whose interior vertices are displaced at random at every time step, by
+up to a quarter of a cell width (*compiler check, not in the sources*:
+their $C_{\mathrm r}=0.5$ times a variable uniform on $(-0.5,0.5)$), as a
+robustness test of their moving-mesh remap with
+[transport polynomial exactness](/properties/transport-polynomial-exactness.md):
+despite the severe mesh deformation, the scheme resolves the flow
+"without mesh-induced artifacts or spurious oscillations", in
+"excellent agreement" with the cited results (§5.4.2, Fig. 7). The
+mesh motion is random, not adapted to the solution, so the run tests
+robustness, not adaptive resolution.
+
 **Scaled data.** Fan et al. (2025a) run the problem also with the initial
 data scaled by $\zeta=10^{-7}$ and $10^7$ ($\zeta$ page-local) and obtain consistent results with their scale-invariant
 nonlinear weights (Figs. 14–15); see
@@ -715,8 +770,8 @@ switching and imperfect coupling (§4.5, Figs. 16–17); see
 
 **Unstructured meshes.** Fu (2023) reproduces finite-volume TENO6 on
 triangular meshes of 151,850 to 752,708 cells (Fig. 11). Chen et al.
-(2022), Chen & Wu (2022), Du et al., Yu & Hesthaven, Maltsev et al. and
-Lin & Zhu also compute on triangles, and Du et al. on polygonal cells built from point clouds.
+(2022), Chen & Wu (2022), Du et al., Yu & Hesthaven, Maltsev et al.,
+Lin & Zhu and Luo et al. (2026) also compute on triangles, and Du et al. on polygonal cells built from point clouds.
 
 **Error norms.** Wang et al. (2022a) are the only source that measures
 an error: density errors on $1500\times1200$ against the baseline
@@ -869,3 +924,7 @@ grid, not an exact solution.
 - [Wang et al. (2023a)](/sources/wang-2023.md) — §4.6, Eq. (28), Figs. 11–12; §4.9, Table 3.
 - [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.14, Figs. 15–16.
 - [Wang et al. (2026)](/sources/wang-2026.md) — §6.4.2, Figs. 17–18.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §3.2, Ex. 3.7, Figs. 7–9, Tables 2–3.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §3.2, Ex. 3.11, Figs. 18–19.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §3, Ex. 3.7, Figs. 3.8–3.10 (arXiv v1).
+- [Cai et al. (2026)](/sources/cai-2026.md) — §5.4, §5.4.2, Fig. 7 (arXiv v1).

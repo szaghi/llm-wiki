@@ -19,8 +19,8 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** all 12 chunks ingested (214 of 217 sources; feng-2026, li-2024 and wu-2023
-await a re-download, see `INGESTION-ISSUES.md`). Chunk 1, the reviews and the
+**Corpus:** 13 chunks ingested (219 of 223 archive works; feng-2026, li-2024 and wu-2023
+await a re-download, and an erratum awaits its parent paper, see `INGESTION-ISSUES.md`). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
 [Wu & Shu (2023)](/sources/wu-2023-b.md), the compact-stencil framework of
@@ -103,7 +103,12 @@ index lists what is in; a whole-bundle deep lint closed the archive. Chunk 12 (a
 [Liu et al. (1994)](/sources/liu-1994.md) and [Jiang & Shu (1996)](/sources/jiang-1996.md) (WENO),
 [Borges et al. (2008)](/sources/borges-2008.md) (WENO-Z), the WENO review of
 [Shu (2009a)](/sources/shu-2009.md), the positivity-preserving DG limiter of
-[Zhang & Shu (2010b)](/sources/zhang-2010-b.md) and the TENO paper of [Fu et al. (2016)](/sources/fu-2016.md).
+[Zhang & Shu (2010b)](/sources/zhang-2010-b.md) and the TENO paper of [Fu et al. (2016)](/sources/fu-2016.md). Chunk 13 (added
+2026-11-01): Hermite and multi-resolution WENO — the simplified hybrid MR-WENO of
+[Zhang et al. (2026a)](/sources/zhang-2026.md), sixth-order finite-volume HWENO with adaptive linear weights of
+[Zhang et al. (2026b)](/sources/zhang-2026-b.md), compact HWENO for degenerate parabolic equations of
+[Yang & Qiu (2026)](/sources/yang-2026.md), ADER-HWENO on triangles of [Luo et al. (2026)](/sources/luo-2026.md) —
+and the transport polynomial exactness of moving meshes of [Cai et al. (2026)](/sources/cai-2026.md).
 
 ## Reading guide
 
@@ -220,7 +225,7 @@ and [pressure-equilibrium preservation](/properties/pressure-equilibrium-preserv
 (with the [APEC flux](/methods/apec-scheme.md)),
 and [local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md).
 [Free-stream preservation](/properties/free-stream-preservation.md) on curved
-meshes; [adaptive moving meshes](/methods/adaptive-moving-mesh.md),
+meshes and its generalization to [transport polynomial exactness](/properties/transport-polynomial-exactness.md) under arbitrary mesh motion; [adaptive moving meshes](/methods/adaptive-moving-mesh.md),
 [hp-adaptation](/methods/hp-adaptation.md) and
 [implicit shock tracking](/methods/implicit-shock-tracking.md) move or refine the mesh;
 the codes [Trixi.jl](/software/trixi-jl.md), [FLUXO](/software/fluxo.md) and

@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-11-01T18:56:00Z
 ---
 
 # Characteristic decomposition
@@ -254,6 +254,13 @@ $R$ and $L=R^{-1}$ it reads $A=R\Lambda L$ *(compiler check, not in the sources)
   lower total and 40–73 % lower reconstruction wall time, a saving of the whole hybrid scheme
   that is not split into its parts (§4; see [troubled-cell indicators](/definitions/troubled-cell-indicator.md)
   and [adaptive TENO](/methods/adaptive-teno.md)).
+  The finite-difference SHMR-WENO of [Zhang et al. (2026a)](/sources/zhang-2026.md) (§2.2,
+  Remark 2) makes the same choice on structured grids: the projection and the multi-resolution
+  weights are applied only in cells that a quadratic extreme-point test on the density flags,
+  and the linear fifth-order flux is reconstructed componentwise elsewhere. With 0.73–7.69 %
+  of the cells flagged, the whole scheme runs in 0.42–0.78 of the time of the
+  characteristic-wise non-hybrid scheme (Tables 2–3); as for TENO-E, the saving is not split
+  between the skipped projections and the skipped weights.
 - **Eigenvectors of another system.** In the semi-implicit all-Mach scheme of
   [Boscarino et al. (2022)](/sources/boscarino-2022.md) (§3.3.1) only the explicit
   (material-wave) flux is reconstructed characteristic-wise, with the local eigenvectors of the
@@ -300,7 +307,16 @@ $R$ and $L=R^{-1}$ it reads $A=R\Lambda L$ *(compiler check, not in the sources)
 - **Main fluxes only.** The finite-difference Hermite WENO of [Fan et al. (2023)](/sources/fan-2023.md)
   (§2, Remark 2.2) reconstructs the fluxes of the conservation law in local characteristic
   directions and the fluxes of its derivative equations componentwise
-  ([Hermite WENO](/methods/hermite-weno.md)).
+  ([Hermite WENO](/methods/hermite-weno.md)). The sixth-order finite-volume Hermite WENO of
+  [Zhang et al. (2026b)](/sources/zhang-2026-b.md) (Zhang, Tao & Zhu; Remarks 3 and 6) does the
+  opposite: the cell averages of $u$ and of its derivative $\partial_xu$ (and $\partial_yu$ in
+  2D) are both projected with the eigensystem of $\partial f/\partial u$ (the derivative "adopts
+  the same eigensystem" as the solution), and the scale factor of the nonlinear weights is computed from the
+  density for all characteristic components; the authors call this "robust and effective in
+  our numerical experiment". The interface derivative values are taken from the derivative of
+  the central quintic without nonlinear weighting *(compiler check, not in the sources: so the
+  projection is the only oscillation control acting on them before the flux; the paper does not
+  discuss it)*.
 - **In the numerical diffusion, not only in the reconstruction.**
   [Chertock et al. (2023)](/sources/chertock-2023.md) use the projection also to give each
   field its own central-upwind diffusion, the
@@ -534,3 +550,5 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — Remark 2.2, §3–§4, §5.1 (Eq. (5.2)), Apps. A–B.
 - [Liang et al. (2025)](/sources/liang-2025.md) — §3.3.3 (Eq. (21)), §3.3.5, §4: characteristic projection only in troubled cells on unstructured meshes.
 - [Ren et al. (2025)](/sources/ren-2025.md) — §4.4, App. B (Eq. (B.3)), Figs. 29–30: characteristic reconstruction lowers but does not remove the fifth-order shock instability.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §2.2, Remarks 2–3; §3, Tables 2–3: projection only in troubled cells of a hybrid MR-WENO.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — Remarks 3, 6: projection of cell averages and derivative averages with one eigensystem in finite-volume Hermite WENO.

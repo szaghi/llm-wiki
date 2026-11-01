@@ -5,7 +5,7 @@ description: "Wang & Don's Ai-WENO weights multiply the sensitivity parameter ε
 status: established
 aliases: [Ai-WENO, Ai-WENO-Z, Ai-WENO-D, Ai-WENO-JS, affine-invariant WENO operator]
 tags: [weno, reconstruction, well-balanced, finite-difference]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-11-01T18:42:00Z
 ---
 
 # Affine-invariant WENO weights
@@ -138,6 +138,21 @@ flux and plain LLF (the LLF figure is omitted) (§4.2, Fig. 4;
 flux ([Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)); the Ai-weights are the
 interpolation it is built on.
 
+## Variance-normalized indicators on moving meshes
+
+[Cai et al. (2026)](/sources/cai-2026.md) (Cai, Cheng, Wu & Qiu; arXiv v1; Remark 3.6) cite Wang & Don
+for the same goal by a different route: "to guarantee the affine invariance of the WENO reconstruction",
+they divide the smoothness indicators $\beta$ of the third-order Zhu–Qiu WENO, used in the troubled
+cells of their [hybrid](/methods/hybrid-weno.md) moving-mesh finite-volume scheme, by "the local
+variance of the reconstructed variable". The paper does not define the variance (which cells, which
+weighting), its regularization, or the weight formula, and tests no affine image of the data.
+*(Compiler check, not in the sources: the variance is unchanged by $f\mapsto f+\mu$ and scales by
+$\sigma^2$, as do the $\beta_k$, so $\beta_k$ divided by it is affine invariant. If one variance divides
+every $\beta_k$ of a stencil and the weights depend on the $\beta_k$ only through
+$\beta_k+\epsilon$ and ratios to $\tau$, the division is the same as replacing $\epsilon$ by $\epsilon$
+times the variance: the Ai descaler above with the variance in place of $\mathsf m^2$, the squared mean
+absolute deviation.)*
+
 ## Qualifications
 
 - Theorem 1 holds with $\mathsf m_0=0$ in exact arithmetic; the implementation uses
@@ -158,3 +173,4 @@ interpolation it is built on.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §1, Defs. 1–4; §2, Eqs. (4)–(18), Theorem 1, Remarks 1–3; §3, Eqs. (19)–(30), Figs. 1–10; App. A, Theorem 2.
 - [Li et al. (2023a)](/sources/li-2023.md) — §1; §2.3, Eqs. (42)–(45), Theorem 4; §4.2, Theorem 5.
 - [Wang et al. (2023a)](/sources/wang-2023.md) — §1; §2.1, Eqs. (7)–(8); §4.2, Fig. 4.
+- [Cai et al. (2026)](/sources/cai-2026.md) — arXiv v1: §3.4, Remark 3.6 (smoothness indicators divided by the local variance).

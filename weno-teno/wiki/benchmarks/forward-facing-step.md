@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel wi
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-01T18:55:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -18,7 +18,7 @@ sheet trails downstream. The expansion corner of the step is a
 singularity that strains robustness, and the vortex sheet is
 Kelvin–Helmholtz unstable, so the benchmark measures both whether a
 scheme survives and how much small-scale structure it resolves.
-Twenty-eight sources of the bundle run it, seven of them on triangles (one of these
+Thirty sources of the bundle run it, eight of them on triangles (one of these
 in a relativistic version), one on polygons and one as a steady-state
 problem; those
 that name an origin, Harten (1983a) and Jiang & Shu (1996) among them,
@@ -189,6 +189,8 @@ fix at the corner.
 | [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §4.3.3 | $\mathbb P^5$ DG with a posteriori local subcell correction ([MOOD-type](/methods/mood-a-posteriori-limiting.md)), first-order FV fallback | 680 triangles, no refinement at the corner | — |
 | [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.6 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG $\mathbb P^2$, $\mathbb P^3$ in primitive variables, a posteriori subcell FV limiter with conservative correction in shock cells | polygons, $h=1/80$ | 0.5 after 10 steps at 0.1 |
 | [Wang et al. (2023a)](/sources/wang-2023.md) §4.8 | fifth-order characteristic-wise [A-WENO](/methods/alternative-weno.md) with affine-invariant Z-type weights, adaptive-diffusion LLF-M flux vs [LLF](/methods/lax-friedrichs-flux.md); TVD-RK3; Woodward–Colella corner treatment; $t=4$ | $900\times300$ | 0.45 |
+| [Zhang et al. (2026a)](/sources/zhang-2026.md) Ex. 3.8 | finite-difference [hybrid](/methods/hybrid-weno.md) SHMR-WENO vs [MR-WENO](/methods/multi-resolution-weno.md) and the hybrid they call HMR-WENO (MR-WENO with Wang, Tian, Zhu & Zhao's indicator, not Zuo & Zhu (2024b)'s HMR-WENO); TVD-RK3; Woodward–Colella corner treatment; $t=4$; 30 contours 0.32–6.15 | $960\times320$ | 0.6 |
+| [Luo et al. (2026)](/sources/luo-2026.md) Ex. 3.8 | third-order compact [Hermite WENO](/methods/hermite-weno.md) with one-stage [ADER](/methods/ader-scheme.md) time stepping (ADER-HWENO) vs RK-HWENO; inflow $(\rho,v_1,v_2,p)=(1.4,3,0,1)$; no corner treatment, no local refinement; $t=4$; 30 contours 0.32–6.15 (arXiv v1) | 164,608 triangles (82,945 vertices); sample mesh $h=1/20$ with 2572 triangles | 0.5 |
 
 ## What the benchmark measures
 
@@ -230,10 +232,17 @@ WENO-Z9 on the [double Mach reflection](/benchmarks/double-mach-reflection.md),
 so the two problems together expose a stability margin that design
 order alone does not show.
 
-**The corner without a fix.** Five sources describe no
+**The corner without a fix.** Six sources describe no
 Woodward–Colella corner treatment: Yu & Hesthaven, Chen & Wu, Zhao
-et al. and Vilar & Abgrall say so, Du et al. mention only local mesh
-refinement. Vilar & Abgrall run sixth-order DG on only 680 triangles,
+et al., Vilar & Abgrall and Luo et al. (2026) say so, Du et al. mention
+only local mesh refinement. Luo et al. (2026) run their one-stage
+ADER-HWENO without modifying the scheme or refining the mesh near the
+corner ("we do not modify the scheme or refine the mesh near the
+corner"), unlike an earlier HWENO work they cite, and find the resolution comparable to RK-HWENO (Ex. 3.8, Figs.
+3.11–3.12); their mesh is three uniform refinements of the $h=1/20$
+sample mesh ($164608=64\cdot2572$) *(compiler check, not in the
+sources)*. They also use the Zhang–Shu scaling limiter "in some extreme
+cases" without naming them (§3). Vilar & Abgrall run sixth-order DG on only 680 triangles,
 with no special treatment beyond their subcell correction (no
 corner refinement, no change of the scheme), and show the solution at
 $t=4$ (Fig. 41). Zhao et
@@ -356,6 +365,16 @@ cost: MR-WENO 3763.48, 9589.80 and 14582.4 s against HMR-WENO 1671.75,
 4182.02 and 10283.0 s at orders 5, 7 and 9 (Table 3.1, a laptop). Lin &
 Zhu's ALW/MR time ratios over their Cases 3.3–3.11 are 0.60–0.96, smallest at
 fifth order (Table 3.1). Neither paper describes a corner treatment.
+Zhang et al. (2026a), with the Woodward–Colella corner treatment, find
+that their hybrid SHMR-WENO, whose quadratic extreme-point test flags
+fewer cells than the quartic test of their HMR-WENO comparator (7.69 %
+against 9.21 %, Table 2), shows "superior capability in resolving fine
+local structures" compared with MR-WENO and HMR-WENO (Ex. 3.8, Figs.
+10–11), at 45407 s against 51097 s and 106863 s for MR-WENO, ratios
+0.42 and 0.48 (Table 3, no hardware stated). The forward step has the
+largest fraction of flagged cells of their seven discontinuous tests.
+Their HMR-WENO is MR-WENO with Wang, Tian, Zhu & Zhao's indicator, as
+they cite it, not Zuo & Zhu (2024b)'s HMR-WENO above.
 
 **Hermite WENO and its first moments.** Li, Shu & Qiu recall that the
 original Hermite WENO schemes are "not stable enough" for the forward
@@ -421,3 +440,5 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 - [Huang et al. (2025b)](/sources/huang-2025-b.md) — §4.2.5, Table 4, Figs. 9–10.
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.3, Fig. 15.
 - [Wang et al. (2023a)](/sources/wang-2023.md) — §4.8, Figs. 18–19; §4.9, Table 3.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §3.2, Ex. 3.8, Figs. 10–11, Tables 2–3.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §3, Ex. 3.8, Figs. 3.11–3.12 (arXiv v1).

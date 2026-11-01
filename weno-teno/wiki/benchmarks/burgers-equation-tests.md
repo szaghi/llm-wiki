@@ -5,7 +5,7 @@ description: "The inviscid Burgers equation as test bed: 1D to 3D sine data for 
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-11-01T18:54:00Z
 ---
 
 # Burgers equation tests
@@ -51,6 +51,9 @@ that reduce exactly to Burgers.
 | [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §3.4, §4.2.1 | $u_0=\sin(2\pi(x+y))$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, periodic, triangles | — | $0.5$, $\mathbb P^5$ on 576 and $\mathbb P^3$ on 242 triangles |
 | [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Ex. 5.5 | $u_0=0.5+\sin(2\pi(x+y))$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, periodic | — | $0.3$, $100\times100$, generalized Active Flux with LLF flux vector splitting |
 | [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.1, Ex. 6.12 | $u_0=\sin x+0.5$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2\pi]$; $[-2,2]^2$, periodic | $0.6$; $\mathbb P^1$ 1280–10240, $\mathbb P^2$ 320–2560, $\mathbb P^3$ 160–1280 cells | 2D: $1.5/\pi$, $160\times80$, third order, cut along the diagonal cells |
+| [Zhang et al. (2026a)](/sources/zhang-2026.md) Ex. 3.2, 3.6 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | 2-periodic; 4-periodic | — | $1.5/\pi$, $N=80$; $200\times200$, cut along $x=y$ |
+| [Zhang et al. (2026b)](/sources/zhang-2026-b.md) Ex. 3.1, 3.3, 3.5, 3.9 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | 2-periodic; 4-periodic | $0.5/\pi$, $N=100$–200; $200^2$–$320^2$; $\Delta t\propto\Delta x^2$ | $1.5/\pi$, $N=80$; $200\times200$, cut along $x=y$ |
+| [Luo et al. (2026)](/sources/luo-2026.md) Ex. 3.1 | 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $(-2,2)^2$, periodic, triangles | $0.5/\pi$, 268–274,432 triangles, CFL 0.5 | $1.5/\pi$, 4288 triangles, cut along $y=x$ |
 | [Liu et al. (2026)](/sources/liu-2026.md) §5.1.1, §5.1.4 | $u_0=A\sin x+B$ (training family); 2D $u_0=A\sin(2\pi x+x_0)\cos(2\pi y+y_0)+B$ ($A$, $B$, $x_0$, $y_0$ page-local, random) | $[0,2\pi]$; $[0,1]^2$, periodic | training data on $[0,0.1]$ (1D) | test to $T=3$ (1D), $T=1.6$ (2D) |
 
 Harten et al. state the shock at $t=2/\pi$ for their data, Shu & Osher
@@ -64,7 +67,8 @@ For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$ (stated by Zhong et
 al.); along the diagonal the
 two-dimensional data have the same breaking time (the data of Li, Shu
 & Qiu, also run by Fan et al. (2023) and Fan et al. (2025a), by Zhang &
-Zhu and, on $[-2,2]^2$, by Lin & Zhu); Danis et al. call their final
+Zhu, by Zhang et al. (2026a, 2026b) and, on $[-2,2]^2$, by Lin & Zhu and
+Luo et al. (2026)); Danis et al. call their final
 time "well before the breaking time": along $\xi=x+y+z$ their equation
 is $\partial_tu+3u\,\partial_\xi u=0$ with $\max\lvert\partial_\xi u_0\rvert=\pi$,
 so $t_{\mathrm b}=1/(3\pi)$ and $1/(12\pi)$ is a quarter of it; for
@@ -195,6 +199,61 @@ times the CPU time of WENO-ZQ for an $L^1$ error 12.800 times smaller,
 HWENO-M 2.319 times for 11.777 times smaller; in 2D the ratios are
 1.312 and $1/59.905$ for HWENO-U, 1.601 and $1/75.842$ for HWENO-M
 (§3.1).
+
+**Sixth-order Hermite WENO with adaptive linear weights.** Zhang et al.
+(2026b) run the sine data with their sixth-order finite-volume
+[Hermite WENO](/methods/hermite-weno.md), which combines one quintic
+Hermite polynomial with two linear ones (four in 2D) and either fixes
+the big-stencil linear weight (HWENO-FLW) or switches it among $10^2$,
+$10^4$ and $10^6$ (HWENO-ALW-I) or between $10^2$ and $10^6$
+(HWENO-ALW-II) by a smoothness ratio, against the multi-resolution
+HWENO-MR of Li, Shu & Qiu, as they cite it (TVD-RK3, CFL 0.6,
+$\Delta t\propto\Delta x^2$). At $N=200$ the 1D $L^1$ errors are
+$6.08\times10^{-11}$ (HWENO-MR), $3.96\times10^{-10}$ (FLW),
+$6.00\times10^{-11}$ (ALW-I) and $5.68\times10^{-11}$ (ALW-II), with
+$L^1$ orders 5.88–6.28 for HWENO-MR and 5.68–6.10 for the two ALW
+schemes;
+the FLW orders are irregular, $L^1$ 7.38, 7.42, 8.56, 6.71, 9.52 and
+$L^\infty$ 8.37, 7.36, 4.04, 5.85, 10.01 (Ex. 3.1, Table 1). In 2D at
+$320^2$ the $L^1$ errors are $3.98\times10^{-11}$, $1.27\times10^{-10}$,
+$4.03\times10^{-11}$ and $3.95\times10^{-11}$, the FLW $L^\infty$ orders
+again irregular (11.37, then 4.14) (Ex. 3.3, Table 3). The authors state
+that "all schemes reach the designed order of accuracy", that FLW has
+the larger errors, and, from error-against-CPU plots, that the ALW
+schemes are the most efficient (Figs. 4, 6). After the shock, on
+$N=80$ and on $200^2$ cut along $x=y$, all four are non-oscillatory
+(Ex. 3.5, 3.9, Figs. 8, 16).
+
+**Hybrid MR-WENO with a quadratic indicator.** Zhang et al. (2026a) run
+the 1D and 2D shocks at $t=1.5/\pi$ with MR-WENO, their finite-difference
+[hybrid](/methods/hybrid-weno.md) SHMR-WENO, which applies MR-WENO only
+in cells where a quadratic interpolant of three point values has an
+extremum on a three-cell interval, and the hybrid they call HMR-WENO
+(MR-WENO with the quartic indicator of Wang, Tian, Zhu & Zhao, as they
+cite it; not Zuo & Zhu (2024b)'s HMR-WENO). The solutions are
+"comparable" (Ex. 3.2, Fig. 2; Ex. 3.6, Fig. 6). SHMR-WENO flags 2.03 %
+of the cells in 1D and 0.73 % in 2D against 3.26 % and 1.14 % (Table 2),
+and costs 0.0286 s and 34.758 s against 0.0321 s and 38.751 s for HMR-WENO
+and 0.0365 s and 46.037 s for MR-WENO, ratios to MR-WENO 0.78 and 0.76
+against 0.88 and 0.84 (Table 3, no hardware stated); see
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md).
+
+**Hermite WENO on triangles with one-stage time stepping.** Luo et al.
+(2026) run the 2D data on the triangular mesh sequence of Zhao & Qiu,
+as they cite it, to compare their third-order compact
+[Hermite WENO](/methods/hermite-weno.md) with one-stage
+[ADER](/methods/ader-scheme.md) time stepping (ADER-HWENO), whose
+derivative averages are recomputed from Taylor-extrapolated edge values
+by the divergence theorem instead of evolved, with the Runge–Kutta
+moment-based RK-HWENO. Errors are of cell averages against exact cell
+averages (exact solution by Newton iteration). ADER-HWENO's $L_1$
+errors fall from $6.46\times10^{-3}$ (268 triangles) to
+$1.85\times10^{-7}$ (274,432), orders 3.25, 3.13, 2.93, 2.87, 2.91, and
+its $L_\infty$ errors from $3.03\times10^{-2}$ to $3.34\times10^{-6}$,
+orders 2.22–2.95; RK-HWENO ends at $2.70\times10^{-7}$ and
+$4.94\times10^{-6}$, with orders between 1.85 and 4.33, and is larger in
+every entry of both norms (Ex. 3.1, Table 3.1). At $t=1.5/\pi$ on 4288
+triangles both are "oscillation-free" along $y=x$ (Fig. 3.2).
 
 **Tensor-train WENO.** Danis et al. solve the three-dimensional data with
 fifth-order finite-difference WENO-JS in
@@ -633,8 +692,32 @@ use this to obtain exact smooth Euler solutions:
   (order 6.03) and $4.67\times10^{-11}$ at $320^2$ (6.49), M5-NI again
   about fifth order (Tables 3.3–3.4).
 
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) Ex. 3.2 and 3.4 print
+  the same data, 1D $\rho=(1+0.2\sin x)/(2\sqrt3)$, $v=\sqrt3\rho$ on
+  $2\pi$-periodic data ($N=100$–200), and 2D
+  $\rho=(1+0.2\sin((x+y)/2))/\sqrt6$, $v_1=v_2=\sqrt{3/2}\,\rho$ on
+  $[0,4\pi]^2$ ($200^2$–$320^2$), $p=\rho^3$, $\gamma=3$, $t=3$, for their
+  sixth-order HWENO schemes. They state that all schemes reach the
+  designed order, with HWENO-MR density $L^1$ orders 5.54–5.81 in 1D
+  (Table 2) and 5.44–5.71 in 2D (Table 4). In Table 2 the HWENO-ALW-II
+  entries equal the HWENO-MR entries in every row; in Table 4 the four
+  schemes' columns are identical in every entry ($L^1$ from
+  $1.38\times10^{-8}$ at $200^2$ to $9.89\times10^{-10}$ at $320^2$).
+  The paper does not comment on either coincidence. From
+  error-against-CPU plots they find the ALW schemes more efficient than
+  HWENO-MR, and FLW less efficient on coarse 1D meshes (Figs. 5, 7).
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) Ex. 3.1 use the 2D
+  data, $v_1=v_2=\sqrt{3/2}\,\rho$, $[0,4\pi]^2$, $t=3$, $80^2$ to $200^2$,
+  for MR-WENO and the two hybrids: the hybrids flag no cell, so they
+  reduce to the linear fifth-order scheme, and the printed density
+  errors of all three are the same, $L^1$ $4.73\times10^{-6}$ at $80^2$
+  to $5.84\times10^{-8}$ at $200^2$, orders 4.51–4.95 (Table 1); the
+  authors state that SHMR-WENO is more efficient than HMR-WENO, from
+  an error-against-CPU plot (Fig. 1).
+
 The breaking time of $1+0.2\sin x$ is $1/0.2=5$ *(compiler check, not
-in the sources)*, matching Zheng et al.'s statement.
+in the sources)*, matching Zheng et al.'s statement; for the 2D data the
+same holds along $(x+y)/2$.
 
 [Wang et al. (2026)](/sources/wang-2026.md) §6.2 use the general-$\gamma$
 version of the construction, a simple wave: on periodic $[0,1]$,
@@ -727,6 +810,14 @@ going from 5.6338 % to 0 % (Table 4).
   sixth-order solution that the text places on 242 cells; they also
   write that the dimension of $\mathbb P^5$ is 20, whereas their own
   count $(k+1)(k+2)/2$ gives 21 subcells for $k=5$.
+- Zhang et al. (2026b) state that all schemes reach the designed sixth
+  order, while their HWENO-FLW orders in Tables 1 and 3 jump between
+  4.04 and 11.37, and their HWENO-MR orders in Tables 2 and 4 stay at
+  5.44–5.81 in $L^1$ and 5.09–5.80 in $L^\infty$; the paper does not
+  comment on either.
+- Luo et al. (2026)'s RK-HWENO comparator converges irregularly
+  ($L_1$ orders 2.37, 3.97, 4.02, 2.78, 2.86), so the error ratios
+  between the two schemes vary from mesh to mesh.
 - The accuracy tests of Zheng et al. use $\Delta t=O(\Delta x^{5/3})$;
   the other sources' accuracy runs state CFL 0.6 with a reduced time
   step (Li, Shu & Qiu) or prescribed multiples of $h$ (Puppo et al.).
@@ -738,6 +829,9 @@ going from 5.6338 % to 0 % (Table 4).
 - [Liu et al. (1994)](/sources/liu-1994.md) — §4, Example 2, Tables III–IV, Figs. 4–5.
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.1–3.4, Tables 3.1–3.4, Figs. 3.1–3.2 (arXiv v1).
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.1, Table 3.1, Fig. 3.1, Remark 3.1.
+- [Zhang et al. (2026a)](/sources/zhang-2026.md) — §3.1, Ex. 3.1, Table 1, Fig. 1; §3.2, Ex. 3.2, 3.6, Figs. 2, 6, Tables 2–3.
+- [Zhang et al. (2026b)](/sources/zhang-2026-b.md) — §3.1, Ex. 3.1–3.4, Tables 1–4, Figs. 4–7; §3.2, Ex. 3.5, 3.9, Figs. 8, 16.
+- [Luo et al. (2026)](/sources/luo-2026.md) — §3, Ex. 3.1, Table 3.1, Figs. 3.1–3.2 (arXiv v1).
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §6.2.1–6.2.2, Eqs. (78)–(80), Table 2, Figs. 17–22 (arXiv v2).
 - [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) — §4.1, §4.3, Table 1, Figs. 1, 4–9 (arXiv v2).
 - [Pazner (2021)](/sources/pazner-2021.md) — §5.5, Fig. 11 (arXiv v1).

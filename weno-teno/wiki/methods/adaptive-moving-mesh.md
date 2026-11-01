@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Adaptive moving mesh finite differences"
-description: "An r-adaptive scheme moves a fixed number of grid points, by variational redistribution with a monitor function, a prescribed mesh Jacobian or an optimal-transport Monge–Ampère map, and discretizes the conservation law on the moving or adapted mesh; the sources make it entropy stable, fast or shock-resolving and measure its cost against uniform meshes."
+description: "An r-adaptive scheme moves a fixed number of grid points, by variational redistribution, a prescribed mesh Jacobian, an optimal-transport map or a decoupled rezone-and-remap step, and discretizes the conservation law on the moving or adapted mesh; the sources make it entropy stable, fast, shock-resolving or exact on quadratics and measure its cost."
 status: established
-aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6, smooth adaptive meshing, SAM, SAM-ALE, optimal-transport mesh adaptation, Monge–Ampère mesh adaptation]
+aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6, smooth adaptive meshing, SAM, SAM-ALE, optimal-transport mesh adaptation, Monge–Ampère mesh adaptation, rezoning moving mesh, RMM, TPE(2) RMM scheme]
 tags: [finite-difference, entropy-stable, multiphase, relativistic, weno, moving-mesh]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-11-01T18:41:00Z
 ---
 
 # Adaptive moving mesh finite differences
@@ -43,7 +43,11 @@ couples the mesh to a simplified finite-difference WENO
 arbitrary-Lagrangian–Eulerian (ALE) solver (section "Jacobian-prescribed meshes" below).
 A fourth, [Nguyen et al. (2024)](/sources/nguyen-2024.md), moves the nodes
 of a steady high-order HDG solution with an optimal-transport map
-(section "Optimal-transport meshes" below).
+(section "Optimal-transport meshes" below). A fifth,
+[Cai et al. (2026)](/sources/cai-2026.md), decouples mesh motion from the
+flow solver in a finite-volume rezoning moving-mesh scheme and makes it
+exact on quadratics for any rezoning (section "Rezoning moving meshes"
+below).
 
 ## The conservation law in moving coordinates
 
@@ -451,6 +455,74 @@ nonlinear equation, which SAM avoids by its Poisson-plus-transport
 construction (§3.1 of Ramani & Shkoller); the two sources run no common
 test.
 
+## Rezoning moving meshes: evolve, rezone, remap
+
+[Cai, Cheng, Wu & Qiu (2026)](/sources/cai-2026.md) (arXiv v1) separate two
+classes of moving-mesh methods (§1.1). In Lagrangian and
+arbitrary-Lagrangian–Eulerian methods the mesh motion is coupled with the
+flux discretization within each time step; the moving-coordinate schemes
+above belong to this class *(compiler classification, not in the
+sources)*. In the **rezoning moving-mesh** (RMM) framework each
+physical step is decoupled into three operations (§2.3):
+
+1. *physical evolution* on the fixed current mesh, $t^n\to t^{n+1}$, by any
+   fixed-grid scheme;
+2. *rezoning*: a new mesh is built from the evolved solution;
+3. *remapping*: the solution is transferred to the new mesh by solving
+   $\partial_{\tau_{\mathrm p}}u=0$ in a pseudo-time $\tau_{\mathrm p}$ on a
+   mesh that moves from the old to the new one
+   ([conservative remapping](/methods/conservative-remapping.md));
+
+optionally repeating steps 2–3 for mesh relaxation. The authors name its
+advantage: "mature high-order fixed-grid discretizations can be integrated
+with minimal modification", while the rezoning step admits equidistribution,
+variational, spring-analogy or Lagrangian strategies (§1.1). The variational
+redistribution of Duan & Tang and of Li, Duan & Tang above is one such
+strategy, used there inside the coupled moving-coordinate formulation
+instead.
+
+The question Cai et al. ask of the framework is whether a moving-mesh method
+"truly delivers its nominal high-order accuracy" under heterogeneous and
+possibly severe mesh motion, and they place the answer in the remap (§1.1).
+Their answer is [transport polynomial exactness](/properties/transport-polynomial-exactness.md):
+with evolved geometric moments and a 2-exact
+[hybrid WENO](/methods/hybrid-weno.md) reconstruction, both the fixed-mesh
+evolution and the remap are exact for linear advection of quadratics, so
+the RMM scheme is TPE(2) "regardless of the specific rezoning strategy
+employed" and of the time and pseudo-time steps (§3.3, Thm. 4.6). The only
+requirement on the rezoning is mesh regularity: at every pseudo-time every
+cell is a convex quadrilateral with pairwise distinct, counterclockwise
+vertices (Assumption 3.4). The mesh velocity may be discontinuous in space
+and time; with $T_{\mathrm r}=\Delta t$ (page-local final pseudo-time, as
+on the remapping page) the pseudo-time mesh velocity equals the physical one
+(§2.2).
+
+**Rezoning used in the tests** (§5). *Random rezoning* perturbs every
+vertex of the initial Cartesian mesh at every step,
+$x^n=x^0+C_r(\mathsf r_1\Delta x,\mathsf r_2\Delta y)+t\,\mathsf d$, with
+$\mathsf r_1,\mathsf r_2$ independent and uniform on $(-0.5,0.5)$, amplitude
+$C_r$ and drift $\mathsf d$ (all page-local), regular for $\lvert C_r\rvert\le0.5$;
+it is a stress test with a bounded but discontinuous mesh velocity, not an
+adaptation strategy. *ALE rezoning* combines a Lagrangian step with the
+mesh optimization of Cheng, Zhao & Qiu (an SSRN preprint, as recalled).
+With ALE rezoning the third-order TPE(2) scheme resolves the
+[Woodward–Colella blast wave](/benchmarks/woodward-colella-blast-wave.md)
+($400\times10$, $t=0.038$) and the [Shu–Osher problem](/benchmarks/shu-osher-problem.md)
+($400\times10$ on the extended domain $[-9.5,5]$, so with a coarser initial
+spacing than the fixed-mesh run on $[-5,5]$, $t=1.8$) better than the same
+scheme on a fixed mesh (Figs. 4–5, visual comparison). With random
+rezoning ($C_r=0.5$, no drift) the
+[double Mach reflection](/benchmarks/double-mach-reflection.md) on
+$1920\times480$ cells runs without mesh-induced artifacts (Fig. 7). Accuracy
+and cost on random meshes are on
+[conservative remapping](/methods/conservative-remapping.md).
+
+Moving meshes are also announced for the compact Hermite WENO with ADER
+time stepping on triangles: [Luo, Zhao, Qiu & Chen (2026)](/sources/luo-2026.md)
+list the extension of their scheme "to the moving mesh", after their
+quasi-Lagrangian moving-mesh DG and ALE multi-component DG work, as future
+work (§4; arXiv v1; [Hermite WENO](/methods/hermite-weno.md)).
+
 ## Relation to other adaptive methods
 
 Ramani & Shkoller state that the dyadic jumps of resolution in
@@ -537,3 +609,5 @@ time step on a moving mesh.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §1, §2.1 (arXiv v2).
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §1, §3 Eqs. (7)–(14), (16)–(17), Tables 1–3, App. B, C.1; §4 Eqs. (25)–(29), Algorithms 1–3; §5; §6 Eqs. (41)–(51), Remark 1, App. A; §7 Tables 6–7 (arXiv v2).
 - [Nguyen, Van Heyningen, Vila-Pérez & Peraire (2024)](/sources/nguyen-2024.md) — §1, §2.2–2.5, §3.1–3.5 Eqs. (18)–(34), Algorithm 1, §4.1–4.5 Figs. 1–22, §5 (arXiv v1).
+- [Cai, Cheng, Wu & Qiu (2026)](/sources/cai-2026.md) — §1.1, §2.2–2.3, §3.3 Assumption 3.4, Thm. 4.6, §5 (rezoning strategies), §5.3–5.4 Figs. 4–5, 7 (arXiv v1).
+- [Luo, Zhao, Qiu & Chen (2026)](/sources/luo-2026.md) — §4 (moving meshes as future work; arXiv v1).
