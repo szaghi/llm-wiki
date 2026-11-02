@@ -98,10 +98,16 @@ notation.
 
 ## Status
 
+**Chunk 5 compiled 2026-11-02 (night step 05-chunk-5):** 10 papers of
+2025–2027; 50 of 51 ingested, 53 concept pages plus the registry, 1706
+bibliography entries; targeted reading and Crossref reference lists; no
+contradiction open. Chunk 6 (the last paper, with the whole-bundle deep
+lint and closing sweeps) follows.
+
 **Chunk 4 compiled 2026-11-02 (night step 04-chunk-4):** 10 papers of
 2022–2025; 40 of 51 ingested, 52 concept pages plus the registry, 1290
 bibliography entries; targeted reading and Crossref reference lists (no
-subagents, owner's instruction); no contradiction open. Chunk 5 follows.
+subagents, owner's instruction); no contradiction open.
 
 **Chunk 3 compiled 2026-11-02 (night step 03-chunk-3):** 10 papers of
 2022; 30 of 51 ingested, 49 concept pages plus the registry, 1009

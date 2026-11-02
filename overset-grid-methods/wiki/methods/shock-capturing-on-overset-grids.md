@@ -5,7 +5,7 @@ description: "How shocks, detonations and material interfaces are captured on ov
 status: established
 aliases: [shock capturing on overset grids, shocks crossing overset boundaries, Chimera shock capturing, Godunov methods on overlapping grids, compressible flow on overlapping grids]
 tags: [shock-capturing, compressible, finite-volume, overset-grid, multiphase]
-timestamp: 2026-11-02T15:27:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Shock capturing on overlapping grids
@@ -228,6 +228,10 @@ hitting a light elastic ellipse on deforming grids (§6); see
 
 [Kochi & Ramakrishna (2023)](/sources/kochi-2023.md) confine shock capturing to an overset grid: troubled-cell data of a coarse DG solution locate the shock, a refined structured overset grid aligned with it is built (partly by hand), and the solver is rerun with the high-resolution flux and limiter only on that grid. The shock then lies on a grid line with very small thickness, decreasing with the order; a refined but unaligned overset grid does better than the coarse grid and worse than the aligned one. Tests: ramp, shock reflection, a cylinder bow shock (stand-off checked against an analytical method) and a Mach reflection (Abstract, Conclusions).
 
+## Several discontinuities in one stencil
+
+[Ding et al. (2025)](/sources/ding-2025.md) capture strong discontinuities and complex shock reflections across inter-grid boundaries of curvilinear structured overset grids with multi-resolution weighted nonlinear interpolation that tolerates several discontinuities in one stencil ([nonlinear inter-grid interpolation](/methods/nonlinear-inter-grid-interpolation.md)).
+
 ## Qualifications
 
 - Picard et al. state that the K-Dubois limiter "acts on the primitive
@@ -281,3 +285,4 @@ hitting a light elastic ellipse on deforming grids (§6); see
 - [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §3–§4.
 - [Delcour et al. (2022)](/sources/delcour-2022.md) — §4.2.
 - [Kochi & Ramakrishna (2023)](/sources/kochi-2023.md) — Abstract, Conclusions.
+- [Ding et al. (2025)](/sources/ding-2025.md) — Abstract.

@@ -5,7 +5,7 @@ description: "Combining immersed-boundary methods with overset grids: a body-att
 status: established
 aliases: [overset immersed boundary method, overset-CURVIB, overset BC-enforced IBM]
 tags: [immersed-boundary, moving-grid, incompressible, fsi]
-timestamp: 2026-11-02T15:06:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Immersed boundaries on overlapping grids
@@ -28,6 +28,10 @@ An immersed-boundary method represents a body on a grid that does not conform to
 
 Hedayat et al. (2022) need about 29 M nodes for four self-propelled fish against at least 470 M for a single grid of similar resolution (§3.5). Zhao et al. (2022) report 31–94 % fewer cells and 26–92 % less CPU time than their single-mesh method on four tests (§III). Bergmann et al. (2022b) use 9267 cells for a sedimenting cylinder against $10^5$–$10^6$ in compared studies (§6).
 
+## Body forces instead of hole cutting, and GPUs
+
+[Wang et al. (2025)](/sources/wang-2025.md) remove hole cutting from overset fluid–structure computations: two diffuse-interface body-force terms in the background momentum equations impose the body's no-slip condition implicitly and carry the overset information, and pressure interpolation counters the immersed-boundary pressure oscillations (Abstract). [Kumar et al. (2026)](/sources/kumar-2026.md) run Cartesian immersed boundaries with overset local refinement for several moving bodies on GPUs, with a sliding-window reallocation strategy and minimal interface storage (Abstract).
+
 ## Qualifications
 
 - Zhao et al. (2022) argue second order for their single-donor reconstruction by a Taylor expansion only; no convergence study of the transfer is shown (§II C).
@@ -40,3 +44,5 @@ Hedayat et al. (2022) need about 29 M nodes for four self-propelled fish against
 - [Zhao et al. (2022)](/sources/zhao-2022.md) — §II, §III.
 - [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §6.
 - [Delcour et al. (2022)](/sources/delcour-2022.md) — §1.
+- [Wang et al. (2025)](/sources/wang-2025.md) — Abstract.
+- [Kumar et al. (2026)](/sources/kumar-2026.md) — Abstract.

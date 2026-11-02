@@ -5,7 +5,7 @@ description: "Hole cutting removes from an overset grid the points that lie insi
 status: established
 aliases: [hole generation, blanking, hole-point identification, explicit hole cutting, Chimera hole cutting, cutting, hole profiling, object X-rays]
 tags: [hole-cutting, domain-connectivity, overset-grid, chimera]
-timestamp: 2026-11-02T15:27:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Hole cutting
@@ -320,6 +320,10 @@ update only its boxes ([moving overset grids](/methods/moving-overset-grid.md)).
 
 Wall-distance-based implicit hole cutting on unstructured grids, with its parallel advancing-front and exact pre-classification variants ([Xiao et al. 2023](/sources/xiao-2023.md); [Oh et al. 2024](/sources/oh-2024.md)), is on [wall-distance hole cutting](/methods/wall-distance-hole-cutting.md).
 
+## Hybrid cutting and cutting avoided
+
+[Ding et al. (2026)](/sources/ding-2026.md) combine approximate hole cutting (efficient) with direct cutting (accurate and robust for small gaps and thin cuts) and remove islands without wall distances (Abstract). [Wang et al. (2025)](/sources/wang-2025.md) avoid hole cutting in the background grid by immersed-boundary body forces ([immersed boundaries](/methods/immersed-boundary-on-overset-grids.md)).
+
 ## Qualifications
 
 - The cost statements are not comparable. Benek et al. (1983) measure hole searches against
@@ -365,3 +369,5 @@ Wall-distance-based implicit hole cutting on unstructured grids, with its parall
 - [Delcour et al. (2022)](/sources/delcour-2022.md) — §3.3.
 - [Xiao et al. (2023)](/sources/xiao-2023.md) — §2.
 - [Oh et al. (2024)](/sources/oh-2024.md) — Abstract.
+- [Ding et al. (2026)](/sources/ding-2026.md) — Abstract.
+- [Wang et al. (2025)](/sources/wang-2025.md) — Abstract.

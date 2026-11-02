@@ -5,7 +5,7 @@ description: "Donor search finds, for each receptor, the enclosing cell of anoth
 status: established
 aliases: [donor cell search, stencil walking, stencil jumping, gradient search, interpolation stencil search, nearest-neighbour search, neighbour walk, line walk, reconstruction-partner pairing, exact inverse map, EIM, alternating digital tree, ADT]
 tags: [donor-search, domain-connectivity, overset-grid, unstructured]
-timestamp: 2026-11-02T15:26:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Donor search
@@ -259,6 +259,10 @@ Three 2022 sources add search variants. [Hedayat et al. (2022)](/sources/hedayat
 
 [Xiao et al. (2023)](/sources/xiao-2023.md) speed up the alternating-digital-tree donor search with bookkeeping (§2); [Oh et al. (2024)](/sources/oh-2024.md) leave the donor search (basic ADT) unchanged and reduce the number of query points by classifying points first ([wall-distance hole cutting](/methods/wall-distance-hole-cutting.md)).
 
+## Locating particles
+
+[Wang et al. (2026)](/sources/wang-2026.md) locate Lagrangian particles in multi-block overset grids with a heterogeneous zonal search-locate algorithm based on particle velocity and an inter-block mapping in the overlaps — the donor search applied to moving points (Abstract).
+
 ## Qualifications
 
 - Lee & Baeder print the planar inside test as $\mathbf r_i\cdot(\mathbf n_i\times\mathbf
@@ -299,3 +303,4 @@ Three 2022 sources add search variants. [Hedayat et al. (2022)](/sources/hedayat
 - [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §3.1.
 - [Xiao et al. (2023)](/sources/xiao-2023.md) — §2.
 - [Oh et al. (2024)](/sources/oh-2024.md) — Conclusions.
+- [Wang et al. (2026)](/sources/wang-2026.md) — Abstract.

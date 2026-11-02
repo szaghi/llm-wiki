@@ -5,7 +5,7 @@ description: "Energy-method theorems for the continuous overset problem of linea
 status: established
 aliases: [overset energy stability, overlap energy]
 tags: [stability, energy-method, sbp-sat, conservation]
-timestamp: 2026-11-02T15:06:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Well-posedness and energy stability of overset problems
@@ -36,6 +36,10 @@ The penalized problem is conservative — the flux one subdomain loses at an int
 
 With $A\to\vec A\cdot\hat n$ the same conditions, on the hole boundary and on the overset outer boundary, give energy bounds and conservation (Thms 9–12). Point penalties inside the overlap keep both if $(1-\eta)\Sigma^m_u=\eta\Sigma^m_v$ and add dissipation proportional to the jump $u-v$ (Thms 13, 15); equivalence and well-posedness are stated with the proof by reference (Thm 14). The weight $\eta$ is arbitrary at the continuous level and can favour the better-resolved subdomain (Remark 4).
 
+## The discrete problem: DGSEM energy bounds
+
+[Kopriva et al. (2025)](/sources/kopriva-2025.md) show that a discontinuous Galerkin spectral element approximation of the well-posed overset problem has an energy bounded by data only for fixed polynomial order, mesh and time: without dissipation the overlap coupling lets the semi-discrete system have eigenvalues with positive real part. Upwind numerical fluxes stabilize the coupling in one dimension, and a new penalty applying dissipation at arbitrary points in the overlap, depending only on the jump $u-v$, adds more; one-dimensional experiments converge spectrally with sufficient dissipation (Abstract). This is the discrete counterpart of the point penalties of Theorems 13–15.
+
 ## Qualifications
 
 - The analysis is continuous and linear; it gives no numerical tests. Its discrete counterparts are the summation-by-parts and DG overset discretizations ([discontinuous Galerkin methods on overlapping grids](/methods/discontinuous-galerkin-on-overset-grids.md), [high-order discretizations on overlapping grids](/methods/high-order-overset-discretization.md)).
@@ -45,3 +49,4 @@ With $A\to\vec A\cdot\hat n$ the same conditions, on the hole boundary and on th
 # Citations
 
 - [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §2–§4, Thms 1–15, Lemma 2, Remarks 2, 4, 5.
+- [Kopriva et al. (2025)](/sources/kopriva-2025.md) — Abstract.

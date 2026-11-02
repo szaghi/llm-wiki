@@ -5,7 +5,7 @@ description: "Moving overset grids let component grids follow rigid, rotating or
 status: established
 aliases: [moving-body overset, unsteady Chimera, dynamic overset grids, dynamic overset technique, relative-motion Chimera, moving-body grid assembly, moving overlapping grids, deforming composite grids]
 tags: [moving-grid, domain-connectivity, overset-grid, chimera]
-timestamp: 2026-11-02T15:27:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Moving overset grids
@@ -328,6 +328,10 @@ Three 2022 sources move component grids differently:
 
 [Carlino & Boscheri (2024)](/sources/carlino-2024.md) integrate on moving cells, encoding the grid velocity in the numerical flux of an IMEX finite-volume scheme; [Xiao et al. (2023)](/sources/xiao-2023.md) re-assemble unstructured overset grids in parallel for a helicopter, a store separation and a component deployment.
 
+## GPU and reconstruction-based moving grids
+
+[Kumar et al. (2026)](/sources/kumar-2026.md) move overset meshes with several bodies on GPUs by sliding-window reallocation; [Hu et al. (2027)](/sources/hu-2027.md) test their physics-based solution transfer on moving grids (Abstract).
+
 ## Qualifications
 
 - Meakin & Suhs state that the effect of the inter-grid boundary updating on time accuracy
@@ -392,3 +396,5 @@ Three 2022 sources move component grids differently:
 - [Li & Wang (2022)](/sources/li-2022.md) — §5.
 - [Carlino & Boscheri (2024)](/sources/carlino-2024.md) — Abstract.
 - [Xiao et al. (2023)](/sources/xiao-2023.md) — §4.
+- [Kumar et al. (2026)](/sources/kumar-2026.md) — Abstract.
+- [Hu et al. (2027)](/sources/hu-2027.md) — Abstract.

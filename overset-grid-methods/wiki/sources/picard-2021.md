@@ -204,7 +204,7 @@ no volume.
 
 # Pages created or updated
 
-Chunk 2 (2026-11-02), cited further in chunk 3. This source is cited on:
+Chunk 2 (2026-11-02), cited further in chunks 3, 5. This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Shock–cylinder interaction](/benchmarks/shock-cylinder-interaction.md)
@@ -220,6 +220,7 @@ Chunk 2 (2026-11-02), cited further in chunk 3. This source is cited on:
 - [Hole cutting](/methods/hole-cutting.md)
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
 - [Multiphase flow on overlapping grids](/methods/multiphase-flow-on-overset-grids.md)
+- [Nonlinear and optimized inter-grid interpolation](/methods/nonlinear-inter-grid-interpolation.md)
 - [Overlap optimization](/methods/overlap-optimization.md)
 - [Shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md)
 - [Interpolation order and overlap requirements](/results/interpolation-order-requirement.md)

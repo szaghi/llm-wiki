@@ -5,7 +5,7 @@ description: "How overset grid assembly is distributed: PEGASUS 5's coarse-grain
 status: established
 aliases: [parallel domain connectivity, parallel overset grid assembly, parallel OGA, GPU overset assembly, accelerated overset assembly, overset load balancing, load re-balance]
 tags: [parallel, gpu, domain-connectivity, unstructured, rotorcraft]
-timestamp: 2026-11-02T15:26:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Parallel and GPU overset grid assembly
@@ -206,6 +206,10 @@ interpolation](/methods/inter-grid-interpolation.md)).
 
 [Xiao et al. (2023)](/sources/xiao-2023.md) accelerate a parallel implicit-hole-cutting assembly for unstructured grids with a bookkeeping alternating digital tree for the donor search, a parallel advancing-front wall-distance computation and a message-passing strategy with lean communication and storage, each compared with existing alternatives (§2–§3). [Oh et al. (2024)](/sources/oh-2024.md) classify points by an exact wall distance before the donor search and balance the load of spatially partitioned runs; their assembly is faster than post-classification assembly in all tests ([wall-distance hole cutting](/methods/wall-distance-hole-cutting.md)).
 
+## GPU reallocation and particle redistribution
+
+[Kumar et al. (2026)](/sources/kumar-2026.md) keep overset meshes that follow moving bodies on GPUs with a lightweight sliding-window reallocation and minimal interface storage (Abstract). [Wang et al. (2026)](/sources/wang-2026.md) move Lagrangian point particles through multi-block overset curvilinear grids with an inter-block mapping in the overlaps, a velocity-based zonal search-locate algorithm and an overset message-passing strategy, reducing tracking overhead for particles crossing block interfaces (Abstract).
+
 ## Qualifications
 
 - Roget & Sitaraman print a "68% reduction" for 2.1 s → 0.7 s; the printed values
@@ -237,3 +241,5 @@ interpolation](/methods/inter-grid-interpolation.md)).
 - [Li & Wang (2022)](/sources/li-2022.md) — §2–§3, §6, Tables 2, 4.
 - [Xiao et al. (2023)](/sources/xiao-2023.md) — §2–§3.
 - [Oh et al. (2024)](/sources/oh-2024.md) — Abstract, Conclusions.
+- [Kumar et al. (2026)](/sources/kumar-2026.md) — Abstract.
+- [Wang et al. (2026)](/sources/wang-2026.md) — Abstract.

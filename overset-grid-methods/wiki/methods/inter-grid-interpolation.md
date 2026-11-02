@@ -5,7 +5,7 @@ description: "How overset grids exchange data: each receptor takes a weighted su
 status: established
 aliases: [intergrid communication, intergrid interpolation, chimera interpolation, overset interpolation, donor interpolation, intergrid boundary conditions, fringe interpolation, Chimera transfer, overset reconstruction]
 tags: [interpolation, overset-grid, chimera, composite-grid, high-order, domain-connectivity]
-timestamp: 2026-11-02T15:09:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Inter-grid interpolation
@@ -428,6 +428,10 @@ Flux-based alternatives that avoid interpolation are on
 
 Qualification on the 2022 formulas: [Hedayat et al. (2022)](/sources/hedayat-2022.md) print trilinear weights with factors $(a_k-1)$ whose sum is $(2a_1-1)(2a_2-1)(2a_3-1)$, not one (Eq. 14) *(compiler check, not in the sources)*.
 
+## Nonlinear, optimized and physics-based transfer (2025–2027 sources)
+
+Solution-adaptive and wavenumber-optimized formulas ([Ding et al. 2025](/sources/ding-2025.md), [Ding et al. 2026](/sources/ding-2026.md)) are on [nonlinear and optimized inter-grid interpolation](/methods/nonlinear-inter-grid-interpolation.md). [Hu et al. (2027)](/sources/hu-2027.md) replace interpolation by a physics-based reconstruction: virtual control volumes and interfaces along the overset boundaries, with a lattice Boltzmann flux solver reconstructing the conservative variables; on 2-D and 3-D benchmarks it reduces accumulated transfer errors and smooths the solution across the overlap compared with conventional interpolation (Abstract).
+
 ## Qualifications
 
 - **Order naming.** Benek et al. (1983) call their linear Taylor formula
@@ -490,3 +494,6 @@ Qualification on the 2022 formulas: [Hedayat et al. (2022)](/sources/hedayat-202
 - [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §3.
 - [Delcour et al. (2022)](/sources/delcour-2022.md) — §3.3.
 - [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §2.
+- [Ding et al. (2025)](/sources/ding-2025.md) — Abstract.
+- [Ding et al. (2026)](/sources/ding-2026.md) — Abstract.
+- [Hu et al. (2027)](/sources/hu-2027.md) — Abstract.

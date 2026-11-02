@@ -6,6 +6,39 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 5 — Kopriva et al. 2025, Wang et al. 2025, Ding et al. 2025, Luo & Fan 2025, Ding et al. 2026, Kumar et al. 2026, Wang et al. 2026, Abgrall et al. 2026, Carter et al. 2026, Hu et al. 2027 (2026-11-02)
+
+Sources (10): kopriva-2025, wang-2025, ding-2025, luo-2025, ding-2026,
+kumar-2026, wang-2026, abgrall-2026, carter-2026, hu-2027. 50 of 51
+ingested, 53 concept pages plus the registry, 1706 bibliography entries.
+Same recipe as chunk 4: targeted reading (stated on each Source page),
+reference lists from the Crossref deposited records.
+
+### Decisions for the human
+
+1. **Kumar et al.'s Meakin reference** prints the year "19895" for the
+   12th AIAA CFD Conference paper (1995); merged into `meakin-1995-b`.
+2. **Abgrall et al. (2026)** use "overlapping meshes" for staggered meshes
+   of one discretization (like Tian et al. 2024); kept and described as a
+   homonym on `definitions/overset-grid.md`.
+3. **Web items** of Wang et al. (2025) (STAR-CCM+, ANSYS Fluent, OpenFOAM)
+   are keyed by corporate author and citing year.
+
+### Contradictions
+
+None open.
+
+### Identity and versions
+
+- kopriva-2025 read in arXiv 2405.04668v2; the others versions of record.
+- hu-2027 is a 2027 issue published online in 2026.
+
+### Bundle fit
+
+Luo & Fan (2025) (solar-corona MHD on Yin–Yang grids) would also fit
+`astrophysical-simulation-codes`; Wang et al. (2026) (particle-laden DNS)
+`turbulence-modelling`. D17 candidates, no copy made.
+
 ## Chunk 4 — Bergmann et al. 2022a, Xiao et al. 2023, Devlin et al. 2023, Kochi & Ramakrishna 2023, Angel et al. 2023, Tian et al. 2024, Carlino & Boscheri 2024, Oh et al. 2024, Zhou et al. 2024, Carson et al. 2025 (2026-11-02)
 
 Sources (10): bergmann-2022, xiao-2023, devlin-2023, kochi-2023,

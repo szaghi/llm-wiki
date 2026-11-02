@@ -5,7 +5,7 @@ description: "Kageyama and Sato's overset grid for spheres and spherical shells:
 status: established
 aliases: [Yin-Yang grid, Yin–Yang overset grid, spherical overset grid, n-grid and e-grid]
 tags: [spherical-grid, overset-grid, geophysics, finite-difference, interpolation]
-timestamp: 2026-11-02T11:28:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Yin–Yang grid
@@ -152,6 +152,10 @@ The authors claim the Yin–Yang grid is simpler in geometry and metrics than
 these, and that it exploits the symmetry of the two frames fully. They call
 the cubed sphere "an overset grid".
 
+## Solar corona and wind
+
+[Luo & Fan (2025)](/sources/luo-2025.md) build a global MHD code for the solar corona and solar wind on the Yin–Yang grid (nonadiabatic single-fluid MHD with the Boris correction), updating the ghost zones of each partial spherical shell from the other domain, parallelized with MPI, validated on standard tests (Abstract).
+
 ## Qualifications
 
 - **Version read.** The arXiv v1 preprint; the published G-cubed article
@@ -180,3 +184,4 @@ the cubed sphere "an overset grid".
 # Citations
 
 - [Kageyama & Sato (2004)](/sources/kageyama-2004.md) — arXiv physics/0403123v1: §I (pole problem, 36% estimate, filter cost, earlier spherical grids), §II (Eqs. (1)–(13), Figs. 1–3, symmetric solver and interpolation), §III (Eqs. (14)–(25), Fig. 4, overlap estimate, Figs. 5–8), §IV (applications, decomposition, Fig. 9).
+- [Luo & Fan (2025)](/sources/luo-2025.md) — Abstract.

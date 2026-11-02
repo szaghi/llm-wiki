@@ -5,7 +5,7 @@ description: "How fourth- to sixth-order finite-difference schemes are run on ov
 status: established
 aliases: [high-order overset methods, high-order Chimera, compact schemes on overset grids, high-order composite-grid discretization]
 tags: [high-order, finite-difference, interpolation, stability, overset-grid, composite-grid]
-timestamp: 2026-11-02T15:27:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # High-order discretizations on overlapping grids
@@ -214,6 +214,10 @@ an interpolation instability.
 
 [Angel et al. (2023)](/sources/angel-2023.md) and [Carson et al. (2025)](/sources/carson-2025.md) keep fourth-order finite differences for second-order wave equations stable on overset grids with upwind dissipation, explicit or within implicit modified-equation schemes ([upwind schemes](/methods/upwind-wave-equation-overset.md), [IMEX](/methods/imex-time-stepping-on-overset-grids.md)). [Zhou et al. (2024)](/sources/zhou-2024.md) use high-order finite differences on overlapping curvilinear body-fitted grids for linearized potential-flow seakeeping of flexible ships.
 
+## Lax–Wendroff and high-order inter-grid boundaries
+
+[Carter et al. (2026)](/sources/carter-2026.md) reach fourth order on overlapping grids for Maxwell's equations with a single-step Lax–Wendroff-type scheme stable up to CFL one; [Ding et al. (2026)](/sources/ding-2026.md) and [Ding et al. (2025)](/sources/ding-2025.md) treat high-order inter-grid boundaries with optimized and nonlinear interpolation ([nonlinear inter-grid interpolation](/methods/nonlinear-inter-grid-interpolation.md)).
+
 ## Qualifications
 
 - **Sixth versus fourth order.** In the acoustic-scattering tests fourth-order
@@ -243,3 +247,6 @@ an interpolation instability.
 - [Angel et al. (2023)](/sources/angel-2023.md) — Abstract.
 - [Carson et al. (2025)](/sources/carson-2025.md) — Abstract, Conclusions.
 - [Zhou et al. (2024)](/sources/zhou-2024.md) — Abstract.
+- [Carter et al. (2026)](/sources/carter-2026.md) — Abstract.
+- [Ding et al. (2026)](/sources/ding-2026.md) — Abstract.
+- [Ding et al. (2025)](/sources/ding-2025.md) — Abstract.

@@ -233,7 +233,7 @@ Both are entered as printed. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-11-02), cited further in chunk 3. This source is cited on:
+Chunk 2 (2026-11-02), cited further in chunks 3, 5. This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Isentropic vortex convection](/benchmarks/isentropic-vortex.md)
@@ -246,5 +246,6 @@ Chunk 2 (2026-11-02), cited further in chunk 3. This source is cited on:
 - [High-order discretizations on overlapping grids](/methods/high-order-overset-discretization.md)
 - [Hole cutting](/methods/hole-cutting.md)
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
+- [Nonlinear and optimized inter-grid interpolation](/methods/nonlinear-inter-grid-interpolation.md)
 - [Overlap optimization](/methods/overlap-optimization.md)
 - [Interpolation order and overlap requirements](/results/interpolation-order-requirement.md)

@@ -5,7 +5,7 @@ description: "Overlap optimization reduces the overlap of an assembled overset g
 status: established
 aliases: [hole-size optimization, overlap minimization, overlap reduction, donor selection, donor quality]
 tags: [domain-connectivity, hole-cutting, overset-grid, interpolation]
-timestamp: 2026-11-02T11:39:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Overlap optimization
@@ -188,6 +188,10 @@ Sitaraman's finest-resolution rule, and Chan's comparable-resolution rule. None 
 gives an error analysis for the size rule; the accuracy requirement that is derived, the
 interpolation width as a function of the overlap, is Chesshire & Henshaw's.
 
+## Overlap minimization for high-order stencils
+
+[Ding et al. (2026)](/sources/ding-2026.md) improve the implicit hole-boundary optimization with a quality comparison that reduces donor-search work, and cancel interpolation cells to minimize the overlap, which matters for large high-order stencils (Abstract).
+
 ## Qualifications
 
 - **CDP as printed.** Each term of the printed sum equals
@@ -219,3 +223,4 @@ interpolation width as a function of the overlap, is Chesshire & Henshaw's.
 - [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §2.1, Fig. 2; §3.5; Fig. 18.
 - [Picard et al. (2021)](/sources/picard-2021.md) — §4.1, Table 2; §4.5, Figs. 29–31; §5.
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §2, Fig. 2 (cutting volumes).
+- [Ding et al. (2026)](/sources/ding-2026.md) — Abstract.

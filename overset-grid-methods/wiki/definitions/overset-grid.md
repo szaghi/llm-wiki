@@ -5,7 +5,7 @@ description: "A covering of the domain by independently generated, mutually over
 status: established
 aliases: [Chimera grid, chimera grid scheme, chimera grid-embedding scheme, grid embedding, overlapped grid, overlaid grid, overset composite grid, composite overlapping grid, overset mesh, overlapping meshes, dynamic overset grid, synthesized grid]
 tags: [overset-grid, chimera, composite-grid, domain-connectivity, interpolation]
-timestamp: 2026-11-02T15:07:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Overset (Chimera) grid
@@ -321,6 +321,10 @@ cutting such a grid is given `jHoleImmune` $=1$ when its interior points are
 tested against partner grids, and the untrimmed grids and their partners are
 identified manually.
 
+## A homonym: overlapping staggered meshes
+
+Two archive papers use "overlapping meshes" for staggered meshes within one discretization rather than for component grids: [Tian et al. (2024)](/sources/tian-2024.md) (vorticity, velocity and potential on different meshes in a local DG scheme) and [Abgrall et al. (2026)](/sources/abgrall-2026.md) (conservative and primitive variables on two staggered finite-volume meshes). They share the vocabulary, not the method.
+
 ## Qualifications
 
 - **Order naming.** Benek et al. (1983) call their linear Taylor interpolation
@@ -384,3 +388,5 @@ identified manually.
 - [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §1.
 - [Li & Wang (2022)](/sources/li-2022.md) — §2.
 - [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §1.
+- [Tian et al. (2024)](/sources/tian-2024.md) — Abstract.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — Abstract.

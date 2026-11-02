@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: component and composite grids, their mappings, point classification, inter-grid interpolation, conservative interfaces, flow equations in Cartesian and curvilinear form, grid motion, Yin–Yang grids, and reserved symbols for high-order, SBP–SAT, immersed-boundary and unstructured overset methods; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-11-02T15:28:00Z
+timestamp: 2026-11-02T15:43:00Z
 ---
 
 # Notation registry
@@ -195,7 +195,7 @@ Reserved symbols: a page that first uses one confirms it here (removing
 | $\chi$ | solid indicator or volume fraction of an immersed body | reserved |
 | $\varphi$ | signed distance (level set) to a body surface or to a fluid interface | in use (multiphase flow); $\varphi<0$ inside the body |
 | $d_w$ | wall distance (wall-distance-based hole cutting) | in use (wall-distance hole cutting) |
-| $\mathbf f_{\mathrm{IB}}$ | immersed-boundary forcing | reserved |
+| $\mathbf f_{\mathrm{IB}}$ | immersed-boundary forcing | in use (immersed boundaries on overlapping grids) |
 
 ## 9. Shared page-local symbols
 

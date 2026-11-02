@@ -5,7 +5,7 @@ description: "Partitioned fluid–structure coupling on moving and deforming ove
 status: established
 aliases: [FSI on overlapping grids, FSI on overset grids, FSI-DCG, deforming composite grids, added-mass partitioned algorithm, AMP scheme, rigid-body coupling on overlapping grids]
 tags: [fsi, moving-grid, composite-grid, compressible, overset-grid]
-timestamp: 2026-11-02T15:27:00Z
+timestamp: 2026-11-02T15:42:00Z
 ---
 
 # Fluid–structure interaction on overlapping grids
@@ -220,6 +220,10 @@ recover (lightest case), with matching centrelines on the two finest grids
 
 [Zhou et al. (2024)](/sources/zhou-2024.md) compute the hydroelastic response of flexible ships at zero forward speed with generalized modes of an Euler–Bernoulli beam in a potential-flow solver on overlapping curvilinear grids, validated against experiments and reference solutions on three cases; they derive both disputed forms of the hydrostatic stiffness of flexible modes and show the buoyancy terms equivalent for pure elastic motions (Abstract, Conclusions).
 
+## Immersed-boundary assembly for large motions
+
+[Wang et al. (2025)](/sources/wang-2025.md) target fluid–structure interaction with large-amplitude motion by merging overset grids with immersed-boundary body forces ([immersed boundaries](/methods/immersed-boundary-on-overset-grids.md), Abstract).
+
 ## Qualifications
 
 - Banks et al. state that both projections "show the expected second-order
@@ -265,3 +269,4 @@ recover (lightest case), with matching centrelines on the two finest grids
 - [Zhao et al. (2022)](/sources/zhao-2022.md) — §III.
 - [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §6.
 - [Zhou et al. (2024)](/sources/zhou-2024.md) — Abstract, Conclusions.
+- [Wang et al. (2025)](/sources/wang-2025.md) — Abstract.

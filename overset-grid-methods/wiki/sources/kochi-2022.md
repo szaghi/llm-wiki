@@ -49,7 +49,7 @@ arXiv preprint 2106.06285v1 (11 June 2021), 20 pages, all read; locators are tho
 
 # Pages created or updated
 
-Chunk 3 (2026-11-02). This source is cited on:
+Chunk 3 (2026-11-02), cited further in chunk 5. This source is cited on:
 
 - [Isentropic vortex convection](/benchmarks/isentropic-vortex.md)
 - [Composite overlapping grid](/definitions/composite-overlapping-grid.md)
@@ -59,4 +59,5 @@ Chunk 3 (2026-11-02). This source is cited on:
 - [High-order discretizations on overlapping grids](/methods/high-order-overset-discretization.md)
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
 - [Moving overset grids](/methods/moving-overset-grid.md)
+- [Nonlinear and optimized inter-grid interpolation](/methods/nonlinear-inter-grid-interpolation.md)
 - [Shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md)
