@@ -98,31 +98,31 @@ notation.
 
 ## Status
 
-**Chunk 6 compiled 2026-11-02 (night step 06-chunk-6) — archive complete:**
+**Chunk 6 committed 2026-11-02 (6a79861) — archive complete:**
 51 of 51 ingested, 53 concept pages plus the registry, 1756 bibliography
 entries after the closing sweeps, whole-bundle deep lint (compiler sweep)
 done, no contradiction open. Open human decisions are in
 INGESTION-ISSUES.md.
 
-**Chunk 5 compiled 2026-11-02 (night step 05-chunk-5):** 10 papers of
+**Chunk 5 committed 2026-11-02 (7a21cbe):** 10 papers of
 2025–2027; 50 of 51 ingested, 53 concept pages plus the registry, 1706
 bibliography entries; targeted reading and Crossref reference lists; no
 contradiction open.
 
-**Chunk 4 compiled 2026-11-02 (night step 04-chunk-4):** 10 papers of
+**Chunk 4 committed 2026-11-02 (f76c3c1):** 10 papers of
 2022–2025; 40 of 51 ingested, 52 concept pages plus the registry, 1290
 bibliography entries; targeted reading and Crossref reference lists (no
 subagents, owner's instruction); no contradiction open.
 
-**Chunk 3 compiled 2026-11-02 (night step 03-chunk-3):** 10 papers of
+**Chunk 3 committed 2026-11-02 (cf7e892):** 10 papers of
 2022; 30 of 51 ingested, 49 concept pages plus the registry, 1009
 bibliography entries, compiler self-audit (no subagents, owner's
 instruction), no contradiction open.
 
-**Chunk 2 compiled 2026-11-02 (night step 02-chunk-2):** 10 papers of
+**Chunk 2 committed 2026-11-02 (e2ccc32):** 10 papers of
 2005–2021; 20 of 51 ingested, 40 concept pages plus the registry, 636
 bibliography entries, deep lint done, no contradiction open.
 
-**Chunk 1 compiled 2026-11-02 (night step 01-chunk-1):** the 10 founding
+**Chunk 1 committed 2026-11-02 (ecb8f32):** the 10 founding
 papers of 1983–2005; 10 of 51 ingested, 28 concept pages plus the
 registry, 209 bibliography entries, deep lint done, no contradiction open.
