@@ -1,0 +1,30 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Overset (Chimera) grid methods"
+summary = "Overset, Chimera and composite overlapping grid methods, 1983–2027: grid embedding and composite overlapping grids, domain connectivity and overset grid assembly (explicit, implicit and wall-distance hole cutting, donor search, fringe and orphan points, overlap optimization; PEGASUS, SUGGAR and related tools), inter-grid interpolation and its accuracy, conservation and stability, moving overset grids and adaptive refinement, overset grids with immersed boundaries, high-order overset discretizations (compact finite differences, discontinuous Galerkin, ADER, upwind and Lax–Wendroff schemes) and their energy-stability and summation-by-parts theory, incompressible, compressible and multiphase flow on overset grids, fluid–structure interaction, spherical Yin–Yang grids, and parallel and GPU implementations."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/overset-chimera"
+keywords = [
+  "overset grid",
+  "Chimera grid",
+  "composite overlapping grid",
+  "overlapping mesh",
+  "grid embedding",
+  "domain connectivity",
+  "overset grid assembly",
+  "hole cutting",
+  "implicit hole cutting",
+  "donor search",
+  "fringe point",
+  "orphan point",
+  "inter-grid interpolation",
+  "conservative interpolation",
+  "moving overset grids",
+  "PEGASUS",
+  "SUGGAR",
+  "Overture",
+  "Yin-Yang grid",
+  "immersed boundary overset",
+  "summation-by-parts overset",
+  "discontinuous Galerkin overset",
+]

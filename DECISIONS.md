@@ -642,3 +642,41 @@ candidates; no copy is made without the human's decision, and the bundle
 never links to another bundle (D12). Chunk 1 holds the reviews and the
 papers that fix the vocabulary, so the registry and the reading guide are
 built from them.
+
+## D31 — Overset-grid bundle (2026-11-02)
+
+**Decision (user):** a new bundle for overset (Chimera, composite
+overlapping) grid methods, compiled from the user's overset-grid
+bibliography, `~/papers/mosaic/overset-chimera` (51 PDFs, papers of
+1983–2027), in chunks of 10 (D26), with a per-chunk digest in
+`overset-grid-methods/INGESTION-ISSUES.md`. The user named the archive and
+the chunk size; the bundle name `overset-grid-methods` was chosen by the
+compiler (the archive's name mixes the method and one of its brand names)
+and is the human's to change before the first commit.
+
+**Compiled unattended.** The user asked for the ingestion under the night
+protocol: the compiler neither stages nor commits; each chunk is one
+snapshot step (one tree, one patch, one prepared commit message
+`docs(overset-grid-methods): ingest chunk N: <slugs>`), and the human
+reviews the chain and commits it in order. This keeps D14 and D26 — one
+reviewed unit per chunk, the commit reserved to the human — while letting
+the next chunk build on the previous one before it is committed.
+
+**The archive's composition, recorded because it shapes the bundle:** the
+page-1 and checksum check found 51 distinct works, no byte copies and no
+misfiled papers; none of them is a Source page of another bundle. Sixteen
+files carry no DOI on page 1 (the AIAA conference papers of 1983–2005 and
+accepted manuscripts); their identity was found on Crossref from title and
+author and checked against page 1.
+
+**How the scope is kept:** the archive mixes overset methods proper
+(assembly, connectivity, interpolation, conservation, stability theory)
+with discretizations and applications that use overlapping grids
+(immersed boundaries, fluid–structure interaction, multiphase flow,
+Maxwell's equations, Yin–Yang grids in geophysics and astrophysics). All
+are ingested in full: the user's bibliography defines the domain. Papers
+whose main subject lives in another bundle are listed in the issues file
+as D17 candidates; no copy is made without the human's decision, and the
+bundle never links to another bundle (D12). The archive is in
+chronological order, so chunk 1 holds the founding papers and the
+registry and the reading guide are built from them.
