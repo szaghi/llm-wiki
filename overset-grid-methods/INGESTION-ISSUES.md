@@ -6,6 +6,57 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 4 — Bergmann et al. 2022a, Xiao et al. 2023, Devlin et al. 2023, Kochi & Ramakrishna 2023, Angel et al. 2023, Tian et al. 2024, Carlino & Boscheri 2024, Oh et al. 2024, Zhou et al. 2024, Carson et al. 2025 (2026-11-02)
+
+Sources (10): bergmann-2022, xiao-2023, devlin-2023, kochi-2023,
+angel-2023, tian-2024, carlino-2024, oh-2024, zhou-2024, carson-2025.
+40 of 51 ingested, 52 concept pages plus the registry, 1290 bibliography
+entries.
+
+### Decisions for the human
+
+1. **Reading depth (taken on your behalf, reversible).** Without reader
+   subagents, the chunk-4 papers were read in a targeted way: abstract,
+   introduction, section structure, main results and conclusions closely,
+   derivations skimmed. Each Source page says so in `# Version read`, and
+   claims are limited to the parts read. Printed slips were not hunted
+   ("None recorded (targeted reading)"). A full reading can be done later
+   per paper.
+2. **Reference lists from Crossref.** Fragments were generated from the
+   Crossref deposited reference lists (all ten papers have complete
+   deposits); references with a DOI carry the full Crossref author list,
+   those without carry the first author only ("and others", noted). Three
+   empty deposited records in Kochi & Ramakrishna (2023) were completed
+   from the printed list.
+3. **Overlapping meshes in Tian et al. (2024)** are staggered meshes of one
+   discretization, not overset component grids; the paper is in the archive
+   and was ingested, with the difference stated on the pages.
+
+### Contradictions
+
+None open.
+
+### Identity and versions
+
+- bergmann-2022 read in HAL hal-03615757; carlino-2024 in arXiv
+  2308.02686v1; carson-2025 in arXiv 2404.14592v1; the others versions of
+  record.
+- Zhou et al.'s own citation keyed `zhou-2024` (Mar. Struct. 93:103527) is
+  a different work, re-keyed `zhou-2024-b`.
+
+### Bundle fit
+
+Zhou et al. (2024) (ship hydroelasticity in potential flow) and Tian et
+al. (2024) (staggered LDG) are peripheral; Carson et al. (2025) and Angel
+et al. (2023) are wave-propagation numerics whose overset content is
+central.
+
+### Candidate pages (not created, inline)
+
+Virtual-face finite volumes (Devlin et al.; one source); shock-aligned
+overset grids (Kochi & Ramakrishna 2023); generalized modes for
+hydroelasticity.
+
 ## Chunk 3 — Chandar & Sitaraman, Hedayat et al., Wang & Stern, Bergmann et al. (b), Kopriva et al., Li & Wang, Delcour et al., Kochi & Ramakrishna, Zhao et al., Teschner & Mundt, all 2022 (2026-11-02)
 
 Sources (10): chandar-2022, hedayat-2022, wang-2022, bergmann-2022-b,

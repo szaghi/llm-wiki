@@ -5,7 +5,7 @@ description: "The circular cylinder on a background grid plus a body-fitted annu
 status: established
 aliases: [cylinder in cross flow, cylinder in a channel, impulsively started cylinder, Wannier flow, shock diffraction by a cylinder, side-by-side cylinders, rotating cylinder]
 tags: [benchmark, chimera, composite-grid, high-order, incompressible, compressible]
-timestamp: 2026-11-02T15:09:00Z
+timestamp: 2026-11-02T15:27:00Z
 ---
 
 # Flow past a circular cylinder
@@ -204,6 +204,10 @@ no convergence rate on an unshocked cylinder.
 | [Hedayat et al. (2022)](/sources/hedayat-2022.md) | rotationally oscillating cylinder ($Re=300$); in-line oscillating cylinder ($Re=100$, $KC=5$); freely falling cylinders | torque agrees with the single grid; velocity profiles agree with the experiment of Dütsch et al.; fall velocity within 0.2 % of the single grid (§3.2–3.4) |
 | [Zhao et al. (2022)](/sources/zhao-2022.md) | transversely oscillating cylinder at $Re=40$ with an immersed boundary on a translating overset grid | smooth forces with single-donor linear reconstruction, noisy forces with inverse distance (§III A) |
 
+## Supersonic cylinder with a shock-aligned grid
+
+[Kochi & Ramakrishna (2023)](/sources/kochi-2023.md) compute supersonic flow over a cylinder with a DG solver and a shock-aligned overset grid; the bow-shock stand-off distance is validated against an analytical method (Abstract).
+
 ## Qualifications
 
 - Chesshire & Henshaw (1990, Table V) print the finest background grid as
@@ -239,3 +243,4 @@ no convergence rate on an unshocked cylinder.
 - [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §5.3, Table 3, Figs. 13–17.
 - [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §3.2–3.4.
 - [Zhao et al. (2022)](/sources/zhao-2022.md) — §III A.
+- [Kochi & Ramakrishna (2023)](/sources/kochi-2023.md) — Abstract.

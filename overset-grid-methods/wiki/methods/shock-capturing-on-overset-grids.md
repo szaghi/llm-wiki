@@ -5,7 +5,7 @@ description: "How shocks, detonations and material interfaces are captured on ov
 status: established
 aliases: [shock capturing on overset grids, shocks crossing overset boundaries, Chimera shock capturing, Godunov methods on overlapping grids, compressible flow on overlapping grids]
 tags: [shock-capturing, compressible, finite-volume, overset-grid, multiphase]
-timestamp: 2026-11-02T15:08:00Z
+timestamp: 2026-11-02T15:27:00Z
 ---
 
 # Shock capturing on overlapping grids
@@ -224,6 +224,10 @@ hitting a light elastic ellipse on deforming grids (§6); see
 
 [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) rebuild the higher modes of DG artificial-boundary cells by WENO reconstruction, which also limits the solution when a shock crosses the overset boundary; Sod and Lax shock tubes and three 2-D Riemann problems pass without oscillation ([discontinuous Galerkin methods on overlapping grids](/methods/discontinuous-galerkin-on-overset-grids.md), §4.3–4.4). [Teschner & Mundt (2022)](/sources/teschner-2022.md) avoid interpolation near the axis of a blunt body by coincident points and compute a supersonic hemisphere cylinder with AUSM-type fluxes ([interpolation-free overset coupling](/methods/interpolation-free-overset-coupling.md)). [Delcour et al. (2022)](/sources/delcour-2022.md) report local supersonic pockets terminated by shocks across a deforming Chimera mesh (§4.2).
 
+## Shock-aligned overset grids
+
+[Kochi & Ramakrishna (2023)](/sources/kochi-2023.md) confine shock capturing to an overset grid: troubled-cell data of a coarse DG solution locate the shock, a refined structured overset grid aligned with it is built (partly by hand), and the solver is rerun with the high-resolution flux and limiter only on that grid. The shock then lies on a grid line with very small thickness, decreasing with the order; a refined but unaligned overset grid does better than the coarse grid and worse than the aligned one. Tests: ramp, shock reflection, a cylinder bow shock (stand-off checked against an analytical method) and a Mach reflection (Abstract, Conclusions).
+
 ## Qualifications
 
 - Picard et al. state that the K-Dubois limiter "acts on the primitive
@@ -276,3 +280,4 @@ hitting a light elastic ellipse on deforming grids (§6); see
 - [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §4.3–4.4.
 - [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §3–§4.
 - [Delcour et al. (2022)](/sources/delcour-2022.md) — §4.2.
+- [Kochi & Ramakrishna (2023)](/sources/kochi-2023.md) — Abstract, Conclusions.

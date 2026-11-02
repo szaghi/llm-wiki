@@ -5,7 +5,7 @@ description: "How overset grid assembly is distributed: PEGASUS 5's coarse-grain
 status: established
 aliases: [parallel domain connectivity, parallel overset grid assembly, parallel OGA, GPU overset assembly, accelerated overset assembly, overset load balancing, load re-balance]
 tags: [parallel, gpu, domain-connectivity, unstructured, rotorcraft]
-timestamp: 2026-11-02T15:08:00Z
+timestamp: 2026-11-02T15:26:00Z
 ---
 
 # Parallel and GPU overset grid assembly
@@ -202,6 +202,10 @@ interpolation](/methods/inter-grid-interpolation.md)).
 
 [Li & Wang (2022)](/sources/li-2022.md) give each component of an array its own instance of a single-solver code on an MPI intra-communicator and couple the instances by Roget & Sitaraman's assembly, run only on solver/process/block triples whose bounding boxes collide; against their dual-solver code this lowers assembly time, shrinks hole maps and scales better to 2880 processes (§3, §6). The off-body octree grid is refined so that background cells are not larger than the near-body cells they overlap ([AMR on overlapping grids](/methods/amr-on-overset-grids.md)).
 
+## Unstructured implicit hole cutting with wall distance (Xiao et al., Oh et al.)
+
+[Xiao et al. (2023)](/sources/xiao-2023.md) accelerate a parallel implicit-hole-cutting assembly for unstructured grids with a bookkeeping alternating digital tree for the donor search, a parallel advancing-front wall-distance computation and a message-passing strategy with lean communication and storage, each compared with existing alternatives (§2–§3). [Oh et al. (2024)](/sources/oh-2024.md) classify points by an exact wall distance before the donor search and balance the load of spatially partitioned runs; their assembly is faster than post-classification assembly in all tests ([wall-distance hole cutting](/methods/wall-distance-hole-cutting.md)).
+
 ## Qualifications
 
 - Roget & Sitaraman print a "68% reduction" for 2.1 s → 0.7 s; the printed values
@@ -231,3 +235,5 @@ interpolation](/methods/inter-grid-interpolation.md)).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1 (TIOGA, ExaWind); §3.1.2; §3.2.
 - [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.2, §4, Algorithms 2–3.
 - [Li & Wang (2022)](/sources/li-2022.md) — §2–§3, §6, Tables 2, 4.
+- [Xiao et al. (2023)](/sources/xiao-2023.md) — §2–§3.
+- [Oh et al. (2024)](/sources/oh-2024.md) — Abstract, Conclusions.

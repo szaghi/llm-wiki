@@ -5,7 +5,7 @@ description: "The store released from a wing (with or without pylon) as the refe
 status: established
 aliases: [store separation, wing/pylon/store, wing/pylon/finned-store, AFATL wing and store, SRB separation]
 tags: [benchmark, moving-grid, chimera, domain-connectivity, parallel]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:26:00Z
 ---
 
 # Wing–pylon–store separation
@@ -143,6 +143,10 @@ involving store separation (§10; see [OVERFLOW](/software/overflow.md)).
 Chan gives no case data. No ingested source compares a computed store
 trajectory with experiment.
 
+## Unstructured assembly in later work
+
+[Xiao et al. (2023)](/sources/xiao-2023.md) compute a store separation, a helicopter and a component deployment with a parallel unstructured overset assembly embedded in a URANS solver (§4).
+
 ## Qualifications
 
 - Noack's Table 2 lists 25 grid rows whose dimensions sum to 3,108,363
@@ -159,3 +163,4 @@ trajectory with experiment.
 - [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §6.1 (hardware); §6.2, Figs. 22–23 (wing–pylon–store, 15 M cells, speed-up 117 → 213 at 256 processors, up to 80% time reduction).
 - [Chan (2009)](/sources/chan-2009.md) — §4 (early single-grid-per-body moving cases, refs. [3], [4]); §10 (OVERFLOW-D in store separation); §11 (controlled store separation from a cavity, ref. [36]).
 - [Banks et al. (2016)](/sources/banks-2016.md) — §1 (store separation as early motivation, ref. [29]).
+- [Xiao et al. (2023)](/sources/xiao-2023.md) — §4.

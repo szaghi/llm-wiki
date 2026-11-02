@@ -223,7 +223,7 @@ are not numbered references.
 
 # Pages created or updated
 
-Chunk 2 (2026-11-02). This source is cited on:
+Chunk 2 (2026-11-02), cited further in chunk 4. This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Flow past a sphere](/benchmarks/flow-past-sphere.md)
@@ -235,6 +235,7 @@ Chunk 2 (2026-11-02). This source is cited on:
 - [Maxwell's equations on overlapping grids](/methods/maxwell-equations-on-overset-grids.md)
 - [Parallel and GPU overset grid assembly](/methods/parallel-overset-grid-assembly.md)
 - [Twilight-zone flow (manufactured solutions)](/methods/twilight-zone-flow.md)
+- [Upwind schemes for wave equations on overlapping grids](/methods/upwind-wave-equation-overset.md)
 - [Interpolation order and overlap requirements](/results/interpolation-order-requirement.md)
 - [CMPGRD and its solver suite (CGINS, CGNVT, CGES, CGMG, DSK)](/software/cmpgrd.md)
 - [Overture (and its grid generator Ogen)](/software/overture.md)

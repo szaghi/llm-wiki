@@ -5,7 +5,7 @@ description: "Henshaw's fourth-order time-domain Maxwell solver on composite ove
 status: established
 aliases: [time-domain electromagnetics on overlapping grids, Maxwell solver on composite grids, mx, second-order Maxwell formulation, FDTD on overlapping grids]
 tags: [maxwell, wave-equation, high-order, composite-grid, stability, parallel]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:27:00Z
 ---
 
 # Maxwell's equations on overlapping grids
@@ -229,6 +229,10 @@ with only $\mathbf E$ computed; the overlapping grid itself took 2.3 reals per
 point. Storing $\partial\mathbf x/\partial\mathbf r$ on all grids would alone
 take 9 reals per point.
 
+## Upwind and implicit schemes in later work
+
+[Angel et al. (2023)](/sources/angel-2023.md) solve Maxwell's equations in second-order form to second and fourth order on overset grids with upwind dissipation added as a corrector stage, ten or more times faster than their earlier upwind formulation; [Carson et al. (2025)](/sources/carson-2025.md) add implicit and spatially partitioned implicit–explicit modified-equation time stepping for geometrically stiff wave problems ([upwind schemes for wave equations](/methods/upwind-wave-equation-overset.md), [IMEX time stepping](/methods/imex-time-stepping-on-overset-grids.md)).
+
 ## Qualifications
 
 - **Stability on general overlapping grids is not proved.** Lemmas 5.1, 6.1,
@@ -267,3 +271,5 @@ take 9 reals per point.
 # Citations
 
 - [Henshaw (2006)](/sources/henshaw-2006-b.md) — §1 (Eqs. (1.1)–(1.6); earlier work as recalled), §2 (Eqs. (2.1)–(2.9)), §3 (Eqs. (3.1)–(3.4)), §4 (overlapping grid, $q=p+1$), §5 (Lemma 5.1, Eqs. (5.6)–(5.13), Figs. 1–2), §6 (Lemma 6.1, Eqs. (6.1)–(6.9)), §6.1 (Yee), §7 (Eqs. (7.3)–(7.18)), §8 (Lemmas 8.1–8.2, Fig. 4), §9.1–9.4 (Eqs. (9.1)–(9.9), Fig. 5), §10 (Tables 1–7, Figs. 8–9), §11.
+- [Angel et al. (2023)](/sources/angel-2023.md) — Abstract.
+- [Carson et al. (2025)](/sources/carson-2025.md) — Abstract.

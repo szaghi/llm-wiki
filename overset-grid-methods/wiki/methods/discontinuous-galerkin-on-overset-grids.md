@@ -5,7 +5,7 @@ description: "How discontinuous Galerkin solutions on overlapping grids are coup
 status: established
 aliases: [DG overset, element-based overset coupling, face-based overset coupling]
 tags: [dg, high-order, interpolation, stability]
-timestamp: 2026-11-02T15:06:00Z
+timestamp: 2026-11-02T15:27:00Z
 ---
 
 # Discontinuous Galerkin methods on overlapping grids
@@ -29,6 +29,10 @@ Evidence (§4): $L_2$ density orders about $N+1$ for $N=1$–3 on an entropy wav
 
 [Kopriva et al. (2022)](/sources/kopriva-2022.md) analyse the continuous overset problem coupled by penalty (lifting) terms with matrices $\Sigma_u$, $\Sigma_v$ at both overlap boundaries, the form a DG or summation-by-parts discretization inherits: it is energy bounded and conservative if $\beta A+\Sigma_u=\Sigma_v$ and $2\Sigma_v-\beta A\ge0$ ([well-posedness and energy stability of overset problems](/results/overset-well-posedness.md)). The authors present the analysis as the foundation for provably stable overset discretizations (§1, §4).
 
+## Shock-aligned DG overset grids and staggered LDG meshes
+
+[Kochi & Ramakrishna (2023)](/sources/kochi-2023.md) use their DG overset coupling to place a shock-aligned refined grid where troubled cells were flagged ([shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md)). [Tian et al. (2024)](/sources/tian-2024.md) use "overlapping meshes" in a different sense: the vorticity, velocity and potential of the incompressible Euler equations are approximated on different staggered meshes, so the velocity is continuous on primitive-mesh interfaces and upwind fluxes apply in a local DG scheme; a divergence-free velocity and positive vorticity averages (time-step restriction plus slope limiter) give a maximum principle for the vorticity (Abstract).
+
 ## Qualifications
 
 - Kochi & Ramakrishna (2022) print the nonlinear weights with the sum over stencils in the denominator, which as printed makes them equal to the linear weights; the cited Jiang–Shu form applies the denominator per stencil (Eq. 12) *(compiler check, not in the sources)*.
@@ -37,3 +41,5 @@ Evidence (§4): $L_2$ density orders about $N+1$ for $N=1$–3 on an entropy wav
 
 - [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §1, §3, §4, Tables 1–2.
 - [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §1, Thm 5, §4.
+- [Kochi & Ramakrishna (2023)](/sources/kochi-2023.md) — Abstract.
+- [Tian et al. (2024)](/sources/tian-2024.md) — Abstract, §3–§4.

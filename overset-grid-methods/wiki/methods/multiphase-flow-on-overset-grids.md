@@ -5,7 +5,7 @@ description: "How interface-capturing and multi-component models cross overset b
 status: established
 aliases: [two-phase flow on overset grids, VOF overset interpolation]
 tags: [multiphase, interpolation, finite-volume, marine]
-timestamp: 2026-11-02T15:06:00Z
+timestamp: 2026-11-02T15:27:00Z
 ---
 
 # Multiphase flow on overlapping grids
@@ -20,6 +20,10 @@ Interface-capturing variables are discontinuous across the interface; the [inter
 
 [Picard et al. (2021)](/sources/picard-2021.md) solve the five-equation two-component Euler model (recalled from Allaire, Clerc & Kokh) on a finite-volume Chimera patch, transferring all variables by their intersection-weighted second-order transfer; a Mach 1.22 shock on a helium bubble with a $30^\circ$-rotated patch agrees with the single grid for equal cell sizes (§4.4). The model is written in non-conservative form, and the transfer is not conservative ([shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md)).
 
+## Mass loss of interpolated volume fractions
+
+[Devlin et al. (2023)](/sources/devlin-2023.md) compare static and dynamic volume-of-fluid cases (including a dam break with an obstacle): conventional interpolated overset schemes lose liquid mass and show a pressure discontinuity between grids, while their interpolation-free DFVF-overset conserves mass strictly and agrees with single-grid solutions (Abstract, §4).
+
 ## Qualifications
 
 - Wang & Stern (2022) state that interpolating the normal directly is "one order more accurate" than computing it from the interpolated distance function, without showing it (§2.2).
@@ -29,3 +33,4 @@ Interface-capturing variables are discontinuous across the interface; the [inter
 
 - [Wang & Stern (2022)](/sources/wang-2022.md) — §1, §2.2–2.3, §3, §4.
 - [Picard et al. (2021)](/sources/picard-2021.md) — §2, §4.4.
+- [Devlin et al. (2023)](/sources/devlin-2023.md) — Abstract, §4.

@@ -56,7 +56,7 @@ arXiv preprint 1910.09315v1 (13 October 2019, "Preprint submitted to Elsevier"),
 
 # Pages created or updated
 
-Chunk 3 (2026-11-02). This source is cited on:
+Chunk 3 (2026-11-02), cited further in chunk 4. This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Taylor–Green vortex (two-dimensional exact decaying solution)](/benchmarks/taylor-green-vortex.md)
@@ -74,3 +74,4 @@ Chunk 3 (2026-11-02). This source is cited on:
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
 - [Moving overset grids](/methods/moving-overset-grid.md)
 - [Parallel and GPU overset grid assembly](/methods/parallel-overset-grid-assembly.md)
+- [Wall-distance hole cutting](/methods/wall-distance-hole-cutting.md)

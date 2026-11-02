@@ -5,7 +5,7 @@ description: "How fourth- to sixth-order finite-difference schemes are run on ov
 status: established
 aliases: [high-order overset methods, high-order Chimera, compact schemes on overset grids, high-order composite-grid discretization]
 tags: [high-order, finite-difference, interpolation, stability, overset-grid, composite-grid]
-timestamp: 2026-11-02T15:09:00Z
+timestamp: 2026-11-02T15:27:00Z
 ---
 
 # High-order discretizations on overlapping grids
@@ -210,6 +210,10 @@ an interpolation instability.
 
 [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) keep order $N+1$ of a DG scheme across overset boundaries by rebuilding artificial-boundary modes with WENO ([DG on overlapping grids](/methods/discontinuous-galerkin-on-overset-grids.md)); [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) reach second order with an ADER scheme without fringe interpolation ([ADER schemes](/methods/ader-on-overset-grids.md)); [Kopriva et al. (2022)](/sources/kopriva-2022.md) give the continuous energy theory that provably stable high-order overset discretizations must reproduce ([well-posedness](/results/overset-well-posedness.md)).
 
+## Wave equations, implicit time stepping and potential flow
+
+[Angel et al. (2023)](/sources/angel-2023.md) and [Carson et al. (2025)](/sources/carson-2025.md) keep fourth-order finite differences for second-order wave equations stable on overset grids with upwind dissipation, explicit or within implicit modified-equation schemes ([upwind schemes](/methods/upwind-wave-equation-overset.md), [IMEX](/methods/imex-time-stepping-on-overset-grids.md)). [Zhou et al. (2024)](/sources/zhou-2024.md) use high-order finite differences on overlapping curvilinear body-fitted grids for linearized potential-flow seakeeping of flexible ships.
+
 ## Qualifications
 
 - **Sixth versus fourth order.** In the acoustic-scattering tests fourth-order
@@ -236,3 +240,6 @@ an interpolation instability.
 - [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §3–§4.
 - [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §5.1.
 - [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §1, §4.
+- [Angel et al. (2023)](/sources/angel-2023.md) — Abstract.
+- [Carson et al. (2025)](/sources/carson-2025.md) — Abstract, Conclusions.
+- [Zhou et al. (2024)](/sources/zhou-2024.md) — Abstract.

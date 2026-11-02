@@ -5,7 +5,7 @@ description: "Moving overset grids let component grids follow rigid, rotating or
 status: established
 aliases: [moving-body overset, unsteady Chimera, dynamic overset grids, dynamic overset technique, relative-motion Chimera, moving-body grid assembly, moving overlapping grids, deforming composite grids]
 tags: [moving-grid, domain-connectivity, overset-grid, chimera]
-timestamp: 2026-11-02T15:08:00Z
+timestamp: 2026-11-02T15:27:00Z
 ---
 
 # Moving overset grids
@@ -324,6 +324,10 @@ Three 2022 sources move component grids differently:
 
 [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) show that on a rotating inner mesh the force oscillates in step with the number of receptors, as cells switch between field and receptor status; RBF interpolation lowers the force error by two orders of magnitude against inverse distance, and their conservation correction lowers the oscillation magnitude (§3.7.6). [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) interpolate only when a hole cell becomes active as the foreground grid moves ([ADER schemes on overlapping grids](/methods/ader-on-overset-grids.md)). [Wang & Stern (2022)](/sources/wang-2022.md) and [Li & Wang (2022)](/sources/li-2022.md) run dynamic overset grids for planing hulls with two degrees of freedom and for rotating turbine and rotor blades. [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) use static grids only.
 
+## Moving Chimera meshes in IMEX and unstructured solvers
+
+[Carlino & Boscheri (2024)](/sources/carlino-2024.md) integrate on moving cells, encoding the grid velocity in the numerical flux of an IMEX finite-volume scheme; [Xiao et al. (2023)](/sources/xiao-2023.md) re-assemble unstructured overset grids in parallel for a helicopter, a store separation and a component deployment.
+
 ## Qualifications
 
 - Meakin & Suhs state that the effect of the inter-grid boundary updating on time accuracy
@@ -386,3 +390,5 @@ Three 2022 sources move component grids differently:
 - [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §4.4.
 - [Wang & Stern (2022)](/sources/wang-2022.md) — §4.3.
 - [Li & Wang (2022)](/sources/li-2022.md) — §5.
+- [Carlino & Boscheri (2024)](/sources/carlino-2024.md) — Abstract.
+- [Xiao et al. (2023)](/sources/xiao-2023.md) — §4.

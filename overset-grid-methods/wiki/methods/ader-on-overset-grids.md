@@ -5,7 +5,7 @@ description: "ADER-type space–time finite-volume schemes on moving overset gri
 status: established
 aliases: [space-time chimera, compact transmission condition]
 tags: [ader, finite-volume, moving-grid, incompressible]
-timestamp: 2026-11-02T15:06:00Z
+timestamp: 2026-11-02T15:26:00Z
 ---
 
 # ADER schemes on overlapping grids
@@ -26,6 +26,10 @@ The coupling replaces fringe interpolation by stencils (§2.1, Algorithm 1):
 
 Second order in space and time for velocity and pressure ($L^2$ rates about 2) on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) with a rotating, perturbed foreground grid; the $L^\infty$ error has no definite rate (§5.1). The [lid-driven cavity](/benchmarks/lid-driven-cavity.md), steady and impulsively started or stopped [cylinders](/benchmarks/flow-past-circular-cylinder.md) and a sedimenting cylinder ([immersed boundaries on overlapping grids](/methods/immersed-boundary-on-overset-grids.md)) agree with references using about $10^4$ cells (§5–§6).
 
+## Advection–diffusion predecessor and successors
+
+[Bergmann et al. (2022a)](/sources/bergmann-2022.md) introduced the approach for advection–diffusion: the equations are discretized on space–time slabs, and instead of time-dependent spatial transmission conditions between relatively moving blocks, interpolation polynomials are defined on arbitrarily intersecting space–time cells at the block boundaries; a mesh-free finite-element predictor and a finite-volume corrector represent the solution, with a space–time local Lax–Friedrichs speed accounting for advection and diffusion. Moving background and foreground meshes add no spurious perturbation, second order is reached uniformly in space and time, and several independently moving, mutually overlapping foreground meshes are supported (Abstract). [Carlino & Boscheri (2024)](/sources/carlino-2024.md) carry the compact fringe transmission into an IMEX finite-volume scheme ([IMEX time stepping](/methods/imex-time-stepping-on-overset-grids.md)).
+
 ## Qualifications
 
 - The hybrid-stencil algorithm may fail for widely different spacings of the two grids; the remedies proposed are not tested (§2.1).
@@ -35,3 +39,5 @@ Second order in space and time for velocity and pressure ($L^2$ rates about 2) o
 # Citations
 
 - [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §1, §2.1, §4.1–4.4, §5–§7, Definition 4.1, Algorithm 1.
+- [Bergmann et al. (2022a)](/sources/bergmann-2022.md) — Abstract, §1.
+- [Carlino & Boscheri (2024)](/sources/carlino-2024.md) — Conclusions.

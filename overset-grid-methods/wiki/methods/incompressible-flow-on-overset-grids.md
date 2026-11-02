@@ -5,7 +5,7 @@ description: "Incompressible Navier–Stokes on overlapping grids: Henshaw's fou
 status: established
 aliases: [incompressible Navier–Stokes on composite grids, velocity–pressure formulation, pressure Poisson formulation, CGINS method, fourth-order incompressible overlapping-grid method, overset single system, overset additive Schwarz, overset Schwarz coupling]
 tags: [incompressible, composite-grid, high-order, finite-volume, interpolation]
-timestamp: 2026-11-02T15:09:00Z
+timestamp: 2026-11-02T15:27:00Z
 ---
 
 # Incompressible flow on overlapping grids
@@ -307,6 +307,10 @@ quantities within 1% of OSS (§5). See
 
 [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) show that in a pressure-correction solver the pressure equation alone decides mass conservation, and impose the overset global conservation condition implicitly in it ([conservative overset interface](/methods/conservative-overset-interface.md)). [Hedayat et al. (2022)](/sources/hedayat-2022.md) solve each moving curvilinear grid in its body frame with a flux correction for mass ([immersed boundaries](/methods/immersed-boundary-on-overset-grids.md)). [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) use a Chorin–Temam projection inside an ADER space–time scheme with flux coupling ([ADER schemes](/methods/ader-on-overset-grids.md)). [Zhao et al. (2022)](/sources/zhao-2022.md) solve the weakly compressible ALE equations (Mach 0.1) with a lattice Boltzmann flux solver. [Wang & Stern (2022)](/sources/wang-2022.md) add two-phase flow ([multiphase flow](/methods/multiphase-flow-on-overset-grids.md)). Test cases include the [lid-driven cavity](/benchmarks/lid-driven-cavity.md) and the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md).
 
+## IMEX projection on moving Chimera meshes and staggered DG
+
+[Carlino & Boscheri (2024)](/sources/carlino-2024.md) combine semi-implicit IMEX Runge–Kutta finite volumes with an incremental projection on evolving Chimera meshes; the mesh motion enters the nonlinear flux and the time step depends only on the fluid velocity relative to the frame ([IMEX time stepping](/methods/imex-time-stepping-on-overset-grids.md)). [Tian et al. (2024)](/sources/tian-2024.md) solve the incompressible Euler equations in vorticity–stream-function form with a maximum-principle-preserving local DG scheme on staggered overlapping meshes ([DG on overlapping grids](/methods/discontinuous-galerkin-on-overset-grids.md)).
+
 ## Qualifications
 
 - **Equivalence not proved here.** The equivalence of the two formulations
@@ -364,3 +368,5 @@ quantities within 1% of OSS (§5). See
 - [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §3–§4.
 - [Zhao et al. (2022)](/sources/zhao-2022.md) — §II.
 - [Wang & Stern (2022)](/sources/wang-2022.md) — §2.
+- [Carlino & Boscheri (2024)](/sources/carlino-2024.md) — Abstract, Conclusions.
+- [Tian et al. (2024)](/sources/tian-2024.md) — Abstract.

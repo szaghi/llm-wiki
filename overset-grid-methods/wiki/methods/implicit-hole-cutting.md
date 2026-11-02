@@ -5,7 +5,7 @@ description: "Implicit hole cutting (Lee and Baeder 2003) replaces cutting by bo
 status: established
 aliases: [IHC, implicit hole-cutting, cell-selection connectivity, smallest-cell donor selection]
 tags: [hole-cutting, domain-connectivity, overset-grid, unstructured, rotorcraft]
-timestamp: 2026-11-02T15:08:00Z
+timestamp: 2026-11-02T15:26:00Z
 ---
 
 # Implicit hole cutting
@@ -206,6 +206,10 @@ boxes, for one static overset mesh on a single GPU.
 
 [Li & Wang (2022)](/sources/li-2022.md) take Roget & Sitaraman's implicit hole cutting into a multiple-solver framework and add a supplementary implicit hole cutting during conflict resolution (§3, Appendix A). [Hedayat et al. (2022)](/sources/hedayat-2022.md) judge it about an order of magnitude more expensive than explicit cutting for grids re-assembled every step, without a measurement (§2.2.2). [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) run on overset meshes assembled in this way and note that donor stencils of RBF interpolation (at least 9 donors in 2-D) widen the search (§3.7.1).
 
+## Wall distance as the criterion
+
+Wall distance as the selection criterion, and its cost, are developed on [wall-distance hole cutting](/methods/wall-distance-hole-cutting.md): [Xiao et al. (2023)](/sources/xiao-2023.md) compute it with a parallel advancing-front algorithm, [Oh et al. (2024)](/sources/oh-2024.md) exactly and before the donor search.
+
 ## Qualifications
 
 - **Must hole points be excluded from the solution update?** (Recorded as a qualification at
@@ -250,3 +254,5 @@ boxes, for one static overset mesh on a single GPU.
 - [Li & Wang (2022)](/sources/li-2022.md) — §3, Appendix A.
 - [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.2.2.
 - [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) — §3.7.1.
+- [Xiao et al. (2023)](/sources/xiao-2023.md) — §2.
+- [Oh et al. (2024)](/sources/oh-2024.md) — Abstract.

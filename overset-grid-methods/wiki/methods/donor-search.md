@@ -5,7 +5,7 @@ description: "Donor search finds, for each receptor, the enclosing cell of anoth
 status: established
 aliases: [donor cell search, stencil walking, stencil jumping, gradient search, interpolation stencil search, nearest-neighbour search, neighbour walk, line walk, reconstruction-partner pairing, exact inverse map, EIM, alternating digital tree, ADT]
 tags: [donor-search, domain-connectivity, overset-grid, unstructured]
-timestamp: 2026-11-02T15:08:00Z
+timestamp: 2026-11-02T15:26:00Z
 ---
 
 # Donor search
@@ -255,6 +255,10 @@ are not comparable across codes.
 
 Three 2022 sources add search variants. [Hedayat et al. (2022)](/sources/hedayat-2022.md) find candidate partitions with oriented bounding boxes (axes from the eigenvectors of a covariance matrix, tighter than axis-aligned boxes), then walk from cell to cell in axis-aligned control cells with a point-in-box test, falling back to brute force in the control cell when the walk gets stuck at a boundary or a highly curved donor boundary (§2.2.3–2.2.5, Algorithm 3). [Li & Wang (2022)](/sources/li-2022.md) keep the exact-inverse-map search of Roget & Sitaraman with a non-contiguous candidate donor list, run only on overlapping solver/process/block triples found by bounding-box collision (§3). [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) locate DG donor elements with a k-d tree and invert the donor element's isoparametric map by Newton iteration (tolerance $10^{-10}$, at most 20 iterations) (§3.1).
 
+## Bookkeeping and pre-classification
+
+[Xiao et al. (2023)](/sources/xiao-2023.md) speed up the alternating-digital-tree donor search with bookkeeping (§2); [Oh et al. (2024)](/sources/oh-2024.md) leave the donor search (basic ADT) unchanged and reduce the number of query points by classifying points first ([wall-distance hole cutting](/methods/wall-distance-hole-cutting.md)).
+
 ## Qualifications
 
 - Lee & Baeder print the planar inside test as $\mathbf r_i\cdot(\mathbf n_i\times\mathbf
@@ -293,3 +297,5 @@ Three 2022 sources add search variants. [Hedayat et al. (2022)](/sources/hedayat
 - [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.2.3–2.2.5, Algorithm 3.
 - [Li & Wang (2022)](/sources/li-2022.md) — §3.
 - [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §3.1.
+- [Xiao et al. (2023)](/sources/xiao-2023.md) — §2.
+- [Oh et al. (2024)](/sources/oh-2024.md) — Conclusions.
