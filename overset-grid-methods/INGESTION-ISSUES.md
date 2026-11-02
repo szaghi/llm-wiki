@@ -6,6 +6,41 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 6 — Glaubitz et al. 2027; archive complete; whole-bundle deep lint (2026-11-02)
+
+Source (1): glaubitz-2027 (arXiv 2509.21442v2, targeted reading). 51 of
+51 ingested, 53 concept pages plus the registry, 1756 bibliography
+entries.
+
+### Decisions for the human (whole night)
+
+1. **Bundle name** `overset-grid-methods` (D31) — confirm or rename
+   before committing.
+2. **Reading depth of chunks 4–6** — targeted (abstract, introduction,
+   structure, results, conclusions), stated on each Source page; chunks 1–2
+   were read in full by reader subagents, chunk 3 from full reader notes.
+   A later full reading of the 21 targeted papers would add printed-slip
+   hunting and section-level claims.
+3. **Reference lists of chunks 4–6** come from the Crossref deposited
+   records (complete for every paper); entries without a DOI carry the
+   first author only. A printed-list pass could complete the author lists.
+4. **Deep lint depth** — chunks 1–2 had four-auditor deep lints; chunks 3–6
+   compiler self-audits and one whole-bundle sweep (owner's no-subagent
+   instruction).
+5. Earlier open items: see the chunk 1–5 sections (year re-keys,
+   `volkov-1968` translation fold, `reyna-1982`/`reyna-1986`, AEDC report
+   year).
+
+### Contradictions
+
+None open in the bundle.
+
+### Closing bibliography sweeps
+
+`--dupes` clean; no venue/volume/page collision; the fuzzy-title sweep
+found only version pairs already kept distinct (conference or report vs
+journal) and Shu & Osher parts I/II.
+
 ## Chunk 5 — Kopriva et al. 2025, Wang et al. 2025, Ding et al. 2025, Luo & Fan 2025, Ding et al. 2026, Kumar et al. 2026, Wang et al. 2026, Abgrall et al. 2026, Carter et al. 2026, Hu et al. 2027 (2026-11-02)
 
 Sources (10): kopriva-2025, wang-2025, ding-2025, luo-2025, ding-2026,

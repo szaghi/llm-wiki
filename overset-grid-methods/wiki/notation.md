@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: component and composite grids, their mappings, point classification, inter-grid interpolation, conservative interfaces, flow equations in Cartesian and curvilinear form, grid motion, Yin–Yang grids, and reserved symbols for high-order, SBP–SAT, immersed-boundary and unstructured overset methods; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-11-02T15:43:00Z
+timestamp: 2026-11-02T15:51:00Z
 ---
 
 # Notation registry
@@ -186,8 +186,8 @@ Reserved symbols: a page that first uses one confirms it here (removing
 | Symbol | Meaning | Remark |
 |---|---|---|
 | $N$ | polynomial degree of DG and spectral-element methods | in use (DG on overlapping grids); order of accuracy then $p=N+1$ when the page shows it |
-| $\mathsf H$ | SBP norm (mass) matrix, symmetric positive definite | reserved |
-| $\mathsf D=\mathsf H^{-1}\mathsf Q$, $\mathsf Q+\mathsf Q^T=\mathsf B$ | SBP first-derivative operator and its summation-by-parts property | reserved; $\mathsf B=\mathrm{diag}(-1,0,\dots,0,1)$ in 1-D |
+| $\mathsf H$ | SBP norm (mass) matrix, symmetric positive definite | in use (sub-cell SBP, Glaubitz et al. 2027) |
+| $\mathsf D=\mathsf H^{-1}\mathsf Q$, $\mathsf Q+\mathsf Q^T=\mathsf B$ | SBP first-derivative operator and its summation-by-parts property | in use; $\mathsf B=\mathrm{diag}(-1,0,\dots,0,1)$ in 1-D |
 | $\Sigma$ | SAT penalty (scalar or matrix) | in use (overset well-posedness: $\Sigma_u$, $\Sigma_v$, $\Sigma^m$) |
 | $\lVert u\rVert_{\mathsf H}^2=u^T\mathsf Hu$ | discrete energy | reserved |
 | $\mathcal I_{k\leftarrow k'}$ (matrix) | interpolation operator in SBP-compatible form | reserved use of §3's symbol; the norm-compatibility condition is written as the source states it |

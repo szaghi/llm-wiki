@@ -9,7 +9,7 @@ year: 1989
 venue: "AIAA 9th Computational Fluid Dynamics Conference, AIAA Paper 89-1996-CP, pp. 643-657"
 local_file: "/home/stefano/papers/mosaic/overset-chimera/1989_Crossref_9th_Computational_Fluid_Dynamics_Conference_MEAKIN_Unsteady_aerodynamic_simulation_of_multiple_bodies_in_relati.pdf"
 tags: [overset-grid, chimera, moving-grid, domain-connectivity, compressible]
-timestamp: 2026-11-02T11:26:00Z
+timestamp: 2026-11-02T15:51:00Z
 ---
 
 # Summary
@@ -17,7 +17,7 @@ timestamp: 2026-11-02T11:26:00Z
 Meakin and Suhs present a prototype method for time-accurate simulation of
 viscous flow about several bodies in relative motion, the earliest
 [moving-overset-grid](/methods/moving-overset-grid.md) method among the
-chunk-1 sources. The authors frame
+founding papers of this bundle. The authors frame
 the Chimera [overset grid](/definitions/overset-grid.md) as a Schwarz-type
 overlapping decomposition with one added feature: bodies cut holes in
 neighbouring grids ([hole cutting](/methods/hole-cutting.md)). The resulting

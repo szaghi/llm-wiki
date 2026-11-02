@@ -5,7 +5,7 @@ description: "How shocks, detonations and material interfaces are captured on ov
 status: established
 aliases: [shock capturing on overset grids, shocks crossing overset boundaries, Chimera shock capturing, Godunov methods on overlapping grids, compressible flow on overlapping grids]
 tags: [shock-capturing, compressible, finite-volume, overset-grid, multiphase]
-timestamp: 2026-11-02T15:42:00Z
+timestamp: 2026-11-02T15:51:00Z
 ---
 
 # Shock capturing on overlapping grids
@@ -102,7 +102,7 @@ and 2-D tests.
 
 **Roe with MUSCL in primitive variables.** Wang (1995, §4) uses MUSCL with
 minmod in primitive variables, Roe flux-difference splitting and implicit
-backward Euler, on both sides of his conservative interface.
+backward Euler, on both sides of the conservative interface.
 
 ## Transfer of discontinuous data between grids
 

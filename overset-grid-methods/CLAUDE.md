@@ -98,11 +98,16 @@ notation.
 
 ## Status
 
+**Chunk 6 compiled 2026-11-02 (night step 06-chunk-6) — archive complete:**
+51 of 51 ingested, 53 concept pages plus the registry, 1756 bibliography
+entries after the closing sweeps, whole-bundle deep lint (compiler sweep)
+done, no contradiction open. Open human decisions are in
+INGESTION-ISSUES.md.
+
 **Chunk 5 compiled 2026-11-02 (night step 05-chunk-5):** 10 papers of
 2025–2027; 50 of 51 ingested, 53 concept pages plus the registry, 1706
 bibliography entries; targeted reading and Crossref reference lists; no
-contradiction open. Chunk 6 (the last paper, with the whole-bundle deep
-lint and closing sweeps) follows.
+contradiction open.
 
 **Chunk 4 compiled 2026-11-02 (night step 04-chunk-4):** 10 papers of
 2022–2025; 40 of 51 ingested, 52 concept pages plus the registry, 1290

@@ -5,7 +5,7 @@ description: "Why interpolation-coupled overset grids are not globally conservat
 status: established
 aliases: [conservative Chimera, COC, fully conservative interface algorithm, zonal interface generation, ZIG, conservative overset coupling, interpolation-free overset coupling]
 tags: [conservation, overset-grid, chimera, finite-volume, shock-capturing, hole-cutting]
-timestamp: 2026-11-02T15:42:00Z
+timestamp: 2026-11-02T15:51:00Z
 ---
 
 # Conservative overset interface
@@ -297,6 +297,10 @@ source of discrete divergence. Divergence damping is used to control it (see
 
 [Hu et al. (2027)](/sources/hu-2027.md) reconstruct conservative variables at overset boundaries with a lattice Boltzmann flux solver on virtual control volumes, reducing accumulated solution-transfer errors (Abstract). [Abgrall et al. (2026)](/sources/abgrall-2026.md) design a conservative coupling between conservative and primitive variables evolved on two staggered overlapping meshes of one discretization — overlap in a different sense from overset component grids (Abstract).
 
+## Provable conservation with SBP operators
+
+[Glaubitz et al. (2027)](/sources/glaubitz-2027.md) obtain provably conservative and energy-stable overset coupling in one dimension with sub-cell summation-by-parts operators (Abstract).
+
 ## Qualifications
 
 - **Two meanings of "conservative overset".** Wang's interface removes the
@@ -357,3 +361,4 @@ source of discrete divergence. Divergence damping is used to control it (see
 - [Devlin et al. (2023)](/sources/devlin-2023.md) — Abstract, §4.
 - [Hu et al. (2027)](/sources/hu-2027.md) — Abstract.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — Abstract.
+- [Glaubitz et al. (2027)](/sources/glaubitz-2027.md) — Abstract.
