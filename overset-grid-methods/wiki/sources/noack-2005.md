@@ -175,7 +175,7 @@ their venues and dates, and are kept as two entries.
 
 # Pages created or updated
 
-Chunk 1 (2026-11-02). This source is cited on:
+Chunk 1 (2026-11-02), cited further in chunk 2. This source is cited on:
 
 - [Wing–pylon–store separation and related moving-body cases](/benchmarks/store-separation.md)
 - [Domain connectivity and overset grid assembly](/definitions/domain-connectivity.md)
@@ -185,12 +185,15 @@ Chunk 1 (2026-11-02). This source is cited on:
 - [Overset (Chimera) grid](/definitions/overset-grid.md)
 - [Point classification and the iblank mask](/definitions/point-classification.md)
 - [Donor search](/methods/donor-search.md)
+- [Fluid–structure interaction on overlapping grids](/methods/fluid-structure-interaction-on-overset-grids.md)
 - [Hole cutting](/methods/hole-cutting.md)
 - [Implicit hole cutting](/methods/implicit-hole-cutting.md)
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
 - [Moving overset grids](/methods/moving-overset-grid.md)
 - [Overlap optimization](/methods/overlap-optimization.md)
+- [Parallel and GPU overset grid assembly](/methods/parallel-overset-grid-assembly.md)
 - [DCF and DCF3D (Meakin's domain connectivity function and code)](/software/dcf3d.md)
+- [Overture (and its grid generator Ogen)](/software/overture.md)
 - [PEGASUS 5](/software/pegasus-5.md)
 - [PEGASUS (PEGSUS) versions 1–4](/software/pegasus.md)
 - [SUGGAR](/software/suggar.md)

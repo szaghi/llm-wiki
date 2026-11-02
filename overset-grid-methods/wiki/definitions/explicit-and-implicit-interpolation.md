@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Explicit and implicit interpolation"
-description: "Two kinds of receptor coupling. In explicit interpolation every donor stencil holds discretization points only, so receptors update directly but need more overlap. In implicit interpolation stencils may hold other receptors, so the coupled equations are solved as a sparse system, needing less overlap and fewer points; the page gives the trade-off's costs."
+description: "Two kinds of receptor coupling. In explicit interpolation every donor stencil holds discretization points only, so receptors update directly but need more overlap; in implicit interpolation stencils may hold other receptors and the coupled equations are solved as a system. The page gives the costs and separates the term from compact interpolation and from single-system versus Schwarz solves."
 status: established
-aliases: [explicit interpolation, implicit interpolation, coupled interpolation, CGINTE, CGINT]
+aliases: [explicit interpolation, implicit interpolation, coupled interpolation, CGINTE, CGINT, circular interpolation]
 tags: [interpolation, composite-grid, overset-grid, domain-connectivity]
-timestamp: 2026-11-02T11:28:00Z
+timestamp: 2026-11-02T14:53:00Z
 ---
 
 # Explicit and implicit interpolation
@@ -83,6 +83,60 @@ receptors before the hole-fringe receptors. This is a sequential (ordered)
 evaluation, neither the implicit solve nor a strictly explicit stencil
 restriction.
 
+## Explicit conditions in later assemblers
+
+Later sources enforce the explicit kind at assembly time, in their own words:
+
+- [Picard et al. (2021)](/sources/picard-2021.md) (§3.2.2, Eq. (12), after a
+  report they cite) require the substrate ghost cells $\widetilde{\mathcal W}$
+  and the patch ghost cells $\widetilde{\mathcal V}$ (page-local names of the
+  two receptor sets) to be disjoint, $\widetilde{\mathcal W}\cap\widetilde{\mathcal V}=\emptyset$,
+  while the substrate ghost cells still overlap the patch. No receptor then
+  takes its value from a receptor of the other grid.
+- [Sharma et al. (2021)](/sources/sharma-2021.md) (Eq. (10)) interpolate
+  each fringe point from donor *field* points only. TIOGA keeps a preset
+  number of field points between the two meshes' fringes, because a zero
+  fringe gap "would otherwise result in a singular system of equations"
+  (Fig. 4).
+- [Sherer & Scott (2005)](/sources/sherer-2005.md) (§5.3) size the overlap
+  as the minimum that, with a two-point fringe, prevents "circular
+  interpolation, whereby interpolation donor points are also receiver points
+  obtaining their data from the grid that they themselves are trying to
+  update".
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) (§3.5) call a donor cell
+  whose vertices or centre are receptors a "low-quality donor" and resolve
+  the conflict by turning those vertices into field points, or, when they are
+  mandatory receptors, the served receptor into a field point.
+
+## Other uses of the words
+
+**Compact ("implicit") interpolation within one donor grid.** Sherer & Scott
+(2005) (§2, Eq. (1)) call an interpolation formula *implicit* or *compact*
+when it couples several receptors lying along one donor grid line in a
+tridiagonal system, as a Padé scheme couples derivatives. The coupling is
+within one donor grid; the authors explicitly exclude Chesshire & Henshaw's
+cross-grid implicit interpolation by assuming adequate overlap. They found
+compact interpolation the most accurate in 1-D but ill-conditioned for
+general receptor distributions in several dimensions, and abandoned it (§4.2,
+§6); see [high-order discretizations on overlapping grids](/methods/high-order-overset-discretization.md).
+
+**Single system versus overset Schwarz.** Sharma et al. (2021) (§3.2,
+Algorithms 1–2) distinguish how the interpolation equations enter the
+*solver*, not which points a stencil may hold. In the overset single system
+(OSS) the interpolation equations of all fringe points are constraint rows of
+one global linear system over all meshes, solved together with the field
+equations. In overset Schwarz coupling each mesh's system is solved
+separately and the fringe values are updated afterwards, in Jacobi
+(additive) or Gauss–Seidel (alternating) fashion, over a number of "overset
+corrector" iterations. With explicit stencils, OSS corresponds to Chesshire &
+Henshaw's implicit *time stepping* with interpolation equations in the
+system (§5.6), and the Schwarz variant to a lagged explicit update
+*(compiler check, not in the sources)*; Sharma et al. do not use these terms.
+[Horne & Mahesh (2021)](/sources/horne-2021.md) (§3.2) likewise inject the
+reconstructed fringe values into the implicit velocity and pressure systems.
+The accuracy and cost of the two solves are on
+[incompressible flow on overlapping grids](/methods/incompressible-flow-on-overset-grids.md).
+
 ## Qualifications
 
 - The Chimera sources do not use the terms. The tree hierarchy of
@@ -104,3 +158,8 @@ restriction.
 - [Lee & Baeder (2003)](/sources/lee-2003.md) — p. 11, Fig. 12.
 - [Benek et al. (1983)](/sources/benek-1983.md) — p. 374–375, Fig. 7.
 - [Benek et al. (1985)](/sources/benek-1985.md) — p. 324.
+- [Sherer & Scott (2005)](/sources/sherer-2005.md) — §2, Eq. (1) (compact interpolation), §4.2, §5.3 (circular interpolation), §6.
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §3.5 (low-quality donors).
+- [Picard et al. (2021)](/sources/picard-2021.md) — §3.2.2, Eq. (12).
+- [Sharma et al. (2021)](/sources/sharma-2021.md) — Eq. (10), Fig. 4, §3.2, Algorithms 1–2.
+- [Horne & Mahesh (2021)](/sources/horne-2021.md) — §3.2.

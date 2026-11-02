@@ -5,7 +5,7 @@ description: "Chesshire and Henshaw's Fortran composite overlapping grid generat
 status: established
 aliases: [CMPGRD]
 tags: [software, composite-grid, domain-connectivity, interpolation, high-order]
-timestamp: 2026-11-02T11:28:00Z
+timestamp: 2026-11-02T11:41:00Z
 ---
 
 # CMPGRD and its solver suite
@@ -142,6 +142,28 @@ flag array plus interpolation arrays (p. 55). Henshaw attributes the
 sphere's 17% interpolation share to its 10,728 receptors, a high fraction of
 all points (§5.2).
 
+## Lineage and successor
+
+[Henshaw & Schwendeman (2006, §1)](/sources/henshaw-2006.md) place CMPGRD in
+the composite-grid line: the approach "was described by Volkov", developed
+further by Starius and by Kreiss, "which led to the CMPGRD tools of
+Chesshire and Henshaw", while "Steger and associates at NASA independently
+conceived of the approach which they called Chimera grids". The 2006
+papers no longer run CMPGRD: their composite grids come from Ogen, the
+overlapping grid generator of the C++ framework
+[Overture](/software/overture.md) (Henshaw & Schwendeman 2006, §3.1;
+[Henshaw 2006](/sources/henshaw-2006-b.md), §9.4, uses Overture for the
+Maxwell code mx). The CMPGRD concepts carry over unchanged: component grids
+as mappings of the unit square or cube, the three point classes
+(discretization, interpolation, unused), tensor-product Lagrange
+interpolation in the donor's parameter space, and interpolation widths set
+by the [interpolation-order requirement](/results/interpolation-order-requirement.md).
+Henshaw (2006, §4) states that rule for the second-order wave equation as
+$q=p+1$ for a $p$th-order scheme, "following" Chesshire & Henshaw (1990);
+for the fourth-order Maxwell scheme this is $q=5$, the width CGINS uses
+(Henshaw 1994). What Ogen adds, a per-step incremental update for moving
+grids, is on the Overture page.
+
 ## Qualifications
 
 - Step 5 and step 6 of the printed pseudo-code (Chesshire & Henshaw 1990,
@@ -161,3 +183,5 @@ all points (§5.2).
 
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §1 and p. 9 (CMPGRD origin, features, size); §3.1 pp. 11–13 (component grids, stretching, platforms); §3.2 pp. 14–21, Figs. 9–11 (parameters, flag array, six steps, donor search, cost); §4 p. 25 (DSK); §5.2 p. 28 (interpolation data, CGINT/CGINTE); §5.4 (smoothed corners); §5.5 (CGEL, CGMG); §6 (CGNVT), Tables IX–XI; p. 55, p. 60 (timings).
 - [Henshaw (1994)](/sources/henshaw-1994.md) — §2 and §4.1 (CMPGRD-supplied coordinates, metrics, triquartic interpolation); §5 (CGINS, CGES, CGMG, DSK); Tables V, VIII (timings).
+- [Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md) — §1 (Volkov–Starius–Kreiss lineage leading to CMPGRD; Chimera conceived independently); §3.1 (Ogen as the grid generator used).
+- [Henshaw (2006)](/sources/henshaw-2006-b.md) — §4 (point classes, tensor-product Lagrange interpolation, width $q=p+1$ after Chesshire & Henshaw); §9.4 (mx built on Overture).

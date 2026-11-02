@@ -3,9 +3,9 @@ type: Definition
 title: "Patched (zonal) grids"
 description: "Multizone grids whose subdomains meet along common boundaries without overlap: how the founding overset sources define them, contrast them with overset grids (zero-overlap limit, conservation, interface matching, metric discontinuities), and how Wang turns an overlap into a patch to make the overset interface conservative."
 status: established
-aliases: [patched grid, grid patching, zonal grid, multizone grid, multiblock grid, patched zones]
+aliases: [patched grid, grid patching, zonal grid, multizone grid, multiblock grid, patched zones, abutting grid]
 tags: [overset-grid, conservation, finite-volume, composite-grid]
-timestamp: 2026-11-02T11:29:00Z
+timestamp: 2026-11-02T11:39:00Z
 ---
 
 # Patched (zonal) grids
@@ -52,6 +52,23 @@ source.
   by overset grids (partial overlap), and choose the overset
   [Yin–Yang grid](/definitions/yin-yang-grid.md). They count the cubed sphere,
   six component grids on the faces of a cube, among overset grids.
+- **Abutting grids at NASA Ames.** [Chan (2009)](/sources/chan-2009.md), §2,
+  calls patched grids the *abutting-grid* approach and gives three reasons the
+  Ames work chose overlap instead: abutting grids "clearly could not satisfy"
+  general six-degree-of-freedom relative motion of several bodies; overlap lets
+  each grid be generated for its own cell quality, "typically" giving
+  significantly better grids; and a component can be added or removed without
+  regenerating the system. Hyperbolic grid generation, which fixes only the
+  body boundary and places the outer boundary approximately, is called
+  unsuitable for abutting grids and natural for overset ones (§5).
+- **Coincident block overlaps.** [Sherer & Scott (2005)](/sources/sherer-2005.md),
+  §4.2, use a hybrid inside their overset system: grids are split into MPI
+  blocks that overlap by five coincident points, where values are copied
+  (direct injection) and the interior high-order differencing and filtering are
+  recovered exactly; interpolation is reserved for the non-coincident overset
+  boundaries. In their convecting-vortex test the observed order is 6.36 with
+  direct injection against 5.33 with sixth-order interpolation (§5.2,
+  Fig. 16a).
 
 ## The conservation condition on a patch
 
@@ -99,7 +116,7 @@ smallest faces.
   coupling *(compiler check, not in the sources)*
   ([fringe points](/definitions/fringe-point.md)).
 - The classification of the cubed sphere as an overset grid is Kageyama &
-  Sato's (§I); no other chunk-1 source classifies it.
+  Sato's (§I); no other source ingested here classifies it.
 - Wang prints Eq. (9) as $\sum_{\Delta V\in G}\frac{\partial Q}{\partial t}\Delta V=\sum_{f\in\Gamma_G}F_f\,dS_f$,
   without the minus sign carried by Eqs. (6)–(7); with $-\sum_{f\in\Gamma_G}$,
   Eqs. (6)–(9) yield Eq. (10) as printed *(compiler check, not in the sources)*.
@@ -112,3 +129,5 @@ smallest faces.
 - [Henshaw (1994)](/sources/henshaw-1994.md) — §1.2 (metric discontinuities of patched grids).
 - [Wang (1995)](/sources/wang-1995.md) — §1, Fig. 1; §2, Eqs. (8)–(11); §3, Figs. 2–4; §6.
 - [Kageyama & Sato (2004)](/sources/kageyama-2004.md) — §I (patched vs overset on the sphere; cubed sphere).
+- [Sherer & Scott (2005)](/sources/sherer-2005.md) — §4.2 (coincident block overlaps); §5.2 (direct injection vs interpolation).
+- [Chan (2009)](/sources/chan-2009.md) — §2 (abutting vs overset); §5 (hyperbolic grids).

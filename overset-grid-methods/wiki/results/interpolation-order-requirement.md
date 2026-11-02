@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Interpolation order and overlap requirements"
-description: "Chesshire and Henshaw's lemmas on the width of inter-grid interpolation needed to keep a composite-grid discretization at its design order: width at least 2s+1 when the overlap shrinks with h, s+1 when it stays fixed, generalized to sp+1 and sp/2+1, and confirmed in 1-D, 2-D Poisson and fourth-order Navier–Stokes tests."
+description: "Chesshire and Henshaw's lemmas on the width of inter-grid interpolation needed to keep a composite-grid discretization at its design order: width at least 2s+1 when the overlap shrinks with h, s+1 when it stays fixed, generalized to sp+1 and sp/2+1, and confirmed in 1-D, 2-D Poisson, fourth-order Navier–Stokes and Maxwell, sixth-order compact and finite-volume elliptic, advective and Navier–Stokes tests."
 status: established
 aliases: [interpolation width rule, interpolation order lemma, Chesshire–Henshaw interpolation lemma, q >= 2s+1 rule, overlap requirement]
 tags: [interpolation, high-order, composite-grid, finite-difference, overset-grid]
-timestamp: 2026-11-02T11:28:00Z
+timestamp: 2026-11-02T14:53:00Z
 ---
 
 # Interpolation order and overlap requirements
@@ -132,6 +132,55 @@ overlapping circle, $\sigma=4.0$ (velocity), 4.0 (pressure) and 4.3
 and 4.2 (Table VII). See
 [incompressible flow on overlapping grids](/methods/incompressible-flow-on-overset-grids.md).
 
+*Fourth-order Maxwell.* [Henshaw (2006)](/sources/henshaw-2006-b.md) (§4)
+states the rule as width $q=p+1$ for a $p$th-order approximation of the
+second-order wave equation, "following" Chesshire & Henshaw; this is
+$q=sp+1$ with $s=1$. With $q=5$ the twilight-zone rates are 3.93–4.40 on a
+2-D cylinder in a channel and 4.11–4.26 on a 3-D sphere in a box, and 3.85–3.88
+in PEC-sphere and dielectric-cylinder scattering (Tables 1–4). See
+[Maxwell's equations on overlapping grids](/methods/maxwell-equations-on-overset-grids.md).
+
+*Second-order finite volumes, elliptic versus hyperbolic.*
+[Sharma et al. (2021)](/sources/sharma-2021.md) (§3.1) restate the rules for
+a second-order discretization: with constant fringe gap, linear interpolation
+suffices for first- and second-order PDEs; with a gap proportional to $h$,
+linear suffices for a first-order PDE but at least quadratic is needed for a
+second-order one. They test them with a node-centred finite-volume code on
+two overlapping Cartesian meshes, $h=0.2$ to $0.025$ (§4.1):
+- diffusion (manufactured solution) with fringe gap $d=3h$: linear ($q=2$)
+  Lagrange interpolation degrades second order, quadratic ($q=3$) keeps it,
+  and cubic adds nothing (Fig. 10); with a constant gap linear keeps second
+  order (Fig. 11) — Lemmas I and II with $s=1$;
+- the same with radial-basis-function interpolation: polynomial augmentation
+  of degree 2 keeps second order, degree 1 does not (Fig. 13);
+- linear advection: linear interpolation keeps second order and higher order
+  changes little (Fig. 15);
+- advection–diffusion at Péclet numbers about 3, 30 and 300: high Péclet
+  behaves like advection, and as it approaches 1 higher-order interpolation
+  is needed (Fig. 16);
+- a decaying Taylor vortex in the incompressible Navier–Stokes solver with
+  linear interpolation keeps second order at cell Reynolds number about 400
+  and loses it at about 1 (§4.3.1, Fig. 25). The authors "strongly recommend"
+  higher-order interpolation for incompressible flow, since the pressure
+  equation is elliptic; the observed orders are shown only in figures.
+
+*High-order compact scheme, hyperbolic.* [Sherer & Scott (2005)](/sources/sherer-2005.md)
+(§5.2, Fig. 16a) convect an inviscid vortex across a curvilinear overset
+system with a hole, using a sixth-order compact scheme. The orders printed
+on the figure are 2.01 with second-order interpolation, 5.33 with sixth-order
+interpolation, 6.36 with direct injection between coincident grids and 7.47
+on a single grid: the interpolation order caps the global order. They recall
+(§1) that Delfs showed linear interpolation eventually corrupts a high-order
+solution, and that Chesshire & Henshaw showed it cannot keep high-order
+global accuracy.
+
+*Second-order finite-volume Chimera transfer.* [Picard et al. (2021)](/sources/picard-2021.md)
+(§4.1, Table 1) advect a sine wave through a non-coincident patch with a
+second-order intersection-volume interpolation: the observed orders of the
+Chimera run (2.026, 2.108 at the two finest pairs) track the single-grid ones
+(2.022, 2.119). Their §1 states that interpolation errors can be compensated
+by interpolating at higher order than the scheme.
+
 ## Qualifications
 
 - **Scope.** The proof is one-dimensional, elliptic, and second-order in the
@@ -151,6 +200,22 @@ and 4.2 (Table VII). See
   Benek et al. (1983) give only the qualitative overlap rule that the
   interpolation stencil must lie in the donor grid and that the overlap must
   be large enough for its boundaries to have little influence (p. 375).
+  As recalled by [Chan (2009)](/sources/chan-2009.md) (§7), Meakin showed
+  that trilinear fringe interpolation keeps the formal accuracy "provided the
+  flow solution is smoothly resolved by all participant grids in the
+  overlapped zones". The statement, as recalled, does not say for which
+  scheme order it holds; Sherer & Scott's measured 2.01 (above) shows that
+  linear interpolation does not keep the accuracy of a sixth-order solver.
+- **First-order (hyperbolic) equations.** The lemmas are proved for
+  equations of even order $2s$. Sharma et al. (2021) attribute to Chesshire &
+  Henshaw the rule that linear interpolation suffices for a first-order PDE
+  with $d\propto h$. Setting $2s=1$ formally in $q\ge2s+1$ gives $q\ge2$,
+  consistent with that rule and with the advection tests of Sharma et al. and
+  Picard et al. *(compiler check, not in the sources)*; it is not a proved
+  case of the lemma.
+- **Overlap scaling in practice.** Sharma et al. (Fig. 4) note that implicit
+  hole cutting by cell counts, as in TIOGA, makes the fringe gap shrink with
+  $h$, so the $d\propto h$ rule applies unless the gap is fixed by hand.
 - **"Interpolation width equals discretization width."** Chesshire & Henshaw
   summarize the $d\propto h$ rule this way (p. 29). A centred order-$p$
   approximation of the $2s$-th derivative uses $2s+p-1$ points per direction.
@@ -189,3 +254,8 @@ and 4.2 (Table VII). See
 - [Benek et al. (1985)](/sources/benek-1985.md) — p. 324 (trilinear interpolation).
 - [Lee & Baeder (2003)](/sources/lee-2003.md) — p. 11 (low-order stencils near walls).
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — "Boundary Point Interpolation" (trilinear inversion).
+- [Sherer & Scott (2005)](/sources/sherer-2005.md) — §1 (Delfs, Chesshire & Henshaw as recalled), §5.2, Fig. 16a.
+- [Henshaw (2006)](/sources/henshaw-2006-b.md) — §4 ($q=p+1$), §10 (Tables 1–4).
+- [Chan (2009)](/sources/chan-2009.md) — §7 (Meakin's result as recalled).
+- [Sharma et al. (2021)](/sources/sharma-2021.md) — §3.1, Fig. 4, §4.1 (Figs. 10–16), §4.3.1 (Fig. 25).
+- [Picard et al. (2021)](/sources/picard-2021.md) — §1, §4.1, Table 1.

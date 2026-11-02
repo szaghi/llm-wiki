@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Fringe (receptor) points and overlap width"
-description: "Receptor points — the hole-fringe and outer-boundary points that take interpolated values — how many layers of them a discretization needs, the overlap they require (Benek's heuristic, Chesshire's overlap d, Yin–Yang buffer), the node- and cell-centred fringe rules of SUGGAR, and the fringe-thickness condition of implicit hole cutting."
+description: "Receptor points — the hole-fringe and outer-boundary points that take interpolated values — how many layers of them a discretization needs, the overlap they require (Benek's heuristic, Chesshire's overlap d, the fringe gap of implicit assembly, Yin–Yang buffer), the fringe rules of SUGGAR, TIOGA and PUNDIT, and the fringe-thickness condition of implicit hole cutting."
 status: established
-aliases: [receptor point, fringe point, interpolation point, intergrid boundary point, IGBP, hole-boundary point, hole-fringe point, outer-boundary point, interpolated boundary point, recipient point, receiver, fringe level, overlap width]
+aliases: [receptor point, fringe point, interpolation point, intergrid boundary point, IGBP, hole-boundary point, hole-fringe point, outer-boundary point, interpolated boundary point, recipient point, receiver, fringe level, overlap width, acceptor, acceptor cell, ghost cell, reconstruction cell, mandatory receptor, fringe gap]
 tags: [domain-connectivity, interpolation, overset-grid]
-timestamp: 2026-11-02T11:29:00Z
+timestamp: 2026-11-02T14:53:00Z
 ---
 
 # Fringe (receptor) points and overlap width
@@ -55,6 +55,25 @@ classification](/definitions/point-classification.md)).
   each Yin–Yang component (e.g. the first index line) receive interpolated
   values, the "horizontal" or "internal" boundary condition; there are no holes
   in the basic grid, only outer-boundary receptors.
+- [Chan (2009)](/sources/chan-2009.md), §7, Fig. 1: fringe points are "one or
+  more layers of grid points that are located at a grid boundary where no
+  boundary conditions are specified, or at a hole boundary"; Fig. 1 separates
+  hole-boundary from outer-boundary fringe points.
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md), §2.1, §3.5: a **mandatory
+  receptor** is a point within a number of cells, set by the breadth of the
+  discretization stencil, of an outer-boundary node of a near-body mesh or of a
+  hole point; other receptors arise where a finer donor exists (the depth is
+  not quantified in the paper).
+- [Picard et al. (2021)](/sources/picard-2021.md), §3.2.1: the receptors are
+  **ghost cells**, not integrated, set every step from the other grid and used
+  only for the fluxes at the faces of the adjacent integrated ("sending")
+  cells; the exchange is symmetric between patch and substrate.
+- [Horne & Mahesh (2021)](/sources/horne-2021.md), §2, call them
+  *reconstruction* cells (cells bordering cut cells or on the outer edges of
+  overset meshes) and their donors reconstruction partners;
+  [Wang et al. (2021)](/sources/wang-2021.md), §III A, *acceptor* cells, in a
+  layer of a few cells on the outer surface of the rotating grid and around the
+  hole in the background (widths not stated).
 
 ## How many layers
 
@@ -63,7 +82,13 @@ The fringe level follows the solver's stencil. Chesshire & Henshaw (1990),
 line of interpolation points, a five-point one ($q_{\mathrm d}=5$) two lines,
 i.e. $n_f=(q_{\mathrm d}-1)/2$ for these centred stencils *(compiler check, not in
 the sources)*; [Henshaw (1994)](/sources/henshaw-1994.md)
-uses two lines for his fourth-order scheme (§4.1, §5.1). Rogers et al. (2003),
+uses two lines for the fourth-order scheme (§4.1, §5.1). The later sources
+agree on two layers for wider stencils: [Sherer & Scott (2005)](/sources/sherer-2005.md),
+§4.2, use a **two-point fringe** at all interpolation boundaries of their
+sixth-order compact scheme; Picard et al. (2021), §3.2.3, Fig. 3, set
+$n_f=2$ ghost layers because a second-order MUSCL flux at a face needs two
+cells on each side, which makes the flux at the first integrated cell
+independent of the patch boundary. Rogers et al. (2003),
 "Outer-Boundary Specification": PEGASUS 5 sets one fringe level for holes and
 outer boundaries jointly or separately; a fringe level of two "has certain
 advantages within the flow solver and can produce more accurate solutions"
@@ -86,6 +111,18 @@ scheme needs C and F1; a least-squares gradient (Cobalt, HYB3D) needs C, F1 and
 the second layer F2; a Taylor-series reconstruction from node values (USM3D)
 needs the node values of F1, each averaged from all cells around the node,
 hence a wider fringe.
+
+**Fringe gap and the singular limit.** [Sharma et al. (2021)](/sources/sharma-2021.md),
+Fig. 4, describe the fringe built by TIOGA's implicit hole cutting: the nodes
+of a preset number of cells counted inward from each outer boundary are
+mandatory fringe, and a preset number of nodes beyond the innermost mandatory
+fringe are kept as field points on both meshes, so that the **fringe gap** $d$
+between the receptors of the two meshes stays nonzero, "which would otherwise
+result in a singular system of equations". Because both counts are in cells,
+$d$ shrinks with $h$ unless the user intervenes. Their $d$ is Chesshire's
+overlap below, and the $d\propto h$ case is the one that needs wider
+interpolation for second-order PDEs
+([interpolation-order requirement](/results/interpolation-order-requirement.md)).
 
 ## SUGGAR's fringe rules
 
@@ -140,6 +177,28 @@ Explicit interpolation needs more overlap than implicit interpolation
 ([explicit and implicit
 interpolation](/definitions/explicit-and-implicit-interpolation.md)); the
 minimum allowable overlap is an input of CMPGRD (§3.2).
+
+**Explicit interpolation and circular interpolation.** Sherer & Scott (2005),
+§5.3, size the overlap of their single-cylinder grid as "the minimum number of
+points to prevent circular interpolation", i.e. donor points that are
+themselves receivers fed by the grid they update, with a two-point fringe; a
+larger overlap gives more centred donor stencils and lower interpolation error,
+a minimal one more one-sided stencils (§3.2). Picard et al. (2021), §3.2.2,
+Eq. 12, state the same explicit-interpolation condition for cell layers: the
+substrate receptor cells are the closest $n_f$ layers that intersect the patch
+but no patch receptor cell. They then *minimize* the gap between the two
+receptor sets by adding patch receptor cells between them without violating
+that condition, a step that "eventually improves the stability" at large patch
+refinement (Eq. 13; no separate test shown). The gap they minimize is the least
+distance between receptor-cell centres of the two grids, which plays the role
+of Chesshire's $d$ *(compiler check, not in the sources)*; with coincident
+interfaces it equals half the sum of the two cell sizes, so it stays positive
+(§4.2, Eq. 23).
+
+**Block overlaps.** Sherer & Scott (2005), §4.2, split grids into blocks for
+MPI and connect blocks through coincident-point overlaps of five points, which
+recover the interior differencing and filtering exactly; only the non-coincident
+overset boundaries need interpolation.
 
 **Yin–Yang buffer.** Kageyama & Sato (2004), §II, extend each component by a
 buffer angle $\delta$ proportional to the grid spacing ($\Delta\theta=\Delta\phi=2\delta$
@@ -198,3 +257,10 @@ lose members at boundaries.
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — Abstract; Fig. 1; "Automation of the Oversetting Process"; "Outer-Boundary Specification" (fringe level).
 - [Kageyama & Sato (2004)](/sources/kageyama-2004.md) — §II, Eq. (1), Fig. 1 (border points, buffer $\delta$); §III (6% overlap).
 - [Noack (2005)](/sources/noack-2005.md) — §I; §IV, Figs. 5–7 (fringe rules); §VI (cell-centred stencils).
+- [Sherer & Scott (2005)](/sources/sherer-2005.md) — §3.2 (centring and overlap); §4.2 (two-point fringe, five-point block overlaps); §5.3 (minimal overlap without circular interpolation).
+- [Chan (2009)](/sources/chan-2009.md) — §7, Fig. 1 (fringe definition).
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §2.1, §3.5 (mandatory receptors).
+- [Picard et al. (2021)](/sources/picard-2021.md) — §3.2.1–3.2.3, Eqs. 12–13, Fig. 3 (ghost cells, two layers, gap minimization); §4.2, Eq. 23.
+- [Horne & Mahesh (2021)](/sources/horne-2021.md) — §2 (reconstruction cells).
+- [Sharma et al. (2021)](/sources/sharma-2021.md) — Fig. 4 (TIOGA fringe, fringe gap).
+- [Wang et al. (2021)](/sources/wang-2021.md) — §III A, Fig. 5 (acceptor cells).

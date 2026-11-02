@@ -5,7 +5,7 @@ description: "High-lift and flapped airfoils as overset test cases: the SKF 1.1 
 status: established
 aliases: [three-element airfoil, high-lift airfoil, 30P30N, SKF 1.1 with flap, flapped airfoil]
 tags: [benchmark, chimera, domain-connectivity, conservation, compressible]
-timestamp: 2026-11-02T11:30:00Z
+timestamp: 2026-11-02T14:54:00Z
 ---
 
 # Multi-element airfoils
@@ -18,8 +18,24 @@ background grid, and the narrow gaps between elements make
 [Benek et al. (1983)](/sources/benek-1983.md) open the Chimera paper with
 this example (Fig. 1): grids $G_2$–$G_4$ around the elements could carry
 Navier–Stokes equations while the background grid carries Euler or
-potential equations; only Euler is demonstrated. Four chunk-1 sources use
-such airfoils, each to test a different part of the method.
+potential equations; only Euler is demonstrated. Four sources use such
+airfoils, each to test a different part of the method.
+
+[Chan (2009, §2, Fig. 1)](/sources/chan-2009.md) retells the same origin in
+the NASA Ames history: "using two- and three-element airfoils as
+illustrations, a single field grid was constructed around each airfoil
+independently", field points of one airfoil's grid lying "inside the outer
+mold line of another airfoil" are removed ("blanked points"), and the
+points next to holes and on grid boundaries without a flow-solver boundary
+condition become fringe points interpolated from a neighbouring grid. Chan's
+Fig. 1 sketches the two kinds, hole-boundary fringe points in the background
+grid and outer-boundary fringe points of the embedded grid (see
+[fringe points](/definitions/fringe-point.md)). Chan credits this framework
+to Steger, Dougherty and Benek (1983, ASME FED-Vol. 5), a record distinct
+from the AIAA paper of Benek et al. (1983) read here; Chan reports no
+airfoil computation. Among Chan's applications, an advanced subsonic
+transport with pylons, nacelles and deployed high-lift devices (§11,
+Fig. 5) is shown as surface grids only.
 
 ## Cases
 
@@ -90,7 +106,7 @@ and contours only; a comparison with experiment is explicitly disclaimed.
 | Wang (1995) | slat + main + flap | Euler | conservative interface in narrow gaps | experiment |
 | Rogers et al. (2003) | 30P30N | Navier–Stokes (OVERFLOW) | automatic connectivity versus manual PEGASUS 4 | experiment, PEGASUS 4 solution |
 
-No chunk-1 source reports a grid-convergence study or a measured order of
+No ingested source reports a grid-convergence study or a measured order of
 accuracy on a multi-element airfoil. Wang (1995) and Rogers et al. (2003)
 both run at $M_\infty=0.2$, $Re=9\times10^6$, but they cite different
 experimental reports (Wang: Valarezo et al. 1991; Rogers et al.: Chin et
@@ -117,3 +133,4 @@ two geometries is not established by the sources.
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §6.5 I, Figs. 22–24, Table XI; p. 60 (grid construction time).
 - [Wang (1995)](/sources/wang-1995.md) — §5.3, Figs. 14–17.
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — "Multi-Element Airfoil", Figs. 9–10.
+- [Chan (2009)](/sources/chan-2009.md) — §2, Fig. 1 (two- and three-element airfoils as the illustration of the Chimera framework; field, hole and fringe points); §11, Fig. 5 (high-lift transport surface grids).

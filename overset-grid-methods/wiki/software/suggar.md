@@ -5,7 +5,7 @@ description: "Noack's stand-alone overset grid assembler for moving-body simulat
 status: established
 aliases: ["Structured, Unstructured, and Generalized overset Grid AssembleR"]
 tags: [software, domain-connectivity, hole-cutting, unstructured, moving-grid]
-timestamp: 2026-11-02T11:28:00Z
+timestamp: 2026-11-02T11:41:00Z
 ---
 
 # SUGGAR
@@ -148,6 +148,25 @@ Both cases ran on a 2.6 GHz Pentium 4 desktop with 3 GB of memory
 was not used. The wing/pylon/store case is on
 [store separation](/benchmarks/store-separation.md).
 
+## Parallel decomposition: SUGGAR++ in a later comparison
+
+Noack (2005, §VIII) mentions a parallel option for hole cutting and donor
+search but runs everything serially. [Roget & Sitaraman (2014)](/sources/roget-2014.md)
+cite SUGGAR++ with DiRTlib (their ref. [4]) as a dedicated assembly code
+(§1) and compare its parallel strategy with their own (§5). As they
+describe it, SUGGAR++ uses a **Spatial Decomposition Volume** (SDV): parts
+of the grids are re-partitioned according to a divided volume (cylindrical
+shells or Cartesian blocks) so that query points and their candidate donor
+cells sit on the same processor. Roget & Sitaraman instead keep the flow
+solver's own partitioning, bring queries and donor cells together by
+point-to-point messages, and divide volume automatically, in one direction
+only and only for overloaded mesh-blocks; they name the price as more
+communication at very large processor counts. The comparison is by
+description; no SUGGAR++ timings appear in the 2014 paper. The method is on
+[parallel overset grid assembly](/methods/parallel-overset-grid-assembly.md).
+How SUGGAR++ relates in code to the 2005 SUGGAR read here is not stated in
+the ingested sources.
+
 ## Qualifications
 
 - Table 2's 25 rows sum to 3,108,363 points and 2,899,400 cells, while the
@@ -169,3 +188,4 @@ was not used. The wing/pylon/store case is on
 # Citations
 
 - [Noack (2005)](/sources/noack-2005.md) — §I (purpose, other tools, PEGASUS 5 not applied to moving bodies, DiRTlib); §II and Figs. 1–4 (binary tree, body hierarchy, over-cutting); §III and Table 1 (refinement criterion, node counts); §IV and Figs. 5–7 (fringe marking); §V (polyhedral donor search); §VI and Figs. 8–9 (donor stencils and weights, non-monotonicity); §VII and Fig. 10 (moving-body support, FIFOs); §VIII, Tables 2–3, Figs. 11–15 (demonstrations, timings, memory).
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §1 (SUGGAR++/DiRTlib among dedicated assembly codes, ref. [4]); §5 (Spatial Decomposition Volume compared with solver-partition load re-balance).

@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Orphan points"
-description: "Receptor points that need interpolation but have no valid donor: the definition, the causes the founding sources identify (insufficient overlap, hole-cutting failure, curved-surface discretization mismatch, donor qualification near boundaries), the treatments (elimination, averaging, projection, reduced stencils) and the measured counts."
+description: "Receptor points that need interpolation but have no valid donor: the definition and its narrower partitioned-assembly form, the causes the sources identify (insufficient overlap, hole-cutting failure, curved-surface mismatch, donor qualification, donor-quality conflicts), the treatments (elimination, averaging, projection, reduced stencils) and the measured counts."
 status: established
 aliases: [orphan, orphans, orphaned point]
 tags: [domain-connectivity, donor-search, interpolation]
-timestamp: 2026-11-02T11:29:00Z
+timestamp: 2026-11-02T11:39:00Z
 ---
 
 # Orphan points
@@ -25,6 +25,13 @@ cannot be found for an interpolation point, the point is termed an
 donor cell, and its stencil consists of usable (non-hole, and for explicit
 interpolation non-receptor) points ([donor search](/methods/donor-search.md),
 [fringe points](/definitions/fringe-point.md)).
+
+[Roget & Sitaraman (2014)](/sources/roget-2014.md), §2.1, define the orphan
+more narrowly, as a *mandatory* receptor (one forced by the stencil next to an
+outer boundary or a hole) that finds no donor cell, and add that such a point
+"should never be created". In their resolution-based classification a point
+that is not mandatory and finds no finer donor simply stays a field point, so
+only the stencil-forced receptors can be orphaned.
 
 ## Causes
 
@@ -60,6 +67,15 @@ interpolation non-receptor) points ([donor search](/methods/donor-search.md),
   index is below a user value, e.g. 4) rather than reject the receptor (p. 11,
   Fig. 13).
 
+- **Donor-quality conflicts.** Roget & Sitaraman (2014), §3.5, forbid donor
+  cells whose vertices (or centre) are themselves receptors. Such a
+  *low-quality donor* is resolved by turning those vertices into field points,
+  unless they are mandatory receptors, in which case the receptor it serves
+  becomes a field point. In pathological cases a mandatory receptor must be
+  turned into a field point, and this creates an orphan, which the authors call
+  the symptom of a poorly designed grid system: a very thin overlap or
+  extremely mismatched cell sizes.
+
 ## Treatments
 
 Rogers et al. (2003) state the PEGASUS policy: orphans "need to be
@@ -82,6 +98,13 @@ no orphan list; a failure shows up as further points becoming unused, in the
 limit the null grid that the authors avoid by enough overlap *(compiler
 check, not in the sources)*.
 
+Roget & Sitaraman (2014), §7, call their assembly robust in that "no
+undesirable point is generated"; the HART-II runs report identical counts of
+each point type for two donor-search methods (§6.1) but no orphan count.
+The other sources that assemble grids (Henshaw & Schwendeman 2006 with
+Ogen; Picard et al. 2021; Horne & Mahesh 2021; Sharma et al. 2021 with TIOGA)
+do not discuss orphans.
+
 ## Measured counts
 
 For the Boeing 777-200 landing configuration (79 grids, 22.4 million points)
@@ -102,7 +125,8 @@ relate the agreement to the remaining orphans.
 - A hole point that becomes a field point without being interpolated, on a
   moving grid, is a different failure: its value is undefined rather than
   missing a donor ([Meakin & Suhs (1989)](/sources/meakin-1989.md), §II, Fig. 3;
-  [moving overset grids](/methods/moving-overset-grid.md)).
+  [moving overset grids](/methods/moving-overset-grid.md); [exposed
+  points](/definitions/exposed-point.md)).
 
 # Citations
 
@@ -112,3 +136,4 @@ relate the agreement to the remaining orphans.
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §3.2, Step 3 (failed points set exterior; null grid).
 - [Benek et al. (1985)](/sources/benek-1985.md) — p. 324 (receptor inside the donor cell).
 - [Meakin & Suhs (1989)](/sources/meakin-1989.md) — §II, Fig. 3 (undefined values on uncovered points).
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §2.1 (orphan as a mandatory receptor without donor); §3.5 (low-quality donors, pathological orphans); §6.1; §7.

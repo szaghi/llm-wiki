@@ -139,7 +139,7 @@ printed. There are no printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-11-02). This source is cited on:
+Chunk 1 (2026-11-02), cited further in chunk 2. This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Multi-element airfoils](/benchmarks/multi-element-airfoil.md)
@@ -151,11 +151,13 @@ Chunk 1 (2026-11-02). This source is cited on:
 - [Overset (Chimera) grid](/definitions/overset-grid.md)
 - [Patched (zonal) grids](/definitions/patched-grid.md)
 - [Point classification and the iblank mask](/definitions/point-classification.md)
+- [Adaptive mesh refinement on overlapping grids](/methods/amr-on-overset-grids.md)
 - [Conservative overset interface](/methods/conservative-overset-interface.md)
 - [Donor search](/methods/donor-search.md)
 - [Hole cutting](/methods/hole-cutting.md)
 - [Implicit hole cutting](/methods/implicit-hole-cutting.md)
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
 - [Overlap optimization](/methods/overlap-optimization.md)
+- [Shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md)
 - [Interpolation order and overlap requirements](/results/interpolation-order-requirement.md)
 - [PEGASUS (PEGSUS) versions 1–4](/software/pegasus.md)

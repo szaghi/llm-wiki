@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Implicit hole cutting"
-description: "Implicit hole cutting (Lee and Baeder 2003) replaces cutting by body surfaces with cell selection: every point of every grid is tested against all overlapping grids, the smallest enclosing cell wins, and holes appear as a by-product; the page gives the selection rule, its algorithmic parts, cost and relation to CMPGRD and PEGASUS 5."
+description: "Implicit hole cutting (Lee and Baeder 2003) replaces cutting by body surfaces with cell selection: every point is tested against all overlapping grids and the smallest enclosing cell wins; the page gives the rule, its algorithm and cost, its unstructured partitioned form in PUNDIT and TIOGA, the shrinking fringe gap it causes, and its relation to CMPGRD and PEGASUS 5."
 status: established
 aliases: [IHC, implicit hole-cutting, cell-selection connectivity, smallest-cell donor selection]
-tags: [hole-cutting, domain-connectivity, overset-grid, rotorcraft]
-timestamp: 2026-11-02T11:30:00Z
+tags: [hole-cutting, domain-connectivity, overset-grid, unstructured, rotorcraft]
+timestamp: 2026-11-02T14:53:00Z
 ---
 
 # Implicit hole cutting
@@ -134,6 +134,54 @@ background). Connectivity took about 45 s of CPU on an Alpha 21264 at 667 MHz; l
 of cubic interpolation cut the time by about 20–25 % (Example, p. 12; Figs. 14–15). No flow
 solution, accuracy or convergence study is reported; the 2-D results are in the earlier paper.
 
+## Resolution-based selection on partitioned unstructured meshes
+
+[Roget & Sitaraman (2014)](/sources/roget-2014.md), §2.1 and §3.5, use the same
+criterion on unstructured meshes without naming it implicit hole cutting: the
+donor of a query point is its candidate donor cell of *finest resolution*
+(nominally the cell volume $\lvert V_c\rvert$; for a node, the average volume
+of the cells sharing it), and a non-hole point is a field point when its own
+resolution is the finest among itself and its candidates, a receptor of the
+finest candidate otherwise (Fig. 12). Field points are thereby chosen so that
+the overlap is minimal (Fig. 2). Three things differ from Lee & Baeder's
+version:
+
+- **holes are cut, not inferred.** A point is a hole point only if it lies in a
+  hole sub-block of another body's auxiliary grid and finds no donor in that
+  body's mesh ([hole cutting](/methods/hole-cutting.md)); the resolution rule
+  decides only between field and receptor;
+- **mandatory receptors.** Points within a stencil-dependent number of cells of
+  an outer boundary or a hole point always receive, which plays the role of
+  Lee & Baeder's infinite volume for overlap-boundary points *(compiler check,
+  not in the sources)*;
+- **donor quality.** A donor cell may not contain receptor vertices; conflicts
+  are resolved by turning points into field points, and a pathological
+  conflict produces an [orphan](/definitions/orphan-point.md) (§3.5).
+
+Candidate donors are searched only in meshes of a *different body* (§3.2), so
+two meshes of the same body never interpolate from each other.
+
+## Fringe gap under implicit hole cutting
+
+TIOGA, which [Sharma et al. (2021)](/sources/sharma-2021.md) cite to Roget &
+Sitaraman and to Brazell et al., applies (§1 and Fig. 4) implicit
+hole cutting in the ExaWind wind-farm stack: the nodes of a preset number of
+cells inward from each outer boundary are mandatory fringe, and a preset number
+of nodes beyond them are kept as field points on both meshes so that the
+fringe gap $d$ is nonzero (a zero gap gives a singular system). Since both
+counts are in cells, $d$ shrinks with the mesh size, $d\propto h$; keeping $d$
+fixed in physical distance is called impractical on unstructured meshes. Sharma
+et al. draw the consequence from Chesshire & Henshaw's rule: with $d\propto h$,
+linear interpolation ($q=2$) no longer preserves second-order accuracy for the
+elliptic pressure equation, and they measure the degradation (§3.1, §4.1.1;
+[interpolation-order requirement](/results/interpolation-order-requirement.md)).
+Lee & Baeder's version has the same property, since its fringe is defined by
+cell layers too *(compiler check, not in the sources)*.
+
+[Horne & Mahesh (2021)](/sources/horne-2021.md), §1, recall an earlier GPU
+assembly of Chandar et al. with implicit cutting based on axis-aligned bounding
+boxes, for one static overset mesh on a single GPU.
+
 ## Relation to other assembly methods
 
 - **CMPGRD.** The composite-grid algorithm of Chesshire & Henshaw (1990) also uses no cutting
@@ -157,7 +205,7 @@ solution, accuracy or convergence study is reported; the 2-D results are in the 
 ## Qualifications
 
 - **Must hole points be excluded from the solution update?** (Recorded as a qualification at
-  the chunk-1 deep lint, in agreement with
+  the first deep lint, in agreement with
   [point classification](/definitions/point-classification.md): a difference of setting and
   of mechanism, not a conflict between sources.) Benek et al. (1983), p. 374, and Benek et al.
   (1985), p. 323, require hole points to be excluded because they lie outside the
@@ -169,13 +217,17 @@ solution, accuracy or convergence study is reported; the 2-D results are in the 
   travels in one $\Delta t$, and the values at invalid points are not very large; they extend
   the argument to implicit methods with Newton subiterations and still blank hole points in
   residuals. The positions rest on different hypotheses (a one-layer fringe without a
-  thickness condition; a thick fringe), and no chunk-1 source tests an unblanked update under
+  thickness condition; a thick fringe), and no source ingested here tests an unblanked update under
   the Chimera papers' hypotheses or a blanked one under Lee & Baeder's. Meakin & Suhs's rule
   that a hole point must not become a field point without first being interpolated (§II,
   Fig. 3) concerns hole motion, not the update, and Lee & Baeder do not address it.
 - The "automatically optimum" claim refers to the volume criterion. In the paper's own Fig. 7
   case the smallest wall cell is larger than all receptor cells, so the volume criterion alone
   would make the wall layer receive, and the authors add the `jHoleImmune` parameter (p. 8).
+- The resolution criterion of Lee & Baeder and Roget & Sitaraman is the cell volume
+  alone; neither source discusses anisotropic cells (stretched boundary-layer cells of
+  small volume but large extent), and Roget & Sitaraman state no minimum overlap beyond
+  the mandatory-receptor depth, which they do not quantify.
 - Lee & Baeder print the face test of `FindDonor` in a form that is identically zero (p. 10);
   the test of their Fig. 10 is given on [donor search](/methods/donor-search.md).
 
@@ -185,6 +237,9 @@ solution, accuracy or convergence study is reported; the 2-D results are in the 
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §3.1, p. 11; §3.2, pp. 14–21.
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — "Boundary Point Interpolation", p. 1039; "Cell Difference Parameter" and "Overlap Optimization", pp. 1040–1041.
 - [Noack (2005)](/sources/noack-2005.md) — §II.
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §2.1, Fig. 2 (resolution-based types); §3.2 (other-body query points); §3.5, Fig. 12 (decision logic, donor quality).
+- [Sharma et al. (2021)](/sources/sharma-2021.md) — §1, Fig. 4 (TIOGA fringe, $d\propto h$); §3.1, §4.1.1.
+- [Horne & Mahesh (2021)](/sources/horne-2021.md) — §1 (Chandar et al., as recalled).
 - [Benek et al. (1983)](/sources/benek-1983.md) — p. 374 (holes must be excluded); p. 375, Eqs. (2)–(3) (IBLANK in the implicit operator).
 - [Benek et al. (1985)](/sources/benek-1985.md) — p. 323 (holes must be excluded); p. 324, Fig. 4 (single fringe layer); p. 325 (IBLANK in the "standard tri-diagonal algorithm").
 - [Meakin & Suhs (1989)](/sources/meakin-1989.md) — §II, Eq. (2) (IBLANK in the factored operator); §II, Fig. 3 (hole-motion rule).

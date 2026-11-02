@@ -151,9 +151,10 @@ venue has not been checked on Crossref. There are no printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-11-02). This source is cited on:
+Chunk 1 (2026-11-02), cited further in chunk 2. This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
+- [Flow past a sphere](/benchmarks/flow-past-sphere.md)
 - [Composite overlapping grid](/definitions/composite-overlapping-grid.md)
 - [Explicit and implicit interpolation](/definitions/explicit-and-implicit-interpolation.md)
 - [Fringe (receptor) points and overlap width](/definitions/fringe-point.md)
@@ -161,6 +162,7 @@ Chunk 1 (2026-11-02). This source is cited on:
 - [Patched (zonal) grids](/definitions/patched-grid.md)
 - [Point classification and the iblank mask](/definitions/point-classification.md)
 - [Conservative overset interface](/methods/conservative-overset-interface.md)
+- [High-order discretizations on overlapping grids](/methods/high-order-overset-discretization.md)
 - [Incompressible flow on overlapping grids](/methods/incompressible-flow-on-overset-grids.md)
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
 - [Twilight-zone flow (manufactured solutions)](/methods/twilight-zone-flow.md)

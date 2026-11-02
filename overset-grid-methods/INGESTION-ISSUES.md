@@ -6,6 +6,86 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 2 — Sherer & Scott 2005, Henshaw & Schwendeman 2006, Henshaw 2006, Chan 2009, Roget & Sitaraman 2014, Banks et al. 2016, Picard et al. 2021, Horne & Mahesh 2021, Sharma et al. 2021, Wang et al. 2021 (2026-11-02)
+
+Sources (10): sherer-2005, henshaw-2006, henshaw-2006-b, chan-2009,
+roget-2014, banks-2016, picard-2021, horne-2021, sharma-2021, wang-2021.
+20 of 51 ingested, 40 concept pages plus the registry, 636 bibliography
+entries. Deep lint A1–A4 over the chunk-2 content done. Compiled unattended
+(night protocol, D31); a session usage limit interrupted the chunk midway,
+and the work resumed from scratch notes without loss.
+
+### Decisions for the human
+
+1. **AEDC-TR-85-64** (`benek-1985-b`): Sherer & Scott and Picard et al.
+   print it as April 1986; keyed 1985 as in chunk 1. Year unverified.
+2. **`reyna-1982` and `reyna-1986`:** probably the same Caltech thesis
+   (one printed "Part III. On Composite Meshes", one only "Thesis"); kept
+   separate.
+3. **`partenander-1994`:** DOI added from Crossref, which gives first page
+   551; one citing list prints 555.
+
+### Contradictions
+
+None open. Recorded as qualifications, not conflicts: the tolerated
+cell-size ratio between overlapping grids (Picard et al. at most 4; Sherer
+& Scott a volume ratio of 16; Lee & Baeder 2:1 — different schemes and
+measures, tabulated on `methods/overlap-optimization.md`); exposed points
+forbidden by a hole-motion limit (Meakin & Suhs) against filled after the
+move (Henshaw & Schwendeman), on `definitions/exposed-point.md`; Picard et
+al. against Pärt-Enander & Sjögreen (not ingested) on refining the patch.
+
+### Identity and versions
+
+- picard-2021 was read in the HAL deposit hal-03779335v1 (revised author
+  manuscript); the others are versions of record.
+- Keys printed with an ingested slug for a different work were re-keyed:
+  Henshaw & Schwendeman's `lee-2003` (Lee & LeVeque) → `lee-2003-b`;
+  Henshaw's `henshaw-1994` (Henshaw, Kreiss & Reyna, Comput. Fluids) →
+  `henshaw-1994-e`; Wang et al.'s two other 2021 papers → `wang-2021-b`,
+  `-c`. Roget & Sitaraman's garbled ref. [11] is Brown, Henshaw & Quinlan
+  (1999), Overture (`brown-1999`, Crossref).
+- Sharma et al.'s ref. [64] is Noack (2007), a direct-cut hole-cutting
+  paper, not SUGGAR.
+
+### Printed slips (recorded on the Source pages)
+
+- Henshaw (2006, Maxwell): $\alpha_1=-1/6$ printed on p. 1738, the
+  expansion gives $-1/24$ (consistent with Eq. (5.12)); Lemma 8.1 factor
+  2; $D^{(4)}_{r_m}$ coefficient $\tfrac1{12}$ for $\tfrac16$; $256^3$ printed
+  1.78e7; Table 1 $E_x$ rate 4.40 against 4.35 from the printed errors.
+- Henshaw & Schwendeman (2006): figure time labels; exposed-point test
+  printed with "<" where the paper's Fig. 4 needs "≤"; §7.1 spacing off by
+  a factor 10 against the grid definitions (which value is wrong is not
+  decidable from the paper).
+- Banks et al. (2016): post-shock pressure printed 1.191 (= $p/\rho$),
+  1.805 from the shock relations; solid-grid domain of zero width.
+- Picard et al. (2021): Table 1 order 1.595 for 1.549; Table 5 0.47 % for
+  0.412 %; §4.4 domain ranges swapped.
+- Horne & Mahesh (2021): Algorithm 1 update sign; Taylor–Green pressure
+  sign; speed-ups 15–50× (conclusion) against 8–56× (§4.2.2).
+- Sharma et al. (2021): Algorithms 1–2 update sign; Eq. (27) bracket;
+  $O(h^{-2})$ corrector growth stated, Table 1 gives an exponent near 1.
+- Sherer & Scott (2005): Eq. (17) exponent; B-spline support; figure
+  references. Roget & Sitaraman (2014): section numbering, 68 % for 67 %.
+
+### Bundle fit
+
+Wang et al. (2021) (propeller-wake turbulence with a rotating grid) and
+Banks et al. (2016) (fluid–structure interaction) use overset grids as an
+ingredient; Wang et al. (2021) would fit `turbulence-modelling` (D17
+candidate, no copy made). Henshaw (2006) is an electromagnetics paper
+whose high-order composite-grid content is central here.
+
+### Candidate pages (not created, inline)
+
+PUNDIT and TIOGA; alternating digital tree and exact inverse map; collar
+and zipper grids, object X-rays, off-body Cartesian grids (Chan); added-mass
+partitioned algorithm; symmetric curvilinear Laplacian and compatibility
+boundary conditions (Henshaw 2006); RBF fringe interpolation and overset
+Schwarz coupling (Sharma et al.; chunk 3 brings a second RBF source);
+PEC-sphere scattering.
+
 ## Chunk 1 — founding papers: Benek et al. 1983 and 1985, Meakin & Suhs 1989, Chesshire & Henshaw 1990, Henshaw 1994, Wang 1995, Lee & Baeder 2003, Rogers et al. 2003, Kageyama & Sato 2004, Noack 2005 (2026-11-02)
 
 Sources (10): benek-1983, benek-1985, meakin-1989, chesshire-1990,

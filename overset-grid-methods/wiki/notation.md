@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: component and composite grids, their mappings, point classification, inter-grid interpolation, conservative interfaces, flow equations in Cartesian and curvilinear form, grid motion, Yin–Yang grids, and reserved symbols for high-order, SBP–SAT, immersed-boundary and unstructured overset methods; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-11-02T11:30:00Z
+timestamp: 2026-11-02T14:54:00Z
 ---
 
 # Notation registry
@@ -71,7 +71,7 @@ renames one locally and says so.
 | $\Omega_{kk'}=\Omega_k\cap\Omega_{k'}$ | overlap region of $G_k$ and $G_{k'}$ | Wang's $O$ |
 | $\ell(k)$ | hierarchy level of $G_k$, $\ell=1$ the background grid | Benek's $G_{\ell,i}$; embedded grids have larger $\ell$ |
 | $\mathbf r=(r_1,\dots,r_{n_d})\in[0,1]^{n_d}$ | parameter (unit-square, unit-cube) coordinates | Chesshire's $(r,s)$; direction index $m=1,\dots,n_d$ |
-| $\mathbf x=\mathbf d_k(\mathbf r)$, $\mathbf r=\mathbf d_k^{-1}(\mathbf x)$ | mapping of $G_k$ and its inverse | later literature: $\mathbf G_g(\mathbf r)$ |
+| $\mathbf x=\mathbf d_k(\mathbf r)$, $\mathbf r=\mathbf d_k^{-1}(\mathbf x)$ | mapping of $G_k$ and its inverse | later literature: $\mathbf G_g(\mathbf r)$; time-dependent $\mathbf d_k(\mathbf r,t)$ in §6 |
 | $\partial\mathbf x/\partial\mathbf r$, $\partial r_m/\partial x_n$ | mapping Jacobian matrix and its inverse (metric) | CMPGRD's `rsxy`; determinants written out |
 | $\boldsymbol\xi=(\xi,\eta,\zeta)$ | curvilinear computational coordinates with unit index spacing | flow-solver form (§5); $\xi_m=r_m/\Delta r_m$ |
 | $J=\det(\partial\boldsymbol\xi/\partial\mathbf x)$ | Jacobian (Pulliam–Steger) | $J^{-1}$ = cell volume; Lee's `InvJacob` = $J^{-1}$ |
@@ -156,7 +156,8 @@ renames one locally and says so.
 
 | Symbol | Meaning | Remark |
 |---|---|---|
-| $\mathbf u_g=\partial_t\mathbf x\rvert_{\boldsymbol\xi}$ | grid velocity | $\xi_t=-\mathbf u_g\cdot\nabla\xi$, likewise $\eta_t$, $\zeta_t$ |
+| $\mathbf x=\mathbf d_k(\mathbf r,t)$ | mapping of a moving or deforming component grid; the parameter space $[0,1]^{n_d}$ stays fixed | Henshaw & Schwendeman's $\mathbf G_g(\mathbf r,t)$, Banks et al.'s $g(r,t)$ |
+| $\mathbf u_g=\partial_t\mathbf x\rvert_{\boldsymbol\xi}$ | grid velocity | $=\partial_t\mathbf d_k(\mathbf r,t)$ at fixed $\mathbf r$; $\xi_t=-\mathbf u_g\cdot\nabla\xi$, likewise $\eta_t$, $\zeta_t$ |
 | $\mathbf x_{\mathrm{cg}}(t)$, $\mathbf v_{\mathrm{cg}}$ | centre-of-gravity position and velocity of a rigid body | |
 | $\mathsf R(t)$ | rotation matrix, body to inertial frame | $\mathbf x=\mathbf x_{\mathrm{cg}}+\mathsf R(\mathbf X-\mathbf X_{\mathrm{cg}})$, $\mathbf X$ body-frame coordinates |
 | $\boldsymbol\omega_b$ | angular velocity of the body | |
@@ -208,3 +209,8 @@ not give them different meanings.
 | $\mathcal T_{\mathbf i}$ | truncation-error forcing of the transport equation of $\vartheta_{\mathbf i}$, $O(h^4)$ | incompressible flow (Henshaw 1994) |
 | $\mathcal V_{\mathbf i}=\sum_m\Delta x_{m,\mathbf i}^{-2}$, $C_d$ | spacing factor and coefficient of the divergence-damping term $-C_d\nu\mathcal V_{\mathbf i}\vartheta_{\mathbf i}$ | incompressible flow (Henshaw 1994) |
 | $\varsigma$ | multiplier of the compatibility condition of the singular Neumann pressure system | incompressible flow (Henshaw 1994) |
+| $\mathcal J=\det(\partial\mathbf x/\partial\mathbf r)$ | Jacobian determinant of the mapping $\mathbf d_k$ with respect to the parameter coordinates: the area (volume) factor of $G_k$ | **not** the Pulliam–Steger $J$ of §1: $\mathcal J=J^{-1}/\prod_m\Delta r_m$, because $\xi_m=r_m/\Delta r_m$; moving grids (Henshaw & Schwendeman 2006), Maxwell (Henshaw 2006) |
+| $G_{k_r}$, $\mathbf d_{k_r}(\mathbf r,t)=\mathbf d_k(\mathbf R_{k_r}(\mathbf r),t)$, $\mathbf R_{k_r}$ | refinement grid on base grid $G_k$, its mapping, and the affine restriction map of $[0,1]^{n_d}$ into the base grid's parameter space | italic subscript $r$; the upright $k_{\mathrm r}$ is the reduced frequency of §6; AMR on overlapping grids (Henshaw & Schwendeman 2006) |
+| $\kappa_h$, $\kappa_{h,\mathbf i}$ | cell-size ratio of substrate to patch: global (the maximum over the patch receptors) and local (receptor cell $\mathbf i$ of the patch) | Picard et al.'s $\chi$, $\chi_i^{\mathcal V}$ ($\chi$ is reserved, §8); $\kappa_h>1$ means a finer patch; shock capturing (Picard et al. 2021) |
+| $\kappa$ | scalar coefficient of the generalized Laplacian $\nabla\cdot(\kappa\nabla w)$; $\kappa_{\mathrm T}$ the diffusivity of a scalar proxy equation | Henshaw's (2006) $k$; Sharma et al.'s $\kappa$; Maxwell, twilight-zone flow |
+| $\varpi$ | spatial frequency of trigonometric manufactured (twilight-zone) solutions | Henshaw's (1994) $f$; twilight-zone flow |

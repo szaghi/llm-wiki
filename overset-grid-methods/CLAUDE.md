@@ -98,7 +98,11 @@ notation.
 
 ## Status
 
+**Chunk 2 compiled 2026-11-02 (night step 02-chunk-2):** 10 papers of
+2005–2021; 20 of 51 ingested, 40 concept pages plus the registry, 636
+bibliography entries, deep lint done, no contradiction open. Chunk 3
+follows.
+
 **Chunk 1 compiled 2026-11-02 (night step 01-chunk-1):** the 10 founding
 papers of 1983–2005; 10 of 51 ingested, 28 concept pages plus the
 registry, 209 bibliography entries, deep lint done, no contradiction open.
-Chunk 2 follows.

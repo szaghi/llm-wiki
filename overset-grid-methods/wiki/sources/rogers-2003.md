@@ -180,7 +180,7 @@ conference paper benek-1985. There are no printed duplicates or unparseable item
 
 # Pages created or updated
 
-Chunk 1 (2026-11-02). This source is cited on:
+Chunk 1 (2026-11-02), cited further in chunk 2. This source is cited on:
 
 - [Multi-element airfoils](/benchmarks/multi-element-airfoil.md)
 - [Domain connectivity and overset grid assembly](/definitions/domain-connectivity.md)
@@ -195,7 +195,10 @@ Chunk 1 (2026-11-02). This source is cited on:
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
 - [Moving overset grids](/methods/moving-overset-grid.md)
 - [Overlap optimization](/methods/overlap-optimization.md)
+- [Parallel and GPU overset grid assembly](/methods/parallel-overset-grid-assembly.md)
 - [Interpolation order and overlap requirements](/results/interpolation-order-requirement.md)
 - [DCF and DCF3D (Meakin's domain connectivity function and code)](/software/dcf3d.md)
+- [OVERFLOW (OVERFLOW-D, OVERFLOW 2)](/software/overflow.md)
+- [Overture (and its grid generator Ogen)](/software/overture.md)
 - [PEGASUS 5](/software/pegasus-5.md)
 - [PEGASUS (PEGSUS) versions 1–4](/software/pegasus.md)

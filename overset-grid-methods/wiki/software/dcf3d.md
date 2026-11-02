@@ -12,11 +12,11 @@ timestamp: 2026-11-02T11:28:00Z
 
 **DCF** is the Domain Connectivity Function of the moving-body Chimera
 method of [Meakin & Suhs (1989)](/sources/meakin-1989.md); **DCF3D** is the
-domain-connectivity code that later chunk-1 sources attribute to Meakin and
+domain-connectivity code that later sources ingested here attribute to Meakin and
 list beside [PEGASUS](/software/pegasus.md), Beggar, FASTRAN and Overture.
-The chunk-1 sources describe the 1989 function in detail; they describe
+The sources ingested here describe the 1989 function in detail; they describe
 DCF3D only through citations, so this page records the function and what
-those citations say. No chunk-1 source states whether the later code
+those citations say. No source ingested here states whether the later code
 descends from the 1989 function.
 
 ## The 1989 Domain Connectivity Function
@@ -92,7 +92,7 @@ prescribed.
 
 ## Qualifications
 
-- The chunk-1 sources give no algorithm, timing or version information for
+- The the sources give no algorithm, timing or version information for
   DCF3D itself; every statement above about DCF3D is a citing source's
   characterization.
 - Meakin & Suhs (1989, p. 646) state the time-step comparison twice. The

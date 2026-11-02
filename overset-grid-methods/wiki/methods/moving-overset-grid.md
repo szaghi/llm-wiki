@@ -1,20 +1,22 @@
 ---
 type: Method
 title: "Moving overset grids"
-description: "Moving overset grids let component grids follow bodies in relative motion, with domain connectivity recomputed every time step and coupled to the flow solver and body dynamics; the page covers Meakin and Suhs's unsteady Chimera cycle, time metrics and hole-motion limit, and SUGGAR's body-frame trees, hierarchical transforms and process coupling."
+description: "Moving overset grids let component grids follow rigid, rotating or deforming bodies, with domain connectivity recomputed every time step and coupled to the flow solver and body dynamics: Meakin and Suhs's unsteady Chimera cycle and hole-motion limit, mapped equations with grid velocity, exposed points, Ogen's incremental update, SUGGAR's body-frame trees, parallel and GPU per-step assembly, and moving-body demonstrations."
 status: established
-aliases: [moving-body overset, unsteady Chimera, dynamic overset grids, relative-motion Chimera, moving-body grid assembly]
-tags: [moving-grid, domain-connectivity, overset-grid, chimera, store-separation]
-timestamp: 2026-11-02T11:26:00Z
+aliases: [moving-body overset, unsteady Chimera, dynamic overset grids, dynamic overset technique, relative-motion Chimera, moving-body grid assembly, moving overlapping grids, deforming composite grids]
+tags: [moving-grid, domain-connectivity, overset-grid, chimera]
+timestamp: 2026-11-02T14:53:00Z
 ---
 
 # Moving overset grids
 
 On a **moving overset grid** the component grids $G_k$ attached to bodies move with them
 while other grids (a background, the grid of a primary body) stay fixed or move differently.
-In the chunk-1 sources each component grid moves rigidly, so its points keep their indices and the flow solver sees a
-grid velocity $\mathbf u_g$; the [point classification](/definitions/point-classification.md),
-the holes and the donors change with time and must be recomputed every time step. Meakin &
+In most sources each component grid moves rigidly, so its points keep their indices and the
+flow solver sees a grid velocity $\mathbf u_g$; Banks et al. (2016) also let the grids next to
+a fluid–solid interface deform and regenerate them every step. In every case the
+[point classification](/definitions/point-classification.md), the holes and the donors change
+with time and must be recomputed every time step. Meakin &
 Suhs (1989) present a prototype method for three-dimensional viscous flow about several
 bodies in relative motion and name its three functions: the flow solver (Aerodynamic
 Function, ADF), the [domain connectivity](/definitions/domain-connectivity.md) (Domain
@@ -23,7 +25,18 @@ form a cycle: the flow solver needs hole and interpolation data from the connect
 connectivity needs body positions from the dynamics, and the dynamics need loads from the
 flow solver ([Meakin & Suhs (1989)](/sources/meakin-1989.md), §II). Noack (2005) builds the
 connectivity side as a separate program, SUGGAR, for structured, unstructured and polyhedral
-grids ([Noack (2005)](/sources/noack-2005.md), §VII).
+grids ([Noack (2005)](/sources/noack-2005.md), §VII). Henshaw & Schwendeman (2006) write the
+same cycle as one PDE-independent time-stepping loop in which the grids are moved, the
+connectivity updated and newly uncovered points filled before the solution is advanced
+([Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md), §3.4, Fig. 6).
+
+Relative motion was the original motivation of the Chimera scheme: Chan (2009) recalls that
+simulating several bodies in relative motion with general six-degree-of-freedom (6-DOF)
+motion was a main reason for overset rather than abutting grids, which "clearly could not
+satisfy" it ([Chan (2009)](/sources/chan-2009.md), §2; see
+[patched grids](/definitions/patched-grid.md)). Wang et al. (2021) choose a dynamic overset
+technique for a rotating propeller because it is "used widely in problems that consider
+moving geometries" ([Wang et al. (2021)](/sources/wang-2021.md), §III A).
 
 ## From static to moving assembly
 
@@ -41,6 +54,16 @@ PEGASUS 5 repeats only the operations that depend on modified input
 PEGASUS 5 "has not been applied to moving body problems" (§I). Wang (1995) notes that the cut
 geometry of the conservative interface is computed once for grids that do not move and
 expects it to be much more expensive in 3-D ([Wang (1995)](/sources/wang-1995.md), §6).
+
+Per-step assembly makes the speed of [hole cutting](/methods/hole-cutting.md) decisive. Chan
+(2009, §7) recalls two hole-cutting methods of Meakin chosen for moving bodies: analytic
+shapes (c. 1991), fast point-in-shape tests suited to hole cutting every time step but
+"prohibitively difficult" to fit to complex bodies, and object X-rays (2001), "routinely used"
+in OVERFLOW 2 moving-body computations, fast but with manually generated X-rays and
+user-listed cut grids (see [OVERFLOW](/software/overflow.md)). Roget & Sitaraman (2014) state
+that unsteady problems with relative motion and elasticity require the overset grid assembly
+"at each time step", which is why it must be as efficient as possible
+([Roget & Sitaraman (2014)](/sources/roget-2014.md), §1).
 
 ## Flow solver on moving component grids
 
@@ -60,15 +83,33 @@ The hole logic reaches the solver only through the 0/1 IBLANK: it multiplies the
 and the dissipation terms of the factored scheme, so that at hole points the update vanishes
 and the solution is frozen (Eq. (2)).
 
-**Verification of the time metrics.** Before any overset run, Meakin & Suhs test the metrics
-on a single grid: a NACA 64A010 airfoil at $M_\infty=0.8$ in constant plunge equivalent to
-$1^\circ$ incidence, with $\xi_t=\eta_t=0$ and $\zeta_t=-M_\infty\sin(\pi/180)$, and in
-sinusoidal plunge of amplitude equivalent to $\pm1^\circ$ with
-$\zeta_t=-M_\infty\sin(\pi/180)\sin(2\pi\tilde t/\tilde t_p)$, $\tilde t_p=2\pi/(k_{\mathrm
-r}M_\infty)$, $k_{\mathrm r}=0.4$ (dimensionless time $\tilde t$ and period $\tilde t_p$
-page-local). Constant plunge agrees well with Magnus (1977) except for a weak lower-surface
-shock smeared by the coarse grid; the lift coefficient over the fourth cycle of the sinusoidal
-plunge shows "excellent agreement" (§III, Figs. 4–5).
+**Mapped equations in parameter space.** Henshaw & Schwendeman (2006, §4.1, Eqs. (7)–(8))
+and Banks et al. (2016, §4.2, Eq. (31)) write the mapping of a moving component grid as
+$\mathbf x=\mathbf d_k(\mathbf r,t)$, with grid velocity $\mathbf u_g=\partial_t\mathbf
+d_k(\mathbf r,t)$, and transform the Euler equations exactly to the fixed parameter space.
+With the page-local area (volume) factor $\mathcal J=\det(\partial\mathbf x/\partial\mathbf r)$
+(not the registry's $J$, which is the inverse metric Jacobian of the computational
+coordinates) and summation over $m,n=1,\dots,n_d$, Banks et al.'s form reads
+$$\partial_t\mathbf q+\frac{1}{\mathcal J}\frac{\partial}{\partial r_m}\Big(\mathcal J\frac{\partial r_m}{\partial x_n}\big(\mathbf F_n-u_{g,n}\mathbf q\big)\Big)+\frac{\mathbf q}{\mathcal J}\frac{\partial}{\partial r_m}\Big(\mathcal J\frac{\partial r_m}{\partial x_n}u_{g,n}\Big)=\mathbf 0 ,$$
+where $u_{g,n}$ are the components of $\mathbf u_g$; Henshaw & Schwendeman's 2-D Eq. (8) is
+the same equation with the reactive source on the right, written with the face fluxes
+$\mathcal J(\partial r_m/\partial x_n)(\mathbf F_n-u_{g,n}\mathbf q)$ across the curves
+$r_m=$ const. The last term is the dilatation of the control volume caused by the divergence
+of the grid velocity; Henshaw & Schwendeman state that it is identically zero for grids that
+only translate and rotate (§4.1). The time derivative acts on $\mathbf q$, not on
+$\mathcal J\mathbf q$, and the discretization built on it is the "semi-conservative"
+Godunov scheme of [shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md).
+Because the equations are solved in a frame moving with each grid, "no interpolation is
+required to transfer the numerical solution from component grids at old times to those at
+new times as a result of the motion" (Henshaw & Schwendeman, §1, §4.1). Banks et al. state
+that the fluid scheme "is adjusted to ensure free-stream preservation, including the case of
+deforming grids", and that the overall fluid–solid approximation is free-stream preserving
+(§4.2).
+
+Horne & Mahesh (2021) use the arbitrary Lagrangian–Eulerian integral form on unstructured
+meshes attached to moving bodies: the convective flux through each face carries the relative
+normal velocity $(\mathbf u-\mathbf u_g)\cdot\mathbf n$ ([Horne & Mahesh (2021)](/sources/horne-2021.md),
+§3.1, Eq. (1)); see [incompressible flow on overlapping grids](/methods/incompressible-flow-on-overset-grids.md).
 
 ## Connectivity every time step
 
@@ -94,6 +135,23 @@ not vectorize.
 | wing/store separation | 2 | 243,906 | 2,090 | 1.96 | 0.64 |
 | Space Shuttle SRB separation | 3 | 357,330 | 10,408 | 5.27 | 2.02 |
 
+**Incremental update and exposed points (Ogen).** Henshaw & Schwendeman (2006, §3.1) call the
+Overture grid generator Ogen after every move. The update considers only the grids affected
+by the motion, starts from the previous classification, identifies the receptors that have
+become invalid, searches locally for new donor candidates and completes the classification;
+if the local search fails, the full overlapping-grid algorithm is called (see
+[donor search](/methods/donor-search.md) and [Overture](/software/overture.md)). Where an
+overlying grid moves away, points that were holes or receptors at the old time become
+discretization points at the new time. Henshaw & Schwendeman call them
+[exposed points](/definitions/exposed-point.md) and give them values at the *previous* time
+level(s) by interpolation from other grids, before the step is taken; they reject assigning
+values at the new time because that "involves an implicit coupling between unknown values at
+the new time level" (§3.2, Figs. 3–4). Meakin & Suhs and Henshaw & Schwendeman thus treat the
+same event in two ways: the first forbids a hole point from becoming a field point without an
+intermediate step as an interpolated point, which limits how far a hole moves per step; the
+second lets it happen and fills the exposed point's old-time values by interpolation, with
+no hole-motion limit stated.
+
 **Trees in body frames (SUGGAR).** Noack (2005) argues that hole cutting must be efficient
 because it is repeated every step (§II, §VII). SUGGAR builds its hole-cutting and
 donor-search trees once, at initialization, in each body's untransformed frame; the grids of
@@ -107,6 +165,18 @@ $\mathbf x=\mathbf x_{\mathrm{cg}}+\mathsf R(\mathbf X-\mathbf X_{\mathrm{cg}})$
 no formula. The same body hierarchy decides which bodies cut which grids ("siblings cut each
 other"; see [hole cutting](/methods/hole-cutting.md)).
 
+**Reuse under rigid motion on partitioned and GPU assemblies.** Two later assemblers reuse
+geometric data that rigid motion does not change. Roget & Sitaraman (2014, §3.3) build the
+cell-to-cell neighbour lists of their partitioned unstructured meshes once, at the first time
+step, "since the neighbor information is unchanged by mesh motion or deformation"; cell and
+nodal resolutions are recomputed only for elastically deforming meshes. Their adaptive load
+re-balance estimates each processor's load from the previous assembly and updates it
+continuously, which, they state, keeps it "applicable to moving and deforming grid problems"
+(§5). Horne & Mahesh (2021, §2) assume rigid motion of the cells within each mesh partition,
+so the Morton ordering and the node connectivity of their GPU bounding-volume hierarchy stay
+fixed after initialization and only the object vertices and bounding boxes are updated. See
+[parallel and GPU overset grid assembly](/methods/parallel-overset-grid-assembly.md).
+
 **Implicit hole cutting.** Lee & Baeder (2003) do not blank hole points: the solver updates
 them, and their contamination argument requires that information from invalid points cannot
 cross the thinnest fringe in one time step $\Delta t$; their test-point sweeps alternate
@@ -115,6 +185,34 @@ direction with the time-step counter
 [implicit hole cutting](/methods/implicit-hole-cutting.md)). Lee & Baeder do not address
 Meakin & Suhs's hole-motion rule, and neither source discusses the other's setting (see the
 qualification on [point classification](/definitions/point-classification.md)).
+
+**Deforming grids.** Banks et al. (2016, §4.1, §4.3) let the component grids next to a
+fluid–solid interface deform with it. After the interface points are advanced, a hyperbolic
+grid generator regenerates these grids by marching from the interface, and Ogen recomputes
+the connectivity ("cut holes, determine interpolation points") every step; Banks et al. call
+the construction *deforming composite grids*. The algorithm is on
+[fluid–structure interaction on overlapping grids](/methods/fluid-structure-interaction-on-overset-grids.md).
+
+## Time stepping with moving grids
+
+Henshaw & Schwendeman's algorithm (§3.4, Fig. 6) orders one step as follows:
+
+1. every $n_{\mathrm{regrid}}$ steps, rebuild the [AMR](/methods/amr-on-overset-grids.md)
+   hierarchy and transfer the solution to it;
+2. move the grids to a *predicted* state at $t+\Delta t$, computed "to full design accuracy
+   (second-order accuracy for the present application)";
+3. update the connectivity with Ogen;
+4. fill the exposed points;
+5. advance the solution from the old grid to the predicted grid;
+6. interpolate the overlapping-grid and AMR receptors and apply the boundary conditions;
+7. correct the grid positions (rigid-body corrector).
+
+The connectivity is not recomputed after the corrector, since it "is already known to
+second-order accuracy from the predictor step" (§3.4). A single global time step is used for
+all component and refinement grids, $\Delta t=C_{\mathrm{CFL}}\min_k\Delta t_k$ with the
+page-local safety factor $C_{\mathrm{CFL}}=0.9$ (§4.2, Eq. (13)). Banks et al.'s
+fluid–structure procedure has the same predict–update–advance–project–correct structure
+(§4.3, Procedure 1).
 
 ## Coupling with body dynamics
 
@@ -135,9 +233,21 @@ machine, and only one parallel solver process can talk to a FIFO (§VII, Fig. 10
 solver-side operations are in the companion library DiRTlib (Noack 2005, AIAA 2005-5116, as
 cited).
 
+Free motion is integrated inside the solver in the later sources:
+- Henshaw & Schwendeman (2006, §2, §4.3) integrate the Newton–Euler equations of rigid
+  bodies loaded by the pressure force and torque, with a leap-frog predictor and a
+  trapezoidal corrector, both second order.
+- Chan (2009, §10) recalls that OVERFLOW-D (Meakin, early 1990s) added prescribed motion,
+  6-DOF dynamics, body contact detection and impact dynamics, merged into OVERFLOW 2 in 2001.
+- Horne & Mahesh (2021, §1) integrate 6-DOF rigid-body motion from the fluid forces and
+  torques.
+
+The coupling algorithms, rigid and deformable, are on
+[fluid–structure interaction on overlapping grids](/methods/fluid-structure-interaction-on-overset-grids.md).
+
 ## Demonstrations
 
-All chunk-1 moving-grid demonstrations use prescribed motion (see
+The moving-grid demonstrations of the founding papers all use prescribed motion (see
 [store separation](/benchmarks/store-separation.md)):
 
 - **Store separation from the AFATL wing** (Meakin & Suhs, §III, Plate 1): the converged
@@ -158,11 +268,59 @@ All chunk-1 moving-grid demonstrations use prescribed motion (see
   donor search and 71 s ASCII output per step, about 1.8 GB memory. No flow solution is shown
   in either SUGGAR case.
 
+Later sources add verified moving-grid accuracy, free motion and timings:
+
+- **Receding piston** (Henshaw & Schwendeman, §6.2, Tables 2–3): a 1-D piston with
+  prescribed motion $-t^4/8$, computed on one translating grid and on a moving grid that cuts
+  a hole in a fixed grid. The two constructions have nearly equal max-norm errors, with rates
+  2.04–2.47 at $t=1$, so the overlapping moving-grid construction keeps second-order
+  accuracy. The pressure-driven variant couples the piston's motion to the gas (see
+  [fluid–structure interaction](/methods/fluid-structure-interaction-on-overset-grids.md)).
+- **Smoothly accelerating cylinder** (Henshaw & Schwendeman, §6.3.1, Table 4): a cylinder of
+  radius 1/2 moving through a channel on an annular grid over a Cartesian background, with
+  self-convergence max-norm rates 2.03, 1.83 and 1.84 for $\rho$, $v$, $T$ at $t=6$ with the
+  authors' slip-wall boundary condition (see
+  [shock capturing](/methods/shock-capturing-on-overset-grids.md)).
+- **Shock-driven cylinder and 26 cylinders in a detonation** (Henshaw & Schwendeman, §6.3.2,
+  §7.2): free rigid bodies driven by shocks and detonations, with AMR; with one refinement
+  level the number of component grids ranges from 28 to about 400 during the 26-cylinder run.
+  See [shock–cylinder interaction](/benchmarks/shock-cylinder-interaction.md).
+- **HART-II rotor–fuselage** (Roget & Sitaraman, §6.1, Fig. 19): five near-body unstructured
+  meshes, 7 million nodes, 256 processors (2.3 GHz AMD Opteron 6134). One overset assembly
+  takes 1.3 s, 7% of the total time-step time, with the exact-inverse-map donor search, and
+  2.6 s (14%) with the alternating digital tree; the 62-million-node version reaches an
+  assembly-to-solver time ratio of 21% at 8192 processors after load re-balance (Fig. 24).
+- **Rotating cylinder** (Sharma et al., §4.3.4): a near-body mesh rotating at rate 3 (surface
+  speed over free-stream speed) inside a Cartesian background, lift converged in space and
+  time and in agreement with the literature values the authors cite
+  ([Sharma et al. (2021)](/sources/sharma-2021.md); see
+  [flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)).
+- **Freely falling sphere** (Horne & Mahesh, §4.2.3, Fig. 20): a 6-DOF sphere (Galileo
+  number 291, mass ratio 7.8) on 2 nodes with 2 NVIDIA V100 each; the GPU method is 12x–20x
+  faster than the authors' earlier CPU method over 100 time steps, despite dynamic
+  connectivity. Only timings are reported. See [flow past a sphere](/benchmarks/flow-past-sphere.md).
+- **E779A propeller** (Wang et al. (2021), §III A): a rotating cylindrical overset region
+  around the four-bladed propeller inside a stationary background, 48 million hexahedral
+  cells in total, advance coefficient 0.38 at 25 rotations per second, one time step per
+  $1^\circ$ of rotation, 30 rotations (statistics over the last 20, 7200 steps). The receptor
+  ("acceptor") cells form a layer of a few cells on the outer surface of the rotating region
+  and around a hole in the background; trilinear interpolation from an 8-point donor cell is
+  used, and new interpolation coefficients are computed every time the propeller grid
+  rotates.
+- **Production applications** recalled by Chan (2009, §11): the V-22 tiltrotor in forward
+  flight as one of the first overset applications with complex bodies in relative motion, SRB
+  separation, wing–store and cavity store separation, a spinning missile with dithering
+  canards, a dart dispenser with contact detection and impact dynamics (Fig. 8), and a CH-47
+  dual-rotor helicopter with coupled CFD and structural dynamics (Fig. 9). No grid sizes or
+  timings are given for these.
+
 ## Qualifications
 
 - Meakin & Suhs state that the effect of the inter-grid boundary updating on time accuracy
   "has not been addressed" (§IV); their time-accuracy evidence is the single-grid plunge tests,
-  and the moving multi-grid cases have no reference data.
+  and the moving multi-grid cases have no reference data. Henshaw & Schwendeman's piston and
+  accelerating-cylinder tests (§6.2–6.3) measure convergence rates of time-dependent
+  solutions on moving overlapping grids, against an exact solution and by self-convergence.
 - The claim that the hole-motion limit is far weaker than the physics time step is stated for
   the cases examined, not shown. On p. 646 the claim is restated with the comparison inverted
   ("the time-step size limitation imposed by the DCF search limits are generally much less
@@ -174,8 +332,23 @@ All chunk-1 moving-grid demonstrations use prescribed motion (see
   directly, are unaffected.
   They also print the conserved vector without the factor $J^{-1}$ that their fluxes carry
   (p. 644).
-- None of the chunk-1 sources discusses the discrete geometric conservation law for the moving
-  component grids.
+- **Geometric conservation.** None of the sources discusses a discrete geometric conservation
+  law by name. Banks et al. (2016) state free-stream preservation on deforming grids (§4.2);
+  Henshaw & Schwendeman evaluate the dilatation term with metrics and grid velocity averaged
+  between $t$ and $t+\Delta t$ (§4.2) and rely on its vanishing for rigid motion.
+- Henshaw & Schwendeman's exposed-point test is printed with a strict inequality that does not
+  reproduce their own Fig. 4 example; the details are on
+  [exposed points](/definitions/exposed-point.md).
+- Henshaw & Schwendeman's claim that the total cost is "similar to that required for a
+  Cartesian-grid embedded-boundary method" (§1) is asserted; Table 6 supports only the small
+  share of the moving-grid update, 0.66 s of 17.8 s per step (3.7%) without AMR and 0.164 s of
+  3.81 s (4.3%) with AMR, on a 2.2 GHz Xeon desktop.
+- Wang et al. (2021) state no hole-cutting method, overlap width or interpolation accuracy for
+  their rotating grid and do not discuss the tip vortices crossing the outer surface of the
+  rotating region; the propeller case validates loads and wake topology against experiment
+  without a grid-convergence study (§III B).
+- Horne & Mahesh's falling-sphere case reports speed-ups only; trajectory accuracy is not
+  shown in that paper (§4.2.3).
 - Noack's C130 setup times (256 s reading and orienting cells, 14 s binary tree, 79 s
   donor-search octree) sum to 349 s, while the text prints a total of 335 s; the
   wing/pylon/store setup total (6 + 261 + 16 = 283 s) is consistent (§VIII) *(compiler check,
@@ -185,6 +358,13 @@ All chunk-1 moving-grid demonstrations use prescribed motion (see
 
 - [Meakin & Suhs (1989)](/sources/meakin-1989.md) — §I; §II ADF (Eqs. (1)–(2)), BDF, DCF (Fig. 3, Table 1); §III (Figs. 4–5, 11, Plates 1–2); §IV.
 - [Noack (2005)](/sources/noack-2005.md) — §I, §II, §VII (Fig. 10), §VIII (Tables 2–3).
+- [Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md) — §1; §2 (Newton–Euler); §3.1 (Ogen update); §3.2 (exposed points, Figs. 3–4); §3.4 (Fig. 6); §4.1 (Eqs. (7)–(8)); §4.2 (Eq. (13)); §4.3; §6.2–6.3 (Tables 2–4, 6); §7.2.
+- [Banks et al. (2016)](/sources/banks-2016.md) — §4.1 (deforming composite grids), §4.2 (Eq. (31), free-stream preservation), §4.3 (Procedure 1).
+- [Chan (2009)](/sources/chan-2009.md) — §2 (relative motion as motivation), §7 (analytic shapes, object X-rays), §10 (OVERFLOW-D), §11 (applications, Figs. 4, 8, 9).
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §1 (assembly at each time step), §3.3 (neighbour lists once, resolutions for deforming meshes), §5 (adaptive load estimate), §6.1–6.2 (Figs. 19, 24).
+- [Horne & Mahesh (2021)](/sources/horne-2021.md) — §1 (6-DOF), §2 (rigid-motion reuse of the BVH), §3.1 (Eq. (1), ALE form), §4.2.3 (Fig. 20).
+- [Sharma et al. (2021)](/sources/sharma-2021.md) — §4.3.4 (rotating cylinder).
+- [Wang et al. (2021)](/sources/wang-2021.md) — §III A (dynamic overset grid, Fig. 5, Eq. (10), time step), §III B.
 - [Benek et al. (1985)](/sources/benek-1985.md) — pp. 323, 325 (static PEGSUS/XMER3D workflow).
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — p. 1038 (PEGASUS 4 restart), p. 1042 (PEGASUS 5 restart).
 - [Wang (1995)](/sources/wang-1995.md) — §6.

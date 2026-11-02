@@ -8,7 +8,7 @@ authors: [Meakin R.L., Suhs N.E.]
 year: 1989
 venue: "AIAA 9th Computational Fluid Dynamics Conference, AIAA Paper 89-1996-CP, pp. 643-657"
 local_file: "/home/stefano/papers/mosaic/overset-chimera/1989_Crossref_9th_Computational_Fluid_Dynamics_Conference_MEAKIN_Unsteady_aerodynamic_simulation_of_multiple_bodies_in_relati.pdf"
-tags: [overset-grid, chimera, moving-grid, domain-connectivity, store-separation, compressible]
+tags: [overset-grid, chimera, moving-grid, domain-connectivity, compressible]
 timestamp: 2026-11-02T11:26:00Z
 ---
 
@@ -135,16 +135,18 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-11-02). This source is cited on:
+Chunk 1 (2026-11-02), cited further in chunk 2. This source is cited on:
 
 - [Wing–pylon–store separation and related moving-body cases](/benchmarks/store-separation.md)
 - [Domain connectivity and overset grid assembly](/definitions/domain-connectivity.md)
+- [Exposed points](/definitions/exposed-point.md)
 - [Fringe (receptor) points and overlap width](/definitions/fringe-point.md)
 - [Grid hierarchy and priority](/definitions/grid-hierarchy.md)
 - [Orphan points](/definitions/orphan-point.md)
 - [Overset (Chimera) grid](/definitions/overset-grid.md)
 - [Point classification and the iblank mask](/definitions/point-classification.md)
 - [Donor search](/methods/donor-search.md)
+- [Fluid–structure interaction on overlapping grids](/methods/fluid-structure-interaction-on-overset-grids.md)
 - [Hole cutting](/methods/hole-cutting.md)
 - [Implicit hole cutting](/methods/implicit-hole-cutting.md)
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)

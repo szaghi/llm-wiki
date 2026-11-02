@@ -5,7 +5,7 @@ description: "Chesshire and Henshaw's formal definition of an overlapping grid: 
 status: established
 aliases: [composite grid, composite mesh, overlapping grid, overlaid grid, composite overlapping mesh]
 tags: [composite-grid, overset-grid, domain-connectivity, finite-difference]
-timestamp: 2026-11-02T11:29:00Z
+timestamp: 2026-11-02T14:53:00Z
 ---
 
 # Composite overlapping grid
@@ -55,7 +55,7 @@ component grids, higher-numbered grids covering lower ones
 order changes which points are removed; all grids, even the top one, lose
 points (Fig. 9). A centred three-point discretization needs one line of
 interpolation points at an interpolation boundary, a five-point one two lines
-(§3.2, p. 14); Henshaw (1994) uses two lines with $q=5$ for his fourth-order
+(§3.2, p. 14); Henshaw (1994) uses two lines with $q=5$ for the fourth-order
 scheme. The overlap $d$ and width $q$ needed for a given accuracy are the
 subject of the [interpolation-order
 requirement](/results/interpolation-order-requirement.md); explicit and implicit
@@ -64,6 +64,42 @@ use of interpolation points as donors is defined on
 The algorithm that turns component grids into a valid composite grid is
 described on [domain connectivity](/definitions/domain-connectivity.md) and
 [CMPGRD](/software/cmpgrd.md).
+
+## Later statements of the definition
+
+The definition is restated almost verbatim by later Kreiss-school papers.
+[Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md), §3.1, and
+[Banks et al. (2016)](/sources/banks-2016.md), §4.1, write the composite grid
+as a set of logically rectangular components $G_k$, each a smooth mapping of
+$[0,1]^{n_d}$, body-fitted near boundaries and Cartesian in the bulk, with
+points classed as discretization, interpolation or unused, plus ghost points
+for boundary conditions. [Henshaw (2006)](/sources/henshaw-2006-b.md), §4,
+indexes points as $\mathbf x^k_{\mathbf i}=\mathbf d_k(\mathbf r_{\mathbf i})$
+with $\mathbf r_{\mathbf i}=(i_1\Delta r_1,\dots,i_{n_d}\Delta r_{n_d})$,
+$i_m=0,\dots,N_m-1$ and $\Delta r_m=1/(N_m-1)$, ghost points having $i_m<0$
+or $i_m>N_m-1$ (the paper's cell count is $N_m-1$ in registry terms), and adds that high-order
+accuracy needs smooth mappings to avoid spurious reflections.
+[Wang et al. (2021)](/sources/wang-2021.md), §III A, call the composite the
+"synthesized grid" and divide the points of each component into interior,
+boundary, interpolation, exterior and unused points.
+
+**Time-dependent composite grids.** Henshaw & Schwendeman (2006), §3.1, let
+the mappings depend on time, $\mathbf x=\mathbf d_k(\mathbf r,t)$, so that
+$\mathcal G(t)$ covers a changing domain $\Omega(t)$; the classification is
+recomputed after each move ([moving overset grids](/methods/moving-overset-grid.md);
+[exposed points](/definitions/exposed-point.md)). They count adaptive
+refinement patches as further components defined by restriction of the base
+mapping, $\mathbf d_{k_r}(\mathbf r,t)=\mathbf d_k(\mathbf R_{k_r}(\mathbf r),t)$
+with $\mathbf R_{k_r}$ an affine map of the unit square into the parameter
+square of $G_k$ (page-local symbols, §3.3), so that refinement patches move
+with their base grid ([AMR on overlapping grids](/methods/amr-on-overset-grids.md));
+with one refinement level the number of components of their 26-cylinder
+detonation run varies between 28 and about 400 (§7.2). Banks et al. (2016),
+§4.1, give the fluid and the solid each its own composite grid; the components
+next to the fluid–solid interface deform with it and are regenerated at every
+step by a hyperbolic grid generator before Ogen recomputes the classification
+([fluid–structure interaction on overlapping
+grids](/methods/fluid-structure-interaction-on-overset-grids.md)).
 
 ## Why overlapping components
 
@@ -79,7 +115,7 @@ normals (valid while the grid width is small against the boundary's radius of
 curvature), and covers the interior with a Cartesian grid (§3.1; §5.4, where
 smoothed-corner polygonal boundary grids are built). Henshaw (1994), §1.2,
 adds that composite grids avoid coordinate singularities — a sphere's poles are
-covered by two or more patches, as in his two-grid spherical-shell test
+covered by two or more patches, as in the two-grid spherical-shell test
 (Table VII) — and the metric discontinuities of multiblock patched grids, which
 eases high-order accuracy.
 
@@ -122,12 +158,21 @@ solver takes 2,673,907 of 2,802,678 words (Chesshire & Henshaw 1990, Table IX,
 whose printed sparse-solver subtotal is 100 words below the sum of its rows,
 72,241 + 2,601,766 = 2,674,007 *(compiler check, not in the sources)*).
 Interpolation cost depends on how it is done: 2% of a step for explicit
-interpolation in Henshaw's cylinder run, 17% for implicit interpolation in his
+interpolation in Henshaw's cylinder run, 17% for implicit interpolation in the
 sphere run, where the 10,728 interpolation points are a large fraction of all
 points (Henshaw 1994, Tables V, VIII). Multigrid on composite grids (CGMG)
 reaches convergence rates "almost as good" as on a single grid; CMPGRD builds
 the coarse composite levels, which are not simply the fine grids with lines
 removed (Chesshire & Henshaw 1990, §5.5, as reported there).
+
+Later measurements put the composite overhead low. Henshaw (2006), §10.5,
+Table 7, stores the composite grid in 2.3 of 12.6 reals per point (17.8%) for a
+3-D run with 10.2 million points, about $4.2\times10^5$ of them interpolation
+points, and notes that storing $\partial\mathbf x/\partial\mathbf r$ on all
+grids would alone take 9 reals per point; interpolation takes 0.46% of the 2-D
+and 6.8% of the 3-D step time (Table 6). Henshaw & Schwendeman (2006), Table 6,
+measure the per-step regeneration of a moving composite grid at 3.7% of the
+step without and 4.3% with adaptive refinement.
 
 ## Lineage
 
@@ -150,6 +195,15 @@ serve adaptivity rather than geometry.
   interpolation conserves; the authors leave conservation at interpolation
   boundaries to future work (§6.4, §7); see
   [conservative overset interface](/methods/conservative-overset-interface.md).
+- [Picard et al. (2021)](/sources/picard-2021.md), §3.2.2, build a two-component
+  finite-volume overlapping grid with no unused points at all: every cell is
+  either integrated or a receptor ("ghost") cell, and the covered substrate cells
+  stay active. It is therefore not a minimal valid composite grid in Chesshire &
+  Henshaw's sense, which removes the points it does not need *(compiler check,
+  not in the sources)*.
+- The time-dependent mapping $\mathbf d_k(\mathbf r,t)$ and the restriction map
+  $\mathbf R_{k_r}$ are page-local extensions of the registry's
+  $\mathbf d_k(\mathbf r)$.
 - Chesshire & Henshaw print the method-of-lines interpolation equation (5.9c)
   with donor values on grid $k$ instead of $k'$; their Eq. (5.3) has the correct
   donor index.
@@ -159,3 +213,8 @@ serve adaptivity rather than geometry.
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §1 (definition, lineage); §2, p. 7 (single-mapping limits); §3.1, p. 11 (component grids); §3.2, pp. 14–16, Fig. 9 (valid grid, point types, parameters, ordering conjecture); §5.1, Eq. (5.2); §5.5; §5.6, Eq. (5.9); Table IX.
 - [Henshaw (1994)](/sources/henshaw-1994.md) — §1.2 (singularities avoided); §2 (components $\mathbf d_k$ from the unit cube, fourth-order mapping method); Tables V, VII, VIII.
 - [Benek et al. (1985)](/sources/benek-1985.md) — p. 323 (composite mesh as PEGSUS output).
+- [Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md) — §3.1 (moving composite grid, point classes); §3.3 (refinement grids as restrictions); §7.2; Table 6.
+- [Henshaw (2006)](/sources/henshaw-2006-b.md) — §4 (grid points, ghost points, smooth mappings); §10.5, Tables 6–7.
+- [Banks et al. (2016)](/sources/banks-2016.md) — §4.1 (composite grids for fluid and solid, deforming components).
+- [Picard et al. (2021)](/sources/picard-2021.md) — §3.2.2 (no deactivated cells).
+- [Wang et al. (2021)](/sources/wang-2021.md) — §III A (synthesized grid, point classes).

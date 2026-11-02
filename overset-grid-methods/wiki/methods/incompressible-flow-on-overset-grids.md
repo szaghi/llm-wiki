@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Incompressible flow on overlapping grids"
-description: "Henshaw's fourth-order method of lines for incompressible Navier–Stokes on curvilinear composite overlapping grids: velocity–pressure form with a pressure Poisson equation and the boundary condition div u = 0, ghost-point numerical boundary conditions, quartic interpolation, divergence damping, and fourth-order convergence on overlapping 2-D and 3-D grids."
+description: "Incompressible Navier–Stokes on overlapping grids: Henshaw's fourth-order velocity–pressure method with div u = 0 on the boundary, quartic interpolation and divergence damping; second-order finite-volume projection and projection–artificial-compressibility schemes; single-system versus Schwarz coupling of the grids; and the interpolation order the elliptic pressure needs."
 status: established
-aliases: [incompressible Navier–Stokes on composite grids, velocity–pressure formulation, pressure Poisson formulation, CGINS method, fourth-order incompressible overlapping-grid method]
-tags: [incompressible, composite-grid, high-order, finite-difference, interpolation]
-timestamp: 2026-11-02T11:28:00Z
+aliases: [incompressible Navier–Stokes on composite grids, velocity–pressure formulation, pressure Poisson formulation, CGINS method, fourth-order incompressible overlapping-grid method, overset single system, overset additive Schwarz, overset Schwarz coupling]
+tags: [incompressible, composite-grid, high-order, finite-volume, interpolation]
+timestamp: 2026-11-02T14:53:00Z
 ---
 
 # Incompressible flow on overlapping grids
@@ -23,6 +23,17 @@ with two receptor lines. The elliptic and composite-grid machinery is that of
 [CMPGRD](/software/cmpgrd.md) and of
 [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md). The pressure $p$
 on this page is kinematic (divided by density).
+
+Two later sources take a second-order finite-volume route for wind-energy and
+particle-laden turbulent flows.
+[Sharma et al. (2021)](/sources/sharma-2021.md) use an incremental
+approximate pressure projection in the node-centred code Nalu-Wind, with
+TIOGA assembling the overset meshes, and study how the interpolation order
+and the coupling of the per-mesh linear systems affect accuracy.
+[Horne & Mahesh (2021)](/sources/horne-2021.md) replace the projection by a
+coupled projection–artificial-compressibility scheme in a cell-centred
+unstructured code on GPUs, so that fringe values can be injected into the
+pressure equation. Their sections below follow Henshaw's.
 
 ## Formulations and the pressure boundary condition
 
@@ -149,6 +160,100 @@ $\nabla^2\phi=-\nabla\cdot\mathbf u_I$ and $\mathbf n\cdot\nabla\phi=0$, using
 the pressure operator. For non-smooth data, smoothing and projection
 alternate until the divergence stops decreasing (§4.5).
 
+## Projection and artificial-compressibility schemes
+
+**Incremental approximate projection** (Sharma et al. 2021, §2,
+Eqs. (3)–(6)). Each step runs $K$ Picard iterations ($K=1$ for linear and
+$K=3$ for nonlinear problems "out of experience", §4). Iteration $k$ solves,
+with $\mathsf A_{\mathrm u}$ the linearized momentum operator (time derivative,
+diffusion, advection; not the pressure matrix $\mathsf A$ above), $\mathbf u^*$ the intermediate velocity, $\delta p$ the
+pressure increment and $\gamma_{\mathrm b}$ the variable-step BDF2
+coefficient (page-local symbols),
+$$\begin{aligned}&\mathsf A_{\mathrm u}(\mathbf u^*_{k+1}-\mathbf u_k)=\mathbf f-\mathsf A_{\mathrm u}\mathbf u_k-\nabla p_k,\\ &-\tfrac{\Delta t}{\gamma_{\mathrm b}}\nabla^2\delta p_{k+1}=-\nabla\cdot\big(\rho\,\mathbf u^*_{k+1}+\tfrac{\Delta t}{\gamma_{\mathrm b}}\nabla p_k\big)+\tfrac{\Delta t}{\gamma_{\mathrm b}}\nabla^2p_k,\\ &\mathbf u_{k+1}=\mathbf u^*_{k+1}-\tfrac{\Delta t}{\gamma_{\mathrm b}\rho}\nabla\delta p_{k+1}.\end{aligned}$$
+The projection is approximate: the discrete $\nabla\cdot\nabla$ differs from the
+discrete $\nabla^2$. For a constant step $\gamma_{\mathrm b}=3/2$ *(compiler
+check, not in the sources)*. Time stepping is implicit BDF2 at a maximum CFL
+number of 1. Sharma et al. keep the density $\rho$; their tests take
+$\rho=1$. The momentum step is parabolic but advection-dominated, the
+pressure step elliptic, which is why the two need different interpolation
+orders (below).
+
+**Projection combined with artificial compressibility** (Horne & Mahesh 2021,
+§3.1, Eqs. (2)–(8)). Starting from a Crank–Nicolson projection, Horne &
+Mahesh take all predicted terms at the new level and add the material
+derivative of pressure to the continuity equation:
+$$\frac{\mathbf u^{n+1}-\mathbf u^n}{\Delta t}+\tfrac12\big(\mathcal C^{n+1}+\mathcal C^n\big)-\tfrac12\big(\mathcal L^{n+1}+\mathcal L^n\big)=-\nabla p^{n+1},\qquad \epsilon_{\mathrm{ac}}\frac{dp}{dt}+\nabla\cdot\mathbf u^{n+1}=\Delta t\,\nabla^2p^{n+1},$$
+with $\mathcal C$, $\mathcal L$ the discrete convective and viscous terms (page-local; $\mathcal V_{\mathbf i}$ above is Henshaw's spacing factor) and
+$\epsilon_{\mathrm{ac}}$ the artificial-compressibility coefficient
+(page-local). They choose $\epsilon_{\mathrm{ac}}=\Delta t$, after Shen's
+analysis as recalled there, which proves $O(\Delta t)$ accuracy of the pure
+artificial-compressibility scheme with this choice; the added term is then
+$O(\Delta t)$ in the continuity equation (Eq. (7)). Velocity and pressure are
+solved at the same level, so there is no splitting error. Further stated
+properties: the condition number falls from $O(\Delta x^{-2})$ (projection) to
+$O(\Delta t/\Delta x^2)$; the pressure Laplacian removes odd–even decoupling on
+the collocated grid and damps spurious compressible waves; and the pressure
+boundary condition is the normal momentum balance,
+$-\partial_np^{n+1}=\mathbf n\cdot\big((\mathbf u^{n+1}-\mathbf u^n)/\Delta t+\mathcal C^{n+1}-\mathcal L^{n+1}\big)$
+(Eq. (8)), instead of the $\partial_np=0$ of the projection method, which the
+authors say limits pressure accuracy to $O(\Delta t^{1/2})$ on general meshes
+(as recalled there). As recalled there, artificial compressibility on overset
+grids had previously needed dual time stepping (Tang et al.). Laplacians use
+a two-point flux approximation with a primal–dual correction for skewed
+cells, which keeps the system symmetric (§3.2, Eq. (10)).
+
+## Coupling the component grids
+
+**Interpolation as boundary data for the pressure.** Henshaw (1994) solves
+the pressure equation on the whole composite grid with the composite-grid
+sparse and multigrid solvers (above). Horne & Mahesh (§3.2) earlier enforced pressure
+continuity across overlapping meshes by a penalty method, which needed
+all-to-all stencil weights and tuning; with $\epsilon_{\mathrm{ac}}\,dp/dt$ in
+the continuity equation they inject the reconstructed fringe values directly
+into the pressure equation and the system stays solvable by plain iterative
+solvers, with no penalty error in the divergence near overset boundaries.
+
+**Single system versus Schwarz iteration** (Sharma et al. 2021, §3.2,
+Algorithms 1–2). In the overset single system (OSS) the fringe interpolation
+equations are constraint rows of one linear system over all meshes. In
+overset additive Schwarz (OAS) each mesh's system is solved separately with
+field-point rows only, and the fringe values are then updated from the other
+meshes, Jacobi fashion, over $n_{\mathrm{oc}}$ "overset corrector" iterations
+(page-local). The authors prefer OAS for parallelism across meshes, for using
+different solvers per mesh, and because constraint rows add noise to
+algebraic-multigrid coarsening (stated without a test). The
+[explicit and implicit interpolation](/definitions/explicit-and-implicit-interpolation.md)
+page relates the two to Chesshire & Henshaw's terms. Findings:
+- *Elliptic proxy* (diffusion, quadratic-reproducing RBF interpolation): OAS
+  needs a tight inter-iteration tolerance, $10^{-5}$, to match the OSS error,
+  and then $n_{\mathrm{oc}}=19$, 47, 90 and 153 for $h=0.2$, 0.1, 0.05 and
+  0.025 (Table 1). The counts did not change with Lagrange interpolation. With
+  GMRES and a weak ILU preconditioner, doing one Krylov iteration per OAS solve
+  instead of converging each lowers the cost, but OSS stays cheapest in Krylov
+  iterations (Figs. 21–22).
+- *Hyperbolic proxy* (linear advection, linear interpolation): two corrector
+  iterations per Picard iteration match OSS and keep second order (Fig. 23).
+  The authors state that with explicit time stepping one may suffice.
+- *Navier–Stokes, cylinder at $Re=200$*: extra Picard iterations, which
+  repeat the projection, are more effective than extra corrector iterations,
+  because repeated pressure solves with an uncorrected intermediate velocity
+  introduce global pressure errors; split-operator errors dominate the
+  inter-mesh errors. Two Picard iterations with one corrector iteration give
+  drag, lift and Strouhal statistics within 1% of OSS, even on the coarsest
+  mesh (§4.3.3, Figs. 30–31).
+
+**Interpolation order.** For an elliptic equation with the fringe gap
+shrinking with $h$, linear interpolation loses second order and quadratic
+keeps it; linear suffices for advection (Sharma et al., §4.1). With linear
+interpolation a decaying Taylor vortex keeps second order at cell Reynolds
+number about 400 and loses it at about 1 (§4.3.1, Fig. 25). Sharma et al.
+therefore "strongly recommend" higher-order interpolation for incompressible
+flow, because the pressure equation is elliptic and low-Reynolds structures
+occur, yet conclude that for advection-dominated engineering problems linear
+interpolation with OAS (2–4 Picard iterations, one corrector iteration) gives
+quantities within 1% of OSS (§5). See
+[interpolation order and overlap requirements](/results/interpolation-order-requirement.md).
+
 ## Verification and demonstrations
 
 - **Twilight-zone tests** on a square, a rotated square, an overlapping
@@ -173,6 +278,30 @@ alternate until the divergence stops decreasing (§4.5).
   $[-2.2,2.2]^3$, three component grids $(35^3)\cup2(25^2\times9)$,
   $\nu=0.05$, 10,728 interpolation points. Each step takes 45.0 s: GMRES
   pressure solve 42%, implicit interpolation 17%.
+- **Taylor vortices.** Sharma et al. (2021) (§4.3.1) translate a decaying
+  Taylor vortex across an overset mesh (OSS, linear interpolation; second
+  order at low viscosity, degraded at high viscosity). Horne & Mahesh (2021)
+  (§4.2.1, Figs. 13–14) run a Taylor–Green vortex in a triply periodic unit box
+  with an empty overset patch half the box size, rotated 25° about each axis,
+  about 30% overlap: second order in velocity and pressure, errors "several
+  orders of magnitude" below their earlier predictor–corrector scheme, and
+  total kinetic energy following the analytic decay up to $Re=10^9$. See
+  the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md).
+- **Cylinders** (Sharma et al. 2021, §4.3.3–4.3.4). A stationary cylinder at
+  $Re=200$ on a near-body O-mesh and a Cartesian background ($30\times20\times0.1$
+  box, OSS, linear interpolation) gives drag and Strouhal number converging
+  under refinement and agreeing with the literature; a rotating cylinder at
+  rotation rate 3 (moving near-body mesh) sheds a single vortex and its lift
+  converges in space and time. OAS with a couple of Picard iterations and one
+  corrector iteration is within 1% of OSS in both. See
+  [flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md).
+- **Sphere at $Re=3700$** (Horne & Mahesh 2021, §4.2.2): 12 million cells,
+  spacing $0.015D$, drag coefficient 0.392 (reference DNS 0.394), wake length
+  $2.2D$ and Strouhal number 0.22, within 1–5% of the references; on one node
+  with one to four V100 GPUs the speed-up over the authors' earlier CPU method
+  is 8x–56x, depending on the GPU count and cell loading (§4.2.2, Fig. 16). See
+  [flow past a sphere](/benchmarks/flow-past-sphere.md) and
+  [parallel and GPU overset grid assembly](/methods/parallel-overset-grid-assembly.md).
 
 ## Qualifications
 
@@ -187,6 +316,25 @@ alternate until the divergence stops decreasing (§4.5).
 - **Non-conservative.** The interpolation is non-conservative and acts as a
   divergence source (§4.4); see
   [conservative overset interface](/methods/conservative-overset-interface.md).
+  Sharma et al. (2021) (§1) state that the lack of conservation does not
+  degrade incompressible solutions, which have no shocks, though mass
+  conservation may matter for the pressure-correction step; Horne & Mahesh
+  (2021) do not discuss mass conservation of the injected pressure.
+- **Divergence of the coupled scheme.** Horne & Mahesh's continuity equation
+  carries an $O(\Delta t)$ term, so the velocity is divergence-free only to
+  that order; second order is shown with space and time refined together at
+  fixed CFL, with no separate temporal test.
+- **Corrector-iteration growth.** Sharma et al. (§4.2.1) state that the OAS
+  iteration count grows as $O(h^{-2})$ (Fig. 19). Their own Table 1 at
+  tolerance $10^{-5}$ gives $153/19=8.05$ over an eightfold refinement,
+  exponent 1.00, with successive exponents 1.31, 0.94 and 0.77 *(compiler
+  check, not in the sources)*. The table indicates $O(h^{-1})$ or slower.
+- **Printed update signs** *(compiler checks, not in the sources)*. Sharma
+  et al.'s Algorithms 1–2 print $\boldsymbol\phi_{k+1}=\boldsymbol\phi_k-\Delta\boldsymbol\phi_{k+1}$
+  with residual $\mathbf b-\mathsf A\boldsymbol\phi_k$ and
+  $\mathsf A\Delta\boldsymbol\phi=\mathbf r$; Horne & Mahesh's Algorithm 1
+  prints $r=Ax-b$, $Ae=r$, $x=x+e$. In both, one sign must flip for the
+  iteration to converge.
 - **Printed slips in Henshaw (1994):**
   - The second-difference operator is printed with denominator
     $24(\Delta r_m)^2$. Applied to $r^2$ this gives 1 instead of 2, so the
@@ -205,3 +353,5 @@ alternate until the divergence stops decreasing (§4.5).
 
 - [Henshaw (1994)](/sources/henshaw-1994.md) — §1.1–1.2 (Eqs. (1)–(3), pressure boundary condition; Gresho & Sani, Strikwerda, Karniadakis et al. as recalled), §2 (Eq. (4), differences, numerical boundary conditions), §3 (Eqs. (5)–(14)), §4.1–4.5 (Eqs. (15)–(17)), §5 (Tables I–VIII, Figs. 1–6).
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §5.1 (mapping method), §5.3 (interpolation order), §5.5 (CGEL, CGMG multigrid rates).
+- [Sharma et al. (2021)](/sources/sharma-2021.md) — §1, §2 (Eqs. (3)–(9)), §3.2 (Algorithms 1–2), §4.1–4.2 (Table 1, Figs. 10–23), §4.3 (Figs. 25–34), §5.
+- [Horne & Mahesh (2021)](/sources/horne-2021.md) — §3.1 (Eqs. (2)–(8); Shen, Tang et al. as recalled), §3.2 (Eq. (10), injection), §3.3 (Algorithm 1), §4.2.1–4.2.2 (Figs. 13–18, Table).

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Wing–pylon–store separation and related moving-body cases"
-description: "The store released from a wing (with or without pylon) as the reference moving-body overset problem: Meakin and Suhs's AFATL wing and store at Mach 1.05 with steady validation and a prescribed fall, their Space Shuttle booster separation, and Noack's 3.6-million-point wing/pylon/finned-store assembly with per-step timings."
+description: "The store released from a wing (with or without pylon) as the reference moving-body overset problem: Meakin and Suhs's AFATL wing and store at Mach 1.05 with steady validation and a prescribed fall, their Space Shuttle booster separation, Noack's 3.6-million-point wing/pylon/finned-store assembly with per-step timings, and Roget and Sitaraman's 15-million-cell parallel assembly scaling."
 status: established
 aliases: [store separation, wing/pylon/store, wing/pylon/finned-store, AFATL wing and store, SRB separation]
-tags: [benchmark, store-separation, moving-grid, chimera, domain-connectivity]
-timestamp: 2026-11-02T11:28:00Z
+tags: [benchmark, moving-grid, chimera, domain-connectivity, parallel]
+timestamp: 2026-11-02T14:54:00Z
 ---
 
 # Wing–pylon–store separation
@@ -16,10 +16,11 @@ were built: the store grid moves through the wing and background grids, so
 holes, receptors and donors change every step and the
 [domain connectivity](/definitions/domain-connectivity.md) must be
 recomputed each time ([moving overset grids](/methods/moving-overset-grid.md)).
-In these sources the case serves two purposes: steady validation of an overset
-solver against wind-tunnel pressures, and a demonstration of per-step
-assembly under prescribed motion. No chunk-1 source computes a
-six-degree-of-freedom trajectory or compares a trajectory with experiment.
+In these sources the case serves three purposes: steady validation of an
+overset solver against wind-tunnel pressures, a demonstration of per-step
+assembly under prescribed motion, and a scaling test of parallel assembly.
+No ingested source computes a six-degree-of-freedom trajectory or compares a
+trajectory with experiment.
 
 ## Meakin & Suhs (1989): AFATL wing and ogive-cylinder store
 
@@ -72,6 +73,28 @@ Plate 1, Table 1:
 
 See [SUGGAR](/software/suggar.md) for the assembler.
 
+## Roget & Sitaraman (2014): parallel static assembly of a wing–pylon–store
+
+[Roget & Sitaraman (2014)](/sources/roget-2014.md), §6.2, Figs. 22–23, use
+a generic wing–pylon–store configuration (their ref. [20]) only to time
+their partitioned [parallel overset grid assembly](/methods/parallel-overset-grid-assembly.md),
+implemented in the PUNDIT module:
+
+- **Grids.** Three unstructured grids (the wing and two stores), 15 million
+  cells, partitioned by the flow solver.
+- **Runs.** 64, 128, 256 and 512 processors (Wyoming "Vortex" cluster,
+  2.3 GHz AMD Opteron 6134, the hardware of their §6.1). Static assembly, no
+  motion and no flow solution is reported.
+- **Result.** Adaptive load re-balancing reduces the total assembly time by
+  up to 80% (at 256 processors); the speed-up at 256 processors rises from
+  117 without re-balancing to 213 with it, "still well below" linear. The
+  speed-up is measured from total assembly time, re-balancing overhead
+  included, assuming linear speed-up from a serial run to the smallest
+  processor count.
+
+The case thus measures parallel scalability of the assembly, the
+complement of Noack's serial per-step timings above.
+
 ## Related moving-body demonstrations
 
 - **Space Shuttle solid-rocket-booster separation** (Meakin & Suhs 1989,
@@ -98,9 +121,27 @@ See [SUGGAR](/software/suggar.md) for the assembler.
 |---|---|---|
 | Meakin & Suhs (1989) | steady $C_p$ vs wind tunnel; assembly cost relative to the flow solver | trajectory, time accuracy of the inter-grid updates (stated as not addressed, §IV) |
 | Noack (2005) | assembly time and memory per step | any flow quantity |
+| Roget & Sitaraman (2014) | parallel assembly time and speed-up, 64–512 processors | any flow quantity; motion |
+
+## Place in the literature
 
 Meakin & Suhs (1989, refs. [2,3]) cite earlier Chimera store-separation
 work by Dougherty and co-workers; it is not ingested here.
+[Banks et al. (2016, §1)](/sources/banks-2016.md) name store separation
+(citing Dougherty & Kuan, AIAA Paper 89-0637) as the application for which
+overlapping grids were early "recognized" as useful with rigid moving
+bodies. [Chan (2009)](/sources/chan-2009.md) recalls that until the late
+1980s overset multi-body computations involved "very simple geometries
+where each body could be described by a single structured grid", citing
+the booster separation of Meakin & Suhs (1989) and Meakin's 1992
+wing/pylon/finned-store computation (AIAA Paper 92-4568, not ingested)
+(§4); Chan lists a "controlled store separation" from a cavity among the
+1990s applications (§11, Chan's ref. [36]) and states that the
+relative-motion version OVERFLOW-D, with six-degree-of-freedom dynamics,
+contact detection and impact dynamics, has been used by DoD projects
+involving store separation (§10; see [OVERFLOW](/software/overflow.md)).
+Chan gives no case data. No ingested source compares a computed store
+trajectory with experiment.
 
 ## Qualifications
 
@@ -115,3 +156,6 @@ work by Dougherty and co-workers; it is not ingested here.
 
 - [Meakin & Suhs (1989)](/sources/meakin-1989.md) — §II DCF and Table 1 (assembly cost); §III, Figs. 6–11, Plates 1–2 (AFATL wing and store, Space Shuttle SRB separation); §IV (time accuracy not addressed).
 - [Noack (2005)](/sources/noack-2005.md) — §II, Figs. 3–4 (body hierarchy); §VIII, Figs. 11–15, Tables 2–3 (wing/pylon/finned store, C130 air drop, timings).
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §6.1 (hardware); §6.2, Figs. 22–23 (wing–pylon–store, 15 M cells, speed-up 117 → 213 at 256 processors, up to 80% time reduction).
+- [Chan (2009)](/sources/chan-2009.md) — §4 (early single-grid-per-body moving cases, refs. [3], [4]); §10 (OVERFLOW-D in store separation); §11 (controlled store separation from a cavity, ref. [36]).
+- [Banks et al. (2016)](/sources/banks-2016.md) — §1 (store separation as early motivation, ref. [29]).

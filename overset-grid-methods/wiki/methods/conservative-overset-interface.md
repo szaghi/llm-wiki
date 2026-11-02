@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Conservative overset interface"
-description: "Why interpolation-coupled overset grids are not globally conservative, the conditions for conservation over an overlap, and Wang's interface: the minor grid's boundary is cut into the major grid as a patched interface carrying Riemann fluxes, giving a mass imbalance of 6e-6 % against 0.38 % and carrying moving shocks through it."
+description: "Why interpolation-coupled overset grids are not globally conservative, the conditions for conservation over an overlap, Wang's interface that cuts the minor grid's boundary into the major grid as a patched interface carrying Riemann fluxes (mass imbalance 6e-6 % against 0.38 %), Picard et al.'s intersection-weighted transfer with conservation defects up to 0.635 %, and when conservation matters."
 status: established
 aliases: [conservative Chimera, COC, fully conservative interface algorithm, zonal interface generation, ZIG, conservative overset coupling, interpolation-free overset coupling]
 tags: [conservation, overset-grid, chimera, finite-volume, shock-capturing, hole-cutting]
-timestamp: 2026-11-02T11:28:00Z
+timestamp: 2026-11-02T14:53:00Z
 ---
 
 # Conservative overset interface
@@ -185,6 +185,56 @@ state". All tests are 2-D Euler.
   per-iteration smallest-face fluxes add less than 5% of CPU time. No
   hardware is stated.
 
+## Intersection-weighted transfer without flux matching
+
+[Picard et al. (2021)](/sources/picard-2021.md) (§3.2.4, Eqs. (14)–(15))
+take a third route in a cell-centred finite-volume Chimera method: they keep
+the overlap, cut no hole, and fill the receptor ("ghost") cells of each grid
+with conservative variables averaged over the geometric intersections with
+the donor grid's cells. Their starting point is a *local conservation
+hypothesis*: the integral of the conserved variables over a receptor cell
+$V_c$ of $G_k$ equals the integral of the donor solution over the part of
+$V_c$ covered by $G_{k'}$. With the limited piecewise-linear reconstruction
+of each donor cell $V_{c'}$ evaluated at the barycentre $\mathbf x_{cc'}$ of
+$V_c\cap V_{c'}$ (page-local), the transfer reads
+$$\mathbf q_c=\sum_{c'\in G_{k'}}\frac{\lvert V_c\cap V_{c'}\rvert}{\lvert V_c\rvert}\Big(\mathbf q_{c'}+\Phi_{c'}\,\nabla\mathbf q_{c'}\cdot(\mathbf x_{cc'}-\mathbf x_{c'})\Big),$$
+with $\Phi_{c'}\in[0,1]$ the slope limiter (page-local) and least-squares
+gradients of the conserved variables. The weights are intersection-volume
+fractions, so the formula needs no structured index space; the authors call
+it second-order accurate "without any constraint on meshes" (§3.2.4), and
+their 1-D advection test keeps the order of the single grid (see
+[inter-grid interpolation](/methods/inter-grid-interpolation.md)). The method
+is admittedly *not* globally conservative, because it transfers states, not
+fluxes: "the only conservative Chimera approach is based on flux
+interpolation" (§3.2.4, citing [Wang (1995)](/sources/wang-1995.md), Wang's
+1998 moving-grid extension and Pärt-Enander & Sjögreen (1994), the last two
+not ingested here). The limiter
+extension that keeps the reconstruction bounded at intersection barycentres
+is on [shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md).
+
+**Measured conservation defect.** Picard et al. (§4.2, Tables 3–4) place a
+stationary Mach-1.5 shock on the patch boundary, the patch holding only the
+post-shock state, and report the relative change of total mass, momentum and
+energy, $\varepsilon_{\mathrm c}$, after $tu_L/L=100$ (pre-shock velocity $u_L$,
+domain length $L$). With coincident grid interfaces (ghost layers abutting
+exactly) and equal cell sizes the defect equals that of the single grid to all
+printed digits. With non-coincident interfaces it is a few tenths of a
+percent:
+
+| interfaces | patch/substrate cell ratio | mass | momentum | energy |
+|---|---|---|---|---|
+| single grid / coincident | 1 | $5.97\times10^{-4}$ % | $2.45\times10^{-3}$ % | $4.46\times10^{-3}$ % |
+| non-coincident | 1 | 0.434 % | 0.635 % | 0.465 % |
+| non-coincident | 2–16 | 0.115–0.599 % | | |
+
+The authors summarize the non-coincident defect as "about 0.6 %" and below
+1 % for every cell ratio, and the loss on the post-shock density jump as at
+most 0.35 % of the exact post-shock state, "acceptable for industrial
+applications" (§4.2, Fig. 11b). For comparison, Wang's original-Chimera mass
+imbalance on the bump channel was 0.38 % (above); the two tests differ in
+geometry, scheme and measure, so the numbers are not a like-for-like
+comparison.
+
 ## Positions on when conservation matters
 
 The founding sources agree on the observations and differ in emphasis:
@@ -199,6 +249,28 @@ The founding sources agree on the observations and differ in emphasis:
   numerical scheme itself is of high-order in accuracy" (§5).
 - Wang also grants that the nonconservative Chimera "can capture a strong
   steady shock wave probably because it is zonally conservative" (§6).
+
+Later sources state the same conditional position:
+- Chan (2009) recalls that the early concern that non-conservative fringe
+  interpolation degrades accuracy "was resolved by Meakin, who showed that
+  formal solution accuracy is maintained using the commonly adopted
+  tri-linear interpolation scheme at the fringe points provided the flow
+  solution is smoothly resolved by all participant grids in the overlapped
+  zones" ([Chan (2009)](/sources/chan-2009.md), §7).
+- Sharma et al. (2021) state that interpolating the solution does not
+  guarantee global conservation, but that the lack of conservation does not
+  degrade the solution if the overlap is away from shocks and
+  discontinuities; incompressible schemes preclude shocks, although mass
+  conservation may matter for the pressure-correction step. They declare
+  conservative interpolation out of scope
+  ([Sharma et al. (2021)](/sources/sharma-2021.md), §1).
+- Picard et al. (2021) accept a measured conservation defect of tenths of a
+  percent for a shock on the patch boundary (above), and Henshaw &
+  Schwendeman (2006) and Banks et al. (2016) compute shocked flows on
+  overlapping grids without discussing conservation at the overlap
+  ([Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md),
+  [Banks et al. (2016)](/sources/banks-2016.md); see
+  [shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md)).
 
 No contradiction is recorded: each source limits its own claim.
 Chesshire & Henshaw restrict theirs to smoothly represented solutions and
@@ -219,8 +291,16 @@ source of discrete divergence. Divergence damping is used to control it (see
   overlap on the major-grid side (hole cells) and keeps a single solution
   there. Other methods keep the overlap and make the interpolation itself
   conservative. Berger's method is one, recalled by Benek et al. (1985),
-  Chesshire & Henshaw (1990) and Wang (1995); none of the chunk-1 sources
-  describes its formulas. Both families belong on this page, attributed.
+  Chesshire & Henshaw (1990) and Wang (1995); none of the sources ingested here
+  describes its formulas. Both families belong on this page, attributed. Picard et al.'s
+  intersection-weighted transfer (above) is a third kind: it keeps the
+  overlap and transfers states, and its authors call it not conservative.
+- **"Only flux interpolation is conservative."** Picard et al. (§3.2.4)
+  state that the only conservative Chimera approach is based on flux
+  interpolation, and cite Wang (1995) as one of the three works behind the
+  statement. In their usage, then, "flux interpolation" covers Wang's
+  patched interface, which computes Riemann fluxes on the minor grid's
+  boundary rather than transferring states; the two sources do not conflict.
 - **Unaddressed issues.** Wang does not analyse the accuracy of the cut-cell
   geometry, the time-step restriction of small cut cells, or the stability of
   the cut-cell update.
@@ -252,3 +332,8 @@ source of discrete divergence. Divergence damping is used to control it (see
 - [Benek et al. (1985)](/sources/benek-1985.md) — p. 324 (Rai and Berger as recalled; choice of trilinear interpolation).
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §6.4 pp. 49–52, Fig. 19a, §7.
 - [Henshaw (1994)](/sources/henshaw-1994.md) — §4.4.
+- [Picard et al. (2021)](/sources/picard-2021.md) — §3.2.4 (Eqs. (14)–(15), non-conservation), §4.2 (Tables 3–4, Fig. 11b).
+- [Chan (2009)](/sources/chan-2009.md) — §7 (Meakin's result as recalled).
+- [Sharma et al. (2021)](/sources/sharma-2021.md) — §1.
+- [Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md) — §4.2 (semi-conservative scheme).
+- [Banks et al. (2016)](/sources/banks-2016.md) — §4.2.

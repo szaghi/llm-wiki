@@ -5,7 +5,7 @@ description: "The AEDC Chimera domain-connectivity preprocessor from its 2-D ori
 status: established
 aliases: [PEGASUS, PEGSUS, PEGASUS 4, Pegsus4, PEGSUS 4.0]
 tags: [software, chimera, domain-connectivity, hole-cutting]
-timestamp: 2026-11-02T11:28:00Z
+timestamp: 2026-11-02T14:54:00Z
 ---
 
 # PEGASUS (PEGSUS) versions 1–4
@@ -54,9 +54,24 @@ and Rogers et al. (2003) write PEGASUS. All denote the same code family.
   §I) states that the PEGASUS codes, separate from the flow solver, have been
   used for static and, "by using scripts", moving-body simulations, citing
   Meakin & Suhs among the latter.
-- **Flow solvers fed.** Rogers et al. (2003, Introduction) list OVERFLOW,
-  NXAIR, INS3D and the cell-centred DXEAGLE as solvers that have used
-  PEGASUS output.
+- **Flow solvers fed.** Rogers et al. (2003, Introduction) list
+  [OVERFLOW](/software/overflow.md), NXAIR, INS3D and the cell-centred
+  DXEAGLE as solvers that have used PEGASUS output.
+- **Place in the NASA Ames tool chain.** [Chan (2009, §7)](/sources/chan-2009.md)
+  recalls that in the earliest overset computations the connectivity step
+  "was frequently hard-coded on a case-by-case basis", and calls PEGASUS
+  "one of the first attempts to build a more general software tool". The
+  early versions of the late 1980s were "based on the algorithms discussed
+  by Benek et al." (Chan's ref. [17], the 1985 paper read here), with "an
+  expensive inside/outside test algorithm" for hole cutting; the user
+  specified the hole cutters one by one together with the list of grids
+  each cutter cuts, "a very labor intensive process". Chan adds that this
+  cost made the early versions "impractical" for moving-body problems with
+  hole cutting at every step, and presents Meakin's analytic-shape
+  (c. 1991) and object X-ray (2001) cutting as the faster alternatives (see
+  [hole cutting](/methods/hole-cutting.md)). The late-1990s
+  re-engineering that produced version 5 is on
+  [PEGASUS 5](/software/pegasus-5.md).
 
 ## What the early versions compute
 
@@ -166,6 +181,13 @@ arbitrary 3-D grid systems.
   level $\ell-1$ is "the next lower level"); their Fig. 1 makes the
   hierarchy unambiguous: embedded grids have larger $\ell$.
 - No timings of PEGASUS itself are given in the 1983 and 1985 papers.
+- Chan (2009, §2) credits the iblank array to Steger, Dougherty and Benek
+  (1983, ASME FED-Vol. 5, Chan's ref. [1]), a record distinct from the AIAA
+  paper of [Benek et al. (1983)](/sources/benek-1983.md) read here and not
+  ingested; the 0/1 mask of the 1983 PEGASUS described above is the one
+  Benek et al. (1983, p. 375) print. Chan's ref. [17] prints the 1985 title
+  as "A 3-D chimera grid embedding scheme" where the paper read here has
+  "technique"; the AIAA paper number 85-1523 identifies the same work.
 
 # Citations
 
@@ -174,3 +196,4 @@ arbitrary 3-D grid systems.
 - [Meakin & Suhs (1989)](/sources/meakin-1989.md) — §II DCF, Table 1 (PEGASUS cost relative to the flow solver), ref. [13].
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — Introduction (codes and solvers), "Motivation for PEGASUS Version 5" pp. 1037–1038 (version history, 17,000 input lines), Boeing 777 section (labour days, orphans).
 - [Noack (2005)](/sources/noack-2005.md) — §I (PEGASUS family as the mainstay of structured assembly, scripts for moving bodies, "Pegsus4"), ref. 7.
+- [Chan (2009)](/sources/chan-2009.md) — §2 (iblank attribution, ref. [1]); §7 (hard-coded connectivity before PEGASUS, early versions and their inside/outside hole cutting, manual cutter lists, cost for moving bodies), refs. [17]–[20].

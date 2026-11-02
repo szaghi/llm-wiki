@@ -170,10 +170,11 @@ report [26] print no titles. There are no printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-11-02). This source is cited on:
+Chunk 1 (2026-11-02), cited further in chunk 2. This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Multi-element airfoils](/benchmarks/multi-element-airfoil.md)
+- [Shock–cylinder interaction](/benchmarks/shock-cylinder-interaction.md)
 - [Composite overlapping grid](/definitions/composite-overlapping-grid.md)
 - [Domain connectivity and overset grid assembly](/definitions/domain-connectivity.md)
 - [Explicit and implicit interpolation](/definitions/explicit-and-implicit-interpolation.md)
@@ -190,6 +191,7 @@ Chunk 1 (2026-11-02). This source is cited on:
 - [Incompressible flow on overlapping grids](/methods/incompressible-flow-on-overset-grids.md)
 - [Inter-grid interpolation](/methods/inter-grid-interpolation.md)
 - [Overlap optimization](/methods/overlap-optimization.md)
+- [Shock capturing on overlapping grids](/methods/shock-capturing-on-overset-grids.md)
 - [Twilight-zone flow (manufactured solutions)](/methods/twilight-zone-flow.md)
 - [Interpolation order and overlap requirements](/results/interpolation-order-requirement.md)
 - [CMPGRD and its solver suite (CGINS, CGNVT, CGES, CGMG, DSK)](/software/cmpgrd.md)

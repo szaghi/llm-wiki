@@ -5,7 +5,7 @@ description: "The 2003 from-scratch Fortran 90 rewrite of the PEGASUS overset co
 status: established
 aliases: [PEGASUS5, Pegasus 5]
 tags: [software, chimera, domain-connectivity, hole-cutting, donor-search, parallel]
-timestamp: 2026-11-02T11:28:00Z
+timestamp: 2026-11-02T14:54:00Z
 ---
 
 # PEGASUS 5
@@ -163,6 +163,35 @@ grid subset in which no hole may be cut.
   modern and automated version of the venerable Pegsus4 code" that "has not
   been applied to moving body problems"; [SUGGAR](/software/suggar.md) is
   presented against that background.
+- [Chan (2009, §7)](/sources/chan-2009.md), reviewing the NASA Ames tool
+  chain, summarizes the same rewrite as a "major re-engineering effort" of
+  the late 1990s: hole cutting "mostly automated using uniform Cartesian
+  maps", a scheme to "optimize the interpolation stencils based on cell
+  size compatibility" (the CDP and overlap optimization above) and MPI
+  parallelism. Chan reports that version 5.1 "is used routinely in highly
+  complex configurations such as the Space Shuttle in steady-state mode",
+  which agrees with Noack's remark that it was not used for moving bodies
+  *(compiler check, not in the sources)*; moving-body runs of [OVERFLOW](/software/overflow.md) 2 cut holes with
+  Meakin's object X-rays instead (§7). Chan names two weaknesses:
+  "occasional robustness issues at component junctions with fairings", and
+  a memory requirement of the uniform Cartesian maps that "can also become
+  significant" when feature sizes span a large range. The second matches the
+  map-resolution limit that Rogers et al. meet at thin trailing edges
+  (Remaining failure modes, item a) *(compiler check, not in the sources)*. Chan states that, as of 2008, "there
+  is currently still no approach and software that satisfies the combined
+  requirements of full automation, robustness, and speed" for domain
+  connectivity.
+- [Roget & Sitaraman (2014, §1)](/sources/roget-2014.md) list PEGASUS5 among
+  the dedicated assembly codes (with SUGGAR++/DiRTlib, CHIMPS and PUNDIT) and
+  attribute to the existing codes as a group a lack of modularity, of mixed
+  structured/unstructured support or of fine-grained parallelism, or hole
+  cutting that needs user input; the statement is made for the group, not
+  shown code by code. Their partitioned, solver-side assembly is on
+  [parallel overset grid assembly](/methods/parallel-overset-grid-assembly.md).
+  Against the group statement, Rogers et al. (2003) describe PEGASUS 5 as a
+  coarse-grained MPI code, i.e. parallel over whole meshes and mesh pairs,
+  the "coarse-grain parallelism" Roget & Sitaraman name *(compiler check,
+  not in the sources)*.
 
 ## Qualifications
 
@@ -178,3 +207,5 @@ grid subset in which no hole may be cut.
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — Introduction; "Motivation for PEGASUS Version 5"; "Automation of the Oversetting Process"; "Hole Cutting" pp. 1038–1039, Figs. 2–3; "Outer-Boundary Specification" p. 1039; "Boundary Point Interpolation" p. 1039; "Cell Difference Parameter" p. 1040; "Overlap Optimization" pp. 1040–1041, Figs. 4–5; "Projection for Viscous Grids" pp. 1041–1042, Figs. 6–7; "Restarting", "Parallelization" p. 1042, Fig. 8; "Multi-Element Airfoil", "Boeing 777", "Performance", Conclusions.
 - [Lee & Baeder (2003)](/sources/lee-2003.md) — "Existing Connectivity Method"; sub-item 1 p. 5 (CDP not used); p. 8 (jHoleImmune versus OFFSET).
 - [Noack (2005)](/sources/noack-2005.md) — §I.
+- [Chan (2009)](/sources/chan-2009.md) — §7 (late-1990s re-engineering, Cartesian maps, stencil optimization, MPI, version 5.1 on the Space Shuttle in steady state, weaknesses, state of domain connectivity), ref. [18].
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §1 (PEGASUS5 among dedicated assembly codes, ref. [3]; stated limitations of existing codes).

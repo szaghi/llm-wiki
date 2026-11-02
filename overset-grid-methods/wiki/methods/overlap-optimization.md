@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Overlap optimization"
-description: "Overlap optimization reduces the overlap of an assembled overset grid to what interpolation needs, keeping the better-suited points active and interpolating the rest; the page covers the CMPGRD deletion and conversion steps, PEGASUS 5's finest-points-kept algorithm with its cell-difference parameter, and the size criteria of implicit hole cutting."
+description: "Overlap optimization reduces the overlap of an assembled overset grid to what interpolation needs, keeping the better-suited points active and interpolating the rest; the page covers the CMPGRD deletion and conversion steps, PEGASUS 5's finest-points-kept algorithm and cell-difference parameter, the size criteria of implicit and partitioned assembly, cutting volumes, and the grid-size ratios the sources tolerate."
 status: established
 aliases: [hole-size optimization, overlap minimization, overlap reduction, donor selection, donor quality]
 tags: [domain-connectivity, hole-cutting, overset-grid, interpolation]
-timestamp: 2026-11-02T11:26:00Z
+timestamp: 2026-11-02T11:39:00Z
 ---
 
 # Overlap optimization
@@ -18,7 +18,7 @@ towards the minimum the interpolation stencils need, and so that, of two overlap
 the better-suited one keeps the active points $\mathcal D_k$ while the other's points become
 receptors $\mathcal R_k$ or hole points $\mathcal H_k$. It needs a rule for which points are
 better suited, which is also the rule for choosing among several candidate donors. The
-chunk-1 sources give three such rules: grid order (CMPGRD), relative cell size with a
+the sources give three such rules: grid order (CMPGRD), relative cell size with a
 cell-difference parameter (PEGASUS 5), and smallest cell volume
 ([implicit hole cutting](/methods/implicit-hole-cutting.md)).
 
@@ -125,6 +125,22 @@ They recommend interpolating a single layer of outer-boundary points, but as man
 possible at hole fringes (p. 12), and state that cubic interpolation tolerates a larger
 spacing ratio between interpolating grids, usually about 2:1 (p. 4).
 
+## Resolution-based selection on unstructured meshes
+
+[Roget & Sitaraman (2014)](/sources/roget-2014.md), §2.1, Fig. 2, reach minimal
+overlap with the same rule on partitioned unstructured meshes: a point is a
+field point when its own resolution (cell volume, or the average volume of the
+cells around a node) is finer than that of every candidate donor, otherwise it
+receives from the finest one; their Fig. 18 shows the resulting minimal overlap
+on the HART-II meshes. The rule acts in one pass, followed by one level of
+donor-quality enforcement: no donor cell may have receptor vertices, conflicts
+being resolved by promoting points to field points (§3.5). No iterative
+optimization follows ([implicit hole cutting](/methods/implicit-hole-cutting.md)).
+[Chan (2009)](/sources/chan-2009.md), §7, summarizes PEGASUS 5's
+optimization as based on "cell-size compatibility" and states as a general
+rule that neighbouring grids should have comparable resolution in the overlap
+(§1).
+
 ## Over-sized holes
 
 Noack (2005) reaches the same end by cutting holes larger than the body: it removes part of
@@ -135,11 +151,40 @@ marking for cell-centred solvers needs more overlap than the neighbour-based one
 zeroth-order donor stencil needs the least (§IV, §VI; see
 [fringe points](/definitions/fringe-point.md)).
 
+## Cutting volumes
+
+[Horne & Mahesh (2021)](/sources/horne-2021.md), §2, Fig. 2, reduce overlap on
+unstructured meshes with explicit **cutting volumes** (spheres, cylinders,
+object-oriented boxes and others) placed around bodies, which cut redundant
+cells while keeping complete coverage; the subsequent cutting removes cells
+inside solid boundaries ([hole cutting](/methods/hole-cutting.md)). Volumes and
+their placement are user choices; the paper gives no rule for them.
+
+## Tolerated size ratios across the overlap
+
+How different the cell sizes of two overlapping grids may be is answered
+differently by setting:
+
+| source | scheme and test | ratio tested | finding |
+|---|---|---|---|
+| Lee & Baeder (2003), p. 4 | cubic interpolation, rotorcraft grids | spacing | about 2:1 "usually" tolerated |
+| [Sherer & Scott (2005)](/sources/sherer-2005.md), §5.2, Fig. 18 | sixth-order compact scheme, inviscid convecting vortex | cell-volume ratios 1, 4, 16 | no degradation; the filter removes the spurious waves of the jump |
+| [Picard et al. (2021)](/sources/picard-2021.md), §4.1, Table 2 | second-order finite volumes, 1-D sine advection | spacing 1 to 16 | error dominated by the coarse substrate; exchange errors do not show |
+| Picard et al. (2021), §4.5, Figs. 29–31 | same, double Mach reflection | spacing 2, 4, 8 | slip lines and jet perturbed at 8; recommended ratio at most 4 (§5) |
+
+In two dimensions Sherer & Scott's volume ratio 16 is a spacing ratio of 4
+*(compiler check, not in the sources)*, so the largest smooth-flow ratio they
+tested equals the largest ratio Picard et al. recommend for flows with shocks
+and slip lines. The rows differ in scheme, dimension and flow, and none is a
+general bound; the shock-specific findings are on [shock capturing on
+overlapping grids](/methods/shock-capturing-on-overset-grids.md).
+
 ## Agreement across the sources
 
-Three sources prefer similar donor and receptor sizes: Chesshire & Henshaw's
+Five sources prefer similar donor and receptor sizes: Chesshire & Henshaw's
 advice of about equal spacings in the overlap, Rogers et al.'s finest-points-kept rule and
-CDP, and Lee & Baeder's smallest-volume rule with a tolerated ratio of about 2:1. None of them
+CDP, Lee & Baeder's smallest-volume rule with a tolerated ratio of about 2:1, Roget &
+Sitaraman's finest-resolution rule, and Chan's comparable-resolution rule. None of them
 gives an error analysis for the size rule; the accuracy requirement that is derived, the
 interpolation width as a function of the overlap, is Chesshire & Henshaw's.
 
@@ -169,3 +214,8 @@ interpolation width as a function of the overlap, is Chesshire & Henshaw's.
 - [Lee & Baeder (2003)](/sources/lee-2003.md) — pp. 3–5, 8, 12; Fig. 7.
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — "Cell Difference Parameter", p. 1040; "Overlap Optimization", pp. 1040–1041, Figs. 4–5; pp. 1042–1043 (OFFSET, Fig. 9); "Performance".
 - [Noack (2005)](/sources/noack-2005.md) — §II, §IV, §VI.
+- [Sherer & Scott (2005)](/sources/sherer-2005.md) — §5.2, Fig. 18 (volume ratios 4 and 16).
+- [Chan (2009)](/sources/chan-2009.md) — §1 (comparable resolution); §7 (PEGASUS 5 stencil optimization).
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §2.1, Fig. 2; §3.5; Fig. 18.
+- [Picard et al. (2021)](/sources/picard-2021.md) — §4.1, Table 2; §4.5, Figs. 29–31; §5.
+- [Horne & Mahesh (2021)](/sources/horne-2021.md) — §2, Fig. 2 (cutting volumes).

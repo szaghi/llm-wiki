@@ -3,9 +3,9 @@ type: Definition
 title: "Point classification and the iblank mask"
 description: "The partition of every component grid into discretization, receptor and hole points (with orphans among the receptors), the signed mask that records it, the 0/1 IBLANK of the Chimera codes and how blanking enters implicit solvers, and the vocabularies of the founding sources translated into one."
 status: established
-aliases: [iblank, IBLANK, i_b, kr flag, point status, blanking, hole point, field point, discretization point]
+aliases: [iblank, IBLANK, i_b, kr flag, point status, blanking, hole point, field point, discretization point, unused point, active point, solver point, blanked-out point, masking variable]
 tags: [domain-connectivity, hole-cutting, overset-grid]
-timestamp: 2026-11-02T11:29:00Z
+timestamp: 2026-11-02T11:39:00Z
 ---
 
 # Point classification and the iblank mask
@@ -44,6 +44,15 @@ is the first task of [domain connectivity](/definitions/domain-connectivity.md).
 | [Lee & Baeder (2003)](/sources/lee-2003.md), pp. 2–3 | field points | hole-fringe points; interpolated boundary points | hole points | $i_b$, values not printed |
 | [Kageyama & Sato (2004)](/sources/kageyama-2004.md), §§II–III | grid points | border points ("internal boundary condition") | masked points (minimum-overlap variants) | no convention |
 | [Noack (2005)](/sources/noack-2005.md), §IV | FIELD | INNER FRINGE 1, 2; OUTER FRINGE 1, 2 | OUT | labels, no integers |
+| [Sherer & Scott (2005)](/sources/sherer-2005.md), §4.4 | (computed) points | interpolation (fringe) points, two levels | hole points, "blanked out" | rows of the implicit operators |
+| [Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md), §3.1; [Henshaw (2006)](/sources/henshaw-2006-b.md), §4 | discretization points (plus ghost points) | interpolation points | unused points | no mask values printed |
+| [Chan (2009)](/sources/chan-2009.md), §2, Fig. 1 | field points | hole-boundary and outer-boundary fringe points | blanked (hole) points | iblank 1 / 0; no fringe value stated |
+| [Roget & Sitaraman (2014)](/sources/roget-2014.md), §2.1 | field (active, solver) points | receptor points, mandatory or by resolution | hole (blanked-out) points | types, no integers |
+| [Banks et al. (2016)](/sources/banks-2016.md), §4.1 | discretization points | interpolation points | unused (hole) points | Ogen classification |
+| [Picard et al. (2021)](/sources/picard-2021.md), §3.2.1 | integrated cells, incl. covered substrate cells | ghost cells, two layers per grid | — (none) | cell sets |
+| [Horne & Mahesh (2021)](/sources/horne-2021.md), §2 | unmasked cells | reconstruction cells | cut (masked) cells | binary masking variable |
+| [Sharma et al. (2021)](/sources/sharma-2021.md), §1, Fig. 1 | field points | fringe points (donors: "donor points") | hole points | no values |
+| [Wang et al. (2021)](/sources/wang-2021.md), §III A, Figs. 4–5 | interior and boundary points; active cells | interpolation points; acceptor cells | exterior and unused points | figure legend also has "ghost" points |
 
 Hence $\iota_k=1\Leftrightarrow$ IBLANK $=1$ and $\iota_k=0\Leftrightarrow$ a
 hole, but a Chimera IBLANK of 0 can also be a receptor (Benek et al. 1985) and
@@ -56,6 +65,23 @@ gets a different fringe from a node-centred one
 points, and uses no interpolation at all: the minor grid's boundary becomes a
 patch boundary inside the major grid
 ([conservative overset interface](/methods/conservative-overset-interface.md)).
+Picard et al. (2021) likewise remove nothing: the substrate cells under the
+patch keep being integrated, and the authors state that they have "no impact
+on the solution inside the patch" because the patch receives only through its
+own receptor layers (§3.2.3).
+
+Roget & Sitaraman (2014), §2.1, give automatable definitions that make the
+classification a decision rule. A *candidate donor* of a query point is any
+cell of another mesh that contains it (in their implementation, a mesh of
+another body, §3.2); the *donor* is the candidate of finest resolution
+(nominally the cell volume; for nodes the average volume of the adjacent
+cells); a point is a **hole** point if it lies inside a solid body, a
+**receptor** if it is a *mandatory receptor* (within a stencil-dependent number
+of cells of an outer boundary node or of a hole point) or has a donor finer than
+itself, and a **field** point otherwise. The rule selects field points so that
+the overlap is minimal ([implicit hole cutting](/methods/implicit-hole-cutting.md);
+[overlap optimization](/methods/overlap-optimization.md)); an orphan is a
+mandatory receptor without donor ([orphan points](/definitions/orphan-point.md)).
 
 ## Validity conditions
 
@@ -97,7 +123,20 @@ $$
 
 so that $i_b=0$ gives $\Delta\hat{\mathbf q}^n=\mathbf 0$ and
 $\hat{\mathbf q}^{n+1}=\hat{\mathbf q}^n$ at hole points; they stress that $i_b$
-is the only dependence of their solver on the Chimera machinery.
+is the only dependence of their solver on the Chimera machinery. Chan (2009),
+§2, presents the same device as the reason a single-grid solver becomes an
+overset solver "with no special logic" for blanked points, the iblank being
+multiplied into the differencing stencils.
+
+Sherer & Scott (2005), §4.4, Fig. 10, carry the device to compact
+(tridiagonal) difference and filter operators, where a hole couples the whole
+line. Along every grid line crossed by a hole the points within two points of
+the hole boundary take one-sided boundary difference formulas (five-point
+interior stencil) and those within five points take boundary filters
+(eleven-point filter); each hole point gets the row $\{0,1,0\}$ with zero right
+side, so the system stays tridiagonal and splits into the hole and the two
+sides. Hole-boundary points are classified per coordinate direction, since a
+point may border a hole along one line and not along the other.
 
 Lee & Baeder (2003), p. 3, obtain the same protection without blanking for
 their cell-selection assembly: the solver need not blank hole points for the update, and $i_b$ is
@@ -112,7 +151,8 @@ large (pp. 7–9; see [implicit hole cutting](/methods/implicit-hole-cutting.md)
 ## Frequencies
 
 Rogers et al. (2003), Performance, report that a typical 3-D problem blanks
-about 5–15% of the grid points. Chesshire & Henshaw's coarsest cylinder grid
+about 5–15% of the grid points. Henshaw (2006), §10.5, counts about
+$4.2\times10^5$ interpolation points in a 10.2-million-point 3-D grid. Chesshire & Henshaw's coarsest cylinder grid
 has 4221 stored and 3580 active points (Tables IX–X); Henshaw (1994) counts
 10,728 interpolation points in the three-grid sphere case, a large fraction of
 the total (§5.2, Table VIII).
@@ -120,7 +160,7 @@ the total (§5.2, Table VIII).
 ## Qualifications
 
 - **Must hole points be excluded from the solution update?** (Reclassified
-  from a contradiction at the chunk-1 deep lint: a difference of setting and of
+  from a contradiction at the first deep lint: a difference of setting and of
   mechanism, not a conflict between sources.) Benek et al. (1983), p. 374, require
   "some mechanism … to remove such points from the solution process", because
   points of the parent grid inside the embedded grid fall "outside the
@@ -150,6 +190,12 @@ the total (§5.2, Table VIII).
 - Benek et al. (1983) call the receptors of the hole boundary "also flagged";
   the paper gives them no separate IBLANK value, so their status lives in the
   interpolation lists, not in the mask.
+- Lee & Baeder's unblanked update has two later analogues of different scope:
+  Picard et al. (2021) integrate the covered substrate cells, which are valid
+  flow cells, not points inside a body; Horne & Mahesh (2021) mask cut cells.
+  Neither tests the thickness condition of Lee & Baeder.
+- Chan (2009) states only the values 0 and 1 of the iblank; the fringe points of
+  its Fig. 1 are not given a value of their own.
 - Kageyama & Sato (2004) give no masking convention; masking appears only in
   their minimum-overlap Yin–Yang variants
   ([Yin–Yang grid](/definitions/yin-yang-grid.md)).
@@ -166,3 +212,13 @@ the total (§5.2, Table VIII).
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — Fig. 1 and "Automation of the Oversetting Process" (point types); Performance (5–15% blanked).
 - [Kageyama & Sato (2004)](/sources/kageyama-2004.md) — §II (border points); §III (masked points).
 - [Noack (2005)](/sources/noack-2005.md) — §I (hole and receptor points); §IV (OUT, INNER/OUTER FRINGE labels).
+- [Sherer & Scott (2005)](/sources/sherer-2005.md) — §4.4, Fig. 10 (holes in compact operators).
+- [Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md) — §3.1, Fig. 2 (point classes, ghost points).
+- [Henshaw (2006)](/sources/henshaw-2006-b.md) — §4 (point classes); §10.5 (interpolation-point count).
+- [Chan (2009)](/sources/chan-2009.md) — §2, Fig. 1 (iblank, field, hole and fringe points).
+- [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §2.1 (automated definitions), §3.2, §3.5.
+- [Banks et al. (2016)](/sources/banks-2016.md) — §4.1.
+- [Picard et al. (2021)](/sources/picard-2021.md) — §3.2.1–3.2.3 (ghost and sending cells, no deactivation).
+- [Horne & Mahesh (2021)](/sources/horne-2021.md) — §2 (masking variable, reconstruction cells).
+- [Sharma et al. (2021)](/sources/sharma-2021.md) — §1, Fig. 1.
+- [Wang et al. (2021)](/sources/wang-2021.md) — §III A, Figs. 4–5.
