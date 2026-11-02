@@ -5,7 +5,7 @@ description: "Moving overset grids let component grids follow rigid, rotating or
 status: established
 aliases: [moving-body overset, unsteady Chimera, dynamic overset grids, dynamic overset technique, relative-motion Chimera, moving-body grid assembly, moving overlapping grids, deforming composite grids]
 tags: [moving-grid, domain-connectivity, overset-grid, chimera]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Moving overset grids
@@ -314,6 +314,16 @@ Later sources add verified moving-grid accuracy, free motion and timings:
   dual-rotor helicopter with coupled CFD and structural dynamics (Fig. 9). No grid sizes or
   timings are given for these.
 
+## Frames, rigid translation and deforming components
+
+Three 2022 sources move component grids differently:
+
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) solve each moving curvilinear grid in a non-inertial frame attached to its body, so its metrics are never recomputed, while the background stays inertial; interpolated velocities are rotated between frames (§2.1, §2.3).
+- [Zhao et al. (2022)](/sources/zhao-2022.md) only translate a Cartesian overset grid with the body's centre-of-mass velocity; rotation and deformation are carried by the immersed-boundary points, so the grid is never regenerated (§II).
+- [Delcour et al. (2022)](/sources/delcour-2022.md) deform a body-fitted component mesh as a fictitious linear-elastic solid with a free outer boundary around a flexible cylinder (§3.3).
+
+[Chandar & Sitaraman (2022)](/sources/chandar-2022.md) show that on a rotating inner mesh the force oscillates in step with the number of receptors, as cells switch between field and receptor status; RBF interpolation lowers the force error by two orders of magnitude against inverse distance, and their conservation correction lowers the oscillation magnitude (§3.7.6). [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) interpolate only when a hole cell becomes active as the foreground grid moves ([ADER schemes on overlapping grids](/methods/ader-on-overset-grids.md)). [Wang & Stern (2022)](/sources/wang-2022.md) and [Li & Wang (2022)](/sources/li-2022.md) run dynamic overset grids for planing hulls with two degrees of freedom and for rotating turbine and rotor blades. [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) use static grids only.
+
 ## Qualifications
 
 - Meakin & Suhs state that the effect of the inter-grid boundary updating on time accuracy
@@ -369,3 +379,10 @@ Later sources add verified moving-grid accuracy, free motion and timings:
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — p. 1038 (PEGASUS 4 restart), p. 1042 (PEGASUS 5 restart).
 - [Wang (1995)](/sources/wang-1995.md) — §6.
 - [Lee & Baeder (2003)](/sources/lee-2003.md) — sub-items 3–4, pp. 6–9.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.1, §2.3.
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §II.
+- [Delcour et al. (2022)](/sources/delcour-2022.md) — §3.3.
+- [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) — §3.7.6.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §4.4.
+- [Wang & Stern (2022)](/sources/wang-2022.md) — §4.3.
+- [Li & Wang (2022)](/sources/li-2022.md) — §5.

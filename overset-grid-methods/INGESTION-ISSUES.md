@@ -6,6 +6,73 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 3 — Chandar & Sitaraman, Hedayat et al., Wang & Stern, Bergmann et al. (b), Kopriva et al., Li & Wang, Delcour et al., Kochi & Ramakrishna, Zhao et al., Teschner & Mundt, all 2022 (2026-11-02)
+
+Sources (10): chandar-2022, hedayat-2022, wang-2022, bergmann-2022-b,
+kopriva-2022, li-2022, delcour-2022, kochi-2022, zhao-2022, teschner-2022.
+30 of 51 ingested, 49 concept pages plus the registry, 1009 bibliography
+entries. **Compiled in the main session without subagents** (owner's
+instruction during the night): pages are leaner, and the deep lint is a
+compiler self-audit (forbidden-word sweep, labelled compiler checks,
+locator spot checks on the PDFs), not the four-auditor pass of chunks 1–2.
+A full-bundle deep lint is due with chunk 6.
+
+### Decisions for the human
+
+1. **`volkov-1968`:** Bergmann et al. (2022b) cite the AMS translation
+   (1970) of Volkov's Proc. Steklov paper; the resolver folded it into
+   `volkov-1968`. Keep folded or make the translation a distinct entry?
+2. **Deep-lint depth:** confirm that a self-audit per chunk plus one
+   whole-bundle deep lint at chunk 6 is acceptable, given the token budget.
+
+### Contradictions
+
+None open. Recorded as qualifications: the two meanings of "conservative"
+for interpolation-free coupling (Wang 1995's discrete flux balance against
+Teschner & Mundt's shared points with enthalpy evidence), on
+`methods/interpolation-free-overset-coupling.md`.
+
+### Identity and versions
+
+- hedayat-2022 was read in arXiv 1910.09315v1, which prints two authors;
+  the published paper adds Akbarzadeh as second author.
+- kochi-2022 (arXiv 2106.06285v1) and kopriva-2022 (arXiv 2105.04664v1)
+  are preprints; delcour-2022 is an anonymised author manuscript (authors
+  from Crossref).
+- Key collisions re-keyed: Zhao et al.'s ref. 36 → `zhao-2022-b`; Li &
+  Wang's `wang-2021` → `wang-2021-d`; Teschner & Mundt's second Wang 1995
+  → `wang-1995-b` (AIAA 95-0077).
+
+### Printed slips (recorded on the Source pages)
+
+- Kochi & Ramakrishna: WENO weights with the sum in the denominator
+  (linear as printed); element size 1/20 for 1/4; background spacing 1/400
+  vs 1/200.
+- Kopriva et al.: sign of the lower-right block of Eq. (126); several
+  index and cross-reference slips.
+- Bergmann et al. (2022b): Taylor–Green pressure $\sin2y$ for $\cos2y$;
+  Eqs. (35)–(36), (40), (42), (48); negative relaxation bound from the
+  printed $C_2$.
+- Hedayat et al.: trilinear weights not summing to one (Eq. 14).
+- Zhao et al.: distance bound $0.5h$ for $\tfrac{\sqrt2}{2}h$; dimensions in
+  Eqs. (16)–(17).
+- Wang & Stern: terminal-velocity correlation without the liquid density.
+- Chandar & Sitaraman: cavity extents transposed.
+- Li & Wang: 1.8 % for 2.02 %; "<5 %" overhead vs 6.5 % in total.
+
+### Bundle fit
+
+Delcour et al. (fluid–structure flutter with a commercial Chimera mesh)
+and Wang & Stern (ship two-phase flow) use overset grids as an
+ingredient. Kopriva et al. is pure theory of the overset problem.
+
+### Candidate pages (not created, inline)
+
+RBF interpolation (Sharma et al., Chandar & Sitaraman: now two sources);
+flux-balance cell; WENO inter-grid reconstruction; CFDShip-Iowa;
+sedimenting cylinder; oscillating cylinder (Hedayat et al., Zhao et al.);
+2-D Riemann problems and shock tubes.
+
 ## Chunk 2 — Sherer & Scott 2005, Henshaw & Schwendeman 2006, Henshaw 2006, Chan 2009, Roget & Sitaraman 2014, Banks et al. 2016, Picard et al. 2021, Horne & Mahesh 2021, Sharma et al. 2021, Wang et al. 2021 (2026-11-02)
 
 Sources (10): sherer-2005, henshaw-2006, henshaw-2006-b, chan-2009,

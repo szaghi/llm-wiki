@@ -5,7 +5,7 @@ description: "The circular cylinder on a background grid plus a body-fitted annu
 status: established
 aliases: [cylinder in cross flow, cylinder in a channel, impulsively started cylinder, Wannier flow, shock diffraction by a cylinder, side-by-side cylinders, rotating cylinder]
 tags: [benchmark, chimera, composite-grid, high-order, incompressible, compressible]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # Flow past a circular cylinder
@@ -196,6 +196,14 @@ $q=2$ visibly degrades a sixth-order solver's drag history while $q\ge4$
 does not. Benek et al. (1983), Wang (1995) and Picard et al. (2021) report
 no convergence rate on an unshocked cylinder.
 
+## Moving and incompressible cylinders (2022 sources)
+
+| source | case | result |
+|---|---|---|
+| [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) | steady cylinder at $Re=200$ on two overlapping grids; impulsively started and stopped cylinders at $Re=40$, 200, 550 on a moving foreground grid | $C_D=1.3430$, $St=0.1979$, within the literature ranges (Table 3); drag histories agree with references (Figs. 13–17) |
+| [Hedayat et al. (2022)](/sources/hedayat-2022.md) | rotationally oscillating cylinder ($Re=300$); in-line oscillating cylinder ($Re=100$, $KC=5$); freely falling cylinders | torque agrees with the single grid; velocity profiles agree with the experiment of Dütsch et al.; fall velocity within 0.2 % of the single grid (§3.2–3.4) |
+| [Zhao et al. (2022)](/sources/zhao-2022.md) | transversely oscillating cylinder at $Re=40$ with an immersed boundary on a translating overset grid | smooth forces with single-donor linear reconstruction, noisy forces with inverse distance (§III A) |
+
 ## Qualifications
 
 - Chesshire & Henshaw (1990, Table V) print the finest background grid as
@@ -228,3 +236,6 @@ no convergence rate on an unshocked cylinder.
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §4.3.3, Figs. 26–31 (stationary cylinder, $Re=200$, single system versus Schwarz coupling); §4.3.4, Figs. 32–34 (rotating cylinder, rotation rate 3).
 - [Picard et al. (2021)](/sources/picard-2021.md) — §4.3 (Mach 3 cylinder, cross-reference).
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §4.2.2 (sphere used instead of a cylinder).
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §5.3, Table 3, Figs. 13–17.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §3.2–3.4.
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §III A.

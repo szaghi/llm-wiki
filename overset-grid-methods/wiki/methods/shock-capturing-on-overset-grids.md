@@ -5,7 +5,7 @@ description: "How shocks, detonations and material interfaces are captured on ov
 status: established
 aliases: [shock capturing on overset grids, shocks crossing overset boundaries, Chimera shock capturing, Godunov methods on overlapping grids, compressible flow on overlapping grids]
 tags: [shock-capturing, compressible, finite-volume, overset-grid, multiphase]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Shock capturing on overlapping grids
@@ -220,6 +220,10 @@ rotated patch (§4.4, Figs. 23–24). Banks et al. compute a Mach-1.3 shock
 hitting a light elastic ellipse on deforming grids (§6); see
 [fluid–structure interaction on overlapping grids](/methods/fluid-structure-interaction-on-overset-grids.md).
 
+## Discontinuous Galerkin coupling as a limiter, and coincident points
+
+[Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) rebuild the higher modes of DG artificial-boundary cells by WENO reconstruction, which also limits the solution when a shock crosses the overset boundary; Sod and Lax shock tubes and three 2-D Riemann problems pass without oscillation ([discontinuous Galerkin methods on overlapping grids](/methods/discontinuous-galerkin-on-overset-grids.md), §4.3–4.4). [Teschner & Mundt (2022)](/sources/teschner-2022.md) avoid interpolation near the axis of a blunt body by coincident points and compute a supersonic hemisphere cylinder with AUSM-type fluxes ([interpolation-free overset coupling](/methods/interpolation-free-overset-coupling.md)). [Delcour et al. (2022)](/sources/delcour-2022.md) report local supersonic pockets terminated by shocks across a deforming Chimera mesh (§4.2).
+
 ## Qualifications
 
 - Picard et al. state that the K-Dubois limiter "acts on the primitive
@@ -269,3 +273,6 @@ hitting a light elastic ellipse on deforming grids (§6); see
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §6.4, Fig. 19a.
 - [Chan (2009)](/sources/chan-2009.md) — §7 (Meakin's result as recalled).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1, §3.1.2.
+- [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §4.3–4.4.
+- [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §3–§4.
+- [Delcour et al. (2022)](/sources/delcour-2022.md) — §4.2.

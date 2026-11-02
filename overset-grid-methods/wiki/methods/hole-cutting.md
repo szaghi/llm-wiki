@@ -5,7 +5,7 @@ description: "Hole cutting removes from an overset grid the points that lie insi
 status: established
 aliases: [hole generation, blanking, hole-point identification, explicit hole cutting, Chimera hole cutting, cutting, hole profiling, object X-rays]
 tags: [hole-cutting, domain-connectivity, overset-grid, chimera]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Hole cutting
@@ -312,6 +312,10 @@ reason for Meakin's fast analytic-shape and X-ray cutters. Henshaw & Schwendeman
 Mahesh (2021), §2, keep the bounding volume hierarchy of each rigidly moving partition and
 update only its boxes ([moving overset grids](/methods/moving-overset-grid.md)).
 
+## Hole cutting in 2022 moving-body solvers
+
+[Hedayat et al. (2022)](/sources/hedayat-2022.md) cut holes explicitly by ray tracing against user-defined surfaces and prefer it to implicit hole cutting for grids that move every step, stating without measurement that implicit hole cutting costs about an order of magnitude more (§2.2.2). [Zhao et al. (2022)](/sources/zhao-2022.md) make the background cells inside the immersed body inactive and surround them with two acceptor layers (§II C). [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) inactivate background cells whose centres lie inside the surface of the foreground cells five layers from the foreground's outer boundary (§2). [Li & Wang (2022)](/sources/li-2022.md) use implicit hole cutting with a supplementary pass during conflict resolution and report hole maps of $35^3$ against $115^3$ for their earlier code (§3, §6). [Delcour et al. (2022)](/sources/delcour-2022.md) give no hole-cutting details for their commercial-code Chimera mesh.
+
 ## Qualifications
 
 - The cost statements are not comparable. Benek et al. (1983) measure hole searches against
@@ -350,3 +354,8 @@ update only its boxes ([moving overset grids](/methods/moving-overset-grid.md)).
 - [Picard et al. (2021)](/sources/picard-2021.md) — §3.2.2, §4.3 (no hole cutting).
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §2 (cutting volumes, fine-detail cut, flood fill); §4.1.
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1 (explicit vs implicit hole cutting).
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.2.2.
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §II C.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §2.
+- [Li & Wang (2022)](/sources/li-2022.md) — §3, §6.
+- [Delcour et al. (2022)](/sources/delcour-2022.md) — §3.3.

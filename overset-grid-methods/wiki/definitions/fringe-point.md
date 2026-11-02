@@ -5,7 +5,7 @@ description: "Receptor points — the hole-fringe and outer-boundary points that
 status: established
 aliases: [receptor point, fringe point, interpolation point, intergrid boundary point, IGBP, hole-boundary point, hole-fringe point, outer-boundary point, interpolated boundary point, recipient point, receiver, fringe level, overlap width, acceptor, acceptor cell, ghost cell, reconstruction cell, mandatory receptor, fringe gap]
 tags: [domain-connectivity, interpolation, overset-grid]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:07:00Z
 ---
 
 # Fringe (receptor) points and overlap width
@@ -233,6 +233,10 @@ Fig. 12). Noack (2005), §VI, notes that cell-centred donor stencils (donor cell
 plus face neighbours) occupy roughly twice the space of node-centred ones and
 lose members at boundaries.
 
+## Receptor layers in later methods
+
+Later sources fix the receptor layers per method: two layers of acceptor cells on each mesh in [Zhao et al. (2022)](/sources/zhao-2022.md) (§II C); one layer of artificial-boundary elements whose higher modes are rebuilt in the DG coupling of [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) (§3); and, in [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md), fringe cells that are not interpolated at all, the grids being coupled by fluxes through a compact hybrid stencil ([ADER schemes on overlapping grids](/methods/ader-on-overset-grids.md)). [Wang & Stern (2022)](/sources/wang-2022.md) rebuild the volume fraction of fringe cells geometrically rather than interpolate it ([multiphase flow](/methods/multiphase-flow-on-overset-grids.md)). [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) replace the interpolation row of one receptor, the flux-balance cell, by a global conservation constraint ([conservative overset interface](/methods/conservative-overset-interface.md)).
+
 ## Qualifications
 
 - Benek et al. (1985) set fringe points to IBLANK $=0$ like hole points, for the
@@ -264,3 +268,8 @@ lose members at boundaries.
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §2 (reconstruction cells).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — Fig. 4 (TIOGA fringe, fringe gap).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §III A, Fig. 5 (acceptor cells).
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §II C.
+- [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §3.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §2.1, §4.4.
+- [Wang & Stern (2022)](/sources/wang-2022.md) — §2.2.
+- [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) — §3.1.

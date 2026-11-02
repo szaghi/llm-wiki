@@ -5,7 +5,7 @@ description: "The partition of every component grid into discretization, recepto
 status: established
 aliases: [iblank, IBLANK, i_b, kr flag, point status, blanking, hole point, field point, discretization point, unused point, active point, solver point, blanked-out point, masking variable]
 tags: [domain-connectivity, hole-cutting, overset-grid]
-timestamp: 2026-11-02T11:39:00Z
+timestamp: 2026-11-02T15:07:00Z
 ---
 
 # Point classification and the iblank mask
@@ -157,6 +157,10 @@ has 4221 stored and 3580 active points (Tables IX–X); Henshaw (1994) counts
 10,728 interpolation points in the three-grid sphere case, a large fraction of
 the total (§5.2, Table VIII).
 
+## Classification in later solvers
+
+[Li & Wang (2022)](/sources/li-2022.md) document a richer `iblank` coding in their assembly (Appendix A): codes carry solver and conflict-resolution states beyond the three classes, and the point-type assignment adds donor-suitability and donor-availability checks and a supplementary implicit hole cutting (§3, Algorithm 5); their Table 5 omits several codes the flowcharts use. [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) explicitly do without the field/fringe/hole classification of interpolation-based methods: fringe cells are solved like interior cells with hybrid stencils, and only inactive (hole) cells are distinguished (§1, §2). [Hedayat et al. (2022)](/sources/hedayat-2022.md) blank the region around an immersed body in the other grid when an overset interface crosses the body (§2.4).
+
 ## Qualifications
 
 - **Must hole points be excluded from the solution update?** (Reclassified
@@ -222,3 +226,6 @@ the total (§5.2, Table VIII).
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §2 (masking variable, reconstruction cells).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1, Fig. 1.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §III A, Figs. 4–5.
+- [Li & Wang (2022)](/sources/li-2022.md) — §3, Algorithm 5, Appendix A, Table 5.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §1, §2.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.4.

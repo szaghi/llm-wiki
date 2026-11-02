@@ -5,7 +5,7 @@ description: "Multizone grids whose subdomains meet along common boundaries with
 status: established
 aliases: [patched grid, grid patching, zonal grid, multizone grid, multiblock grid, patched zones, abutting grid]
 tags: [overset-grid, conservation, finite-volume, composite-grid]
-timestamp: 2026-11-02T11:39:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Patched (zonal) grids
@@ -107,6 +107,10 @@ In the patched zones produced this way the interface coincides geometrically
 while the faces of the two zones do not, the mismatch being absorbed by the
 smallest faces.
 
+## Patched-grid argument for coincident overset points
+
+[Teschner & Mundt (2022)](/sources/teschner-2022.md) borrow the point-continuous patched-grid argument to call an overset mesh with coincident points "fully conservative": values are copied, not interpolated, between grids that share points ([interpolation-free overset coupling](/methods/interpolation-free-overset-coupling.md), §3).
+
 ## Qualifications
 
 - Chesshire & Henshaw's zero-overlap reading treats a patch as a limit of the
@@ -131,3 +135,4 @@ smallest faces.
 - [Kageyama & Sato (2004)](/sources/kageyama-2004.md) — §I (patched vs overset on the sphere; cubed sphere).
 - [Sherer & Scott (2005)](/sources/sherer-2005.md) — §4.2 (coincident block overlaps); §5.2 (direct injection vs interpolation).
 - [Chan (2009)](/sources/chan-2009.md) — §2 (abutting vs overset); §5 (hyperbolic grids).
+- [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §1, §3.

@@ -5,7 +5,7 @@ description: "Incompressible Navier–Stokes on overlapping grids: Henshaw's fou
 status: established
 aliases: [incompressible Navier–Stokes on composite grids, velocity–pressure formulation, pressure Poisson formulation, CGINS method, fourth-order incompressible overlapping-grid method, overset single system, overset additive Schwarz, overset Schwarz coupling]
 tags: [incompressible, composite-grid, high-order, finite-volume, interpolation]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # Incompressible flow on overlapping grids
@@ -303,6 +303,10 @@ quantities within 1% of OSS (§5). See
   [flow past a sphere](/benchmarks/flow-past-sphere.md) and
   [parallel and GPU overset grid assembly](/methods/parallel-overset-grid-assembly.md).
 
+## Pressure equation, frames and immersed bodies (2022 sources)
+
+[Chandar & Sitaraman (2022)](/sources/chandar-2022.md) show that in a pressure-correction solver the pressure equation alone decides mass conservation, and impose the overset global conservation condition implicitly in it ([conservative overset interface](/methods/conservative-overset-interface.md)). [Hedayat et al. (2022)](/sources/hedayat-2022.md) solve each moving curvilinear grid in its body frame with a flux correction for mass ([immersed boundaries](/methods/immersed-boundary-on-overset-grids.md)). [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) use a Chorin–Temam projection inside an ADER space–time scheme with flux coupling ([ADER schemes](/methods/ader-on-overset-grids.md)). [Zhao et al. (2022)](/sources/zhao-2022.md) solve the weakly compressible ALE equations (Mach 0.1) with a lattice Boltzmann flux solver. [Wang & Stern (2022)](/sources/wang-2022.md) add two-phase flow ([multiphase flow](/methods/multiphase-flow-on-overset-grids.md)). Test cases include the [lid-driven cavity](/benchmarks/lid-driven-cavity.md) and the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md).
+
 ## Qualifications
 
 - **Equivalence not proved here.** The equivalence of the two formulations
@@ -355,3 +359,8 @@ quantities within 1% of OSS (§5). See
 - [Chesshire & Henshaw (1990)](/sources/chesshire-1990.md) — §5.1 (mapping method), §5.3 (interpolation order), §5.5 (CGEL, CGMG multigrid rates).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1, §2 (Eqs. (3)–(9)), §3.2 (Algorithms 1–2), §4.1–4.2 (Table 1, Figs. 10–23), §4.3 (Figs. 25–34), §5.
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §3.1 (Eqs. (2)–(8); Shen, Tang et al. as recalled), §3.2 (Eq. (10), injection), §3.3 (Algorithm 1), §4.2.1–4.2.2 (Figs. 13–18, Table).
+- [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) — §1, §3.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.1, §2.4.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §3–§4.
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §II.
+- [Wang & Stern (2022)](/sources/wang-2022.md) — §2.

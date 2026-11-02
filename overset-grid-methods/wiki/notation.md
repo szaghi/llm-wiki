@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: component and composite grids, their mappings, point classification, inter-grid interpolation, conservative interfaces, flow equations in Cartesian and curvilinear form, grid motion, Yin–Yang grids, and reserved symbols for high-order, SBP–SAT, immersed-boundary and unstructured overset methods; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:10:00Z
 ---
 
 # Notation registry
@@ -185,15 +185,15 @@ Reserved symbols: a page that first uses one confirms it here (removing
 
 | Symbol | Meaning | Remark |
 |---|---|---|
-| $N$ | polynomial degree of DG and spectral-element methods | reserved; order of accuracy then $p=N+1$ when the page shows it |
+| $N$ | polynomial degree of DG and spectral-element methods | in use (DG on overlapping grids); order of accuracy then $p=N+1$ when the page shows it |
 | $\mathsf H$ | SBP norm (mass) matrix, symmetric positive definite | reserved |
 | $\mathsf D=\mathsf H^{-1}\mathsf Q$, $\mathsf Q+\mathsf Q^T=\mathsf B$ | SBP first-derivative operator and its summation-by-parts property | reserved; $\mathsf B=\mathrm{diag}(-1,0,\dots,0,1)$ in 1-D |
-| $\Sigma$ | SAT penalty (scalar or matrix) | reserved |
+| $\Sigma$ | SAT penalty (scalar or matrix) | in use (overset well-posedness: $\Sigma_u$, $\Sigma_v$, $\Sigma^m$) |
 | $\lVert u\rVert_{\mathsf H}^2=u^T\mathsf Hu$ | discrete energy | reserved |
 | $\mathcal I_{k\leftarrow k'}$ (matrix) | interpolation operator in SBP-compatible form | reserved use of §3's symbol; the norm-compatibility condition is written as the source states it |
-| $\omega_r$, $\beta_r$ | nonlinear (WENO) weights and smoothness indicators of candidate stencil $r$ | reserved |
+| $\omega_r$, $\beta_r$ | nonlinear (WENO) weights and smoothness indicators of candidate stencil $r$ | in use (DG overset coupling) |
 | $\chi$ | solid indicator or volume fraction of an immersed body | reserved |
-| $\varphi$ | signed distance (level set) to a body surface | reserved; $\varphi<0$ inside the body |
+| $\varphi$ | signed distance (level set) to a body surface or to a fluid interface | in use (multiphase flow); $\varphi<0$ inside the body |
 | $d_w$ | wall distance (wall-distance-based hole cutting) | reserved |
 | $\mathbf f_{\mathrm{IB}}$ | immersed-boundary forcing | reserved |
 
@@ -214,3 +214,7 @@ not give them different meanings.
 | $\kappa_h$, $\kappa_{h,\mathbf i}$ | cell-size ratio of substrate to patch: global (the maximum over the patch receptors) and local (receptor cell $\mathbf i$ of the patch) | Picard et al.'s $\chi$, $\chi_i^{\mathcal V}$ ($\chi$ is reserved, §8); $\kappa_h>1$ means a finer patch; shock capturing (Picard et al. 2021) |
 | $\kappa$ | scalar coefficient of the generalized Laplacian $\nabla\cdot(\kappa\nabla w)$; $\kappa_{\mathrm T}$ the diffusivity of a scalar proxy equation | Henshaw's (2006) $k$; Sharma et al.'s $\kappa$; Maxwell, twilight-zone flow |
 | $\varpi$ | spatial frequency of trigonometric manufactured (twilight-zone) solutions | Henshaw's (1994) $f$; twilight-zone flow |
+| $\Omega_u$, $\Omega_v$, $\Omega_O$; $u$, $v$ | two overlapping subdomains, their overlap ($=\Omega_{kk'}$); the solutions on them | overset well-posedness (Kopriva et al. 2022), DG overset coupling |
+| $\eta\in(0,1)$ | overlap weight of the energy and of the penalties | overset well-posedness; not the computational coordinate $\eta$ of §1, which that page does not use |
+| $A^\pm$ | positive and negative parts of a symmetric coefficient matrix | overset well-posedness |
+| $F$ | fluid volume fraction of a two-phase model | multiphase flow; distinct from the immersed-body $\chi$ |

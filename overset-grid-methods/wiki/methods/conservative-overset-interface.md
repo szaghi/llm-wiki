@@ -5,7 +5,7 @@ description: "Why interpolation-coupled overset grids are not globally conservat
 status: established
 aliases: [conservative Chimera, COC, fully conservative interface algorithm, zonal interface generation, ZIG, conservative overset coupling, interpolation-free overset coupling]
 tags: [conservation, overset-grid, chimera, finite-volume, shock-capturing, hole-cutting]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Conservative overset interface
@@ -285,6 +285,10 @@ fourth-order incompressible scheme the (nonconservative) interpolation condition
 source of discrete divergence. Divergence damping is used to control it (see
 [incompressible flow on overlapping grids](/methods/incompressible-flow-on-overset-grids.md)).
 
+## Global constraint in the pressure equation and theory
+
+[Chandar & Sitaraman (2022)](/sources/chandar-2022.md) derive, for a pressure-correction finite-volume solver, the discrete global mass-conservation condition $\sum_O\nabla p\cdot d\mathbf S=\sum_O\mathbf u^*\cdot d\mathbf S$ over all overset interfaces, and impose it implicitly by replacing the interpolation row of one receptor (the flux-balance cell); the global mass error then follows the linear-solver tolerance (down to $10^{-16}$) instead of stalling near $10^{-5}$, and in 1-D inverse-distance interpolation regains second order (§3, Table 3). [Hedayat et al. (2022)](/sources/hedayat-2022.md) enforce zero net flux over each blanked region and each overset interface by a flux correction (§2.4.1). [Kopriva et al. (2022)](/sources/kopriva-2022.md) prove for the continuous penalty-coupled problem that the coupling condition for energy boundedness is also the condition for conservation ([well-posedness](/results/overset-well-posedness.md)). [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) obtain conservative fluxes in the no-shift configuration and argue that conservative interpolations are cumbersome in 3-D and not locally conservative (§1, §4.2.2). [Teschner & Mundt (2022)](/sources/teschner-2022.md) avoid interpolation with coincident points ([interpolation-free overset coupling](/methods/interpolation-free-overset-coupling.md)).
+
 ## Qualifications
 
 - **Two meanings of "conservative overset".** Wang's interface removes the
@@ -337,3 +341,8 @@ source of discrete divergence. Divergence damping is used to control it (see
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1.
 - [Henshaw & Schwendeman (2006)](/sources/henshaw-2006.md) — §4.2 (semi-conservative scheme).
 - [Banks et al. (2016)](/sources/banks-2016.md) — §4.2.
+- [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) — §3, Eqs. (20), (37)–(38), Table 3.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.4.1.
+- [Kopriva et al. (2022)](/sources/kopriva-2022.md) — Thms 7–8, 11–12.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §1, §4.2.2.
+- [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §1, §3.

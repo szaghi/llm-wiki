@@ -5,7 +5,7 @@ description: "Partitioned fluid–structure coupling on moving and deforming ove
 status: established
 aliases: [FSI on overlapping grids, FSI on overset grids, FSI-DCG, deforming composite grids, added-mass partitioned algorithm, AMP scheme, rigid-body coupling on overlapping grids]
 tags: [fsi, moving-grid, composite-grid, compressible, overset-grid]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Fluid–structure interaction on overlapping grids
@@ -209,6 +209,13 @@ recover (lightest case), with matching centrelines on the two finest grids
   boundary and an immersed-boundary FSI extension as future work
   ([Picard et al. (2021)](/sources/picard-2021.md), §5).
 
+## Flexible structures and freely moving bodies (2022 sources)
+
+- [Delcour et al. (2022)](/sources/delcour-2022.md) couple a commercial finite-volume code and a beam model with quasi-Newton (IQN-ILS) strong coupling for a flexible cylinder in axial flow; the Chimera component mesh deforms with the cylinder, so large motions keep body-fitted boundary layers; water experiments are reproduced and air compressibility above inlet Mach 0.66 accelerates second-mode flutter (§3–§4).
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) couple freely falling cylinders strongly with the flow on moving overset grids: overset and single-grid fall velocities differ by about 0.2 % for one cylinder and at most 4 % for three (§3.4).
+- [Zhao et al. (2022)](/sources/zhao-2022.md) compute particle sedimentation, a spinning ball and a self-propelled flapping foil, the body motion driven by the computed forces (§III).
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) compute a sedimenting cylinder (§6).
+
 ## Qualifications
 
 - Banks et al. state that both projections "show the expected second-order
@@ -249,3 +256,7 @@ recover (lightest case), with matching centrelines on the two finest grids
 - [Chan (2009)](/sources/chan-2009.md) — §10, §11 (Fig. 9).
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §1, §4.2.3.
 - [Picard et al. (2021)](/sources/picard-2021.md) — §5.
+- [Delcour et al. (2022)](/sources/delcour-2022.md) — §3–§4.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §3.4.
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §III.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §6.

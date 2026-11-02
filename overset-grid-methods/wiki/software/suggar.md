@@ -5,7 +5,7 @@ description: "Noack's stand-alone overset grid assembler for moving-body simulat
 status: established
 aliases: ["Structured, Unstructured, and Generalized overset Grid AssembleR"]
 tags: [software, domain-connectivity, hole-cutting, unstructured, moving-grid]
-timestamp: 2026-11-02T11:41:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # SUGGAR
@@ -167,6 +167,10 @@ description; no SUGGAR++ timings appear in the 2014 paper. The method is on
 How SUGGAR++ relates in code to the 2005 SUGGAR read here is not stated in
 the ingested sources.
 
+## Use in ship hydrodynamics
+
+[Wang & Stern (2022)](/sources/wang-2022.md) take the overset connectivity of the ship-hydrodynamics code CFDShip-Iowa V5.5 from SUGGAR (their ref. [27]) for static and dynamic overset grids with six-degree-of-freedom motion, and mention its successor Suggar++ (§1, §4).
+
 ## Qualifications
 
 - Table 2's 25 rows sum to 3,108,363 points and 2,899,400 cells, while the
@@ -189,3 +193,4 @@ the ingested sources.
 
 - [Noack (2005)](/sources/noack-2005.md) — §I (purpose, other tools, PEGASUS 5 not applied to moving bodies, DiRTlib); §II and Figs. 1–4 (binary tree, body hierarchy, over-cutting); §III and Table 1 (refinement criterion, node counts); §IV and Figs. 5–7 (fringe marking); §V (polyhedral donor search); §VI and Figs. 8–9 (donor stencils and weights, non-monotonicity); §VII and Fig. 10 (moving-body support, FIFOs); §VIII, Tables 2–3, Figs. 11–15 (demonstrations, timings, memory).
 - [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §1 (SUGGAR++/DiRTlib among dedicated assembly codes, ref. [4]); §5 (Spatial Decomposition Volume compared with solver-partition load re-balance).
+- [Wang & Stern (2022)](/sources/wang-2022.md) — §1, §4.

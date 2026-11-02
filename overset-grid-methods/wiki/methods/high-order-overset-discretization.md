@@ -5,7 +5,7 @@ description: "How fourth- to sixth-order finite-difference schemes are run on ov
 status: established
 aliases: [high-order overset methods, high-order Chimera, compact schemes on overset grids, high-order composite-grid discretization]
 tags: [high-order, finite-difference, interpolation, stability, overset-grid, composite-grid]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # High-order discretizations on overlapping grids
@@ -206,6 +206,10 @@ an interpolation instability.
   interpolation and a high fraction of interpolation points (see
   [explicit and implicit interpolation](/definitions/explicit-and-implicit-interpolation.md)).
 
+## DG, ADER and the energy theory (2022 sources)
+
+[Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) keep order $N+1$ of a DG scheme across overset boundaries by rebuilding artificial-boundary modes with WENO ([DG on overlapping grids](/methods/discontinuous-galerkin-on-overset-grids.md)); [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) reach second order with an ADER scheme without fringe interpolation ([ADER schemes](/methods/ader-on-overset-grids.md)); [Kopriva et al. (2022)](/sources/kopriva-2022.md) give the continuous energy theory that provably stable high-order overset discretizations must reproduce ([well-posedness](/results/overset-well-posedness.md)).
+
 ## Qualifications
 
 - **Sixth versus fourth order.** In the acoustic-scattering tests fourth-order
@@ -229,3 +233,6 @@ an interpolation instability.
 - [Henshaw (2006)](/sources/henshaw-2006-b.md) — §3, §4 ($q=p+1$, smooth mappings), §5 (Lemma 5.1, symmetric operators, Fig. 2), §9.2 (Eq. (9.9)), §10.5 (Table 6).
 - [Henshaw (1994)](/sources/henshaw-1994.md) — §4.1 (quartic interpolation, two receptor lines), Tables V, VIII.
 - [Banks et al. (2016)](/sources/banks-2016.md) — §4.2, Eqs. (38)–(40) (dissipation of zero-speed characteristics at overlaps).
+- [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §3–§4.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §5.1.
+- [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §1, §4.

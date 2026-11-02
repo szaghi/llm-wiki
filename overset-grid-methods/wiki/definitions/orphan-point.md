@@ -5,7 +5,7 @@ description: "Receptor points that need interpolation but have no valid donor: t
 status: established
 aliases: [orphan, orphans, orphaned point]
 tags: [domain-connectivity, donor-search, interpolation]
-timestamp: 2026-11-02T11:39:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Orphan points
@@ -116,6 +116,10 @@ OVERFLOW lift on this grid system matches the PEGASUS 4 result and is within
 1.5% of experiment at approach conditions (Fig. 12); the paper does not
 relate the agreement to the remaining orphans.
 
+## Conflict resolution in a multiple-solver framework
+
+[Li & Wang (2022)](/sources/li-2022.md) handle points without a suitable donor inside their conflict-resolution loop: a donor-suitability check, a donor-availability check and a supplementary implicit hole cutting re-assign their status (§3, Appendix A); the paper reports no orphan counts.
+
 ## Qualifications
 
 - The founding Chimera papers have no orphan concept
@@ -137,3 +141,4 @@ relate the agreement to the remaining orphans.
 - [Benek et al. (1985)](/sources/benek-1985.md) — p. 324 (receptor inside the donor cell).
 - [Meakin & Suhs (1989)](/sources/meakin-1989.md) — §II, Fig. 3 (undefined values on uncovered points).
 - [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §2.1 (orphan as a mandatory receptor without donor); §3.5 (low-quality donors, pathological orphans); §6.1; §7.
+- [Li & Wang (2022)](/sources/li-2022.md) — §3, Appendix A.

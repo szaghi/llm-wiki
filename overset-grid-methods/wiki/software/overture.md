@@ -5,7 +5,7 @@ description: "Henshaw's C++ framework for PDEs on composite overlapping grids an
 status: established
 aliases: [Overture framework, Ogen, Overture class library]
 tags: [software, composite-grid, domain-connectivity, moving-grid, parallel]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # Overture (and Ogen)
@@ -157,6 +157,10 @@ the shock-capturing solver of Henshaw & Schwendeman is on
 - [Sharma et al. (2021, §3)](/sources/sharma-2021.md) cite Ogen with other
   assembly tools as approaches to which their interpolation results apply.
 
+## Later mentions
+
+[Kopriva et al. (2022)](/sources/kopriva-2022.md) cite Overture among the overset software that motivates their analysis of the continuous problem (§1).
+
 ## Qualifications
 
 - Roget & Sitaraman print the authors of their Overture reference (ref.
@@ -181,3 +185,4 @@ the shock-capturing solver of Henshaw & Schwendeman is on
 - [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §1 (Overture among solver-integrated assembly codes, ref. [11]).
 - [Picard et al. (2021)](/sources/picard-2021.md) — §3.2.2, Eq. 12 (explicit-interpolation condition after the Ogen report, ref. [18]).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §3 (Ogen among assembly tools, ref. [63]).
+- [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §1.

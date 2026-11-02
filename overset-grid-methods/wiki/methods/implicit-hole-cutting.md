@@ -5,7 +5,7 @@ description: "Implicit hole cutting (Lee and Baeder 2003) replaces cutting by bo
 status: established
 aliases: [IHC, implicit hole-cutting, cell-selection connectivity, smallest-cell donor selection]
 tags: [hole-cutting, domain-connectivity, overset-grid, unstructured, rotorcraft]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Implicit hole cutting
@@ -202,6 +202,10 @@ boxes, for one static overset mesh on a single GPU.
   body, so that coarse background fringes do not interpolate near a resolved boundary layer
   ([Noack (2005)](/sources/noack-2005.md), §II).
 
+## Later uses and cost judgements
+
+[Li & Wang (2022)](/sources/li-2022.md) take Roget & Sitaraman's implicit hole cutting into a multiple-solver framework and add a supplementary implicit hole cutting during conflict resolution (§3, Appendix A). [Hedayat et al. (2022)](/sources/hedayat-2022.md) judge it about an order of magnitude more expensive than explicit cutting for grids re-assembled every step, without a measurement (§2.2.2). [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) run on overset meshes assembled in this way and note that donor stencils of RBF interpolation (at least 9 donors in 2-D) widen the search (§3.7.1).
+
 ## Qualifications
 
 - **Must hole points be excluded from the solution update?** (Recorded as a qualification at
@@ -243,3 +247,6 @@ boxes, for one static overset mesh on a single GPU.
 - [Benek et al. (1983)](/sources/benek-1983.md) — p. 374 (holes must be excluded); p. 375, Eqs. (2)–(3) (IBLANK in the implicit operator).
 - [Benek et al. (1985)](/sources/benek-1985.md) — p. 323 (holes must be excluded); p. 324, Fig. 4 (single fringe layer); p. 325 (IBLANK in the "standard tri-diagonal algorithm").
 - [Meakin & Suhs (1989)](/sources/meakin-1989.md) — §II, Eq. (2) (IBLANK in the factored operator); §II, Fig. 3 (hole-motion rule).
+- [Li & Wang (2022)](/sources/li-2022.md) — §3, Appendix A.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.2.2.
+- [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) — §3.7.1.

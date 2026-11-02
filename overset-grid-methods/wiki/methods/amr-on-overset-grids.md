@@ -5,7 +5,7 @@ description: "Block-structured adaptive mesh refinement on composite overlapping
 status: established
 aliases: [AMR on overlapping grids, AMR on overset grids, Chimera-AMR, adaptive overlapping grids, moving overlapping grids with AMR, adaptively refined overlapping grids]
 tags: [amr, overset-grid, composite-grid, moving-grid, shock-capturing]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Adaptive mesh refinement on overlapping grids
@@ -168,6 +168,10 @@ the detonation initiated by an impulsively moved cylinder, the shock position
 converges with resolution while the von Neumann pressure peak is not fully
 converged on the finest grid (§7.1, Fig. 21).
 
+## Octree off-body grids and refined body-attached grids
+
+[Li & Wang (2022)](/sources/li-2022.md) build the off-body grid as an octree block-structured Cartesian grid (PARAMESH), refined geometrically by a cell-volume ratio so that background cells are not larger than the near-body cells they overlap, then adapted to flow features by a density-based shock sensor and a normalized $Q$-criterion (§4). [Zhao et al. (2022)](/sources/zhao-2022.md) build the body-attached Cartesian grid with several automatic refinement levels (§II). [Teschner & Mundt (2022)](/sources/teschner-2022.md) adapt their body mesh by shock fitting, with a non-conservative interpolation (§3).
+
 ## Qualifications
 
 - The rows of Table 6 do not add up to the printed totals: 17.152 s against
@@ -193,3 +197,6 @@ converged on the finest grid (§7.1, Fig. 21).
 - [Benek et al. (1983)](/sources/benek-1983.md) — p. 373 (adaptive grids and Berger's refinement, as recalled).
 - [Chan (2009)](/sources/chan-2009.md) — §6 (Meakin's adaptive off-body Cartesian grids, as recalled).
 - [Picard et al. (2021)](/sources/picard-2021.md) — §1 (patch-based AMR and Chimera–AMR, as recalled).
+- [Li & Wang (2022)](/sources/li-2022.md) — §4.
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §II.
+- [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §3.

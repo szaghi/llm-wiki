@@ -5,7 +5,7 @@ description: "The preprocessing that turns independent component grids into a us
 status: established
 aliases: [overset grid assembly, OGA, grid assembly, overset assembly, domain connectivity information, DCI, domain connectivity function, DCF, oversetting process, connectivity, grid connectivity, overlapping grid connectivity]
 tags: [domain-connectivity, hole-cutting, donor-search, moving-grid, parallel]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:07:00Z
 ---
 
 # Domain connectivity and overset grid assembly
@@ -238,6 +238,10 @@ load-balancing scaling, among the open needs of 2008, and states (§7) that no
 approach yet satisfied "the combined requirements of full automation,
 robustness, and speed".
 
+## Assembly coupled to the solver
+
+In two 2022 solvers assembly is coupled directly to the flow solver: [Hedayat et al. (2022)](/sources/hedayat-2022.md) replace a file-based sequential assembly by an in-core parallel one inside the solver and report assembly at about 7 % of the flow-solver time on 560 cores (§4); [Li & Wang (2022)](/sources/li-2022.md) run assembly between solver instances, restricted to overlapping process pairs (§3). Li & Wang reuse the pipeline of Roget & Sitaraman, Hedayat et al. explicit hole cutting; both are described on [parallel overset grid assembly](/methods/parallel-overset-grid-assembly.md).
+
 ## Qualifications
 
 - Rogers et al. (2003) print a speedup "up to a factor of 30 for very large"
@@ -267,3 +271,5 @@ robustness, and speed".
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §2 (overset assembly, BVH reuse); §4.1 (GPU timings).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1, Fig. 4 (TIOGA assembly).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §III A (coefficients recomputed each rotation step).
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.2, §4.
+- [Li & Wang (2022)](/sources/li-2022.md) — §3.

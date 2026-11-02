@@ -233,9 +233,10 @@ Both are entered as printed. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-11-02). This source is cited on:
+Chunk 2 (2026-11-02), cited further in chunk 3. This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
+- [Isentropic vortex convection](/benchmarks/isentropic-vortex.md)
 - [Explicit and implicit interpolation](/definitions/explicit-and-implicit-interpolation.md)
 - [Fringe (receptor) points and overlap width](/definitions/fringe-point.md)
 - [Overset (Chimera) grid](/definitions/overset-grid.md)

@@ -5,7 +5,7 @@ description: "The 2003 from-scratch Fortran 90 rewrite of the PEGASUS overset co
 status: established
 aliases: [PEGASUS5, Pegasus 5]
 tags: [software, chimera, domain-connectivity, hole-cutting, donor-search, parallel]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # PEGASUS 5
@@ -193,6 +193,10 @@ grid subset in which no hole may be cut.
   the "coarse-grain parallelism" Roget & Sitaraman name *(compiler check,
   not in the sources)*.
 
+## Later mentions
+
+[Wang & Stern (2022)](/sources/wang-2022.md) name PEGASUS 5 with Suggar++ as the assembly packages of structured overset solvers (§1).
+
 ## Qualifications
 
 - The CDP rule ("donor and receptor cells should be of similar size") and
@@ -209,3 +213,4 @@ grid subset in which no hole may be cut.
 - [Noack (2005)](/sources/noack-2005.md) — §I.
 - [Chan (2009)](/sources/chan-2009.md) — §7 (late-1990s re-engineering, Cartesian maps, stencil optimization, MPI, version 5.1 on the Space Shuttle in steady state, weaknesses, state of domain connectivity), ref. [18].
 - [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §1 (PEGASUS5 among dedicated assembly codes, ref. [3]; stated limitations of existing codes).
+- [Wang & Stern (2022)](/sources/wang-2022.md) — §1.

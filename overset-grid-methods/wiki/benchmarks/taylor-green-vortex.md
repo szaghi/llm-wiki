@@ -5,7 +5,7 @@ description: "The two-dimensional Taylor–Green exact solution of the incompres
 status: established
 aliases: [Taylor–Green vortex, decaying Taylor vortex, TGV, Taylor vortex]
 tags: [benchmark, incompressible, interpolation, unstructured]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # Taylor–Green vortex
@@ -103,6 +103,10 @@ $(x-Ut,\,y-Vt)$ gives the translating (Galilean-shifted) vortex.
 | Horne & Mahesh (2021) | rotated empty patch, ~30% overlap, unstructured | supercell reconstruction, injected | 2nd order in $u$, $p$; kinetic energy follows the exact decay up to $Re=10^9$ |
 | Sharma et al. (2021) | Cartesian overset pair, $d\propto h$ | linear Lagrange, $q=2$ | 2nd order at cell $Re\approx400$; order lost at cell $Re\approx1$ |
 
+## Moving-grid convergence tests (2022 sources)
+
+[Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) compute the vortex on a background grid with a rotating, perturbed foreground grid and measure $L^2$ rates about 2 for velocity and pressure, with no definite $L^\infty$ rate (§5.1); [Hedayat et al. (2022)](/sources/hedayat-2022.md) compute it at $Re=10$ with a translating or rotating overset grid and find about second order under combined space–time refinement at constant CFL (§3.1). Bergmann et al. print the pressure with $\sin2y$ where their velocity field requires $\cos2y$ *(compiler check, not in the sources)*; Hedayat et al.'s grid list repeats $81\times49$.
+
 ## Qualifications
 
 - Horne & Mahesh print the pressure of their Eq. (11) as
@@ -122,3 +126,5 @@ $(x-Ut,\,y-Vt)$ gives the translating (Galilean-shifted) vortex.
 
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §3 (solver, injection of overset reconstructions); §4.2.1, Eq. (11), Figs. 12–14 (rotated patch, second-order convergence, kinetic energy up to $Re=10^9$).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §3 and Fig. 4 (TIOGA implicit hole cutting, $d\propto h$); §4.3.1, Eq. (29), Fig. 25 (translating decaying vortex, $\nu=0.001$ and $0.5$, recommendation of higher-order interpolation).
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §5.1, Fig. 8.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §3.1, Figs. 12–13.

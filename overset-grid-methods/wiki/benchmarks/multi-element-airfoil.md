@@ -5,7 +5,7 @@ description: "High-lift and flapped airfoils as overset test cases: the SKF 1.1 
 status: established
 aliases: [three-element airfoil, high-lift airfoil, 30P30N, SKF 1.1 with flap, flapped airfoil]
 tags: [benchmark, chimera, domain-connectivity, conservation, compressible]
-timestamp: 2026-11-02T14:54:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # Multi-element airfoils
@@ -113,6 +113,10 @@ experimental reports (Wang: Valarezo et al. 1991; Rogers et al.: Chin et
 al. 1993) and Wang does not name the configuration, so the identity of the
 two geometries is not established by the sources.
 
+## Multiple solver instances
+
+[Li & Wang (2022)](/sources/li-2022.md) compute the 30P30N with each element as a separate solver instance coupled by dynamic overset assembly, compare surface pressure with experiment and simulate a notional flap deployment (§5.1) ([parallel overset grid assembly](/methods/parallel-overset-grid-assembly.md)).
+
 ## Qualifications
 
 - Benek et al. (1983) print the airfoil mesh as "G12" in the Fig. 13
@@ -134,3 +138,4 @@ two geometries is not established by the sources.
 - [Wang (1995)](/sources/wang-1995.md) — §5.3, Figs. 14–17.
 - [Rogers et al. (2003)](/sources/rogers-2003.md) — "Multi-Element Airfoil", Figs. 9–10.
 - [Chan (2009)](/sources/chan-2009.md) — §2, Fig. 1 (two- and three-element airfoils as the illustration of the Chimera framework; field, hole and fringe points); §11, Fig. 5 (high-lift transport surface grids).
+- [Li & Wang (2022)](/sources/li-2022.md) — §5.1.

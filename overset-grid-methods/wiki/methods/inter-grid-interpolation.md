@@ -5,7 +5,7 @@ description: "How overset grids exchange data: each receptor takes a weighted su
 status: established
 aliases: [intergrid communication, intergrid interpolation, chimera interpolation, overset interpolation, donor interpolation, intergrid boundary conditions, fringe interpolation, Chimera transfer, overset reconstruction]
 tags: [interpolation, overset-grid, chimera, composite-grid, high-order, domain-connectivity]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:09:00Z
 ---
 
 # Inter-grid interpolation
@@ -416,6 +416,18 @@ Flux-based alternatives that avoid interpolation are on
   See
   [moving overset grids](/methods/moving-overset-grid.md).
 
+## Formulas and alternatives in the 2022 sources
+
+- **Polynomial, inverse-distance and RBF transfer compared.** [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) find that inverse-distance interpolation degrades a 1-D manufactured problem to first order, while quadratic (3-donor) interpolation keeps second order, as they recall from Chesshire & Henshaw; the Vandermonde system can become singular in more dimensions; RBF interpolation (at least 9 donors in 2-D) keeps second order in 2-D and gives two orders of magnitude lower force error on a rotating mesh (§3.5–§3.7).
+- **Single-donor reconstruction.** [Zhao et al. (2022)](/sources/zhao-2022.md) set each receptor to $W_{\mathrm{donor}}+\mathbf d\cdot\nabla W_{\mathrm{donor}}$ from the nearest donor cell, arguing second order by a Taylor expansion; inverse-distance transfer gives high-frequency force noise on an oscillating cylinder (§II C, §III A).
+- **Trilinear transfer as a matrix.** [Hedayat et al. (2022)](/sources/hedayat-2022.md) store the trilinear weights in a sparse PETSc matrix applied by matrix–vector products (§2.2.6); [Li & Wang (2022)](/sources/li-2022.md) compute trilinear weights by Newton–Raphson inversion (§3).
+- **Discontinuous variables.** [Wang & Stern (2022)](/sources/wang-2022.md) interpolate the distance function and normal instead of the volume fraction ([multiphase flow](/methods/multiphase-flow-on-overset-grids.md)); [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) evaluate donor DG polynomials in a ghost cell and rebuild receptor modes by WENO ([DG on overlapping grids](/methods/discontinuous-galerkin-on-overset-grids.md)).
+- **No interpolation.** [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) couple through fluxes and [Teschner & Mundt (2022)](/sources/teschner-2022.md) through coincident points ([interpolation-free overset coupling](/methods/interpolation-free-overset-coupling.md)). [Delcour et al. (2022)](/sources/delcour-2022.md) give no interpolation details.
+
+[Kopriva et al. (2022)](/sources/kopriva-2022.md) treat the coupling at the level of the continuous problem, where the transfer condition is a boundary or penalty condition ([well-posedness](/results/overset-well-posedness.md)).
+
+Qualification on the 2022 formulas: [Hedayat et al. (2022)](/sources/hedayat-2022.md) print trilinear weights with factors $(a_k-1)$ whose sum is $(2a_1-1)(2a_2-1)(2a_3-1)$, not one (Eq. 14) *(compiler check, not in the sources)*.
+
 ## Qualifications
 
 - **Order naming.** Benek et al. (1983) call their linear Taylor formula
@@ -468,3 +480,13 @@ Flux-based alternatives that avoid interpolation are on
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1, §3.1 (Eqs. (10)–(22), Figs. 4–5), §4.1 (Figs. 10–17).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §III A, Eq. (10).
 - [Banks et al. (2016)](/sources/banks-2016.md) — §4.3, Procedure 1.
+- [Chandar & Sitaraman (2022)](/sources/chandar-2022.md) — §3.5–§3.7.
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §II C, §III A.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.2.6, Eq. 14.
+- [Li & Wang (2022)](/sources/li-2022.md) — §3.
+- [Wang & Stern (2022)](/sources/wang-2022.md) — §2.2.
+- [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §3.
+- [Bergmann et al. (2022b)](/sources/bergmann-2022-b.md) — §1, §4.
+- [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §3.
+- [Delcour et al. (2022)](/sources/delcour-2022.md) — §3.3.
+- [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §2.

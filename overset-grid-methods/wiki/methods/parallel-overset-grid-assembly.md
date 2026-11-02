@@ -5,7 +5,7 @@ description: "How overset grid assembly is distributed: PEGASUS 5's coarse-grain
 status: established
 aliases: [parallel domain connectivity, parallel overset grid assembly, parallel OGA, GPU overset assembly, accelerated overset assembly, overset load balancing, load re-balance]
 tags: [parallel, gpu, domain-connectivity, unstructured, rotorcraft]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Parallel and GPU overset grid assembly
@@ -194,6 +194,14 @@ sums to the owner of the receptors, so that at most one message passes between
 any pair of processes ([inter-grid
 interpolation](/methods/inter-grid-interpolation.md)).
 
+## In-core assembly on solver partitions (Hedayat et al.)
+
+[Hedayat et al. (2022)](/sources/hedayat-2022.md) partition every block over all processors as the flow solver prefers, so each processor cuts holes in its own partition; receptors are matched to processors by oriented bounding boxes, packed into one buffer per processor pair (worst-case messages $n\times P(m,2)$ instead of $C(n,2)\times P(m,2)$ for $n$ blocks on $m$ processors), searched by walking, and interpolated by a sparse PETSc matrix formed once per step (§2.2, Algorithms 2–3). Strong scaling on about 30 M points: assembly 5.1 s on 8 cores to 0.40 s on 140, then 0.58 s on 560 cores, about 7 % of the flow-solver time, limited by load imbalance; interpolation below 0.1 % (§4).
+
+## Multiple solver instances (Li & Wang)
+
+[Li & Wang (2022)](/sources/li-2022.md) give each component of an array its own instance of a single-solver code on an MPI intra-communicator and couple the instances by Roget & Sitaraman's assembly, run only on solver/process/block triples whose bounding boxes collide; against their dual-solver code this lowers assembly time, shrinks hole maps and scales better to 2880 processes (§3, §6). The off-body octree grid is refined so that background cells are not larger than the near-body cells they overlap ([AMR on overlapping grids](/methods/amr-on-overset-grids.md)).
+
 ## Qualifications
 
 - Roget & Sitaraman print a "68% reduction" for 2.1 s → 0.7 s; the printed values
@@ -221,3 +229,5 @@ interpolation](/methods/inter-grid-interpolation.md)).
 - [Roget & Sitaraman (2014)](/sources/roget-2014.md) — §1 (limits of existing codes); §2.2 (six steps); §3.2, Figs. 6–8; §3.3–3.6; §4; §5, Figs. 15–17 (load re-balance, SUGGAR++ comparison); §6, Figs. 19–24; §7.
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §1 (earlier GPU work, CPU scaling); §2, Figs. 3–6 (BVH, GJK, pipeline, reuse); §4.1, Figs. 10–11 (timings).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1 (TIOGA, ExaWind); §3.1.2; §3.2.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.2, §4, Algorithms 2–3.
+- [Li & Wang (2022)](/sources/li-2022.md) — §2–§3, §6, Tables 2, 4.

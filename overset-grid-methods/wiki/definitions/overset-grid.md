@@ -5,7 +5,7 @@ description: "A covering of the domain by independently generated, mutually over
 status: established
 aliases: [Chimera grid, chimera grid scheme, chimera grid-embedding scheme, grid embedding, overlapped grid, overlaid grid, overset composite grid, composite overlapping grid, overset mesh, overlapping meshes, dynamic overset grid, synthesized grid]
 tags: [overset-grid, chimera, composite-grid, domain-connectivity, interpolation]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:07:00Z
 ---
 
 # Overset (Chimera) grid
@@ -254,6 +254,10 @@ general framework.
   coupling of the linear systems affect incompressible accuracy; Wang et al.
   use a rotating overset grid as the ingredient of a propeller-wake study.
 
+## Uses beyond moving bodies
+
+Later sources also use overset grids where one grid alone cannot be well behaved: [Teschner & Mundt (2022)](/sources/teschner-2022.md) cover the symmetry axis of a blunt-body mesh, where the metric is singular, with a small overset mesh whose points coincide with the body mesh ([interpolation-free overset coupling](/methods/interpolation-free-overset-coupling.md)); [Zhao et al. (2022)](/sources/zhao-2022.md) and [Hedayat et al. (2022)](/sources/hedayat-2022.md) carry an immersed boundary on a body-attached grid ([immersed boundaries on overlapping grids](/methods/immersed-boundary-on-overset-grids.md)); [Li & Wang (2022)](/sources/li-2022.md) give each component of an array its own solver instance ([parallel overset grid assembly](/methods/parallel-overset-grid-assembly.md)). [Kopriva et al. (2022)](/sources/kopriva-2022.md) analyse the continuous problem behind every overset discretization ([well-posedness](/results/overset-well-posedness.md)).
+
 ## Grid generation for overset systems
 
 Chan (2009), §§4–6, describes the generation side of the NASA structured
@@ -375,3 +379,8 @@ identified manually.
 - [Horne & Mahesh (2021)](/sources/horne-2021.md) — §1–2 (unstructured overset meshes, GPU assembly).
 - [Sharma et al. (2021)](/sources/sharma-2021.md) — §1 (TIOGA, ExaWind); §3.2 (single-system and Schwarz coupling).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §III A (synthesized grid, dynamic overset grid).
+- [Teschner & Mundt (2022)](/sources/teschner-2022.md) — §1, §3.
+- [Zhao et al. (2022)](/sources/zhao-2022.md) — §II.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §1.
+- [Li & Wang (2022)](/sources/li-2022.md) — §2.
+- [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §1.

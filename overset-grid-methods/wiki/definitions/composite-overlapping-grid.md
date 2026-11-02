@@ -5,7 +5,7 @@ description: "Chesshire and Henshaw's formal definition of an overlapping grid: 
 status: established
 aliases: [composite grid, composite mesh, overlapping grid, overlaid grid, composite overlapping mesh]
 tags: [composite-grid, overset-grid, domain-connectivity, finite-difference]
-timestamp: 2026-11-02T14:53:00Z
+timestamp: 2026-11-02T15:08:00Z
 ---
 
 # Composite overlapping grid
@@ -185,6 +185,10 @@ Chesshire; they cite the Chimera scheme of Benek, Steger and Buning as the
 parallel approach and contrast Berger's overlapping rectangular grids, which
 serve adaptivity rather than geometry.
 
+## The continuous problem on a composite domain
+
+[Kopriva et al. (2022)](/sources/kopriva-2022.md) state the continuous counterpart of a composite grid: a domain $\Omega$ covered by overlapping subdomains $\Omega_u$, $\Omega_v$ with overlap $\Omega_O$, on which the coupled problem must be well posed before any discretization ([well-posedness](/results/overset-well-posedness.md)). [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) and [Hedayat et al. (2022)](/sources/hedayat-2022.md) use composite grids of quadrilateral DG elements and of curvilinear blocks with immersed bodies.
+
 ## Qualifications
 
 - **Ordering independence is a conjecture.** Chesshire & Henshaw (1990), §3.2,
@@ -218,3 +222,6 @@ serve adaptivity rather than geometry.
 - [Banks et al. (2016)](/sources/banks-2016.md) — §4.1 (composite grids for fluid and solid, deforming components).
 - [Picard et al. (2021)](/sources/picard-2021.md) — §3.2.2 (no deactivated cells).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §III A (synthesized grid, point classes).
+- [Kopriva et al. (2022)](/sources/kopriva-2022.md) — §2, §3.
+- [Kochi & Ramakrishna (2022)](/sources/kochi-2022.md) — §2.
+- [Hedayat et al. (2022)](/sources/hedayat-2022.md) — §2.
