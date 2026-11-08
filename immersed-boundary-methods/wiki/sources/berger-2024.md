@@ -8,8 +8,8 @@ authors: [Berger M., Giuliani A.]
 year: 2024
 venue: "SIAM J. Sci. Comput. 46(5):A2848–A2873"
 local_file: "/home/stefano/papers/mosaic/immersed-boundary/2024_Crossref_SIAM_Journal_on_Scientific_Computing_Berger_A_New_Provably_Stable_Weighted_State_Redistribution_Algorith.pdf"
-tags: [state-redistribution, cut-cell, stability, small-cell-problem]
-timestamp: 2026-11-08T18:35:00Z
+tags: [state-redistribution, cut-cell, stability, small-cell]
+timestamp: 2026-11-08T18:48:00Z
 ---
 
 # Summary

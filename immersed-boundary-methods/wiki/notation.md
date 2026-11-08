@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: Eulerian and Lagrangian descriptions, the immersed boundary and its configuration, regularized delta functions and the spreading and interpolation operators, forcing, penalization, cut-cell geometry and redistribution, interface jumps, level sets and ghost states, and the compressible-flow symbols; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-11-08T18:15:00Z
+timestamp: 2026-11-08T18:48:00Z
 ---
 
 # Notation registry
@@ -57,6 +57,7 @@ $[w]=w^+-w^-$.
 | $\mathbf i=(i,j,k)$, $\mathbf x_{\mathbf i}$ | multi-index of a grid point or cell, its position |
 | $\mathbf e_m$ | unit vector of direction $m$ |
 | $t$, $\Delta t$, $n$ | time, time step, time level (superscript) |
+| $k$ | polynomial degree of a discretization (finite element, discontinuous Galerkin, reconstruction polynomial) |
 | $p$ | pressure; the **order of accuracy** is written $r$ ("order $r$") so that $p$ is never overloaded |
 
 ## Fluid
@@ -130,7 +131,7 @@ $[w]=w^+-w^-$.
 |---|---|
 | $\tilde\Omega$, $\tilde\Gamma$, $\tilde{\mathbf n}$ | surrogate domain of whole mesh elements, its boundary, its normal (shifted boundary method) |
 | $\mathcal M$, $\mathbf d$ | map from $\tilde\Gamma$ to $\Gamma$ (closest-point projection) and distance vector $\mathbf d=\mathcal M(\tilde{\mathbf x})-\tilde{\mathbf x}$ |
-| $S^m_h$ | Taylor shift operator of order $m$, $S^m_hu=\sum_{k\le m}\partial^k_{\mathbf d}u/k!$ |
+| $S^m_h$ | Taylor shift operator of order $m$, $S^m_hu=\sum_{j\le m}\partial^j_{\mathbf d}u/j!$ |
 | $M_{\mathbf i}$, $N_{\mathbf k}$, $\hat{\mathbf q}_{\mathbf i}$ | merging neighbourhood of cell $\mathbf i$, overlap count of cell $\mathbf k$, neighbourhood average (state redistribution) |
 | $V_{\mathbf k}$ | cell volume $\kappa_{\mathbf k}h^d$ |
 

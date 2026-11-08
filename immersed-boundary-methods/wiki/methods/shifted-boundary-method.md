@@ -5,7 +5,7 @@ description: "Approximate-domain embedded method that applies boundary condition
 status: established
 aliases: [SBM, shifted boundary, surrogate boundary method, approximate domain method]
 tags: [shifted-boundary, finite-element, nitsche, surrogate-boundary, small-cell, high-order]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Shifted boundary method
@@ -33,8 +33,8 @@ $\tilde{\mathbf n}$ reaches $45^\circ$ (§2).
 ## High order
 
 [Atallah et al. (2022)](/sources/atallah-2022.md) use a Taylor expansion of
-order $m$ for elements of degree $m$,
-$S^m_hu=\sum_{k=0}^{m}\frac{1}{k!}\,\partial^k_{\mathbf d}u$, in the Nitsche terms, pairing
+order $m=k$ for elements of degree $k$,
+$S^m_hu=\sum_{j=0}^{m}\frac{1}{j!}\,\partial^j_{\mathbf d}u$, in the Nitsche terms, pairing
 the penalty with the first-order operator $S^1_hv$ to obtain an $L^2$ estimate by
 duality. Optimal convergence ($h^m$ in $H^1$, $h^{m+1}$ in $L^2$) is retained
 although the surrogate boundary is piecewise linear, so neither high-order
@@ -80,8 +80,43 @@ under an extra mesh assumption); numerically $L^2$ converges at $k+1$ for $k=1$�
 For linear elasticity with Neumann conditions the method loses one order,
 because stresses are extrapolated by a Taylor expansion of one order lower.
 
+## Compressible Euler flow with shocks
+
+[Zeng, Song & Scovazzi (2025)](/sources/zeng-2025.md) apply the method to the
+compressible Euler equations with a stabilized continuous piecewise-linear
+finite element method, weakly imposed conditions and entropy- or Lax-type
+artificial viscosity. The shifted slip-wall condition expresses
+$\mathbf u\cdot\mathbf n=0$ on $\Gamma$ through a Taylor expansion along
+$\mathbf d$ with the true normal. On a square with shifted slip walls the
+method converges at second order, while a zeroth-order variant ($\mathbf d=0$)
+and a computation that only integrates the body-fitted boundary terms on
+$\tilde\Gamma$ are at best first order; at comparable resolution the results
+match body-fitted computations with or without artificial viscosity, also
+for strong shocks meeting the staircase surrogate. Two further uses: shifted
+conditions on a body-fitted *polygonal* mesh remove the error of the
+polygonal wall, and a Kutta condition on an immersed airfoil is obtained by
+extending the camber line beyond the trailing edge as an embedded slip
+interface.
+
+## Polynomial correction instead of Taylor terms
+
+[Boscheri & Ciallella (2025)](/sources/boscheri-2025.md) use the
+shifted-boundary idea on a body-fitted moving mesh whose straight-sided
+boundary $\tilde\Gamma$ approximates a curved wall. Rather than evaluating
+the Taylor terms of $S^m_h$ one by one, the whole correction is the
+difference of the cell's reconstruction polynomial $u_h$ between the true and
+the surrogate point: a Dirichlet value at $\tilde{\mathbf x}\in\tilde\Gamma$ is
+imposed as $u_D(\mathcal M(\tilde{\mathbf x}))-[u_h(\tilde{\mathbf x}+\mathbf d)-u_h(\tilde{\mathbf x})]$,
+one extra polynomial evaluation per quadrature point. For slip walls the
+normal velocity is corrected the same way with the true normal. In a direct
+arbitrary Lagrangian–Eulerian finite volume scheme this recovers design order
+(up to fourth on moving tetrahedra for Kidder's isentropic compression),
+where the uncorrected boundary limits every degree to second order.
+
 # Citations
 
 - [Main & Scovazzi (2018)](/sources/main-2018.md) — §1–§4.
 - [Atallah et al. (2022)](/sources/atallah-2022.md) — §1–§6.
 - [Collins et al. (2023)](/sources/collins-2023.md) — §1–§5.
+- [Zeng, Song & Scovazzi (2025)](/sources/zeng-2025.md) — §1, §3, §4.
+- [Boscheri & Ciallella (2025)](/sources/boscheri-2025.md) — §4–§5.

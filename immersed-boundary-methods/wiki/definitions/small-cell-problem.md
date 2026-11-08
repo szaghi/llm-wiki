@@ -5,7 +5,7 @@ description: "The stability defect of explicit cut-cell (embedded-boundary) fini
 status: established
 aliases: [small cell problem, arbitrarily small cells, cut-cell stability]
 tags: [cut-cell, embedded-boundary, stability, conservation]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Small-cell problem
@@ -86,6 +86,20 @@ build boundary stencils that are stable at CFL 0.5 for any cut distance; and
 [Xie et al. (2022)](/sources/xie-2022.md) avoid the problem with implicit time
 stepping.
 
+## Two further remedies
+
+[Taylor, Wilcox & Chan (2025)](/sources/taylor-2025.md), §1.1, survey the
+remedies by family: implicit or explicit–implicit time stepping and
+subcycling; penalties built into the discretization (jump penalization, the
+domain-of-dependence method); flux-based fixes (h-box methods, flux
+redistribution); cell merging and cell linking; and
+[state redistribution](/methods/state-redistribution.md).
+[Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) use the
+Forrer–Jeltsch cut-cell scheme, which computes every flux on the full
+Cartesian faces and does not treat a cut cell as smaller than its full
+volume: the time step is not restricted, at the cost of local conservation
+errors in the boundary cells.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1, §2.6.
@@ -99,3 +113,5 @@ stepping.
 - [Xie et al. (2022)](/sources/xie-2022.md) — §1.
 - [Giuliani (2022)](/sources/giuliani-2022.md) — §1.
 - [de Prenter et al. (2023)](/sources/deprenter-2023.md) — §2–§4.
+- [Taylor, Wilcox & Chan (2025)](/sources/taylor-2025.md) — §1.1.
+- [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) — §1, §3.

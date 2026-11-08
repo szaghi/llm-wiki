@@ -5,7 +5,7 @@ description: "Sharp-interface discrete-forcing method that assigns values to gho
 status: established
 aliases: [GCIBM, ghost-cell IBM, ghost-point method, image-point method, hybrid Cartesian immersed boundary, HCIB]
 tags: [ghost-cell, sharp-interface, discrete-forcing, reconstruction, compressible, incompressible]
-timestamp: 2026-11-08T18:32:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Ghost-cell immersed boundary method
@@ -152,6 +152,12 @@ polynomials at image points, hybrid compact–WENO interiors — are compared on
 ([Turner et al. 2024](/sources/turner-2024.md); [Huang et al. 2024](/sources/huang-2024.md);
 [Qi et al. 2024](/sources/qi-2024.md); [Marashi & Hejranfar 2025](/sources/marashi-2025.md)).
 
+## Shock-adaptive ghost values
+
+[Yang, Bi & Jiang (2026)](/sources/yang-2026.md) switch between third- and
+first-order ghost extrapolation with a nonlinear weight
+([high-order immersed boundary treatments](/methods/high-order-immersed-boundary.md)).
+
 # Citations
 
 - [Tseng & Ferziger (2003)](/sources/tseng-2003.md) — §1, §2.2–2.6, §3.
@@ -169,3 +175,4 @@ polynomials at image points, hybrid compact–WENO interiors — are compared on
 - [Huang et al. (2024)](/sources/huang-2024.md) — §2.
 - [Qi et al. (2024)](/sources/qi-2024.md) — §3.
 - [Marashi & Hejranfar (2025)](/sources/marashi-2025.md) — §3.
+- [Yang, Bi & Jiang (2026)](/sources/yang-2026.md) — §3.

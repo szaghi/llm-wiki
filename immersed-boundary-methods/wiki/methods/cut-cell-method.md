@@ -5,7 +5,7 @@ description: "Sharp-interface finite-volume method on a Cartesian grid whose cel
 status: established
 aliases: [embedded boundary method, Cartesian cut-cell method, Cartesian grid method, volume-of-fluid boundary representation]
 tags: [cut-cell, embedded-boundary, sharp-interface, finite-volume, conservation, compressible, incompressible]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Cut-cell (embedded-boundary) finite-volume method
@@ -152,6 +152,21 @@ first order (§2–§3).
   and momentum fluxes and a solid-volume source in moving cut cells that
   removes most [spurious pressure oscillations](/definitions/spurious-force-oscillations.md).
 
+## Constrained-transport MHD
+
+[Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) build an embedded
+boundary for compressible resistive MHD on the Forrer–Jeltsch cut-cell
+scheme (see [small-cell problem](/definitions/small-cell-problem.md)) with a
+face-centred staggered constrained-transport induction equation, so that the
+discrete magnetic field stays divergence free. Ghost cells are filled by
+reflection about the boundary with bilinear interpolation at the image; the
+normal magnetic field and the tangential electric field are prescribed on
+embedded faces and edges. Magnetic flux is not conserved at the embedded
+boundary, but no monopoles are introduced. Moving two-material interfaces use
+a [ghost fluid method](/methods/ghost-fluid-method.md). The scheme converges
+at second order for smooth problems and at first order with a material
+discontinuity.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1–§4.
@@ -163,3 +178,4 @@ first order (§2–§3).
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2–§3.
 - [Sharan et al. (2022)](/sources/sharan-2022.md) — §1–§5.
 - [Xie et al. (2022)](/sources/xie-2022.md) — §2–§4.
+- [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) — §3–§4, §7.

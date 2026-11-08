@@ -5,7 +5,7 @@ description: "Compressible inviscid test problems in which a shock meets a solid
 status: established
 aliases: [shock reflection off a ramp, double Mach reflection, Schardin's problem, shock–cylinder interaction, supersonic flow past a cylinder]
 tags: [benchmark, compressible, shock, cut-cell, ghost-cell]
-timestamp: 2026-11-08T18:32:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Shock–obstacle interaction
@@ -55,6 +55,15 @@ surface pressure). Exact or theoretical references exist for oblique shocks
   reflection, supersonic flow over a half cylinder and two cylinders, and a shock
   hitting an array of cylinders.
 
+## Uses in chunk 6
+
+- [Yang, Bi & Jiang (2026)](/sources/yang-2026.md): double Mach reflection,
+  shock–cylinder, supersonic cylinder, a supersonic wedge ($M=2$, $20^\circ$)
+  checked against oblique-shock theory, and shock interaction with several
+  cylinders.
+- [Zeng, Song & Scovazzi (2025)](/sources/zeng-2025.md): double Mach reflection
+  with the wedge immersed in a grid not aligned with the ramp.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §4.
@@ -69,3 +78,5 @@ surface pressure). Exact or theoretical references exist for oblique shocks
 - [Turner et al. (2024)](/sources/turner-2024.md) — §3–§4.
 - [Qi et al. (2024)](/sources/qi-2024.md) — §4.
 - [Marashi & Hejranfar (2025)](/sources/marashi-2025.md) — §4.
+- [Yang, Bi & Jiang (2026)](/sources/yang-2026.md) — §4.3–§4.7.
+- [Zeng, Song & Scovazzi (2025)](/sources/zeng-2025.md) — §4.6.

@@ -5,7 +5,7 @@ description: "How immersed boundary methods couple the flow with a moving or def
 status: established
 aliases: [FSI coupling, strong coupling, loose coupling, weak coupling, added-mass instability, partitioned FSI]
 tags: [fluid-structure-interaction, coupling, stability, added-mass, moving-boundary]
-timestamp: 2026-11-08T18:32:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Fluid–structure coupling in immersed boundary methods
@@ -96,6 +96,17 @@ and spreading act on them, consistently with the spline basis. The scheme is
 validated on a flexible filament and on an array of filaments in pulsating
 channel flow.
 
+## Added mass in compressible partitioned coupling
+
+[Liu, Jiang, Shu & Zhang (2025)](/sources/liu-2025.md) show by eigenvalue
+analysis of a one-dimensional linear model that a weakly coupled
+inverse Lax–Wendroff interface treatment is unstable for a light solid in a
+heavy fluid (fluid-to-solid density ratio $10^2$), in line with the added-mass analysis of
+Banks and Sjögreen, while building both media's PDEs and the interface
+conditions into one interface system keeps the explicit scheme stable for
+density ratios from $10^{-2}$ to $10^{2}$
+([inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
+
 # Citations
 
 - [Uhlmann (2005)](/sources/uhlmann-2005.md) — §4.
@@ -106,3 +117,4 @@ channel flow.
 - [Ni et al. (2022)](/sources/ni-2022.md) — §1, §5, §6.
 - [Boustani et al. (2022)](/sources/boustani-2022.md) — §4.
 - [Agrawal et al. (2024)](/sources/agrawal-2024.md) — §1–§5.
+- [Liu, Jiang, Shu & Zhang (2025)](/sources/liu-2025.md) — §1, §4.

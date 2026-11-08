@@ -5,7 +5,7 @@ description: "Postprocessing stabilization for explicit cut-cell finite volumes:
 status: established
 aliases: [SRD, weighted state redistribution, WSRD]
 tags: [cut-cell, embedded-boundary, small-cell, conservation, redistribution, amr]
-timestamp: 2026-11-08T18:32:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # State redistribution
@@ -70,9 +70,9 @@ discontinuous Galerkin schemes in 2-D.
 high-order discontinuous Galerkin methods on 2-D curvilinear cut-cell grids:
 the solution is $L^2$-projected onto polynomials on each merging neighbourhood
 in an overlap-weighted inner product, then projected back and averaged; the
-scheme is conservative and preserves polynomials of degree $p$, runs at the
+scheme is conservative and preserves polynomials of degree $k$, runs at the
 time step of the background cells (volume fractions down to $10^{-9}$), and
-converges at order $p+1$ in $L^1$ and between $p$ and $p+1$ in $L^\infty$ on
+converges at order $k+1$ in $L^1$ and between $k$ and $k+1$ in $L^\infty$ on
 smooth problems (solid-body rotation, Ringleb-type transonic channel flow);
 with curved cut cells the DG scheme is about an order of magnitude more
 accurate than a second-order rotated-grid $h$-box method, and a Mach 10 double
@@ -89,9 +89,22 @@ while $3\times3$ central merging at $45^\circ$ is not; with limiting and SSP
 Runge–Kutta the second-order version is TVD. The analysis also explains why the
 original SRD worked so well — it is monotone in most configurations.
 
+## Energy stability
+
+[Taylor, Wilcox & Chan (2025)](/sources/taylor-2025.md) prove that state
+redistribution preserves the $L^2$ energy stability of a skew-symmetric
+discontinuous Galerkin discretization of the acoustic wave equation on cut
+meshes, a discretization stable for arbitrary quadrature on cut elements. The
+merging-neighbourhood solution is a volume-weighted $L^2$ projection, and the
+redistribution operator is contractive in $L^2$; an energy-stable scheme
+followed by a contractive filter stays energy stable. In their tests
+redistribution reduces the largest eigenvalue magnitude by about the length
+ratio between a small and a full cell.
+
 # Citations
 
 - [Berger & Giuliani (2021)](/sources/berger-2021.md) — §1–§6.
 - [Giuliani et al. (2022b)](/sources/giuliani-2022-b.md) — §1–§6.
 - [Giuliani (2022)](/sources/giuliani-2022.md) — §1–§6.
 - [Berger & Giuliani (2024)](/sources/berger-2024.md) — §1–§5.
+- [Taylor, Wilcox & Chan (2025)](/sources/taylor-2025.md) — §2, §3.

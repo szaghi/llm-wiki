@@ -8,8 +8,8 @@ authors: [Munschy Y., Bourne E., Dif-Pradalier G., Donnel P., Ghendrih P., Grand
 year: 2024
 venue: "Nucl. Fusion 64(5):056027"
 local_file: "/home/stefano/papers/mosaic/immersed-boundary/2024_Crossref_Nuclear_Fusion_Munschy_Kinetic_plasma-wall_interaction_using_immersed_boundary_cond.pdf"
-tags: [volume-penalization, plasma, kinetic, sheath]
-timestamp: 2026-11-08T18:35:00Z
+tags: [penalization, plasma, kinetic, sheath]
+timestamp: 2026-11-08T18:48:00Z
 ---
 
 # Summary

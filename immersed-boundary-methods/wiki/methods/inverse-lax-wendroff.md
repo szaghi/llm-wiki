@@ -5,7 +5,7 @@ description: "High-order finite-difference boundary treatment for hyperbolic con
 status: established
 aliases: [ILW, inverse Lax-Wendroff procedure]
 tags: [inverse-lax-wendroff, high-order, ghost-cell, hyperbolic, compressible, sharp-interface]
-timestamp: 2026-11-08T18:32:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Inverse Lax–Wendroff boundary treatment
@@ -15,11 +15,11 @@ next to a boundary that cuts the grid arbitrarily: three per direction for a
 fifth-order WENO scheme. [Tan & Shu (2010)](/sources/tan-2010.md) fill them
 by a Taylor expansion from the boundary point $x_b$,
 
-$$w_j=\sum_{k=0}^{r-1}\frac{(x_j-x_b)^k}{k!}\,\frac{\partial^k w}{\partial x^k}\Big|_{x_b},$$
+$$w_j=\sum_{q=0}^{r-1}\frac{(x_j-x_b)^q}{q!}\,\frac{\partial^q w}{\partial x^q}\Big|_{x_b},$$
 
 and obtain the normal derivatives as follows (§2).
 
-- **Inflow (ILW).** Use the PDE repeatedly to write $\partial^k w/\partial x^k$
+- **Inflow (ILW).** Use the PDE repeatedly to write $\partial^q w/\partial x^q$
   at the boundary through time derivatives (and, in 2-D, tangential
   derivatives) of the prescribed boundary data. For $w_t+f(w)_x=0$ with
   $w(x_b,t)=g(t)$: $w_x=-g'/f'(g)$, then $w_{xx}$ from the differentiated equation,
@@ -78,7 +78,21 @@ terms (for third order with two ILW terms, a position parameter
 $\alpha\ge0.61$), improving efficiency at the same accuracy
 ([high-order immersed boundary treatments](/methods/high-order-immersed-boundary.md)).
 
+## Deformable solids
+
+[Liu, Jiang, Shu & Zhang (2025)](/sources/liu-2025.md) extend ILW to
+compressible flow interacting with linearly elastic solids: third-order WENO
+on a fixed Cartesian grid for the fluid, Lagrangian discontinuous Galerkin
+for the solid. At the interface the PDEs of both media and the interface
+conditions (continuity of normal velocity, balance of traction) form one
+linear system for the normal derivatives, from which follow the fluid ghost
+values and the solid's interface fluxes. Without sub-iterations the
+treatment stays stable for fluid-to-solid density ratios from $10^{-2}$ to
+$10^{2}$, where a weakly coupled ILW becomes unstable at $10^{2}$ (see
+[fluid–structure coupling](/methods/fluid-structure-coupling.md)).
+
 # Citations
 
 - [Tan & Shu (2010)](/sources/tan-2010.md) — §1–§3.
 - [Liu et al. (2024)](/sources/liu-2024.md) — §1–§4.
+- [Liu, Jiang, Shu & Zhang (2025)](/sources/liu-2025.md) — §1–§4.

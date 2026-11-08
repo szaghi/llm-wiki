@@ -2,6 +2,47 @@
 
 ## 2026-11-08
 
+**Chunk 6 ingested (night protocol, D32); archive complete.** Sources:
+boscheri-2025, liu-2025, taylor-2025, zeng-2025, jones-2026, yang-2026,
+okafor-2026 (57 of 57).
+
+- Concept pages updated (11): methods/shifted-boundary-method (compressible
+  Euler with shocks; polynomial correction), methods/inverse-lax-wendroff
+  (deformable solids), methods/fluid-structure-coupling (added mass,
+  compressible), methods/state-redistribution (energy stability),
+  definitions/small-cell-problem (remedies; Forrer–Jeltsch), methods/cut-cell-method
+  (constrained-transport MHD), methods/ghost-fluid-method (Riemann-based
+  variants, MHD), methods/high-order-immersed-boundary (shock-adaptive
+  blending), methods/ghost-cell-method, benchmarks/shock-obstacle-interaction,
+  properties/discrete-conservation.
+- Source pages created (7); audit lists regenerated, no older list changed.
+- Bibliography: 2608 entries after the chunk merge (FLAGS 0; karatzas-2020-b
+  kept distinct from the 2019 pre-publication citation), 2598 after the closing
+  sweep.
+- **Closing bibliography sweep:** `bib_merge --dupes` (3 cross-stem groups),
+  plus a scratch sweep for DOI duplicates, identical titles across years,
+  journal+volume+page collisions and fuzzy titles. Merged (citedby union):
+  ye-1993 → ye-1999, leveque-1019 → leveque-1994, yusof-1996 →
+  mohdyusof-1996 (rekeyed from jmohdyusof-1996), mos-1999 → moes-1999,
+  scicomput-2020 → sticko-2020, computphys-2007 → parvizian-2007,
+  jhbramble-1972 → bramble-1972, barlev-1997 → barlev-1975, boiveau-2014 →
+  boiveau-2016, deconinck-2007 → deconinck-2004; d-1991 rekeyed
+  dezeeuw-1991. Kept distinct after review: editions (ferziger, leveque
+  1990/1992, saad, toro), thesis vs paper (berger-1982, givelberg, zhu-2001),
+  conference vs journal (dezeeuw-1991/1993), report vs chapter (noh-1963/1964),
+  pre-publication citations (khadra-1999, karatzas-2019-b, burman-2019), series
+  parts (coutanceau, shu, saye, zhu, borazjani, bungartz). `--dupes` reports 0
+  afterwards.
+- **Whole-bundle deep lint:** registry extended with $k$ (polynomial degree),
+  which removes drift between $p$, $m$ and $k$ (state-redistribution,
+  shifted-boundary-method); bound summation indices renamed where they
+  collided with $k$ ($S^m_h$ in the registry and shifted-boundary-method, the
+  ILW Taylor formula); tag synonyms merged (small-cell-problem → small-cell,
+  volume-penalization → penalization, multi-material → multimaterial,
+  adaptive-mesh-refinement → amr); every concept page reachable from the
+  reading guide and linked from at least two other pages; no forbidden math
+  delimiters; no contradiction open.
+
 **Chunk 5 ingested (night protocol, D32).** Sources: mittal-2023,
 agrawal-2024, liu-2024, turner-2024, munschy-2024, huang-2024, qi-2024,
 berger-2024, burman-2025, marashi-2025 (50 of 57).

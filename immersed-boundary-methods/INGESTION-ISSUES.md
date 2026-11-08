@@ -6,6 +6,50 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 6 — 2025–2026: SBM for shocks, ILW–FSI, energy-stable SRD, MHD embedded boundaries; closing sweeps (2026-11-08)
+
+Sources (7): boscheri-2025, liu-2025, taylor-2025, zeng-2025, jones-2026,
+yang-2026, okafor-2026. 57 of 57 ingested (archive complete), 30 concept
+pages plus the registry, 2598 bibliography entries.
+
+### Decisions for the human
+
+1. **Versions read.** taylor-2025 (arXiv:2404.06630v2), jones-2026
+   (arXiv:2601.04099v1, accepted manuscript); the others are versions of
+   record.
+2. **Body-fitted papers.** boscheri-2025 is a body-fitted ALE method; it
+   enters through the shifted-boundary polynomial correction on a polygonal
+   surrogate of a curved wall, and zeng-2025 makes the same use of the SBM on
+   body-fitted meshes. Both are recorded on the shifted-boundary page.
+3. **Registry extension.** $k$ is now the polynomial degree; the clash with
+   bound summation indices was removed by renaming those indices.
+4. **Bibliography keys kept against a possible merge** (judgement calls):
+   burman-2019 (cited as 2019 with the DOI of the 2022 IMA J. Numer. Anal.
+   paper, kept as a pre-publication citation), khadra-1999 (printed as
+   submitted), noh-1963 (report) vs noh-1964 (chapter), toro-2009 vs
+   toro-2013 (same DOI, citing years differ), peskin-1992 vs peskin-1993-b
+   (same chapter title, two different volume titles).
+
+### Contradictions
+
+None opened.
+
+### Bibliography items still open after the sweep
+
+- burman-2011 carries the deposit year; Appl. Numer. Math. 62 is the 2012
+  volume (not rekeyed, the key follows the citing deposits).
+- iaccarino-2003-c (Appl. Mech. Rev. 52:421) and fauci-1994 (Bull. Math.
+  Biol. 57, the 1995 volume) need a Crossref check before any change.
+- welch-1966 is the Welch et al. MAC report (Los Alamos), correctly keyed by
+  its first author; agrawal-2024 prints 1965.
+
+### Bundle fit
+
+- jones-2026 (constrained-transport MHD embedded boundary) touches
+  `div-free-amr`; okafor-2026 (multi-material shocks, ghost fluid) and
+  yang-2026 (WCNS) touch `high-order-capturing-schemes` and `weno-teno`; read
+  here in this bundle's notation (D12).
+
 ## Chunk 5 — 2023–2025: high-order compressible boundaries, weighted SRD, CutFEM review (2026-11-08)
 
 Sources (10): mittal-2023, agrawal-2024, liu-2024, turner-2024, munschy-2024,

@@ -21,7 +21,7 @@ spreading and interpolation, $\eta$ and $\chi_s$ the penalization parameter and
 body mask, $\kappa$ the cut-cell volume fraction, $\phi$ the level set), and the
 [update log](/log.md).
 
-**Corpus:** 50 of the 57 archived papers ingested in 5 chunks. Chunk 1 holds
+**Corpus:** all 57 archived papers ingested in 6 chunks. Chunk 1 holds
 the founding papers of 1972–2002:
 [Peskin (1972)](/sources/peskin-1972.md) invents the immersed boundary method
 for heart valves, and [Peskin (2002)](/sources/peskin-2002.md) gives its
@@ -72,6 +72,14 @@ provably stable weighted state redistribution ([Berger & Giuliani 2024](/sources
 the CutFEM review ([Burman et al. 2025](/sources/burman-2025.md)),
 isogeometric slender rods ([Agrawal et al. 2024](/sources/agrawal-2024.md))
 and penalized plasma walls ([Munschy et al. 2024](/sources/munschy-2024.md)).
+Chunk 6 (2025–2026) closes the archive: the shifted boundary method for
+compressible flow with shocks ([Zeng et al. 2025](/sources/zeng-2025.md)) and
+as a polynomial correction on moving curved meshes ([Boscheri & Ciallella 2025](/sources/boscheri-2025.md)),
+inverse Lax–Wendroff coupling with deformable solids ([Liu et al. 2025](/sources/liu-2025.md)),
+energy-stable DG with state redistribution ([Taylor et al. 2025](/sources/taylor-2025.md)),
+constrained-transport MHD embedded boundaries ([Jones et al. 2026](/sources/jones-2026.md)),
+shock-adaptive high-order ghost cells ([Yang et al. 2026](/sources/yang-2026.md)) and
+Riemann-based ghost fluids for shocked energetic materials ([Okafor et al. 2026](/sources/okafor-2026.md)).
 
 ## Reading guide
 

@@ -5,7 +5,7 @@ description: "Sharp-interface Eulerian method for multimaterial compressible flo
 status: established
 aliases: [GFM, ghost fluid method (Fedkiw), boundary-condition capturing with ghost cells]
 tags: [ghost-fluid, sharp-interface, level-set, compressible, multimaterial, ghost-cell]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Ghost fluid method
@@ -86,9 +86,30 @@ normal-direction image-point interpolation with Gibou et al.'s ghost-fluid
 extrapolation along Cartesian directions, which becomes ill conditioned for
 small distances and falls back to first order.
 
+## Riemann-based variants and MHD
+
+[Okafor et al. (2026)](/sources/okafor-2026.md), §1.2, review the variants:
+the original method, whose interfacial treatment is at most first order and
+errs at strong-shock interfaces; the modified GFM, which solves a local
+Riemann problem by characteristic analysis; real and interface-interaction
+variants; and a fully conservative variant. Riemann-based variants are more
+accurate and robust and cost more. Their own scheme, with fifth-order WENO-Z
+and narrow-band level sets for shocked elastoplastic and reactive materials,
+reflects each interfacial ghost point across the interface to
+$\mathbf x_{\mathbf i}+2|\phi|\mathbf n$, interpolates the state there by
+least squares and solves an HLLC Riemann problem along the normal for the
+ghost state; tangential states are extrapolated.
+[Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) extend a ghost
+fluid coupling to resistive MHD. Separate magnetic fields on the two sides
+would create monopoles, so a single field is evolved, with per-material edge
+electric fields averaged by edge occupation; numerical resistivity at the
+interface remains.
+
 # Citations
 
 - [Fedkiw et al. (1999)](/sources/fedkiw-1999.md) — §1–§5, Appendix.
 - [Tseng & Ferziger (2003)](/sources/tseng-2003.md) — §1.
 - [Ghias et al. (2007)](/sources/ghias-2007.md) — §2.5.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §1.
+- [Okafor et al. (2026)](/sources/okafor-2026.md) — §1.2, §3.3.
+- [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) — §4.

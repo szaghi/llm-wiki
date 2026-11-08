@@ -5,7 +5,7 @@ description: "Whether an immersed boundary discretization conserves mass, moment
 status: established
 aliases: [conservation, conservative immersed boundary, mass conservation]
 tags: [conservation, cut-cell, coupling-operator, ghost-fluid, direct-forcing]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # Discrete conservation
@@ -79,6 +79,14 @@ penalization of [Reiss (2022)](/sources/reiss-2022.md) mass and energy are
 conserved in the whole domain and approximately in the fluid, while momentum is
 not, physically, since the body exchanges momentum with the flow.
 
+## Conservation traded for stability
+
+[Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) accept local
+conservation errors in boundary cells (Forrer–Jeltsch cut cells at full
+volume) to avoid the small-cell time-step limit; magnetic flux is not
+conserved at their embedded boundary, though the constrained-transport field
+stays free of monopoles.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §2.6.
@@ -97,3 +105,4 @@ not, physically, since the body exchanges momentum with the flow.
 - [Ni et al. (2022)](/sources/ni-2022.md) — §5.
 - [Xie et al. (2022)](/sources/xie-2022.md) — §2, §4.
 - [Reiss (2022)](/sources/reiss-2022.md) — §2.
+- [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) — §1, §4.

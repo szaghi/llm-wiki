@@ -5,7 +5,7 @@ description: "Boundary treatments that keep third- or higher-order accuracy at a
 status: established
 aliases: [high-order IB, high-order ghost-cell method, high-order embedded boundary]
 tags: [high-order, ghost-cell, compressible, shock, sharp-interface]
-timestamp: 2026-11-08T18:32:00Z
+timestamp: 2026-11-08T18:43:00Z
 ---
 
 # High-order immersed boundary treatments for compressible flow
@@ -47,6 +47,18 @@ immersed boundary". The sources pursue several routes.
 Shock problems used across the routes are collected on
 [shock–obstacle interaction](/benchmarks/shock-obstacle-interaction.md).
 
+## Blending high- and low-order ghost values
+
+High-order least-squares ghost values oscillate at discontinuities.
+[Yang, Bi & Jiang (2026)](/sources/yang-2026.md) blend a third-order
+weighted-least-squares extrapolation, built with the wall condition at the
+boundary intercept, and a first-order extrapolation with one WENO-type
+nonlinear weight, so that the ghost values are third order in smooth regions
+and first order at shocks. The interior scheme is a third-order weighted
+compact nonlinear scheme whose new smoothness indicator keeps third order at
+critical points. The authors judge earlier interpolation variants (bilinear,
+inverse distance, two reference points, biquadratic) second order at best.
+
 # Citations
 
 - [Tan & Shu (2010)](/sources/tan-2010.md) — §2–§3.
@@ -56,3 +68,4 @@ Shock problems used across the routes are collected on
 - [Huang et al. (2024)](/sources/huang-2024.md) — §1–§3.
 - [Qi et al. (2024)](/sources/qi-2024.md) — §2–§4.
 - [Marashi & Hejranfar (2025)](/sources/marashi-2025.md) — §2–§4.
+- [Yang, Bi & Jiang (2026)](/sources/yang-2026.md) — §1, §3–§4.
