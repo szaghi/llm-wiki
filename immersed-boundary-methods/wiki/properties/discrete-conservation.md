@@ -5,7 +5,7 @@ description: "Whether an immersed boundary discretization conserves mass, moment
 status: established
 aliases: [conservation, conservative immersed boundary, mass conservation]
 tags: [conservation, cut-cell, coupling-operator, ghost-fluid, direct-forcing]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Discrete conservation
@@ -42,6 +42,25 @@ The founding sources treat conservation differently:
   decaying-vortex test with the mass source "much smaller" than without, and
   comparable with a computation that needs no immersed boundary.
 
+## Local accuracy or conservation
+
+[Ghias et al. (2007)](/sources/ghias-2007.md), §2.5, state a trade-off:
+sharp-interface methods such as theirs and those of Fadlun et al., Balaras and
+Gibou et al. "have to choose between higher (second in most cases) local
+accuracy or strict discrete conservation"; Colella's embedded-boundary method
+keeps conservation and drops to first order locally; only a cut-cell method
+such as Ye et al.'s maintains both. [Mittal & Iaccarino (2005)](/sources/mittal-2005.md)
+make the same point: strict global and local conservation of mass and
+momentum "can only be guaranteed by resorting to a finite-volume approach",
+the motivation for cut cells. [Colella et al. (2006)](/sources/colella-2006.md)
+obtain local conservation with redistribution; [Mittal et al. (2008)](/sources/mittal-2008.md),
+§2.1, and [Ye et al. (1999)](/sources/ye-1999.md) keep discrete mass
+conservation of the face velocities to machine accuracy in the fluid while the
+[ghost-cell](/methods/ghost-cell-method.md) boundary treatment itself is not
+conservative. [Uhlmann (2005)](/sources/uhlmann-2005.md) and
+[Taira & Colonius (2007)](/sources/taira-2007.md) keep a discretely
+divergence-free velocity with delta-function forcing.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §2.6.
@@ -49,3 +68,9 @@ The founding sources treat conservation differently:
 - [Ye et al. (1999)](/sources/ye-1999.md) — §2.
 - [Kim et al. (2001)](/sources/kim-2001.md) — §2.3, §3.1.
 - [Peskin (2002)](/sources/peskin-2002.md) — §5, §8.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — discrete-forcing section (cut cells).
+- [Uhlmann (2005)](/sources/uhlmann-2005.md) — §3.
+- [Colella et al. (2006)](/sources/colella-2006.md) — §2.
+- [Ghias et al. (2007)](/sources/ghias-2007.md) — §2.5.
+- [Taira & Colonius (2007)](/sources/taira-2007.md) — §3.
+- [Mittal et al. (2008)](/sources/mittal-2008.md) — §2.1.

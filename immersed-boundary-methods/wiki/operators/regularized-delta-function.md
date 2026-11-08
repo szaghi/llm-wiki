@@ -6,7 +6,7 @@ status: established
 symbol: "$\\delta_h$"
 aliases: [discrete delta function, smoothed delta function, semidiscrete delta function, Peskin delta function, kernel function]
 tags: [immersed-boundary, delta-function, coupling-operator, diffuse-interface]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Regularized delta function $\delta_h$
@@ -77,9 +77,25 @@ exact shape "not crucial".
   from the chain condition (3.19) and the Fig. 1 caption
   ([Peskin 1972](/sources/peskin-1972.md), Version read).
 
+## Later uses
+
+[Uhlmann (2005)](/sources/uhlmann-2005.md), §3, and [Taira & Colonius (2007)](/sources/taira-2007.md),
+§3.2, both use the 3-point kernel of Roma, Peskin and Berger on staggered
+grids, where the even–odd decoupling of the central-difference gradient does
+not arise. Uhlmann reports second-order interpolation of smooth fields with an
+error insensitive to sub-grid shifts of the boundary, and a still smoother
+force with the 4-point kernel at higher cost; Taira and Colonius found no
+significant differences with other kernels and note that the moment
+conditions require a uniform grid near the body.
+[Mittal & Iaccarino (2005)](/sources/mittal-2005.md) compare four
+distribution functions used in the literature (their Fig. 2b).
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §III.B, eqs. (3.17)–(3.22).
 - [Goldstein et al. (1993)](/sources/goldstein-1993.md) — spectral implementation.
 - [LeVeque & Li (1994)](/sources/leveque-1994.md) — §1, eqs. (1.3)–(1.5); §5 Example 1.
 - [Peskin (2002)](/sources/peskin-2002.md) — §4, §5, §6.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous-forcing section, Fig. 2.
+- [Uhlmann (2005)](/sources/uhlmann-2005.md) — §3, §5.
+- [Taira & Colonius (2007)](/sources/taira-2007.md) — §3.2.

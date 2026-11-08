@@ -5,7 +5,7 @@ description: "Stabilization of explicit cut-cell finite-volume schemes that take
 status: established
 aliases: [redistribution, algebraic redistribution, mass-weighted redistribution, flux redistribution]
 tags: [cut-cell, embedded-boundary, conservation, stability, small-cell]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Flux redistribution for cut cells
@@ -44,6 +44,38 @@ scheme is equivalent to a modification of the edge fluxes of the predictor
   corrected by a composite refluxing/redistribution step ("re-redistribution")
   so the AMR hierarchy stays conservative (§3).
 
+## Hybrid update and redistribution (Colella et al. 2006)
+
+[Colella et al. (2006)](/sources/colella-2006.md) write the scheme
+explicitly. Besides the conservative divergence $(\nabla\cdot\boldsymbol{\mathcal F})^{C}$
+(which divides by $\kappa_{\mathbf i}$), a stable non-conservative divergence
+$(\nabla\cdot\boldsymbol{\mathcal F})^{NC}$ is formed from the fluxes on the full Cartesian
+cell, with states extrapolated to covered faces. The cut cell is updated with
+the hybrid
+
+$$(\nabla\cdot\boldsymbol{\mathcal F})^{H}_{\mathbf i}=\kappa_{\mathbf i}(\nabla\cdot\boldsymbol{\mathcal F})^{C}_{\mathbf i}+(1-\kappa_{\mathbf i})(\nabla\cdot\boldsymbol{\mathcal F})^{NC}_{\mathbf i},$$
+
+which cancels the small denominator, and the conservation defect
+
+$$\delta\mathbf M_{\mathbf i}=-\Delta t\,\kappa_{\mathbf i}(1-\kappa_{\mathbf i})\big[(\nabla\cdot\boldsymbol{\mathcal F})^{C}_{\mathbf i}-(\nabla\cdot\boldsymbol{\mathcal F})^{NC}_{\mathbf i}\big]$$
+
+is distributed to the neighbours $\mathbf j\in N(\mathbf i)$ (indices within one of
+$\mathbf i$) as $\mathbf q_{\mathbf j}\leftarrow\mathbf q_{\mathbf j}+w_{\mathbf i\mathbf j}\,\delta\mathbf M_{\mathbf i}$ with
+$\sum_{\mathbf j}w_{\mathbf i\mathbf j}\kappa_{\mathbf j}=1$ and $w_{\mathbf i\mathbf j}$ bounded independently of
+$\kappa_{\mathbf j}^{-1}$. Volume weighting takes $w_{\mathbf i\mathbf j}=\big(\sum_{N(\mathbf i)}\kappa_{\mathbf j}\big)^{-1}$;
+mass weighting with a non-conservative density estimate, after Pember et al.,
+is more robust for strong shocks. The scheme is locally conservative up to
+redistribution across the boundary of a region, and the non-conservative
+divergence must be designed so that a small cell comes into equilibrium with
+its larger neighbours, because it carries almost the whole update when
+$\kappa\ll1$.
+
+The sign convention of $\delta\mathbf M$ and the precise update formula are written
+here in registry form from the paper's description; the version read prints
+the formulas in a garbled text layer ([Colella et al. 2006](/sources/colella-2006.md),
+Version read).
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1, §2.6, §3.
+- [Colella et al. (2006)](/sources/colella-2006.md) — §2 (stable evolution, redistribution).

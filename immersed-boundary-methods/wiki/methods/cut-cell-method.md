@@ -5,7 +5,7 @@ description: "Sharp-interface finite-volume method on a Cartesian grid whose cel
 status: established
 aliases: [embedded boundary method, Cartesian cut-cell method, Cartesian grid method, volume-of-fluid boundary representation]
 tags: [cut-cell, embedded-boundary, sharp-interface, finite-volume, conservation, compressible, incompressible]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Cut-cell (embedded-boundary) finite-volume method
@@ -82,7 +82,49 @@ turbomachinery cascade show complex geometry (§3).
 - Ye et al. (1999) treat 2-D only; the interpolation is "in principle
   extendable to three-dimensions".
 
+## A formally consistent version: Colella et al. (2006)
+
+[Colella et al. (2006)](/sources/colella-2006.md) recast the compressible
+embedded-boundary method so that it is formally consistent. Control volumes
+are $V_{\mathbf i}=\Upsilon_{\mathbf i}\cap\Omega$ with apertures on the faces and a boundary
+face; cells are regular, irregular (cut) or covered, with the state stored at
+Cartesian cell centres; all geometric quantities are computed to $O(h^2)$, and a
+covered face implies a covered neighbour (a minimum-thickness assumption,
+relaxed in their code to several control volumes per cell). The conservative
+divergence $(\nabla\cdot\boldsymbol{\mathcal F})^{C}$ sums aperture-weighted fluxes
+**interpolated to the face centroids** (linear in 2-D, bilinear in 3-D) plus
+the boundary flux and divides by $\kappa_{\mathbf i}h$. This makes the truncation error
+$O(h)$ in the irregular cells and their neighbours and $O(h^2)$ elsewhere,
+whereas the earlier methods, Pember et al.'s included, have $O(1)$ truncation
+errors at the boundary. A modified-equation argument predicts a solution error
+$O(h^2)$ in $L^1$, $O(h^{3/2})$ in $L^2$ and $O(h)$ in $L^\infty$ when the boundary is
+characteristic, and $O(h^2)$ when it is not; a gas-dynamics wall is
+characteristic for particle paths but mostly not for sound waves, so
+intermediate rates are expected and measured: second order in $L^1$ for smooth
+2-D and 3-D acoustic problems. Fluxes come from an unsplit Godunov method in
+primitive variables with fourth-order limited slopes, flattening and
+artificial viscosity; states at covered faces are extrapolated along the
+boundary normal so that a small cell relaxes towards a locally constant state
+around it. The small-cell instability is removed by hybridization with a
+non-conservative divergence and [redistribution](/methods/redistribution.md).
+
+## Later assessments
+
+[Mittal & Iaccarino (2005)](/sources/mittal-2005.md) credit the cut-cell
+approach with being "globally as well as locally second-order accurate" and
+exactly conservative for mass and momentum (Ye et al.'s version), but judge
+its extension to three dimensions nontrivial because of complex polyhedral
+cells; [Mittal et al. (2008)](/sources/mittal-2008.md), §1, repeat that a
+3-D cut-cell implementation had not been accomplished in their line of work
+and choose [ghost cells](/methods/ghost-cell-method.md). [Ghias et al. (2007)](/sources/ghias-2007.md),
+§1, describe Colella's method as globally second order but locally first
+order near the boundary, adequate for inviscid flows without boundary layers.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1–§4.
 - [Ye et al. (1999)](/sources/ye-1999.md) — §1–§3, Appendix.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — discrete-forcing section (cut cells).
+- [Colella et al. (2006)](/sources/colella-2006.md) — §1–§5.
+- [Ghias et al. (2007)](/sources/ghias-2007.md) — §1.
+- [Mittal et al. (2008)](/sources/mittal-2008.md) — §1.

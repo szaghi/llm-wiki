@@ -67,11 +67,11 @@ as submitted, ref. 5 as to appear.
 
 # Pages created or updated
 
-Chunk 1 (2026-11-08). This source is cited on:
+Chunk 1 (2026-11-08), list updated in chunk 2 (2026-11-08). This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Immersed boundary method](/definitions/immersed-boundary-method.md)
 - [Sharp and diffuse interface representations](/definitions/sharp-and-diffuse-interface.md)
 - [Feedback forcing](/methods/feedback-forcing.md)
-- [Volume penalization](/methods/volume-penalization.md)
+- [Volume penalization (Brinkman penalization)](/methods/volume-penalization.md)
 - [Convergence of volume penalization](/results/convergence-of-volume-penalization.md)

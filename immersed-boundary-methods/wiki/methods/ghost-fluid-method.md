@@ -5,7 +5,7 @@ description: "Sharp-interface Eulerian method for multimaterial compressible flo
 status: established
 aliases: [GFM, ghost fluid method (Fedkiw), boundary-condition capturing with ghost cells]
 tags: [ghost-fluid, sharp-interface, level-set, compressible, multimaterial, ghost-cell]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Ghost fluid method
@@ -74,6 +74,21 @@ unmodified interior scheme can be applied — is a ghost-cell boundary
 treatment; Fedkiw et al. (§4) motivate it from the reflection condition of a
 solid wall, the case of an immersed rigid body.
 
+## Descendants for solid walls
+
+[Tseng & Ferziger (2003)](/sources/tseng-2003.md), §1, place the
+[ghost-cell immersed boundary method](/methods/ghost-cell-method.md) in the
+line of the ghost fluid method, citing also its use by Gibou et al. for a
+variable-coefficient Poisson equation on irregular domains.
+[Ghias et al. (2007)](/sources/ghias-2007.md), §2.5, and
+[Mittal et al. (2008)](/sources/mittal-2008.md), §1, contrast their
+normal-direction image-point interpolation with Gibou et al.'s ghost-fluid
+extrapolation along Cartesian directions, which becomes ill conditioned for
+small distances and falls back to first order.
+
 # Citations
 
 - [Fedkiw et al. (1999)](/sources/fedkiw-1999.md) — §1–§5, Appendix.
+- [Tseng & Ferziger (2003)](/sources/tseng-2003.md) — §1.
+- [Ghias et al. (2007)](/sources/ghias-2007.md) — §2.5.
+- [Mittal et al. (2008)](/sources/mittal-2008.md) — §1.

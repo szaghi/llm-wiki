@@ -5,7 +5,7 @@ description: "The classification of immersed boundary methods by whether the bou
 status: established
 aliases: [sharp interface, diffuse interface, smeared boundary, sharp-interface method, diffused-interface method]
 tags: [immersed-boundary, classification, accuracy]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Sharp and diffuse interface representations
@@ -61,6 +61,21 @@ mixes information from both sides through a smoothing kernel.
   move through the grid without jumps in the interpolated velocity or the
   applied force as Lagrangian points cross grid lines.
 
+## Tracking versus representation
+
+[Mittal & Iaccarino (2005)](/sources/mittal-2005.md) separate how a method
+*tracks* the boundary from how it *represents* its effect: Peskin's method
+tracks a sharp Lagrangian boundary but represents it diffusely; cut-cell and
+ghost-cell methods are sharp in both; volume-of-fluid is diffuse in both. In
+their account the smoothing of continuous forcing prevents a sharp boundary,
+"especially undesirable for high Reynolds number flows", while discrete forcing
+with direct imposition keeps it sharp and decouples the solid nodes from the
+fluid. [Ghias et al. (2007)](/sources/ghias-2007.md), §1, and
+[Mittal et al. (2008)](/sources/mittal-2008.md), §1, define a diffuse boundary
+as one where the condition "is not precisely satisfied at its actual location
+but within a localized region around the boundary". Smearing also has a
+benefit: diffuse methods have no [fresh-cell problem](/definitions/fresh-cell-problem.md).
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §III.B.
@@ -73,3 +88,6 @@ mixes information from both sides through a smoothing kernel.
 - [Fadlun et al. (2000)](/sources/fadlun-2000.md) — §2.3.
 - [Kim et al. (2001)](/sources/kim-2001.md) — §2.2.
 - [Peskin (2002)](/sources/peskin-2002.md) — §6.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous- and discrete-forcing sections, moving boundaries.
+- [Ghias et al. (2007)](/sources/ghias-2007.md) — §1.
+- [Mittal et al. (2008)](/sources/mittal-2008.md) — §1.

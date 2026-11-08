@@ -5,7 +5,7 @@ description: "Fictitious-domain immersed boundary method that solves the flow eq
 status: established
 aliases: [Brinkman penalization, penalization method, L2 penalization, H1 penalization, porous-medium fictitious domain]
 tags: [immersed-boundary, penalization, fictitious-domain, continuous-forcing, incompressible]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Volume penalization (Brinkman penalization)
@@ -58,7 +58,19 @@ discretized penalized viscous term effectively changes the body volume
 (Angot et al. 1999, §6). Since $\eta$ can be taken as small as needed, the
 penalty error is negligible compared with the discretization error (§7).
 
+## Relation to feedback forcing
+
+[Mittal & Iaccarino (2005)](/sources/mittal-2005.md) note that the Brinkman
+force $-(\mu/K)\mathbf u$, with permeability $K$ infinite in the fluid and zero in the
+solid (dimensionless, $K\leftrightarrow\eta$ and $\chi_s$ marks where $K$ is small), is feedback forcing with $\alpha_f=0$ and $\beta_f=-\mu/K$, subject to the same
+stiffness from the large variation of $K$; in practice $K$ is large but finite in
+the fluid, small in the solid and smoothed across $\Gamma$, which leaves an error
+in the wall velocity. They contrast it with the fictitious-domain method of
+Glowinski et al., which treats the solid as a fluid under a rigidity
+constraint.
+
 # Citations
 
 - [Goldstein et al. (1993)](/sources/goldstein-1993.md) — introduction (point forcing that Angot et al. contrast).
 - [Angot et al. (1999)](/sources/angot-1999.md) — §1, §3–§7.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous-forcing section (rigid boundaries).

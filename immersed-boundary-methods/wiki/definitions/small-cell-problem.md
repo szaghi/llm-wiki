@@ -5,7 +5,7 @@ description: "The stability defect of explicit cut-cell (embedded-boundary) fini
 status: established
 aliases: [small cell problem, arbitrarily small cells, cut-cell stability]
 tags: [cut-cell, embedded-boundary, stability, conservation]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Small-cell problem
@@ -37,7 +37,24 @@ conditioning problem instead: the irregular cells destroy the diagonal
 dominance of the pressure operator and slow the iterative solver
 ([Ye et al. 1999](/sources/ye-1999.md), §2).
 
+## Quantified, and its counterparts
+
+[Colella et al. (2006)](/sources/colella-2006.md), §2, state the constraint
+of an explicit conservative update as $\Delta t=O\big(h\,\kappa_{\max}^{1/D}/v_{\max}\big)$, with
+$D$ the dimension and $v_{\max}$ the maximum wave speed, and list merging,
+special stencils (h-box) and algebraic redistribution as the cures.
+[Ghias et al. (2007)](/sources/ghias-2007.md), §1, note that the problem
+combines arbitrarily small cells with high inviscid velocities in them, and
+that a [ghost-cell method](/methods/ghost-cell-method.md) avoids it because
+cell sizes are not changed by the boundary. In finite elements the same
+geometry makes the system matrix ill conditioned and the Nitsche formulation
+unstable when a cut element barely intersects the domain; [CutFEM](/methods/cutfem.md)
+removes it with a ghost penalty ([Burman et al. 2015](/sources/burman-2015.md), §3).
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1, §2.6.
 - [Ye et al. (1999)](/sources/ye-1999.md) — §2 (inclusion of immersed boundaries; pressure solver).
+- [Colella et al. (2006)](/sources/colella-2006.md) — §2.
+- [Ghias et al. (2007)](/sources/ghias-2007.md) — §1.
+- [Burman et al. (2015)](/sources/burman-2015.md) — §3.

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: Eulerian and Lagrangian descriptions, the immersed boundary and its configuration, regularized delta functions and the spreading and interpolation operators, forcing, penalization, cut-cell geometry and redistribution, interface jumps, level sets and ghost states, and the compressible-flow symbols; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-11-08T21:30:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Notation registry
@@ -89,6 +89,9 @@ $[w]=w^+-w^-$.
 | $M_\Gamma(\mathbf s)$ | Lagrangian mass density of the structure |
 | $T$, $k_s$, $\ell_0$ | fibre tension, spring stiffness, rest length |
 | $\mathbf u_\Gamma$ | prescribed velocity of the boundary (the target velocity of a forcing scheme) |
+| $\mathbf u_c$, $\boldsymbol\omega_c$, $\mathbf x_c$ | translational velocity, angular velocity and centre of a rigid body (particle); $\mathbf u_\Gamma=\mathbf u_c+\boldsymbol\omega_c\times(\mathbf X-\mathbf x_c)$ |
+| $\mathbf x_{BI}$, $\mathbf x_{IP}$, $\Delta l$ | boundary intercept (foot of the normal from a ghost point), image point in the fluid, ghost-to-image distance |
+| $\mathbf f_b$, $[L]$, $[L']$ | forcing of the whole flow system and the unmodified and modified discrete operators in the continuous/discrete forcing classification |
 
 ## Coupling operators
 

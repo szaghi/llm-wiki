@@ -5,7 +5,7 @@ description: "A singular interface force represented with a regularized delta fu
 status: established
 aliases: [first-order accuracy of the immersed boundary method, smearing error of discrete delta functions]
 tags: [accuracy, delta-function, diffuse-interface, immersed-interface]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # First-order accuracy of regularized-delta forcing at interfaces
@@ -49,9 +49,25 @@ Sharp treatments — jump-corrected stencils
 §2.3, where volume-fraction weighting is first order and reconstruction
 second order) — recover second order.
 
+## Further evidence
+
+- *Measured.* [Taira & Colonius (2007)](/sources/taira-2007.md), §5: with
+  the 3-point kernel, the $L^\infty$ error of a 1-D Stokes problem is first
+  order (the smearing acts near the plate) while the $L^2$ error is second
+  order; for flow between two concentric cylinders the rates are 1 in
+  $L^\infty$ and about $1.5$ in $L^2$. The authors expected first order from the
+  delta function and could not explain why second order is not reached in
+  $L^2$.
+- *Consistent.* [Uhlmann (2005)](/sources/uhlmann-2005.md), §5, measures
+  second order for decaying vortices whose exact solution is smooth across the
+  embedded circle — the setting in which $\delta_h$ interpolates to second order —
+  while the cylinder drag is overpredicted by about 10 %.
+
 # Citations
 
 - [LeVeque & Li (1994)](/sources/leveque-1994.md) — §1, §5 Example 1, Table 1.
 - [Ye et al. (1999)](/sources/ye-1999.md) — §1, §3.
 - [Fadlun et al. (2000)](/sources/fadlun-2000.md) — §2.3.
 - [Peskin (2002)](/sources/peskin-2002.md) — §6, §8.
+- [Uhlmann (2005)](/sources/uhlmann-2005.md) — §5.
+- [Taira & Colonius (2007)](/sources/taira-2007.md) — §5.

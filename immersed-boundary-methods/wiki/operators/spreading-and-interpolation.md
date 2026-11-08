@@ -6,7 +6,7 @@ status: established
 symbol: "$\\mathcal S$, $\\mathcal J$"
 aliases: [force spreading, velocity interpolation, interaction equations, Lagrangian–Eulerian transfer]
 tags: [immersed-boundary, coupling-operator, conservation, delta-function]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Spreading and interpolation operators $\mathcal S$, $\mathcal J$
@@ -64,7 +64,22 @@ whole scheme conserves them depends on the fluid solver
   equally consistent; the fixed-point iteration converges when
   $u_{\max}\Delta t<h/4$, which he takes as a necessary accuracy condition.
 
+## Symmetric operators in later methods
+
+[Taira & Colonius (2007)](/sources/taira-2007.md), §3.2, scale the
+regularization operator $H$ (spreading) and the interpolation operator $E$ so
+that $E=H^{\mathsf T}$, the discrete form of adjointness; symmetry is not needed
+for consistency but makes the projection system symmetric positive-definite
+([IB projection method](/methods/immersed-boundary-projection-method.md), solved by
+conjugate gradients). [Uhlmann (2005)](/sources/uhlmann-2005.md), §3, relies
+on the unit-sum and first-moment conditions so that the force and torque added
+to the fluid equal those computed at the Lagrangian points, and obtains the
+hydrodynamic force on a particle from the summed coupling force plus the rate
+of change of fluid momentum inside the particle.
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §III.B, §III.D, eqs. (3.21)–(3.26).
 - [Peskin (2002)](/sources/peskin-2002.md) — §2, §4, §5, §8.
+- [Uhlmann (2005)](/sources/uhlmann-2005.md) — §3, §4.
+- [Taira & Colonius (2007)](/sources/taira-2007.md) — §3.2.

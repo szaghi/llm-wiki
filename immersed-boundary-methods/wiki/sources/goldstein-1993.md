@@ -73,12 +73,12 @@ is entered as Bar-Lev.
 
 # Pages created or updated
 
-Chunk 1 (2026-11-08). This source is cited on:
+Chunk 1 (2026-11-08), list updated in chunk 2 (2026-11-08). This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Immersed boundary method](/definitions/immersed-boundary-method.md)
 - [Sharp and diffuse interface representations](/definitions/sharp-and-diffuse-interface.md)
 - [Classical (Peskin) immersed boundary method](/methods/classical-immersed-boundary-method.md)
 - [Feedback forcing](/methods/feedback-forcing.md)
-- [Volume penalization](/methods/volume-penalization.md)
-- [Regularized delta function](/operators/regularized-delta-function.md)
+- [Volume penalization (Brinkman penalization)](/methods/volume-penalization.md)
+- [Regularized delta function $\delta_h$](/operators/regularized-delta-function.md)

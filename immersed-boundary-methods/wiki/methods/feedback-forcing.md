@@ -5,7 +5,7 @@ description: "Continuous-forcing immersed boundary method that drives the fluid 
 status: established
 aliases: [virtual boundary method, Goldstein forcing, proportional-integral forcing, two-mode controller forcing]
 tags: [immersed-boundary, continuous-forcing, stiffness, diffuse-interface, spectral]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Feedback forcing
@@ -65,9 +65,25 @@ stability penalty by solving the discrete momentum equation for the force
 that must be extended to the volume of the body at high Reynolds numbers
 ([volume penalization](/methods/volume-penalization.md)).
 
+## Later assessments
+
+[Mittal & Iaccarino (2005)](/sources/mittal-2005.md) view the spring model of
+rigid bodies, $\mathbf F=-k_s(\mathbf X-\mathbf X_e)$ with an equilibrium position $\mathbf X_e$,
+as a special case of feedback forcing and the latter, after Iaccarino and
+Verzicco, as a damped oscillator: promising at low Reynolds numbers, but large
+$\alpha_f$, $\beta_f$ bring stability problems in highly unsteady flows.
+[Uhlmann (2005)](/sources/uhlmann-2005.md), §1, calls it the "virtual
+boundary method": virtual springs and dampers whose stiffness and damping are
+problem dependent and whose time scales must be resolved. Taira and Colonius
+(2007, §4.1) quote CFL numbers of $O(10^{-3})$ to $O(10^{-1})$ for cylinders
+with such forcing.
+
 # Citations
 
 - [Goldstein et al. (1993)](/sources/goldstein-1993.md) — introduction, formulation, spectral implementation, examples (the OCR text carries no section numbers).
 - [Angot et al. (1999)](/sources/angot-1999.md) — §1.
 - [Fadlun et al. (2000)](/sources/fadlun-2000.md) — §1, §2.1, §2.4.
 - [Kim et al. (2001)](/sources/kim-2001.md) — §1.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous-forcing section (rigid boundaries).
+- [Uhlmann (2005)](/sources/uhlmann-2005.md) — §1.
+- [Taira & Colonius (2007)](/sources/taira-2007.md) — §4.1.

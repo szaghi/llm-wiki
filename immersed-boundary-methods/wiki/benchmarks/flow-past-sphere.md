@@ -5,7 +5,7 @@ description: "Three-dimensional and axisymmetric flow around a sphere at Re of o
 status: established
 aliases: [sphere wake, sphere]
 tags: [benchmark, incompressible, separation, three-dimensional, validation]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Flow past a sphere
@@ -27,7 +27,21 @@ boundary represents the wall ([Fadlun et al. 2000](/sources/fadlun-2000.md), §3
 - [Kim et al. (2001)](/sources/kim-2001.md), §3.3: direct forcing with mass
   source, results in agreement with previous numerical and experimental data.
 
+## Later uses
+
+- [Mittal et al. (2008)](/sources/mittal-2008.md), §3: [ghost cell](/methods/ghost-cell-method.md),
+  stationary sphere $Re=100$–$350$ on a $16d\times15d\times15d$ domain, with the
+  steady axisymmetric, steady non-axisymmetric and unsteady regimes, compared
+  with Johnson and Patel and Marella et al.; suddenly accelerated sphere.
+- [Uhlmann (2005)](/sources/uhlmann-2005.md), §5: a single sphere settling
+  under gravity, then the sedimentation of 1000 spheres.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) cite LES of a sphere at
+  $Re=3700$ and $10^4$ (Yun et al.) with Kim et al.'s forcing and mass source.
+
 # Citations
 
 - [Fadlun et al. (2000)](/sources/fadlun-2000.md) — §3.2.
 - [Kim et al. (2001)](/sources/kim-2001.md) — §3.3.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — applications.
+- [Uhlmann (2005)](/sources/uhlmann-2005.md) — §5.
+- [Mittal et al. (2008)](/sources/mittal-2008.md) — §3.

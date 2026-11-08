@@ -6,6 +6,69 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 2 — 2003–2015: ghost cells, embedded boundaries, projection, ILW, CutFEM (2026-11-08)
+
+Sources (10): tseng-2003, mittal-2005, uhlmann-2005, colella-2006,
+ghias-2007, taira-2007, mittal-2008, tan-2010, chaudhuri-2011, burman-2015.
+20 of 57 ingested, 24 concept pages plus the registry, 609 bibliography
+entries.
+
+### Decisions for the human
+
+1. **Versions read that are not the version of record.** uhlmann-2005 was
+   read from arXiv:1809.08170v1 (a 2018 posting of the published paper);
+   colella-2006 from an author preprint with the published title and
+   abstract. Metadata are the published identities.
+2. **Reconstructed formula.** The hybrid update and redistribution of
+   colella-2006 are written in registry form from the paper's prose because
+   the text layer of the version read garbles the equations
+   (methods/redistribution); a visual check of the printed equations would
+   confirm the sign convention of $\delta\mathbf M$.
+3. **Reading depth** as in chunk 1: methods in full, results for set-up,
+   tables and conclusions.
+
+### Contradictions
+
+None opened. Points of view recorded as such, not as contradictions:
+tseng-2003 calls spreading and local reconstruction "equivalent", while
+mittal-2005 and ghias-2007 distinguish diffuse from sharp forcing; ghias-2007
+calls colella-2006 "locally first-order", consistent with colella-2006's own
+$O(h)$ truncation error and $O(h)$ $L^\infty$ error at the boundary.
+
+### Identity and metadata
+
+- mittal-2008: Crossref gives the fourth author as "Najjar F."; page 1 prints
+  F.M. Najjar.
+- burman-2015: published online 29 Dec 2014, issue 2015 (slug uses 2015).
+- chaudhuri-2011: the abstract describes the image-point interpolation as "a
+  local quadratic scheme" while §2.2 uses inverse-distance weighting; the
+  pages record both.
+
+### Bibliography decisions taken
+
+- Same key, different works (aliased): verzicco-2000-b (LES with boundary
+  body forces), verzicco-1996-b (cylindrical finite-difference scheme),
+  liu-1998-b (preconditioned multigrid), quirk-1994-b (Computers & Fluids),
+  beyer-1992-b (Beyer–LeVeque SINUM), lee-2003-b (Lee–LeVeque IIM),
+  mittal-1999-b (spectral collocation for spheres), mittal-2002-c (sphere
+  wake symmetry), fedkiw-2002-b (book chapter), iaccarino-2003-b (CTR brief),
+  peskin-1972-b (thesis, also via chaudhuri-2011), and the Mittal 1997 pair
+  printed in swapped suffix order by ghias-2007.
+- fauci-1994 kept under the year printed by peskin-2002 although Bull. Math.
+  Biol. 57 is the 1995 volume (note on the entry); a re-key to fauci-1995
+  is the human's call.
+- khadra-2000 (published) and khadra-1999 (submitted form cited by
+  angot-1999) kept distinct.
+- Software entries GetFEM++ and LifeV keyed getfem-2014 and lifev-2014.
+- patankar-2001: first page printed 185 by uhlmann-2005 and 197 in the
+  mittal-2005 deposit; merged as one work with a note.
+
+### Bundle fit
+
+All ten fit. burman-2015 (finite elements) and tan-2010 (high-order finite
+differences) extend the bundle beyond Cartesian finite volumes, as the
+archive intends.
+
 ## Chunk 1 — the founding papers, 1972–2002 (2026-11-08)
 
 Sources (10): peskin-1972, goldstein-1993, leveque-1994, pember-1995,

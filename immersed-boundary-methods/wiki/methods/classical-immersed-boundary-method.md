@@ -5,7 +5,7 @@ description: "Peskin's formulation of fluid–structure interaction: an elastic 
 status: established
 aliases: [Peskin's method, immersed boundary method (Peskin), IB method for fluid–structure interaction, continuous forcing with elastic boundaries]
 tags: [immersed-boundary, fluid-structure-interaction, delta-function, diffuse-interface, incompressible, stiffness]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:08:00Z
 ---
 
 # Classical (Peskin) immersed boundary method
@@ -99,6 +99,18 @@ flight.
   instead ([feedback forcing](/methods/feedback-forcing.md),
   [direct forcing](/methods/direct-forcing.md)).
 
+## Rigid bodies and the stiffness of tethers
+
+For rigid bodies the elastic laws are "not generally well posed in the rigid
+limit"; the body is tethered to equilibrium positions $\mathbf X_e$ by springs,
+$\mathbf F=-k_s(\mathbf X-\mathbf X_e)$. Large $k_s$ gives a stiff system with severe stability
+limits (Lai and Peskin 2000; Stockie and Wetton), small $k_s$ spurious
+elastic deviations ([Mittal & Iaccarino 2005](/sources/mittal-2005.md)).
+In the algebraic view of [Taira & Colonius (2007)](/sources/taira-2007.md),
+§4.1, the spring is a $(3,3)$ block $k_s^{-1}$ in the
+[IB projection](/methods/immersed-boundary-projection-method.md) system, which
+vanishes in the rigid limit $k_s\to\infty$ that their method imposes exactly.
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §II–§VI.
@@ -106,3 +118,5 @@ flight.
 - [LeVeque & Li (1994)](/sources/leveque-1994.md) — §1 (IB as motivation of the IIM).
 - [Fadlun et al. (2000)](/sources/fadlun-2000.md) — §1.
 - [Peskin (2002)](/sources/peskin-2002.md) — §2–§9.
+- [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous-forcing section.
+- [Taira & Colonius (2007)](/sources/taira-2007.md) — §4.1.
