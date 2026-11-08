@@ -5,7 +5,7 @@ description: "Unfitted finite element framework in which the geometry is represe
 status: established
 aliases: [cut finite element method, unfitted Nitsche method, Nitsche fictitious domain method]
 tags: [cutfem, finite-element, nitsche, ghost-penalty, unfitted, level-set, small-cell]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # CutFEM (cut finite element method)
@@ -66,6 +66,16 @@ volume fraction $\kappa$ and the small cells of the
 role that [redistribution](/methods/redistribution.md) and cell merging play
 there.
 
+## Criticism
+
+[Main & Scovazzi (2018)](/sources/main-2018.md), §1, list the costs that
+motivate the [shifted boundary method](/methods/shifted-boundary-method.md):
+cut-element geometry and quadrature take a non-negligible share of run time,
+and the ghost penalty, while it cures small cut elements, may be delicate in
+nonlinear problems, affect conditioning and enlarge the stencil of low-order
+elements.
+
 # Citations
 
 - [Burman et al. (2015)](/sources/burman-2015.md) — §1–§6.
+- [Main & Scovazzi (2018)](/sources/main-2018.md) — §1.

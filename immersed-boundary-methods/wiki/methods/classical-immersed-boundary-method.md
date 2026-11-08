@@ -5,7 +5,7 @@ description: "Peskin's formulation of fluid–structure interaction: an elastic 
 status: established
 aliases: [Peskin's method, immersed boundary method (Peskin), IB method for fluid–structure interaction, continuous forcing with elastic boundaries]
 tags: [immersed-boundary, fluid-structure-interaction, delta-function, diffuse-interface, incompressible, stiffness]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Classical (Peskin) immersed boundary method
@@ -111,6 +111,22 @@ In the algebraic view of [Taira & Colonius (2007)](/sources/taira-2007.md),
 [IB projection](/methods/immersed-boundary-projection-method.md) system, which
 vanishes in the rigid limit $k_s\to\infty$ that their method imposes exactly.
 
+## Immersed finite elements and the review of 2020
+
+[Griffith & Patankar (2020)](/sources/griffith-2020.md) review immersed
+methods for elastic structures and prescribed kinematics two decades after
+Peskin (2002). Structures may be fibre models or finite-strain continua
+discretized by finite elements (the immersed finite-element method of Zhang et
+al. and Boffi et al.'s hyperelastic formulation); with nodal quadrature the
+coupling operators are adjoint, and markers too far apart leak, while Gaussian
+quadrature (Griffith and Luo) allows a structural mesh coarse relative to the
+fluid grid. Regularized-delta methods are "broadly applicable but lower-order
+accurate" and give slowly converging force distributions; poor volume
+conservation of the immersed finite-element method in large-deformation
+benchmarks was largely resolved later. Prescribed kinematics are imposed with
+distributed Lagrange multipliers or penalty forces. Applications reach
+$Re\approx20{,}000$ in heart valves, jellyfish and fish swimming.
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §II–§VI.
@@ -120,3 +136,4 @@ vanishes in the rigid limit $k_s\to\infty$ that their method imposes exactly.
 - [Peskin (2002)](/sources/peskin-2002.md) — §2–§9.
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous-forcing section.
 - [Taira & Colonius (2007)](/sources/taira-2007.md) — §4.1.
+- [Griffith & Patankar (2020)](/sources/griffith-2020.md) — formulations, discretization, benchmarks, summary points.

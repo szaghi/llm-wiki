@@ -5,7 +5,7 @@ description: "Sharp-interface finite-volume method on a Cartesian grid whose cel
 status: established
 aliases: [embedded boundary method, Cartesian cut-cell method, Cartesian grid method, volume-of-fluid boundary representation]
 tags: [cut-cell, embedded-boundary, sharp-interface, finite-volume, conservation, compressible, incompressible]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Cut-cell (embedded-boundary) finite-volume method
@@ -120,6 +120,23 @@ and choose [ghost cells](/methods/ghost-cell-method.md). [Ghias et al. (2007)](/
 §1, describe Colella's method as globally second order but locally first
 order near the boundary, adequate for inviscid flows without boundary layers.
 
+## Moving embedded boundaries
+
+[Natarajan et al. (2022)](/sources/natarajan-2022.md) move the embedded
+boundary through a block-structured adaptive grid (AMReX) for the compressible
+Navier–Stokes equations: unsplit cut cells with hybrid divergence and flux
+redistribution, a Reynolds-transport form for the moving control volume, and a
+flux on the moving boundary face from a Riemann problem whose exterior state is
+the reflection of the cut-cell state with the wall velocity
+([ghost-cell](/methods/ghost-cell-method.md)-type). Freshly cleared cells take a
+volume-weighted average of their valid neighbours
+([fresh-cell problem](/definitions/fresh-cell-problem.md)), a uniform flow
+around a body moving with it is preserved exactly, viscous wall stresses come
+from a third-order least-squares fit, and all cut cells are kept on the finest
+level. The mass error of an oscillating piston in a closed cylinder falls with
+refinement; the entropy error of a receding-piston expansion fan converges at
+first order (§2–§3).
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1–§4.
@@ -128,3 +145,4 @@ order near the boundary, adequate for inviscid flows without boundary layers.
 - [Colella et al. (2006)](/sources/colella-2006.md) — §1–§5.
 - [Ghias et al. (2007)](/sources/ghias-2007.md) — §1.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §1.
+- [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2–§3.

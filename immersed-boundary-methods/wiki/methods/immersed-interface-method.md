@@ -5,7 +5,7 @@ description: "Sharp-interface finite-difference method for problems with discont
 status: established
 aliases: [IIM, LeVeque–Li method]
 tags: [immersed-interface, sharp-interface, elliptic, jump-conditions, finite-difference]
-timestamp: 2026-11-08T17:31:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Immersed interface method
@@ -83,8 +83,19 @@ their finite-volume cut-cell scheme: a finite-difference method altered near
 $\Gamma$ to keep global second order versus a finite-volume method designed
 for second order both locally and globally.
 
+## For the Navier–Stokes equations
+
+[Griffith & Patankar (2020)](/sources/griffith-2020.md) describe immersed
+interface methods for incompressible flow that impose the jumps in pressure and
+in the normal velocity derivative directly (Li and Lai 2001; Kolahdouz et al.
+2019, using only the lowest-order jump conditions), with spreading and
+interpolation operators that incorporate the jumps. They remove the spurious
+interior flow of regularized-delta methods but need more geometry
+computations; adjoint pairs of such operators were still lacking.
+
 # Citations
 
 - [LeVeque & Li (1994)](/sources/leveque-1994.md) — §1–§6.
 - [Ye et al. (1999)](/sources/ye-1999.md) — §2.
 - [Peskin (2002)](/sources/peskin-2002.md) — §6.
+- [Griffith & Patankar (2020)](/sources/griffith-2020.md) — jump conditions, benchmarks, future issues.

@@ -6,6 +6,56 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 3 — 2014–2022: FSI reviews, shifted boundary, state redistribution, moving EB (2026-11-08)
+
+Sources (10): sotiropoulos-2014, main-2018, griffith-2020, berger-2021,
+atallah-2022, giuliani-2022-b, nair-2022, natarajan-2022, ni-2022, ou-2022.
+30 of 57 ingested, 27 concept pages plus the registry, 1186 bibliography
+entries.
+
+### Decisions for the human
+
+1. **Versions read.** Four sources were read from arXiv preprints of the
+   published papers (berger-2021 arXiv:2005.05734v1, giuliani-2022-b
+   arXiv:2112.12360v2, nair-2022 arXiv:2103.06415v1, natarajan-2022
+   arXiv:2108.00126v1) and two from accepted manuscripts (main-2018,
+   atallah-2022); metadata are the published identities.
+2. **Timestamp correction (whole night).** Chunk-2 pages and the step-01
+   registry first carried invented future timestamps; step 02 was re-snapped
+   with real-clock times. Step 01's tree still holds notation.md with
+   21:30Z, corrected by step 02.
+
+### Contradictions
+
+None opened. Recorded as a qualified difference: griffith-2020 states that
+immersed formulations "do not appear to suffer" added-mass instabilities even
+with explicit coupling, while uhlmann-2005 measures a density-ratio limit for
+explicit coupling of rigid particles and sotiropoulos-2014 reviews the
+added-mass problem of loose coupling (methods/fluid-structure-coupling).
+
+### Identity and metadata
+
+- giuliani-2022-b is the JCP paper of September 2022; the SISC paper of
+  February 2022 (chunk 4) is giuliani-2022 by publication order.
+
+### Bibliography decisions taken
+
+- 30 same-key, different-work aliases, among them liu-1998-c (insect
+  flight), kang-2009-b, burman-2010-b (ghost penalty), xu-2006 pair printed
+  in swapped order by griffith-2020, berger-1989 pair swapped in
+  natarajan-2022, berger-1984-b (Berger–Oliger), liu-2003-b, wang-2020-b/-c,
+  yang-2012-c (deposited twice by ni-2022).
+- 7 same-work merges, e.g. berger-2015 → berger-2016 (year variant noted),
+  hansbo-2002, nitsche-1971, arnold-2002, AMReX zhang-2021.
+- noh-1963 (CEL report year in natarajan-2022) kept apart from noh-1964
+  (book chapter in pember-1995); a merge is the human's call.
+
+### Bundle fit
+
+All ten fit. ni-2022 (material point method) and ou-2022 (reacting low-Mach
+flow) are application-driven but contribute named coupling and ghost-cell
+variants.
+
 ## Chunk 2 — 2003–2015: ghost cells, embedded boundaries, projection, ILW, CutFEM (2026-11-08)
 
 Sources (10): tseng-2003, mittal-2005, uhlmann-2005, colella-2006,

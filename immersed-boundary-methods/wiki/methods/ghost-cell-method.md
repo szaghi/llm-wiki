@@ -5,7 +5,7 @@ description: "Sharp-interface discrete-forcing method that assigns values to gho
 status: established
 aliases: [GCIBM, ghost-cell IBM, ghost-point method, image-point method, hybrid Cartesian immersed boundary, HCIB]
 tags: [ghost-cell, sharp-interface, discrete-forcing, reconstruction, compressible, incompressible]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Ghost-cell immersed boundary method
@@ -105,6 +105,30 @@ step ([fresh-cell problem](/definitions/fresh-cell-problem.md)). Mittal et
 al. (2008) handle 3-D moving and deforming bodies, infinitely thin plates and
 membranes (ghost cells on both sides), and a video-reconstructed fish fin.
 
+## Later variants
+
+- **Directional ghost values.** [Ou et al. (2022)](/sources/ou-2022.md), §2,
+  give each ghost point one value per coordinate direction, each reconstructed
+  in 1-D along that grid line with the boundary condition imposed at the line's
+  intersection with $\Gamma$, as at a real domain boundary; no normals or image
+  points are needed, Dirichlet, Neumann and Robin conditions (including
+  surface-reaction coefficients) enter a Taylor-series extrapolation, and a
+  first-order fallback handles fluid points too close to the intersection. With
+  a sixth-order interior scheme reduced to fourth and fifth order next to the
+  boundary, the local error converges at nearly second order for all three
+  condition types.
+- **Ghost states for moving boundary faces.** [Natarajan et al. (2022)](/sources/natarajan-2022.md)
+  compute the flux on a moving embedded-boundary face from a Riemann problem
+  with a reflected ghost state whose normal velocity is $2\mathbf u_\Gamma\cdot\mathbf n-u_n$.
+- **Boundary cells without normals.** [Ni et al. (2022)](/sources/ni-2022.md)
+  treat the cells occupied by material points next to the fluid as ghost cells
+  whose velocity is set to the structure's
+  ([fluid–structure coupling](/methods/fluid-structure-coupling.md)).
+- **Curvilinear background grids.** [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md),
+  §3, review the curvilinear immersed boundary (CURVIB) method, which
+  reconstructs velocities at immersed-boundary nodes along the normal on a
+  curvilinear background grid, used for heart valves and biological flows.
+
 # Citations
 
 - [Tseng & Ferziger (2003)](/sources/tseng-2003.md) — §1, §2.2–2.6, §3.
@@ -112,3 +136,7 @@ membranes (ghost cells on both sides), and a video-reconstructed fish fin.
 - [Ghias et al. (2007)](/sources/ghias-2007.md) — §1, §2.4, §2.5, §3.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §1, §2.2, §3.
 - [Chaudhuri et al. (2011)](/sources/chaudhuri-2011.md) — §2.2, §3.
+- [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md) — §3.
+- [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2.
+- [Ni et al. (2022)](/sources/ni-2022.md) — §5.
+- [Ou et al. (2022)](/sources/ou-2022.md) — §2–§3.

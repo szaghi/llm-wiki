@@ -5,7 +5,7 @@ description: "A singular interface force represented with a regularized delta fu
 status: established
 aliases: [first-order accuracy of the immersed boundary method, smearing error of discrete delta functions]
 tags: [accuracy, delta-function, diffuse-interface, immersed-interface]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # First-order accuracy of regularized-delta forcing at interfaces
@@ -63,6 +63,12 @@ second order) — recover second order.
   embedded circle — the setting in which $\delta_h$ interpolates to second order —
   while the cylinder drag is overpredicted by about 10 %.
 
+- *Stated, 2020.* [Griffith & Patankar (2020)](/sources/griffith-2020.md):
+  regularized-kernel methods "appear to be limited to lower-order accuracy at
+  fluid–structure interfaces because they smooth stress discontinuities", and
+  give slowly converging interface forces; methods built on the jump
+  conditions improve velocity, deformation and stress accuracy.
+
 # Citations
 
 - [LeVeque & Li (1994)](/sources/leveque-1994.md) — §1, §5 Example 1, Table 1.
@@ -71,3 +77,4 @@ second order) — recover second order.
 - [Peskin (2002)](/sources/peskin-2002.md) — §6, §8.
 - [Uhlmann (2005)](/sources/uhlmann-2005.md) — §5.
 - [Taira & Colonius (2007)](/sources/taira-2007.md) — §5.
+- [Griffith & Patankar (2020)](/sources/griffith-2020.md) — introduction, summary points.

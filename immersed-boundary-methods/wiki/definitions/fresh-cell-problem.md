@@ -5,7 +5,7 @@ description: "In sharp-interface immersed boundary methods with moving bodies, a
 status: established
 aliases: [freshly cleared cells, fresh cells, emerging cells]
 tags: [moving-boundary, sharp-interface, ghost-cell, cut-cell]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Fresh-cell problem
@@ -37,7 +37,15 @@ Methods with continuous forcing do not meet the problem: spreading the
 boundary over a few cells on both sides gives a smooth transition between
 solid and fluid (Mittal & Iaccarino 2005, moving-boundary section).
 
+## In moving embedded boundaries
+
+[Natarajan et al. (2022)](/sources/natarajan-2022.md), §2, initialize the
+conserved state of a freshly cleared cut cell with a volume-weighted average of
+the valid cells around it, and show that a uniform flow with a body moving at
+the flow velocity is then preserved exactly.
+
 # Citations
 
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — moving-boundary section.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §2.2.
+- [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2.

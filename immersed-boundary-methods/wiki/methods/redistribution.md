@@ -5,7 +5,7 @@ description: "Stabilization of explicit cut-cell finite-volume schemes that take
 status: established
 aliases: [redistribution, algebraic redistribution, mass-weighted redistribution, flux redistribution]
 tags: [cut-cell, embedded-boundary, conservation, stability, small-cell]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Flux redistribution for cut cells
@@ -75,7 +75,19 @@ here in registry form from the paper's description; the version read prints
 the formulas in a garbled text layer ([Colella et al. 2006](/sources/colella-2006.md),
 Version read).
 
+## Assessment and successor
+
+[Berger & Giuliani (2021)](/sources/berger-2021.md), §1, credit flux
+redistribution with being simple and already used in 3-D, but note that it is
+only first-order accurate at the cut cells and not linearity preserving; their
+[state redistribution](/methods/state-redistribution.md) redistributes states
+instead. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §2, use the
+hybrid divergence of Colella et al. with volume-weighted redistribution
+($\sum_{\mathbf j}\kappa_{\mathbf j}w_{\mathbf j}=1$) for moving embedded boundaries.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1, §2.6, §3.
 - [Colella et al. (2006)](/sources/colella-2006.md) — §2 (stable evolution, redistribution).
+- [Berger & Giuliani (2021)](/sources/berger-2021.md) — §1.
+- [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2.

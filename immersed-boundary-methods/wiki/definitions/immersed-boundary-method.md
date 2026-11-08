@@ -5,7 +5,7 @@ description: "A family of methods that solve the flow equations on a grid that d
 status: established
 aliases: [IB method, IBM, immersed boundary technique, Cartesian grid method, non-boundary-conforming method, fictitious domain method, embedded boundary method]
 tags: [immersed-boundary, classification, cartesian-grid]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Immersed boundary method
@@ -115,6 +115,24 @@ boundary layer.
 | [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md) | high-order ghost values from the PDE and boundary data | [Tan & Shu (2010)](/sources/tan-2010.md) |
 | [CutFEM](/methods/cutfem.md) | unfitted finite elements, Nitsche conditions, ghost penalty | [Burman et al. (2015)](/sources/burman-2015.md) |
 
+## Terminology and the families of 2014–2022
+
+The words are not used consistently. [Main & Scovazzi (2018)](/sources/main-2018.md),
+§1, reserve *immersed boundary* for methods that solve the equations inside
+and outside the body with a boundary forcing (interpretable as penalty methods)
+and *embedded boundary* for methods that solve only in the physical domain,
+noting that the literature uses the two "interchangeably". [Natarajan et al. (2022)](/sources/natarajan-2022.md),
+§1, keep Mittal and Iaccarino's inclusive use. [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md),
+§3, classify the family into diffused-interface methods (classic, direct
+forcing, penalization) and sharp-interface methods (cut cell, immersed
+interface, hybrid Cartesian–immersed boundary, curvilinear immersed boundary).
+
+| family | idea | sources |
+|---|---|---|
+| [shifted boundary](/methods/shifted-boundary-method.md) | boundary conditions shifted by Taylor expansion to a surrogate boundary of mesh faces | [Main & Scovazzi (2018)](/sources/main-2018.md), [Atallah et al. (2022)](/sources/atallah-2022.md) |
+| [state redistribution](/methods/state-redistribution.md) | cut cells stabilized by overlapping merged neighbourhoods | [Berger & Giuliani (2021)](/sources/berger-2021.md), [Giuliani et al. (2022b)](/sources/giuliani-2022-b.md) |
+| [fluid–structure coupling](/methods/fluid-structure-coupling.md) | loose and strong coupling with deformable structures | [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md), [Griffith & Patankar (2020)](/sources/griffith-2020.md), [Nair & Goza (2022)](/sources/nair-2022.md), [Ni et al. (2022)](/sources/ni-2022.md) |
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §I, §VI.
@@ -136,3 +154,7 @@ boundary layer.
 - [Tan & Shu (2010)](/sources/tan-2010.md) — §1.
 - [Chaudhuri et al. (2011)](/sources/chaudhuri-2011.md) — §1.
 - [Burman et al. (2015)](/sources/burman-2015.md) — §1.
+- [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md) — §1, §3.
+- [Main & Scovazzi (2018)](/sources/main-2018.md) — §1.
+- [Griffith & Patankar (2020)](/sources/griffith-2020.md) — introduction.
+- [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §1.

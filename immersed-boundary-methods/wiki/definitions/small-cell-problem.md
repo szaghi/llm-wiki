@@ -5,7 +5,7 @@ description: "The stability defect of explicit cut-cell (embedded-boundary) fini
 status: established
 aliases: [small cell problem, arbitrarily small cells, cut-cell stability]
 tags: [cut-cell, embedded-boundary, stability, conservation]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Small-cell problem
@@ -51,6 +51,18 @@ geometry makes the system matrix ill conditioned and the Nitsche formulation
 unstable when a cut element barely intersects the domain; [CutFEM](/methods/cutfem.md)
 removes it with a ghost penalty ([Burman et al. 2015](/sources/burman-2015.md), §3).
 
+## Later remedies
+
+[State redistribution](/methods/state-redistribution.md) postprocesses the
+states of an unstable full-time-step update through overlapping merged
+neighbourhoods and is second order at the cut cells, where
+[flux redistribution](/methods/redistribution.md) is first order
+([Berger & Giuliani 2021](/sources/berger-2021.md), §1). The
+[shifted boundary method](/methods/shifted-boundary-method.md) avoids cut cells
+altogether by moving the boundary condition to a surrogate boundary of whole
+elements ([Main & Scovazzi 2018](/sources/main-2018.md), §1), which they
+contrast with the costs of cut-element quadrature and ghost penalties.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1, §2.6.
@@ -58,3 +70,5 @@ removes it with a ghost penalty ([Burman et al. 2015](/sources/burman-2015.md), 
 - [Colella et al. (2006)](/sources/colella-2006.md) — §2.
 - [Ghias et al. (2007)](/sources/ghias-2007.md) — §1.
 - [Burman et al. (2015)](/sources/burman-2015.md) — §3.
+- [Main & Scovazzi (2018)](/sources/main-2018.md) — §1.
+- [Berger & Giuliani (2021)](/sources/berger-2021.md) — §1.

@@ -5,7 +5,7 @@ description: "The standard validation of immersed boundary methods for incompres
 status: established
 aliases: [circular cylinder, cylinder wake, impulsively started cylinder]
 tags: [benchmark, incompressible, vortex-shedding, validation]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Flow past a circular cylinder
@@ -44,6 +44,19 @@ indistinguishable at $\eta=10^{-8}$).
 low-Reynolds-number cylinder of Lai and Peskin to illustrate the spurious
 elasticity of soft tethers in continuous forcing.
 
+## Uses in chunk 3
+
+- [Griffith & Patankar (2020)](/sources/griffith-2020.md): $Re=200$ with the
+  set-up of Taira and Colonius; lift, drag and Strouhal numbers agree, and the
+  immersed boundary method shows spurious interior flow that the immersed
+  interface method removes.
+- [Natarajan et al. (2022)](/sources/natarajan-2022.md): moving embedded
+  boundary, cylinder translating at $Re=40$, in-line oscillation at $Re=100$,
+  transverse oscillation at $Re=185$.
+- [Ou et al. (2022)](/sources/ou-2022.md): directional ghost cells; flow and
+  heat transfer at $Re=20$, $40$ with Dirichlet, Neumann and Robin thermal
+  conditions (Nusselt numbers against Pan), nearly second-order convergence.
+
 # Citations
 
 - [Goldstein et al. (1993)](/sources/goldstein-1993.md) — examples (start-up cylinder).
@@ -56,3 +69,6 @@ elasticity of soft tethers in continuous forcing.
 - [Ghias et al. (2007)](/sources/ghias-2007.md) — §3.
 - [Taira & Colonius (2007)](/sources/taira-2007.md) — §5.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §3.
+- [Griffith & Patankar (2020)](/sources/griffith-2020.md) — benchmarks.
+- [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §3.
+- [Ou et al. (2022)](/sources/ou-2022.md) — §3.

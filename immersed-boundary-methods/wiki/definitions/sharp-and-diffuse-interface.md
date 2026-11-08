@@ -5,7 +5,7 @@ description: "The classification of immersed boundary methods by whether the bou
 status: established
 aliases: [sharp interface, diffuse interface, smeared boundary, sharp-interface method, diffused-interface method]
 tags: [immersed-boundary, classification, accuracy]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Sharp and diffuse interface representations
@@ -76,6 +76,18 @@ as one where the condition "is not precisely satisfied at its actual location
 but within a localized region around the boundary". Smearing also has a
 benefit: diffuse methods have no [fresh-cell problem](/definitions/fresh-cell-problem.md).
 
+## Later statements
+
+[Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md), §3, build their
+review on the diffused/sharp split; in their account the reconstruction of
+sharp methods enters the intermediate velocity, so a mass-conservation
+correction is needed in the projection. [Griffith & Patankar (2020)](/sources/griffith-2020.md)
+show what smearing does physically: for a cylinder at $Re=200$ a regularized-delta
+immersed boundary generates spurious fluid motion *inside* the body, because the
+interface moves with a local average of the velocity, so the exterior flow
+drives a counter-rotating interior flow; an immersed interface computation,
+which reconstructs the velocity-derivative jump, removes it.
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §III.B.
@@ -91,3 +103,5 @@ benefit: diffuse methods have no [fresh-cell problem](/definitions/fresh-cell-pr
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous- and discrete-forcing sections, moving boundaries.
 - [Ghias et al. (2007)](/sources/ghias-2007.md) — §1.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §1.
+- [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md) — §3.
+- [Griffith & Patankar (2020)](/sources/griffith-2020.md) — benchmarks.

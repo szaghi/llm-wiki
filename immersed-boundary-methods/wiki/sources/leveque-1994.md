@@ -74,7 +74,7 @@ entries, one per printed reference).
 
 # Pages created or updated
 
-Chunk 1 (2026-11-08), list updated in chunk 2 (2026-11-08). This source is cited on:
+Chunk 1 (2026-11-08), list updated in chunk 3 (2026-11-08). This source is cited on:
 
 - [Immersed boundary method](/definitions/immersed-boundary-method.md)
 - [Sharp and diffuse interface representations](/definitions/sharp-and-diffuse-interface.md)

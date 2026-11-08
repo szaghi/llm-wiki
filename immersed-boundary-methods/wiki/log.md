@@ -2,6 +2,35 @@
 
 ## 2026-11-08
 
+**Chunk 3 ingested (night protocol, D32).** Sources: sotiropoulos-2014,
+main-2018, griffith-2020, berger-2021, atallah-2022, giuliani-2022-b,
+nair-2022, natarajan-2022, ni-2022, ou-2022 (30 of 57).
+
+- Concept pages created (3): methods/shifted-boundary-method,
+  methods/state-redistribution, methods/fluid-structure-coupling.
+- Concept pages updated (15): definitions/immersed-boundary-method
+  (terminology, later families), definitions/sharp-and-diffuse-interface,
+  definitions/small-cell-problem, definitions/fresh-cell-problem,
+  methods/redistribution, methods/cut-cell-method (moving embedded boundaries),
+  methods/ghost-cell-method (directional ghost values, CURVIB),
+  methods/classical-immersed-boundary-method (immersed finite elements),
+  methods/immersed-interface-method, methods/cutfem,
+  operators/regularized-delta-function (B-spline kernels),
+  results/first-order-accuracy-of-regularized-delta-forcing,
+  properties/discrete-conservation, benchmarks/flow-past-circular-cylinder,
+  benchmarks/shock-obstacle-interaction.
+- Registry extended: surrogate domain and boundary, map $\mathcal M$, distance
+  vector $\mathbf d$, shift operator $S^m_h$, redistribution neighbourhoods.
+- Source pages created (10); audit lists of all 30 Source pages regenerated.
+- Bibliography: 1186 entries (from 609); FLAGS 0 after 37 aliases (30 same-key
+  different works, 7 same work under a second key) and 18 verified silences.
+- Deep lint (self-audit of the 18 touched concept pages): timestamps from the
+  real clock; no contradiction opened (Griffith & Patankar's claim that
+  immersed formulations escape added-mass instability is recorded beside
+  Uhlmann's measured density-ratio limit as a qualified statement, not as a
+  contradiction: the former concerns elastic-structure formulations, the
+  latter explicit rigid-particle coupling).
+
 **Chunk 2 ingested (night protocol, D32).** Sources: tseng-2003,
 mittal-2005, uhlmann-2005, colella-2006, ghias-2007, taira-2007,
 mittal-2008, tan-2010, chaudhuri-2011, burman-2015 (20 of 57).

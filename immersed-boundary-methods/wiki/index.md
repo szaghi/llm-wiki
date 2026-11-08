@@ -21,7 +21,7 @@ spreading and interpolation, $\eta$ and $\chi_s$ the penalization parameter and
 body mask, $\kappa$ the cut-cell volume fraction, $\phi$ the level set), and the
 [update log](/log.md).
 
-**Corpus:** 20 of the 57 archived papers ingested in 2 chunks. Chunk 1 holds
+**Corpus:** 30 of the 57 archived papers ingested in 3 chunks. Chunk 1 holds
 the founding papers of 1972–2002:
 [Peskin (1972)](/sources/peskin-1972.md) invents the immersed boundary method
 for heart valves, and [Peskin (2002)](/sources/peskin-2002.md) gives its
@@ -42,7 +42,16 @@ direct forcing for particles ([Uhlmann 2005](/sources/uhlmann-2005.md)), the
 formally consistent embedded-boundary method ([Colella et al. 2006](/sources/colella-2006.md)),
 the projection formulation ([Taira & Colonius 2007](/sources/taira-2007.md)),
 the inverse Lax–Wendroff treatment ([Tan & Shu 2010](/sources/tan-2010.md))
-and CutFEM ([Burman et al. 2015](/sources/burman-2015.md)).
+and CutFEM ([Burman et al. 2015](/sources/burman-2015.md)). Chunk 3 (2014–2022)
+adds the fluid–structure reviews ([Sotiropoulos & Yang 2014](/sources/sotiropoulos-2014.md),
+[Griffith & Patankar 2020](/sources/griffith-2020.md)), the shifted boundary
+method ([Main & Scovazzi 2018](/sources/main-2018.md), [Atallah et al. 2022](/sources/atallah-2022.md)),
+state redistribution ([Berger & Giuliani 2021](/sources/berger-2021.md),
+[Giuliani et al. 2022b](/sources/giuliani-2022-b.md)), strongly coupled and
+material-point fluid–structure coupling ([Nair & Goza 2022](/sources/nair-2022.md),
+[Ni et al. 2022](/sources/ni-2022.md)), moving embedded boundaries with AMR
+([Natarajan et al. 2022](/sources/natarajan-2022.md)) and directional ghost
+cells for reacting flow ([Ou et al. 2022](/sources/ou-2022.md)).
 
 ## Reading guide
 
@@ -73,7 +82,12 @@ and CutFEM ([Burman et al. 2015](/sources/burman-2015.md)).
    sharp-interface finite differences, its [fresh-cell problem](/definitions/fresh-cell-problem.md)
    for moving bodies, and its high-order relative, the
    [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md) treatment;
-   [CutFEM](/methods/cutfem.md), the finite-element counterpart.
+   [CutFEM](/methods/cutfem.md), the finite-element counterpart, and the
+   [shifted boundary method](/methods/shifted-boundary-method.md), which avoids
+   cut cells; [state redistribution](/methods/state-redistribution.md), the
+   second-order successor of flux redistribution.
+7. **Moving and deforming bodies.** [Fluid–structure coupling](/methods/fluid-structure-coupling.md):
+   loose and strong coupling, added mass, and the structural models.
 5. **Cross-cutting properties.**
    [First-order accuracy of regularized-delta forcing](/results/first-order-accuracy-of-regularized-delta-forcing.md)
    and [discrete conservation](/properties/discrete-conservation.md).

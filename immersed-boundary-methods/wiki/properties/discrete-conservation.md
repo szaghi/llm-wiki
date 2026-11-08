@@ -5,7 +5,7 @@ description: "Whether an immersed boundary discretization conserves mass, moment
 status: established
 aliases: [conservation, conservative immersed boundary, mass conservation]
 tags: [conservation, cut-cell, coupling-operator, ghost-fluid, direct-forcing]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:10:00Z
 ---
 
 # Discrete conservation
@@ -61,6 +61,15 @@ conservative. [Uhlmann (2005)](/sources/uhlmann-2005.md) and
 [Taira & Colonius (2007)](/sources/taira-2007.md) keep a discretely
 divergence-free velocity with delta-function forcing.
 
+## Moving boundaries
+
+For a closed piston–cylinder system with a moving embedded boundary,
+[Natarajan et al. (2022)](/sources/natarajan-2022.md), §3, show that the
+percentage mass error falls with refinement. [State redistribution](/methods/state-redistribution.md)
+is conservative by construction ([Berger & Giuliani 2021](/sources/berger-2021.md),
+§2). [Ni et al. (2022)](/sources/ni-2022.md), §5, return the forcing as a
+reaction on the structure to conserve momentum between fluid and solid.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §2.6.
@@ -74,3 +83,6 @@ divergence-free velocity with delta-function forcing.
 - [Ghias et al. (2007)](/sources/ghias-2007.md) — §2.5.
 - [Taira & Colonius (2007)](/sources/taira-2007.md) — §3.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §2.1.
+- [Berger & Giuliani (2021)](/sources/berger-2021.md) — §2.
+- [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §3.
+- [Ni et al. (2022)](/sources/ni-2022.md) — §5.

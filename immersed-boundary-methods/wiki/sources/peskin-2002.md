@@ -89,11 +89,12 @@ three items are printed as "200x" unpublished work and one as submitted.
 
 # Pages created or updated
 
-Chunk 1 (2026-11-08), list updated in chunk 2 (2026-11-08). This source is cited on:
+Chunk 1 (2026-11-08), list updated in chunk 3 (2026-11-08). This source is cited on:
 
 - [Immersed boundary method](/definitions/immersed-boundary-method.md)
 - [Sharp and diffuse interface representations](/definitions/sharp-and-diffuse-interface.md)
 - [Classical (Peskin) immersed boundary method](/methods/classical-immersed-boundary-method.md)
+- [Fluid–structure coupling in immersed boundary methods](/methods/fluid-structure-coupling.md)
 - [Immersed interface method](/methods/immersed-interface-method.md)
 - [Regularized delta function $\delta_h$](/operators/regularized-delta-function.md)
 - [Spreading and interpolation operators $\mathcal S$, $\mathcal J$](/operators/spreading-and-interpolation.md)
