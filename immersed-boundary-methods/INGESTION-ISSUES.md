@@ -6,6 +6,49 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 5 — 2023–2025: high-order compressible boundaries, weighted SRD, CutFEM review (2026-11-08)
+
+Sources (10): mittal-2023, agrawal-2024, liu-2024, turner-2024, munschy-2024,
+huang-2024, qi-2024, berger-2024, burman-2025, marashi-2025. 50 of 57
+ingested, 30 concept pages plus the registry, 2287 bibliography entries.
+
+### Decisions for the human
+
+1. **Versions read.** liu-2024 (arXiv:2402.10152v1), berger-2024
+   (arXiv:2308.16332v2), agrawal-2024 (Politecnico di Torino accepted
+   manuscript); the others are versions of record.
+2. **Reading depth.** burman-2025 (Acta Numerica, 121 pages): abstract,
+   contents and §1 in full, §§2–9 by structure and key statements, proofs not
+   read; its reference list is merged complete. mittal-2023: later
+   perspective sections skimmed. munschy-2024: detailed sheath results skimmed.
+3. **New page.** methods/high-order-immersed-boundary groups seven high-order
+   routes (ILW, auxiliary-point SILW, polynomial WLS, no image point, DG
+   polynomial, SBP, hybrid compact–WENO). It could later split by family if
+   contradictions appear between routes.
+
+### Contradictions
+
+None opened.
+
+### Bibliography items for the closing sweep
+
+- welch-1966 (and the alias of agrawal-2024's welch-1965) is the Harlow &
+  Welch MAC paper, keyed by the second author because of Crossref deposits;
+  printed year 1965 (Phys. Fluids 8).
+- boiveau-2014 and boiveau-2016 both hold the penalty-free Nitsche paper
+  (IMA J. Numer. Anal. 36:770).
+- burman-2025's printed list was parsed by a scratch parser: titles in it that
+  include a part number or a colon may still be split wrongly; the fuzzy-title
+  sweep should recheck burman-2025-only entries with short venues.
+
+### Bundle fit
+
+- munschy-2024 (kinetic plasma–wall penalization) would also fit a plasma or
+  fusion bundle (D17 candidate).
+- turner-2024, huang-2024, qi-2024, marashi-2025 (high-order shock-capturing
+  interiors) touch `high-order-capturing-schemes` and `weno-teno`; read here
+  in this bundle's notation (D12).
+
 ## Chunk 4 — 2022–2023: SBP embedded boundaries, moving cut cells, penalization, history (2026-11-08)
 
 Sources (10): sharan-2022, xie-2022, boustani-2022, reiss-2022, giuliani-2022,

@@ -5,7 +5,7 @@ description: "Compressible inviscid test problems in which a shock meets a solid
 status: established
 aliases: [shock reflection off a ramp, double Mach reflection, Schardin's problem, shock–cylinder interaction, supersonic flow past a cylinder]
 tags: [benchmark, compressible, shock, cut-cell, ghost-cell]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # Shock–obstacle interaction
@@ -45,6 +45,16 @@ surface pressure). Exact or theoretical references exist for oblique shocks
   supersonic wedge and supersonic sphere (drag, recirculation, separation,
   stand-off, Nusselt number) with penalization and continuous forcing.
 
+## Uses in chunk 5
+
+- [Turner et al. (2024)](/sources/turner-2024.md): supersonic cylinders and
+  spheres with bow shocks, third-order IB.
+- [Qi et al. (2024)](/sources/qi-2024.md): transonic sphere, airfoils and the
+  ONERA M6 wing with DG on adaptive grids.
+- [Marashi & Hejranfar (2025)](/sources/marashi-2025.md): double Mach
+  reflection, supersonic flow over a half cylinder and two cylinders, and a shock
+  hitting an array of cylinders.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §4.
@@ -56,3 +66,6 @@ surface pressure). Exact or theoretical references exist for oblique shocks
 - [Reiss (2022)](/sources/reiss-2022.md) — §4.
 - [Giuliani (2022)](/sources/giuliani-2022.md) — §6.
 - [Ménez et al. (2023)](/sources/menez-2023.md) — §4.
+- [Turner et al. (2024)](/sources/turner-2024.md) — §3–§4.
+- [Qi et al. (2024)](/sources/qi-2024.md) — §4.
+- [Marashi & Hejranfar (2025)](/sources/marashi-2025.md) — §4.

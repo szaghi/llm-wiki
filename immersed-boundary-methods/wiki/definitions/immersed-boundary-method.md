@@ -5,7 +5,7 @@ description: "A family of methods that solve the flow equations on a grid that d
 status: established
 aliases: [IB method, IBM, immersed boundary technique, Cartesian grid method, non-boundary-conforming method, fictitious domain method, embedded boundary method]
 tags: [immersed-boundary, classification, cartesian-grid]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # Immersed boundary method
@@ -149,6 +149,19 @@ to impose wall conditions. His conclusion: most key ideas "had been conceived
 and implemented already in the 1960s" but could not be exploited with the
 computers of the time.
 
+## A second history
+
+[Mittal & Seo (2023)](/sources/mittal-2023.md) trace the field from the
+marker-and-cell method of Harlow and Welch (1965) and Viecelli's curved
+boundaries through Peskin's thesis, whose regularized delta function they call
+the method's "Achilles heel", to decades in which aerospace high-Reynolds-number
+work favoured body-conformal, arbitrary Lagrangian–Eulerian and overset grids;
+immersed methods spread beyond cardiovascular mechanics in the 1990s, and the
+2000s began "a Cambrian-like period". They credit cut cells with being the only
+immersed boundary method that conserves mass and momentum strictly, and
+mention a "virtual cut-cell" variant that adds regional conservation to a 3-D
+ghost-cell method.
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §I, §VI.
@@ -175,3 +188,4 @@ computers of the time.
 - [Griffith & Patankar (2020)](/sources/griffith-2020.md) — introduction.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §1.
 - [Verzicco (2023)](/sources/verzicco-2023.md) — historical sections, summary points.
+- [Mittal & Seo (2023)](/sources/mittal-2023.md) — historical sections.

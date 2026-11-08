@@ -44,7 +44,8 @@ from the Crossref deposited list.
 
 # Pages created or updated
 
-Chunk 4 (2026-11-08). This source is cited on:
+Chunk 4 (2026-11-08), list updated in chunk 5 (2026-11-08). This source is cited on:
 
 - [Small-cell problem](/definitions/small-cell-problem.md)
 - [Cut-cell (embedded-boundary) finite-volume method](/methods/cut-cell-method.md)
+- [High-order immersed boundary treatments for compressible flow](/methods/high-order-immersed-boundary.md)

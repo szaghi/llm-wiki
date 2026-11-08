@@ -5,7 +5,7 @@ description: "High-order finite-difference boundary treatment for hyperbolic con
 status: established
 aliases: [ILW, inverse Lax-Wendroff procedure]
 tags: [inverse-lax-wendroff, high-order, ghost-cell, hyperbolic, compressible, sharp-interface]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # Inverse Lax–Wendroff boundary treatment
@@ -65,6 +65,20 @@ symmetric about the wall, with finite-volume cut cells, which need $h$-box or
 similar devices for the time step, and with second-order embedded finite
 differences.
 
+## Simplified ILW with auxiliary points
+
+The simplified ILW obtains only low-order normal derivatives through the PDE
+and extrapolates the higher ones; an eigenvalue analysis shows it stable at the
+periodic CFL number for every cut fraction only at third order.
+[Liu et al. (2024)](/sources/liu-2024.md) build ghost values in two steps —
+interpolation to artificial auxiliary points from the interior, then
+extrapolation through those values and the ILW boundary derivatives — and
+choose the auxiliary-point position so that stability holds with fewer ILW
+terms (for third order with two ILW terms, a position parameter
+$\alpha\ge0.61$), improving efficiency at the same accuracy
+([high-order immersed boundary treatments](/methods/high-order-immersed-boundary.md)).
+
 # Citations
 
 - [Tan & Shu (2010)](/sources/tan-2010.md) — §1–§3.
+- [Liu et al. (2024)](/sources/liu-2024.md) — §1–§4.

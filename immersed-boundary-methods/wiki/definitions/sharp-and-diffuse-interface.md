@@ -5,7 +5,7 @@ description: "The classification of immersed boundary methods by whether the bou
 status: established
 aliases: [sharp interface, diffuse interface, smeared boundary, sharp-interface method, diffused-interface method]
 tags: [immersed-boundary, classification, accuracy]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # Sharp and diffuse interface representations
@@ -96,6 +96,22 @@ of a supersonic flow past a wedge" because the artificial flow inside the
 boundary contaminates the external flow, the compressible analogue of the
 spurious interior flow noted by Griffith and Patankar.
 
+## A five-condition definition of "sharp"
+
+[Mittal & Seo (2023)](/sources/mittal-2023.md) define a sharp-interface
+method by equivalence with body-conformal methods: (1) boundary conditions are
+imposed at discrete points precisely on the immersed boundary and nowhere
+else; (2) their spacing matches the fluid grid; (3) their accuracy matches the
+scheme's; (4) every grid point solves the native governing equations, with no
+augmented or auxiliary equation; (5) the flow equations are not solved inside
+the body. Continuous forcing, fictitious-domain and front-tracking methods
+satisfy none and are diffuse; cut-cell methods are "unequivocally" sharp;
+ghost-cell methods are sharp; a stair-step boundary fails condition (1).
+Condition (5) matters because methods without a pressure condition on the
+boundary compute pressure inside the body, and a fractional step then leaves a
+slip and penetration error of order $\Delta t^{m}\,\partial p/\partial\boldsymbol\tau$ and
+$\Delta t^{m}\,\partial p/\partial n$ ($m$ the order of the splitting).
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §III.B.
@@ -114,3 +130,4 @@ spurious interior flow noted by Griffith and Patankar.
 - [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md) — §3.
 - [Griffith & Patankar (2020)](/sources/griffith-2020.md) — benchmarks.
 - [Ménez et al. (2023)](/sources/menez-2023.md) — conclusions.
+- [Mittal & Seo (2023)](/sources/mittal-2023.md) — classification section.

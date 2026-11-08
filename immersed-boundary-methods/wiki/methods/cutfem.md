@@ -5,7 +5,7 @@ description: "Unfitted finite element framework in which the geometry is represe
 status: established
 aliases: [cut finite element method, unfitted Nitsche method, Nitsche fictitious domain method]
 tags: [cutfem, finite-element, nitsche, ghost-penalty, unfitted, level-set, small-cell]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # CutFEM (cut finite element method)
@@ -83,8 +83,20 @@ stability and conditioning problems of small cut elements, and give a unified
 analysis of aggregation and ghost-penalty stabilization
 ([small-cell problem](/definitions/small-cell-problem.md)).
 
+## The 2025 review
+
+[Burman et al. (2025)](/sources/burman-2025.md) review CutFEM in Acta
+Numerica: active meshes of elements meeting the domain, weakly imposed
+conditions (Nitsche or Lagrange multipliers), error and condition-number
+estimates, weak stabilization (ghost penalty) in the bulk and on surfaces,
+strong stabilization by extension that eliminates unstable degrees of freedom
+(shown to be connected to the weak form), Lagrange multipliers and
+hybridization, and time-dependent domains. Robustness with respect to the
+position of the geometry relative to the mesh is the stated design goal.
+
 # Citations
 
 - [Burman et al. (2015)](/sources/burman-2015.md) — §1–§6.
 - [Main & Scovazzi (2018)](/sources/main-2018.md) — §1.
 - [de Prenter et al. (2023)](/sources/deprenter-2023.md) — §3–§4.
+- [Burman et al. (2025)](/sources/burman-2025.md) — §1–§9 (scoped reading).

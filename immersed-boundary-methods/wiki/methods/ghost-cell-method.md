@@ -5,7 +5,7 @@ description: "Sharp-interface discrete-forcing method that assigns values to gho
 status: established
 aliases: [GCIBM, ghost-cell IBM, ghost-point method, image-point method, hybrid Cartesian immersed boundary, HCIB]
 tags: [ghost-cell, sharp-interface, discrete-forcing, reconstruction, compressible, incompressible]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # Ghost-cell immersed boundary method
@@ -143,6 +143,15 @@ an oscillating sphere, growing with mesh size, and compare AMD and NVIDIA GPUs.
 [Ménez et al. (2023)](/sources/menez-2023.md) borrow ghost cells with two image
 points to impose adiabatic walls in volume penalization.
 
+## High order
+
+Ghost-cell treatments that keep third or higher order — polynomial
+weighted-least-squares ghost values with or without image points, DG
+polynomials at image points, hybrid compact–WENO interiors — are compared on
+[high-order immersed boundary treatments](/methods/high-order-immersed-boundary.md)
+([Turner et al. 2024](/sources/turner-2024.md); [Huang et al. 2024](/sources/huang-2024.md);
+[Qi et al. 2024](/sources/qi-2024.md); [Marashi & Hejranfar 2025](/sources/marashi-2025.md)).
+
 # Citations
 
 - [Tseng & Ferziger (2003)](/sources/tseng-2003.md) — §1, §2.2–2.6, §3.
@@ -156,3 +165,7 @@ points to impose adiabatic walls in volume penalization.
 - [Ou et al. (2022)](/sources/ou-2022.md) — §2–§3.
 - [Ménez et al. (2023)](/sources/menez-2023.md) — §3.
 - [Raj et al. (2023)](/sources/raj-2023.md) — §2–§5.
+- [Turner et al. (2024)](/sources/turner-2024.md) — §2.
+- [Huang et al. (2024)](/sources/huang-2024.md) — §2.
+- [Qi et al. (2024)](/sources/qi-2024.md) — §3.
+- [Marashi & Hejranfar (2025)](/sources/marashi-2025.md) — §3.

@@ -5,7 +5,7 @@ description: "Postprocessing stabilization for explicit cut-cell finite volumes:
 status: established
 aliases: [SRD, weighted state redistribution, WSRD]
 tags: [cut-cell, embedded-boundary, small-cell, conservation, redistribution, amr]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # State redistribution
@@ -78,8 +78,20 @@ with curved cut cells the DG scheme is about an order of magnitude more
 accurate than a second-order rotated-grid $h$-box method, and a Mach 10 double
 Mach reflection is computed with limiting.
 
+## Provable stability
+
+[Berger & Giuliani (2024)](/sources/berger-2024.md) give a weighted SRD whose
+weights vanish continuously as a cut cell's volume fraction reaches the
+threshold, conservative and constant-preserving, and prove it monotone, total
+variation diminishing and GKS stable in many configurations: for first-order
+upwinding with merging normal to a ramp of angle up to $45^\circ$ it is monotone,
+while $3\times3$ central merging at $45^\circ$ is not; with limiting and SSP
+Runge–Kutta the second-order version is TVD. The analysis also explains why the
+original SRD worked so well — it is monotone in most configurations.
+
 # Citations
 
 - [Berger & Giuliani (2021)](/sources/berger-2021.md) — §1–§6.
 - [Giuliani et al. (2022b)](/sources/giuliani-2022-b.md) — §1–§6.
 - [Giuliani (2022)](/sources/giuliani-2022.md) — §1–§6.
+- [Berger & Giuliani (2024)](/sources/berger-2024.md) — §1–§5.

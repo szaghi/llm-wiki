@@ -5,7 +5,7 @@ description: "Fictitious-domain immersed boundary method that solves the flow eq
 status: established
 aliases: [Brinkman penalization, penalization method, L2 penalization, H1 penalization, porous-medium fictitious domain]
 tags: [immersed-boundary, penalization, fictitious-domain, continuous-forcing, incompressible]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # Volume penalization (Brinkman penalization)
@@ -93,6 +93,16 @@ constraint.
   a new porosity model reproduces shock reflection at the accuracy of
   $\phi_p=0.01$ with the cost divided by 36.
 
+## Beyond fluid mechanics
+
+[Munschy et al. (2024)](/sources/munschy-2024.md) model a plasma-facing wall
+in a 1D-1V kinetic Vlasov–Poisson computation with immersed boundary conditions
+by penalization — sink and thermalization terms in a masked wall region, with
+or without current flowing inside the material — and recover the kinetic
+sheath physics, finding ion and electron heat transmission factors 60 % and
+35 % larger than usually predicted; the aim is a wall treatment for
+gyrokinetic codes whose mesh cannot resolve the sheath.
+
 # Citations
 
 - [Goldstein et al. (1993)](/sources/goldstein-1993.md) — introduction (point forcing that Angot et al. contrast).
@@ -100,3 +110,4 @@ constraint.
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous-forcing section (rigid boundaries).
 - [Reiss (2022)](/sources/reiss-2022.md) — §1–§4.
 - [Ménez et al. (2023)](/sources/menez-2023.md) — §2–§4.
+- [Munschy et al. (2024)](/sources/munschy-2024.md) — §1–§2, conclusions.

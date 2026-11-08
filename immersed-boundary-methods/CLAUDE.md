@@ -89,6 +89,11 @@ immersed boundaries on overlapping grids also live in
 
 ## Status
 
+**Chunk 5 compiled 2026-11-08 (night step 05, awaiting the human's
+commit):** 10 papers of 2023–2025; 50 of 57 ingested, 30 concept pages plus
+the registry, 2287 bibliography entries, compiler self-audit done, no
+contradiction open.
+
 **Chunk 4 compiled 2026-11-08 (night step 04, awaiting the human's
 commit):** 10 papers of 2022–2023; 40 of 57 ingested, 29 concept pages plus
 the registry, 1780 bibliography entries, compiler self-audit done, no

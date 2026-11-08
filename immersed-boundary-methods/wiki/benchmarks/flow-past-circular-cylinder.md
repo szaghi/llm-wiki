@@ -5,7 +5,7 @@ description: "The standard validation of immersed boundary methods for incompres
 status: established
 aliases: [circular cylinder, cylinder wake, impulsively started cylinder]
 tags: [benchmark, incompressible, vortex-shedding, validation]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # Flow past a circular cylinder
@@ -57,6 +57,13 @@ elasticity of soft tethers in continuous forcing.
   heat transfer at $Re=20$, $40$ with Dirichlet, Neumann and Robin thermal
   conditions (Nusselt numbers against Pan), nearly second-order convergence.
 
+## Compressible cylinders (chunk 5)
+
+[Turner et al. (2024)](/sources/turner-2024.md) compare $M=0.5$, $Re=40$
+with body-fitted DNS (compressibility lengthens the recirculation) and reach
+about third order at $Re=300$; [Huang et al. (2024)](/sources/huang-2024.md)
+compute $M=0.2$, $Re=40$ with third-order ghost points.
+
 # Citations
 
 - [Goldstein et al. (1993)](/sources/goldstein-1993.md) — examples (start-up cylinder).
@@ -72,3 +79,5 @@ elasticity of soft tethers in continuous forcing.
 - [Griffith & Patankar (2020)](/sources/griffith-2020.md) — benchmarks.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §3.
 - [Ou et al. (2022)](/sources/ou-2022.md) — §3.
+- [Turner et al. (2024)](/sources/turner-2024.md) — §3.
+- [Huang et al. (2024)](/sources/huang-2024.md) — §3.

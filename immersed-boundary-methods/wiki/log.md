@@ -2,6 +2,33 @@
 
 ## 2026-11-08
 
+**Chunk 5 ingested (night protocol, D32).** Sources: mittal-2023,
+agrawal-2024, liu-2024, turner-2024, munschy-2024, huang-2024, qi-2024,
+berger-2024, burman-2025, marashi-2025 (50 of 57).
+
+- Concept page created (1): methods/high-order-immersed-boundary (seven
+  routes to third or higher order at an immersed boundary, compared).
+- Concept pages updated (10): definitions/sharp-and-diffuse-interface
+  (five-condition definition), definitions/immersed-boundary-method (second
+  history), methods/inverse-lax-wendroff (auxiliary-point simplified ILW),
+  methods/state-redistribution (provable stability), methods/volume-penalization
+  (kinetic plasma walls), methods/fluid-structure-coupling (isogeometric
+  rods), methods/cutfem (2025 review), methods/ghost-cell-method (high order),
+  benchmarks/shock-obstacle-interaction, benchmarks/flow-past-circular-cylinder.
+- Registry: no extension; native symbols kept page-local in the notation maps.
+- Source pages created (10); audit lists regenerated, two older lists changed
+  (sharan-2022, tan-2010).
+- Bibliography: 2287 entries (from 1780); FLAGS 0. burman-2025 has no Crossref
+  deposit: its 224 printed references were parsed from the text, and the
+  parser's split of "Part I/II" titles into the venue was corrected before the
+  merge. Resolution: autoresolve (now reserving every fragment key as taken, to
+  avoid alias shadowing), plus hand corrections: leveque-1985-b (cochlea
+  model), glowinski-1994-b (same-key venue check), munschy-2024-b (companion
+  paper), burman-2011 (cut elements II), seo-2011-b.
+- Deep lint (self-audit of the 11 touched concept pages): quotations checked
+  against the text layers (Turner, Mittal & Seo, Liu, Marashi, Munschy);
+  canonical notation only; reading guide renumbered (it had run 1–4, 7, 8, 5, 6).
+
 **Chunk 4 ingested (night protocol, D32).** Sources: sharan-2022,
 xie-2022, boustani-2022, reiss-2022, giuliani-2022, verzicco-2023,
 deprenter-2023, collins-2023, menez-2023, raj-2023 (40 of 57).

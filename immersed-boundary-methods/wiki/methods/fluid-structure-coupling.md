@@ -5,7 +5,7 @@ description: "How immersed boundary methods couple the flow with a moving or def
 status: established
 aliases: [FSI coupling, strong coupling, loose coupling, weak coupling, added-mass instability, partitioned FSI]
 tags: [fluid-structure-interaction, coupling, stability, added-mass, moving-boundary]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-08T18:32:00Z
 ---
 
 # Fluid–structure coupling in immersed boundary methods
@@ -85,6 +85,17 @@ with penalty contact in a loosely coupled way at the flow solver's CFL step,
 for supersonic parachute inflation with massive self-contact of the
 broadcloth.
 
+## Slender rods in isogeometric analysis
+
+[Agrawal et al. (2024)](/sources/agrawal-2024.md) couple a geometrically exact
+Cosserat rod discretized by isogeometric analysis to a staggered
+finite-difference flow solver by direct forcing, and decouple the structural
+resolution from the fluid grid: Lagrangian markers are generated uniformly in
+the NURBS parameter space at about the fluid grid spacing, and interpolation
+and spreading act on them, consistently with the spline basis. The scheme is
+validated on a flexible filament and on an array of filaments in pulsating
+channel flow.
+
 # Citations
 
 - [Uhlmann (2005)](/sources/uhlmann-2005.md) — §4.
@@ -94,3 +105,4 @@ broadcloth.
 - [Nair & Goza (2022)](/sources/nair-2022.md) — §1–§4.
 - [Ni et al. (2022)](/sources/ni-2022.md) — §1, §5, §6.
 - [Boustani et al. (2022)](/sources/boustani-2022.md) — §4.
+- [Agrawal et al. (2024)](/sources/agrawal-2024.md) — §1–§5.

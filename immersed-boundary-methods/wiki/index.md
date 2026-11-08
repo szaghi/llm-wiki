@@ -21,7 +21,7 @@ spreading and interpolation, $\eta$ and $\chi_s$ the penalization parameter and
 body mask, $\kappa$ the cut-cell volume fraction, $\phi$ the level set), and the
 [update log](/log.md).
 
-**Corpus:** 40 of the 57 archived papers ingested in 4 chunks. Chunk 1 holds
+**Corpus:** 50 of the 57 archived papers ingested in 5 chunks. Chunk 1 holds
 the founding papers of 1972–2002:
 [Peskin (1972)](/sources/peskin-1972.md) invents the immersed boundary method
 for heart valves, and [Peskin (2002)](/sources/peskin-2002.md) gives its
@@ -63,6 +63,15 @@ compressible penalization ([Reiss 2022](/sources/reiss-2022.md),
 elements ([de Prenter et al. 2023](/sources/deprenter-2023.md)), the
 penalty-free shifted boundary method ([Collins et al. 2023](/sources/collins-2023.md))
 and GPU sharp-interface methods ([Raj et al. 2023](/sources/raj-2023.md)).
+Chunk 5 (2023–2025) brings a second history with a five-condition definition
+of sharpness ([Mittal & Seo 2023](/sources/mittal-2023.md)), high-order
+boundary treatments for compressible flow ([Liu et al. 2024](/sources/liu-2024.md),
+[Turner et al. 2024](/sources/turner-2024.md), [Huang et al. 2024](/sources/huang-2024.md),
+[Qi et al. 2024](/sources/qi-2024.md), [Marashi & Hejranfar 2025](/sources/marashi-2025.md)),
+provably stable weighted state redistribution ([Berger & Giuliani 2024](/sources/berger-2024.md)),
+the CutFEM review ([Burman et al. 2025](/sources/burman-2025.md)),
+isogeometric slender rods ([Agrawal et al. 2024](/sources/agrawal-2024.md))
+and penalized plasma walls ([Munschy et al. 2024](/sources/munschy-2024.md)).
 
 ## Reading guide
 
@@ -97,14 +106,19 @@ and GPU sharp-interface methods ([Raj et al. 2023](/sources/raj-2023.md)).
    [shifted boundary method](/methods/shifted-boundary-method.md), which avoids
    cut cells; [state redistribution](/methods/state-redistribution.md), the
    second-order successor of flux redistribution.
-7. **Moving and deforming bodies.** [Fluid–structure coupling](/methods/fluid-structure-coupling.md):
+5. **High order and compressible flow.**
+   [High-order immersed boundary treatments for compressible flow](/methods/high-order-immersed-boundary.md):
+   inverse Lax–Wendroff, polynomial weighted-least-squares ghost values with
+   or without image points, DG polynomials at image points, summation-by-parts
+   embedded boundaries and hybrid compact–WENO interiors, side by side.
+6. **Moving and deforming bodies.** [Fluid–structure coupling](/methods/fluid-structure-coupling.md):
    loose and strong coupling, added mass, and the structural models;
    [spurious force and pressure oscillations](/definitions/spurious-force-oscillations.md).
-8. **High Reynolds numbers.** [Wall models for immersed boundaries](/methods/wall-models-for-immersed-boundaries.md).
-5. **Cross-cutting properties.**
+7. **High Reynolds numbers.** [Wall models for immersed boundaries](/methods/wall-models-for-immersed-boundaries.md).
+8. **Cross-cutting properties.**
    [First-order accuracy of regularized-delta forcing](/results/first-order-accuracy-of-regularized-delta-forcing.md)
    and [discrete conservation](/properties/discrete-conservation.md).
-6. **Validation cases.** [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md),
+9. **Validation cases.** [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md),
    [flow past a sphere](/benchmarks/flow-past-sphere.md) and
    [shock–obstacle interaction](/benchmarks/shock-obstacle-interaction.md).
 
