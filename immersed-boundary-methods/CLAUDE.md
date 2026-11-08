@@ -89,32 +89,26 @@ immersed boundaries on overlapping grids also live in
 
 ## Status
 
-**Chunk 6 compiled 2026-11-08 (night step 06, awaiting the human's
-commit): archive complete,** 57 of 57 ingested, 30 concept pages plus the
+**Chunk 6 committed 2026-11-08 (ad2cb2e): archive complete,** 57 of 57 ingested, 30 concept pages plus the
 registry, 2598 bibliography entries after the closing duplicate sweep,
 whole-bundle deep lint done, no contradiction open.
 
-**Chunk 5 compiled 2026-11-08 (night step 05, awaiting the human's
-commit):** 10 papers of 2023–2025; 50 of 57 ingested, 30 concept pages plus
+**Chunk 5 committed 2026-11-08 (36bb8df):** 10 papers of 2023–2025; 50 of 57 ingested, 30 concept pages plus
 the registry, 2287 bibliography entries, compiler self-audit done, no
 contradiction open.
 
-**Chunk 4 compiled 2026-11-08 (night step 04, awaiting the human's
-commit):** 10 papers of 2022–2023; 40 of 57 ingested, 29 concept pages plus
+**Chunk 4 committed 2026-11-08 (523731b):** 10 papers of 2022–2023; 40 of 57 ingested, 29 concept pages plus
 the registry, 1780 bibliography entries, compiler self-audit done, no
 contradiction open.
 
-**Chunk 3 compiled 2026-11-08 (night step 03, awaiting the human's
-commit):** 10 papers of 2014–2022; 30 of 57 ingested, 27 concept pages plus
+**Chunk 3 committed 2026-11-08 (dff2dcc):** 10 papers of 2014–2022; 30 of 57 ingested, 27 concept pages plus
 the registry, 1186 bibliography entries, compiler self-audit done, no
 contradiction open.
 
-**Chunk 2 compiled 2026-11-08 (night step 02, awaiting the human's
-commit):** 10 papers of 2003–2015; 20 of 57 ingested, 24 concept pages plus
+**Chunk 2 committed 2026-11-08 (ef78af8):** 10 papers of 2003–2015; 20 of 57 ingested, 24 concept pages plus
 the registry, 609 bibliography entries, compiler self-audit done, no
 contradiction open.
 
-**Chunk 1 compiled 2026-11-08 (night step 01, awaiting the human's
-commit):** the 10 founding papers of 1972–2002; 10 of 57 ingested, 18
+**Chunk 1 committed 2026-11-08 (c7a1a0a):** the 10 founding papers of 1972–2002; 10 of 57 ingested, 18
 concept pages plus the registry, 312 bibliography entries, compiler
 self-audit done, no contradiction open.
