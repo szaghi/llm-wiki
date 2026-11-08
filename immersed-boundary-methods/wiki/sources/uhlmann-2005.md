@@ -63,11 +63,12 @@ from the Crossref deposited list of the journal version.
 
 # Pages created or updated
 
-Chunk 2 (2026-11-08), list updated in chunk 3 (2026-11-08). This source is cited on:
+Chunk 2 (2026-11-08), list updated in chunk 4 (2026-11-08). This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Flow past a sphere](/benchmarks/flow-past-sphere.md)
 - [Immersed boundary method](/definitions/immersed-boundary-method.md)
+- [Spurious force and pressure oscillations](/definitions/spurious-force-oscillations.md)
 - [Direct (discrete-time) forcing](/methods/direct-forcing.md)
 - [Feedback forcing](/methods/feedback-forcing.md)
 - [Fluid–structure coupling in immersed boundary methods](/methods/fluid-structure-coupling.md)

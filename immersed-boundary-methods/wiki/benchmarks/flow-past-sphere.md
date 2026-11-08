@@ -5,7 +5,7 @@ description: "Three-dimensional and axisymmetric flow around a sphere at Re of o
 status: established
 aliases: [sphere wake, sphere]
 tags: [benchmark, incompressible, separation, three-dimensional, validation]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Flow past a sphere
@@ -38,6 +38,16 @@ boundary represents the wall ([Fadlun et al. 2000](/sources/fadlun-2000.md), §3
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) cite LES of a sphere at
   $Re=3700$ and $10^4$ (Yun et al.) with Kim et al.'s forcing and mass source.
 
+## Uses in chunk 4
+
+- [Raj et al. (2023)](/sources/raj-2023.md): sphere at $Re=100$ on three grids
+  ($D/25$–$D/100$), separation length, order equal to the interpolation's;
+  oscillating sphere for GPU timing.
+- [Ménez et al. (2023)](/sources/menez-2023.md): supersonic isothermal sphere
+  ($T_w=2T_\infty$) against Nagata et al. and Riahi et al.
+- [Xie et al. (2022)](/sources/xie-2022.md): oscillating and free-falling
+  spheres with smooth drag.
+
 # Citations
 
 - [Fadlun et al. (2000)](/sources/fadlun-2000.md) — §3.2.
@@ -45,3 +55,6 @@ boundary represents the wall ([Fadlun et al. 2000](/sources/fadlun-2000.md), §3
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — applications.
 - [Uhlmann (2005)](/sources/uhlmann-2005.md) — §5.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §3.
+- [Xie et al. (2022)](/sources/xie-2022.md) — §4.
+- [Ménez et al. (2023)](/sources/menez-2023.md) — §4.
+- [Raj et al. (2023)](/sources/raj-2023.md) — §4.

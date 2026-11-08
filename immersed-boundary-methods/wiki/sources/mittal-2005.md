@@ -69,7 +69,7 @@ deposit are merged complete into the [bibliography](/bibliography.md).
 
 # Pages created or updated
 
-Chunk 2 (2026-11-08), list updated in chunk 3 (2026-11-08). This source is cited on:
+Chunk 2 (2026-11-08), list updated in chunk 4 (2026-11-08). This source is cited on:
 
 - [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 - [Flow past a sphere](/benchmarks/flow-past-sphere.md)

@@ -5,7 +5,7 @@ description: "Sharp-interface finite-difference method for problems with discont
 status: established
 aliases: [IIM, LeVeque–Li method]
 tags: [immersed-interface, sharp-interface, elliptic, jump-conditions, finite-difference]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Immersed interface method
@@ -93,9 +93,23 @@ interpolation operators that incorporate the jumps. They remove the spurious
 interior flow of regularized-delta methods but need more geometry
 computations; adjoint pairs of such operators were still lacking.
 
+## Thin porous structures
+
+[Boustani et al. (2022)](/sources/boustani-2022.md) use a higher-order
+finite-difference immersed interface method for the compressible
+Navier–Stokes equations on adaptive Cartesian grids (NASA LAVA), extended to
+membranes thinner than a grid cell — ray–triangle in–out tests, irregular
+points per grid direction, weighted least-squares stencils built by graph
+walking on the correct side of the sheet — and impose the porosity of parachute
+fabric as a Darcy–Forchheimer jump condition across the interface, since the
+fabric cannot be resolved as a porous volume; loosely coupled to a shell solver
+with contact, it reproduces opening loads of supersonic disk-gap-band parachutes
+([fluid–structure coupling](/methods/fluid-structure-coupling.md)).
+
 # Citations
 
 - [LeVeque & Li (1994)](/sources/leveque-1994.md) — §1–§6.
 - [Ye et al. (1999)](/sources/ye-1999.md) — §2.
 - [Peskin (2002)](/sources/peskin-2002.md) — §6.
 - [Griffith & Patankar (2020)](/sources/griffith-2020.md) — jump conditions, benchmarks, future issues.
+- [Boustani et al. (2022)](/sources/boustani-2022.md) — §3–§5.

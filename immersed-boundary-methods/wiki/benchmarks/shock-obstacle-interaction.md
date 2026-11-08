@@ -5,7 +5,7 @@ description: "Compressible inviscid test problems in which a shock meets a solid
 status: established
 aliases: [shock reflection off a ramp, double Mach reflection, Schardin's problem, shock–cylinder interaction, supersonic flow past a cylinder]
 tags: [benchmark, compressible, shock, cut-cell, ghost-cell]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Shock–obstacle interaction
@@ -35,6 +35,16 @@ surface pressure). Exact or theoretical references exist for oblique shocks
   shock-deformed flexible panel and the detonation-driven fragmentation of a
   steel shell.
 
+## Uses in chunk 4
+
+- [Giuliani (2022)](/sources/giuliani-2022.md): Mach 10 double Mach reflection
+  with DG and state redistribution on a cut-cell grid.
+- [Reiss (2022)](/sources/reiss-2022.md): supersonic flow along a wedge and a
+  confined blast wave with volume-fraction penalization.
+- [Ménez et al. (2023)](/sources/menez-2023.md): shock reflection on a wall,
+  supersonic wedge and supersonic sphere (drag, recirculation, separation,
+  stand-off, Nusselt number) with penalization and continuous forcing.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §4.
@@ -43,3 +53,6 @@ surface pressure). Exact or theoretical references exist for oblique shocks
 - [Chaudhuri et al. (2011)](/sources/chaudhuri-2011.md) — §3, §4.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §3.
 - [Ni et al. (2022)](/sources/ni-2022.md) — §6.
+- [Reiss (2022)](/sources/reiss-2022.md) — §4.
+- [Giuliani (2022)](/sources/giuliani-2022.md) — §6.
+- [Ménez et al. (2023)](/sources/menez-2023.md) — §4.

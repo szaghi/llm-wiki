@@ -5,7 +5,7 @@ description: "Approximate-domain embedded method that applies boundary condition
 status: established
 aliases: [SBM, shifted boundary, surrogate boundary method, approximate domain method]
 tags: [shifted-boundary, finite-element, nitsche, surrogate-boundary, small-cell, high-order]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Shifted boundary method
@@ -70,7 +70,18 @@ Solano's transfer paths. Earlier extensions cited there cover
 advection–diffusion and Navier–Stokes, hyperbolic conservation laws and
 elasticity.
 
+## Penalty-free version
+
+[Collins et al. (2023)](/sources/collins-2023.md) remove the Nitsche penalty
+with a formulation inspired by the non-symmetric Nitsche method, prove stability
+through an inf–sup estimate and energy-norm convergence of order $h^k$ for
+elements of degree $k$, and an $L^2$ estimate half an order suboptimal (optimal
+under an extra mesh assumption); numerically $L^2$ converges at $k+1$ for $k=1$–$5$.
+For linear elasticity with Neumann conditions the method loses one order,
+because stresses are extrapolated by a Taylor expansion of one order lower.
+
 # Citations
 
 - [Main & Scovazzi (2018)](/sources/main-2018.md) — §1–§4.
 - [Atallah et al. (2022)](/sources/atallah-2022.md) — §1–§6.
+- [Collins et al. (2023)](/sources/collins-2023.md) — §1–§5.

@@ -2,6 +2,34 @@
 
 ## 2026-11-08
 
+**Chunk 4 ingested (night protocol, D32).** Sources: sharan-2022,
+xie-2022, boustani-2022, reiss-2022, giuliani-2022, verzicco-2023,
+deprenter-2023, collins-2023, menez-2023, raj-2023 (40 of 57).
+
+- Concept pages created (2): definitions/spurious-force-oscillations,
+  methods/wall-models-for-immersed-boundaries.
+- Concept pages updated (17): definitions/immersed-boundary-method (history
+  before 1972), definitions/sharp-and-diffuse-interface,
+  definitions/small-cell-problem (finite-element stability vs conditioning),
+  definitions/fresh-cell-problem, methods/cut-cell-method (SBP embedded
+  boundaries, implicit moving cut cells), methods/volume-penalization
+  (compressible), methods/state-redistribution (DG), methods/immersed-interface-method
+  (thin porous membranes), methods/fluid-structure-coupling,
+  methods/shifted-boundary-method (penalty-free), methods/cutfem,
+  methods/ghost-cell-method (GPU, thin and sharp-edged bodies),
+  properties/discrete-conservation, results/first-order-accuracy-of-regularized-delta-forcing,
+  benchmarks/shock-obstacle-interaction, benchmarks/flow-past-sphere.
+- Registry: subscripted $\phi_v$, $\phi_p$ (penalization volume fraction and
+  porosity) recorded as a clash kept on purpose with the level set.
+- Source pages created (10); audit lists of all 40 regenerated.
+- Bibliography: 1780 entries (from 1186); FLAGS 0 after mechanical resolution
+  (scratch tool autoresolve: aliases by DOI or title to the right member of a
+  key family, else the next free suffix) plus ten hand corrections; a duplicate
+  of Burman's "cut elements II" under two keys (burman-2011, burman-2012-b) is
+  left for the closing duplicate sweep.
+- Deep lint (self-audit of the 19 touched concept pages): notation of
+  compressible penalization translated; no contradiction opened.
+
 **Chunk 3 ingested (night protocol, D32).** Sources: sotiropoulos-2014,
 main-2018, griffith-2020, berger-2021, atallah-2022, giuliani-2022-b,
 nair-2022, natarajan-2022, ni-2022, ou-2022 (30 of 57).

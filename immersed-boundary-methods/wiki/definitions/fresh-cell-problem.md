@@ -5,7 +5,7 @@ description: "In sharp-interface immersed boundary methods with moving bodies, a
 status: established
 aliases: [freshly cleared cells, fresh cells, emerging cells]
 tags: [moving-boundary, sharp-interface, ghost-cell, cut-cell]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Fresh-cell problem
@@ -44,8 +44,20 @@ conserved state of a freshly cleared cut cell with a volume-weighted average of
 the valid cells around it, and show that a uniform flow with a body moving at
 the flow velocity is then preserved exactly.
 
+## Fresh and dead cells in cut-cell methods
+
+[Xie et al. (2022)](/sources/xie-2022.md), §3, need no special treatment
+beyond setting the previous velocity of a fresh cell to the body velocity and
+the new velocity of a dead cell (zero fluid volume) to the body velocity, once
+the solid-volume change enters the continuity equation consistently.
+[Raj et al. (2023)](/sources/raj-2023.md) relate the changing status of
+intercepted cells to violations of the geometric conservation law and to
+[spurious force oscillations](/definitions/spurious-force-oscillations.md).
+
 # Citations
 
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — moving-boundary section.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §2.2.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2.
+- [Xie et al. (2022)](/sources/xie-2022.md) — §3.
+- [Raj et al. (2023)](/sources/raj-2023.md) — §1–§2.

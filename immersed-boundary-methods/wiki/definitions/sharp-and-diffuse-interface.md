@@ -5,7 +5,7 @@ description: "The classification of immersed boundary methods by whether the bou
 status: established
 aliases: [sharp interface, diffuse interface, smeared boundary, sharp-interface method, diffused-interface method]
 tags: [immersed-boundary, classification, accuracy]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Sharp and diffuse interface representations
@@ -88,6 +88,14 @@ interface moves with a local average of the velocity, so the exterior flow
 drives a counter-rotating interior flow; an immersed interface computation,
 which reconstructs the velocity-derivative jump, removes it.
 
+## Compressible evidence
+
+[Ménez et al. (2023)](/sources/menez-2023.md) find that a continuous-forcing
+immersed boundary method "is not able to properly reproduce the downstream part
+of a supersonic flow past a wedge" because the artificial flow inside the
+boundary contaminates the external flow, the compressible analogue of the
+spurious interior flow noted by Griffith and Patankar.
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §III.B.
@@ -105,3 +113,4 @@ which reconstructs the velocity-derivative jump, removes it.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §1.
 - [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md) — §3.
 - [Griffith & Patankar (2020)](/sources/griffith-2020.md) — benchmarks.
+- [Ménez et al. (2023)](/sources/menez-2023.md) — conclusions.

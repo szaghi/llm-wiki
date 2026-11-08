@@ -6,6 +6,41 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 4 — 2022–2023: SBP embedded boundaries, moving cut cells, penalization, history (2026-11-08)
+
+Sources (10): sharan-2022, xie-2022, boustani-2022, reiss-2022, giuliani-2022,
+verzicco-2023, deprenter-2023, collins-2023, menez-2023, raj-2023. 40 of 57
+ingested, 29 concept pages plus the registry, 1780 bibliography entries.
+
+### Decisions for the human
+
+1. **Versions read.** reiss-2022 (arXiv:2103.08144v2), giuliani-2022
+   (arXiv:2102.01857v2), deprenter-2023 (Research Square preprint),
+   sharan-2022 (LANL accepted manuscript), menez-2023 (HAL accepted
+   manuscript), collins-2023 (preprint layout).
+2. **Reading depth.** deprenter-2023 (62 pages) read for its framework and
+   remedies; proofs skimmed. Its condition-number exponent (eq. 3.8) is not
+   quoted because the text layer garbles it.
+3. **Bibliography resolution tool.** Same-key collisions were resolved
+   mechanically by DOI or title (51 aliases, 6 silences) and ten by hand;
+   the closing duplicate sweep in chunk 6 will recheck them.
+
+### Contradictions
+
+None opened.
+
+### Bibliography items for the closing sweep
+
+- burman-2011 and burman-2012-b both hold "Fictitious domain finite element
+  methods using cut elements: II" (year variants).
+- iaccarino-2003-c: verzicco-2023's deposit gives Appl. Mech. Rev. 52:421 for
+  an Iaccarino 2003 paper; possibly iaccarino-2003 (56:331) misdeposited.
+
+### Bundle fit
+
+All ten fit; verzicco-2023's wall-model section overlaps
+`turbulence-modelling` (D17 candidate for the human, no copy made).
+
 ## Chunk 3 — 2014–2022: FSI reviews, shifted boundary, state redistribution, moving EB (2026-11-08)
 
 Sources (10): sotiropoulos-2014, main-2018, griffith-2020, berger-2021,

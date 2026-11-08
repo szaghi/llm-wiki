@@ -54,9 +54,10 @@ from the Crossref deposited list.
 
 # Pages created or updated
 
-Chunk 3 (2026-11-08). This source is cited on:
+Chunk 3 (2026-11-08), list updated in chunk 4 (2026-11-08). This source is cited on:
 
 - [Immersed boundary method](/definitions/immersed-boundary-method.md)
 - [Sharp and diffuse interface representations](/definitions/sharp-and-diffuse-interface.md)
 - [Fluid–structure coupling in immersed boundary methods](/methods/fluid-structure-coupling.md)
 - [Ghost-cell immersed boundary method](/methods/ghost-cell-method.md)
+- [Wall models for immersed boundaries](/methods/wall-models-for-immersed-boundaries.md)

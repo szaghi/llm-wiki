@@ -5,7 +5,7 @@ description: "Whether an immersed boundary discretization conserves mass, moment
 status: established
 aliases: [conservation, conservative immersed boundary, mass conservation]
 tags: [conservation, cut-cell, coupling-operator, ghost-fluid, direct-forcing]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Discrete conservation
@@ -70,6 +70,15 @@ is conservative by construction ([Berger & Giuliani 2021](/sources/berger-2021.m
 §2). [Ni et al. (2022)](/sources/ni-2022.md), §5, return the forcing as a
 reaction on the structure to conserve momentum between fluid and solid.
 
+## Moving cut cells and penalization
+
+[Xie et al. (2022)](/sources/xie-2022.md) enforce mass and momentum
+conservation in fluid and cut cells of moving geometries and show that both are
+needed to suppress spurious pressure oscillations. In the volume-fraction
+penalization of [Reiss (2022)](/sources/reiss-2022.md) mass and energy are
+conserved in the whole domain and approximately in the fluid, while momentum is
+not, physically, since the body exchanges momentum with the flow.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §2.6.
@@ -86,3 +95,5 @@ reaction on the structure to conserve momentum between fluid and solid.
 - [Berger & Giuliani (2021)](/sources/berger-2021.md) — §2.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §3.
 - [Ni et al. (2022)](/sources/ni-2022.md) — §5.
+- [Xie et al. (2022)](/sources/xie-2022.md) — §2, §4.
+- [Reiss (2022)](/sources/reiss-2022.md) — §2.

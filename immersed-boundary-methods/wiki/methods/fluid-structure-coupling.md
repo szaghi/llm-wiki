@@ -5,7 +5,7 @@ description: "How immersed boundary methods couple the flow with a moving or def
 status: established
 aliases: [FSI coupling, strong coupling, loose coupling, weak coupling, added-mass instability, partitioned FSI]
 tags: [fluid-structure-interaction, coupling, stability, added-mass, moving-boundary]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Fluid–structure coupling in immersed boundary methods
@@ -77,6 +77,14 @@ system when there are more boundary particles than grid points in the kernel
 support, producing oscillations that erase velocity-sensitive features such as
 Mach reflection.
 
+## Loose coupling for parachutes
+
+[Boustani et al. (2022)](/sources/boustani-2022.md), §4, advance a
+compressible immersed-interface flow solver and a shell finite-element solver
+with penalty contact in a loosely coupled way at the flow solver's CFL step,
+for supersonic parachute inflation with massive self-contact of the
+broadcloth.
+
 # Citations
 
 - [Uhlmann (2005)](/sources/uhlmann-2005.md) — §4.
@@ -85,3 +93,4 @@ Mach reflection.
 - [Griffith & Patankar (2020)](/sources/griffith-2020.md) — introduction, formulations.
 - [Nair & Goza (2022)](/sources/nair-2022.md) — §1–§4.
 - [Ni et al. (2022)](/sources/ni-2022.md) — §1, §5, §6.
+- [Boustani et al. (2022)](/sources/boustani-2022.md) — §4.

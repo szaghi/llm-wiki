@@ -152,5 +152,5 @@ reaction coefficient of the elliptic model problem, always subscripted).
 $\beta$ (the elliptic coefficient, only on interface-method pages) and
 $\beta_f$ (the feedback gain, always subscripted). $\sigma$ (singular source
 strength) is not used for stress; the Cauchy stress is $\boldsymbol{\Sigma}$.
-$r$ (the kernel argument of $\varphi$, only inside kernel formulas) and the
+$\phi_v$ and $\phi_p$ (the reduced volume fraction and the porosity of compressible penalization, always subscripted) and the level set $\phi$. $r$ (the kernel argument of $\varphi$, only inside kernel formulas) and the
 order of accuracy $r$; a page that needs both renames one locally and says so.

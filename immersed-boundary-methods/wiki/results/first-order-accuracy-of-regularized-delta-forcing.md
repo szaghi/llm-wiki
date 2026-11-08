@@ -5,7 +5,7 @@ description: "A singular interface force represented with a regularized delta fu
 status: established
 aliases: [first-order accuracy of the immersed boundary method, smearing error of discrete delta functions]
 tags: [accuracy, delta-function, diffuse-interface, immersed-interface]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # First-order accuracy of regularized-delta forcing at interfaces
@@ -69,6 +69,10 @@ second order) — recover second order.
   give slowly converging interface forces; methods built on the jump
   conditions improve velocity, deformation and stress accuracy.
 
+- *Measured, compressible.* [Ménez et al. (2023)](/sources/menez-2023.md):
+  both a continuous-forcing immersed boundary method and volume penalization
+  are first order in space for isothermal and adiabatic obstacles.
+
 # Citations
 
 - [LeVeque & Li (1994)](/sources/leveque-1994.md) — §1, §5 Example 1, Table 1.
@@ -78,3 +82,4 @@ second order) — recover second order.
 - [Uhlmann (2005)](/sources/uhlmann-2005.md) — §5.
 - [Taira & Colonius (2007)](/sources/taira-2007.md) — §5.
 - [Griffith & Patankar (2020)](/sources/griffith-2020.md) — introduction, summary points.
+- [Ménez et al. (2023)](/sources/menez-2023.md) — conclusions.

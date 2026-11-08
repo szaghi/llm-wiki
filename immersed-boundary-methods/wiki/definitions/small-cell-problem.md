@@ -5,7 +5,7 @@ description: "The stability defect of explicit cut-cell (embedded-boundary) fini
 status: established
 aliases: [small cell problem, arbitrarily small cells, cut-cell stability]
 tags: [cut-cell, embedded-boundary, stability, conservation]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Small-cell problem
@@ -63,6 +63,29 @@ altogether by moving the boundary condition to a surrogate boundary of whole
 elements ([Main & Scovazzi 2018](/sources/main-2018.md), §1), which they
 contrast with the costs of cut-element quadrature and ghost penalties.
 
+## In immersed finite elements: stability versus conditioning
+
+[de Prenter et al. (2023)](/sources/deprenter-2023.md) separate two effects
+of small cut elements in unfitted finite elements. **Stability**: the Nitsche
+parameter needed for coercivity grows without bound as a cut element thins,
+weakening the bound of the operator norm and producing large gradients.
+**Conditioning**: the equivalence between the coefficient norm and the
+operator norm weakens, eigenvalues approach zero, and the condition number
+grows as an inverse power of the smallest volume fraction that increases with
+the polynomial order (the shape of the cut matters less). Their remedies are
+(additive) Schwarz preconditioning, aggregation of badly cut elements onto
+interior ones (AgFEM) and the ghost penalty of [CutFEM](/methods/cutfem.md),
+which they analyse in a unified way; boundary formulations that avoid Nitsche's
+penalty, such as the [shifted boundary method](/methods/shifted-boundary-method.md),
+sidestep the stability problem at other costs.
+
+For cut-cell discontinuous Galerkin schemes, [Giuliani (2022)](/sources/giuliani-2022.md)
+extends [state redistribution](/methods/state-redistribution.md); for
+dimensionally split high-order finite differences, [Sharan et al. (2022)](/sources/sharan-2022.md)
+build boundary stencils that are stable at CFL 0.5 for any cut distance; and
+[Xie et al. (2022)](/sources/xie-2022.md) avoid the problem with implicit time
+stepping.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1, §2.6.
@@ -72,3 +95,7 @@ contrast with the costs of cut-element quadrature and ghost penalties.
 - [Burman et al. (2015)](/sources/burman-2015.md) — §3.
 - [Main & Scovazzi (2018)](/sources/main-2018.md) — §1.
 - [Berger & Giuliani (2021)](/sources/berger-2021.md) — §1.
+- [Sharan et al. (2022)](/sources/sharan-2022.md) — §3–§5.
+- [Xie et al. (2022)](/sources/xie-2022.md) — §1.
+- [Giuliani (2022)](/sources/giuliani-2022.md) — §1.
+- [de Prenter et al. (2023)](/sources/deprenter-2023.md) — §2–§4.

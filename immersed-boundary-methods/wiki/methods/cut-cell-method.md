@@ -5,7 +5,7 @@ description: "Sharp-interface finite-volume method on a Cartesian grid whose cel
 status: established
 aliases: [embedded boundary method, Cartesian cut-cell method, Cartesian grid method, volume-of-fluid boundary representation]
 tags: [cut-cell, embedded-boundary, sharp-interface, finite-volume, conservation, compressible, incompressible]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Cut-cell (embedded-boundary) finite-volume method
@@ -137,6 +137,21 @@ level. The mass error of an oscillating piston in a closed cylinder falls with
 refinement; the entropy error of a receding-piston expansion fan converges at
 first order (§2–§3).
 
+## High order and implicit variants
+
+- [Sharan et al. (2022)](/sources/sharan-2022.md) derive dimensionally split
+  finite-difference embedded-boundary stencils, built only along grid lines with
+  a shortened first interval, that satisfy discrete primary and secondary
+  (energy) conservation in summation-by-parts form with weakly imposed boundary
+  data. With non-dissipative centred interiors up to sixth order they are
+  provably time stable without artificial dissipation and fourth order globally
+  for hyperbolic, parabolic and incompletely parabolic problems, with no
+  small-cell problem at CFL 0.5.
+- [Xie et al. (2022)](/sources/xie-2022.md) solve a 3-D cut-cell finite volume
+  implicitly (PISO), which needs no small-cell treatment, with consistent mass
+  and momentum fluxes and a solid-volume source in moving cut cells that
+  removes most [spurious pressure oscillations](/definitions/spurious-force-oscillations.md).
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1–§4.
@@ -146,3 +161,5 @@ first order (§2–§3).
 - [Ghias et al. (2007)](/sources/ghias-2007.md) — §1.
 - [Mittal et al. (2008)](/sources/mittal-2008.md) — §1.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2–§3.
+- [Sharan et al. (2022)](/sources/sharan-2022.md) — §1–§5.
+- [Xie et al. (2022)](/sources/xie-2022.md) — §2–§4.

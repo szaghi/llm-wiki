@@ -5,7 +5,7 @@ description: "A family of methods that solve the flow equations on a grid that d
 status: established
 aliases: [IB method, IBM, immersed boundary technique, Cartesian grid method, non-boundary-conforming method, fictitious domain method, embedded boundary method]
 tags: [immersed-boundary, classification, cartesian-grid]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Immersed boundary method
@@ -133,6 +133,22 @@ interface, hybrid Cartesian–immersed boundary, curvilinear immersed boundary).
 | [state redistribution](/methods/state-redistribution.md) | cut cells stabilized by overlapping merged neighbourhoods | [Berger & Giuliani (2021)](/sources/berger-2021.md), [Giuliani et al. (2022b)](/sources/giuliani-2022-b.md) |
 | [fluid–structure coupling](/methods/fluid-structure-coupling.md) | loose and strong coupling with deformable structures | [Sotiropoulos & Yang (2014)](/sources/sotiropoulos-2014.md), [Griffith & Patankar (2020)](/sources/griffith-2020.md), [Nair & Goza (2022)](/sources/nair-2022.md), [Ni et al. (2022)](/sources/ni-2022.md) |
 
+## Before 1972
+
+[Verzicco (2023)](/sources/verzicco-2023.md) traces the ideas further back.
+Viecelli (1969) computed incompressible flow bounded by arbitrarily curved
+walls by modifying the marker-and-cell method, tagging cells as external,
+fluid or boundary and interpolating boundary velocities; Viecelli (1971)
+extended it to moving boundaries, a method that "includes most elements of
+modern IBMs". In the Russian school, Saulev (1963) solved a diffusion problem
+around a body on an extended domain with a coefficient $1+1/\epsilon$ in the body —
+a penalization that, with a Lagrange multiplier, becomes the distributed
+Lagrange multiplier fictitious-domain method — and Yanenko (1967) noted that
+fractional-step methods on "unmatched or incoherent grids" need interpolation
+to impose wall conditions. His conclusion: most key ideas "had been conceived
+and implemented already in the 1960s" but could not be exploited with the
+computers of the time.
+
 # Citations
 
 - [Peskin (1972)](/sources/peskin-1972.md) — §I, §VI.
@@ -158,3 +174,4 @@ interface, hybrid Cartesian–immersed boundary, curvilinear immersed boundary).
 - [Main & Scovazzi (2018)](/sources/main-2018.md) — §1.
 - [Griffith & Patankar (2020)](/sources/griffith-2020.md) — introduction.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §1.
+- [Verzicco (2023)](/sources/verzicco-2023.md) — historical sections, summary points.

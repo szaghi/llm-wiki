@@ -5,7 +5,7 @@ description: "Unfitted finite element framework in which the geometry is represe
 status: established
 aliases: [cut finite element method, unfitted Nitsche method, Nitsche fictitious domain method]
 tags: [cutfem, finite-element, nitsche, ghost-penalty, unfitted, level-set, small-cell]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # CutFEM (cut finite element method)
@@ -75,7 +75,16 @@ and the ghost penalty, while it cures small cut elements, may be delicate in
 nonlinear problems, affect conditioning and enlarge the stencil of low-order
 elements.
 
+## Remedies compared
+
+[de Prenter et al. (2023)](/sources/deprenter-2023.md) review the ghost
+penalty alongside Schwarz preconditioning and element aggregation for the
+stability and conditioning problems of small cut elements, and give a unified
+analysis of aggregation and ghost-penalty stabilization
+([small-cell problem](/definitions/small-cell-problem.md)).
+
 # Citations
 
 - [Burman et al. (2015)](/sources/burman-2015.md) — §1–§6.
 - [Main & Scovazzi (2018)](/sources/main-2018.md) — §1.
+- [de Prenter et al. (2023)](/sources/deprenter-2023.md) — §3–§4.

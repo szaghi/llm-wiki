@@ -5,7 +5,7 @@ description: "Postprocessing stabilization for explicit cut-cell finite volumes:
 status: established
 aliases: [SRD, weighted state redistribution, WSRD]
 tags: [cut-cell, embedded-boundary, small-cell, conservation, redistribution, amr]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # State redistribution
@@ -64,7 +64,22 @@ Pele and MFIX-Exa codes with domain decomposition and hybrid parallelism, at a
 negligible share of the cost (§6). SRD has also been applied to
 discontinuous Galerkin schemes in 2-D.
 
+## Discontinuous Galerkin
+
+[Giuliani (2022)](/sources/giuliani-2022.md) applies state redistribution to
+high-order discontinuous Galerkin methods on 2-D curvilinear cut-cell grids:
+the solution is $L^2$-projected onto polynomials on each merging neighbourhood
+in an overlap-weighted inner product, then projected back and averaged; the
+scheme is conservative and preserves polynomials of degree $p$, runs at the
+time step of the background cells (volume fractions down to $10^{-9}$), and
+converges at order $p+1$ in $L^1$ and between $p$ and $p+1$ in $L^\infty$ on
+smooth problems (solid-body rotation, Ringleb-type transonic channel flow);
+with curved cut cells the DG scheme is about an order of magnitude more
+accurate than a second-order rotated-grid $h$-box method, and a Mach 10 double
+Mach reflection is computed with limiting.
+
 # Citations
 
 - [Berger & Giuliani (2021)](/sources/berger-2021.md) — §1–§6.
 - [Giuliani et al. (2022b)](/sources/giuliani-2022-b.md) — §1–§6.
+- [Giuliani (2022)](/sources/giuliani-2022.md) — §1–§6.

@@ -5,7 +5,7 @@ description: "Fictitious-domain immersed boundary method that solves the flow eq
 status: established
 aliases: [Brinkman penalization, penalization method, L2 penalization, H1 penalization, porous-medium fictitious domain]
 tags: [immersed-boundary, penalization, fictitious-domain, continuous-forcing, incompressible]
-timestamp: 2026-11-08T18:08:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Volume penalization (Brinkman penalization)
@@ -69,8 +69,34 @@ in the wall velocity. They contrast it with the fictitious-domain method of
 Glowinski et al., which treats the solid as a fluid under a rigidity
 constraint.
 
+## Compressible penalization
+
+- **Pressure-tight and non-stiff.** [Reiss (2022)](/sources/reiss-2022.md)
+  replaces the stiff velocity penalty that must balance large pressure
+  gradients by a reduced volume fraction $\phi_v$ in the body (lowered by six to
+  eight orders of magnitude) that scales mass, momentum and energy alike, with
+  a non-conservative pressure term $p\,\nabla\phi_v$ as in quasi-one-dimensional gas
+  dynamics. The speed of sound and hence the CFL condition are unchanged,
+  convective and viscous fluxes vanish inside the body (pressure-tight),
+  $\phi_v$ alone gives a slip wall and an added Darcy friction gives no-slip;
+  mass and energy are conserved and the skew-symmetry of the energy-conserving
+  interior scheme is kept. Tests: acoustics, a cylinder, a supersonic wedge, a
+  confined blast wave.
+- **Porosity and cost.** [Ménez et al. (2023)](/sources/menez-2023.md) use
+  the compressible Brinkman form with a permeability $\eta$ treated implicitly and
+  a porosity $\phi_p$ in the continuity equation needed for correct wave
+  reflection (after Liu and Vasilyev); since the spectral radius grows as
+  $\phi_p$ decreases, accuracy costs time step. An adiabatic condition with an
+  implicit source term borrows the ghost-cell framework (zero normal
+  temperature gradient through two image points). Penalization is first order
+  in space, as is the continuous-forcing method they compare, but much cheaper;
+  a new porosity model reproduces shock reflection at the accuracy of
+  $\phi_p=0.01$ with the cost divided by 36.
+
 # Citations
 
 - [Goldstein et al. (1993)](/sources/goldstein-1993.md) — introduction (point forcing that Angot et al. contrast).
 - [Angot et al. (1999)](/sources/angot-1999.md) — §1, §3–§7.
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — continuous-forcing section (rigid boundaries).
+- [Reiss (2022)](/sources/reiss-2022.md) — §1–§4.
+- [Ménez et al. (2023)](/sources/menez-2023.md) — §2–§4.

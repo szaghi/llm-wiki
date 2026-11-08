@@ -21,7 +21,7 @@ spreading and interpolation, $\eta$ and $\chi_s$ the penalization parameter and
 body mask, $\kappa$ the cut-cell volume fraction, $\phi$ the level set), and the
 [update log](/log.md).
 
-**Corpus:** 30 of the 57 archived papers ingested in 3 chunks. Chunk 1 holds
+**Corpus:** 40 of the 57 archived papers ingested in 4 chunks. Chunk 1 holds
 the founding papers of 1972–2002:
 [Peskin (1972)](/sources/peskin-1972.md) invents the immersed boundary method
 for heart valves, and [Peskin (2002)](/sources/peskin-2002.md) gives its
@@ -51,7 +51,18 @@ state redistribution ([Berger & Giuliani 2021](/sources/berger-2021.md),
 material-point fluid–structure coupling ([Nair & Goza 2022](/sources/nair-2022.md),
 [Ni et al. 2022](/sources/ni-2022.md)), moving embedded boundaries with AMR
 ([Natarajan et al. 2022](/sources/natarajan-2022.md)) and directional ghost
-cells for reacting flow ([Ou et al. 2022](/sources/ou-2022.md)).
+cells for reacting flow ([Ou et al. 2022](/sources/ou-2022.md)). Chunk 4
+(2022–2023) brings provably stable high-order embedded boundaries
+([Sharan et al. 2022](/sources/sharan-2022.md)), moving cut cells without
+spurious pressure oscillations ([Xie et al. 2022](/sources/xie-2022.md)),
+thin porous parachutes ([Boustani et al. 2022](/sources/boustani-2022.md)),
+compressible penalization ([Reiss 2022](/sources/reiss-2022.md),
+[Ménez et al. 2023](/sources/menez-2023.md)), DG state redistribution
+([Giuliani 2022](/sources/giuliani-2022.md)), the history of the field
+([Verzicco 2023](/sources/verzicco-2023.md)), small cut elements in finite
+elements ([de Prenter et al. 2023](/sources/deprenter-2023.md)), the
+penalty-free shifted boundary method ([Collins et al. 2023](/sources/collins-2023.md))
+and GPU sharp-interface methods ([Raj et al. 2023](/sources/raj-2023.md)).
 
 ## Reading guide
 
@@ -87,7 +98,9 @@ cells for reacting flow ([Ou et al. 2022](/sources/ou-2022.md)).
    cut cells; [state redistribution](/methods/state-redistribution.md), the
    second-order successor of flux redistribution.
 7. **Moving and deforming bodies.** [Fluid–structure coupling](/methods/fluid-structure-coupling.md):
-   loose and strong coupling, added mass, and the structural models.
+   loose and strong coupling, added mass, and the structural models;
+   [spurious force and pressure oscillations](/definitions/spurious-force-oscillations.md).
+8. **High Reynolds numbers.** [Wall models for immersed boundaries](/methods/wall-models-for-immersed-boundaries.md).
 5. **Cross-cutting properties.**
    [First-order accuracy of regularized-delta forcing](/results/first-order-accuracy-of-regularized-delta-forcing.md)
    and [discrete conservation](/properties/discrete-conservation.md).

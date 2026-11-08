@@ -5,7 +5,7 @@ description: "Sharp-interface discrete-forcing method that assigns values to gho
 status: established
 aliases: [GCIBM, ghost-cell IBM, ghost-point method, image-point method, hybrid Cartesian immersed boundary, HCIB]
 tags: [ghost-cell, sharp-interface, discrete-forcing, reconstruction, compressible, incompressible]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-08T18:22:00Z
 ---
 
 # Ghost-cell immersed boundary method
@@ -129,6 +129,20 @@ membranes (ghost cells on both sides), and a video-reconstructed fish fin.
   reconstructs velocities at immersed-boundary nodes along the normal on a
   curvilinear background grid, used for heart valves and biological flows.
 
+## GPU and thin, sharp-edged bodies
+
+[Raj et al. (2023)](/sources/raj-2023.md) port a sharp-interface
+reconstruction method on a staggered grid to GPUs (OpenACC/CUDA): intercepted
+and "thin" cells are identified from a triangulated surface by ray casting,
+variables are reconstructed along the nearest surface normal, a
+multi-directional forcing handles sharp edges such as airfoil trailing edges,
+and field extension to near-boundary solid points reduces
+[spurious force oscillations](/definitions/spurious-force-oscillations.md) of
+moving bodies. They report more than a 100-fold speed-up on an NVIDIA V100 for
+an oscillating sphere, growing with mesh size, and compare AMD and NVIDIA GPUs.
+[Ménez et al. (2023)](/sources/menez-2023.md) borrow ghost cells with two image
+points to impose adiabatic walls in volume penalization.
+
 # Citations
 
 - [Tseng & Ferziger (2003)](/sources/tseng-2003.md) — §1, §2.2–2.6, §3.
@@ -140,3 +154,5 @@ membranes (ghost cells on both sides), and a video-reconstructed fish fin.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2.
 - [Ni et al. (2022)](/sources/ni-2022.md) — §5.
 - [Ou et al. (2022)](/sources/ou-2022.md) — §2–§3.
+- [Ménez et al. (2023)](/sources/menez-2023.md) — §3.
+- [Raj et al. (2023)](/sources/raj-2023.md) — §2–§5.
