@@ -1,0 +1,30 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Immersed boundary methods"
+summary = "Immersed boundary, embedded boundary and fictitious-domain methods, 1972–2026: Peskin's immersed boundary method for fluid–structure interaction and its regularized delta functions, continuous (feedback) and discrete (direct) forcing, sharp-interface ghost-cell and cut-cell (embedded-boundary) finite-volume methods and their small-cell stabilization (cell merging, flux and state redistribution), the immersed interface and ghost fluid methods, volume penalization (Brinkman), CutFEM and the shifted boundary method, inverse Lax–Wendroff boundary treatments, high-order and discontinuous Galerkin immersed discretizations, compressible and shock–obstacle flows, moving bodies and fluid–structure interaction, and GPU implementations."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/immersed-boundary"
+keywords = [
+  "immersed boundary method",
+  "regularized delta function",
+  "direct forcing",
+  "feedback forcing",
+  "sharp interface",
+  "ghost-cell method",
+  "cut-cell method",
+  "embedded boundary method",
+  "small-cell problem",
+  "cell merging",
+  "flux redistribution",
+  "state redistribution",
+  "immersed interface method",
+  "ghost fluid method",
+  "volume penalization",
+  "Brinkman penalization",
+  "fictitious domain",
+  "CutFEM",
+  "shifted boundary method",
+  "inverse Lax-Wendroff",
+  "fluid-structure interaction",
+  "Cartesian grid method",
+]

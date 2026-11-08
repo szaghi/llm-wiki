@@ -1,0 +1,74 @@
+# Ingestion issues — immersed-boundary-methods
+
+Reviewer's digest, one section per chunk, newest first: contradictions
+opened (the normative record is the `## Contradictions` section of the
+named page), printed inconsistencies, identity and metadata problems,
+bundle-fit suggestions, and questions left to the human. Not part of the
+OKF wiki; maintained by the compiler at every chunk.
+
+## Chunk 1 — the founding papers, 1972–2002 (2026-11-08)
+
+Sources (10): peskin-1972, goldstein-1993, leveque-1994, pember-1995,
+fedkiw-1999, ye-1999, angot-1999, fadlun-2000, kim-2001, peskin-2002.
+10 of 57 ingested, 18 concept pages plus the registry, 312 bibliography
+entries.
+
+### Decisions for the human
+
+1. **Bundle name** `immersed-boundary-methods` (D32), chosen on the owner's
+   behalf — confirm or rename before committing.
+2. **Reading depth.** Compiled inline without subagents. Method sections and
+   theory were read in full; long result sections of fedkiw-1999, ye-1999,
+   fadlun-2000, kim-2001 and pember-1995 were read for set-up, tables and
+   conclusions. Each Source page states its version read.
+3. **OCR sources.** goldstein-1993 and pember-1995 are image-only scans read
+   through tesseract OCR; their display equations are not legible, so no
+   equation from them is quoted beyond what their prose states (Pember's
+   preliminary update and redistribution formulas are described in words).
+   A visual page-by-page reading would recover the formulas.
+4. **Slug order for Giuliani 2022.** By publication order the SISC paper
+   (Feb 2022) is giuliani-2022 and the JCP paper (Sep 2022) giuliani-2022-b.
+   The bundle `high-order-capturing-schemes` uses giuliani-2022 for the JCP
+   paper. Bundles are independent (D12), so this is legal, but a reader
+   moving between bundles may be confused.
+
+### Contradictions
+
+None opened.
+
+### Identity and metadata
+
+- pember-1995: Crossref spells the fourth author "Curtchfield"; page 1 prints
+  Crutchfield (used).
+- peskin-1972: the text layer prints the author as "PISKIN" on page 1.
+- burman-2015 (chunk 2) is filed as 2014 (online year); the issue is 2015.
+- Seven archive papers are also Sources elsewhere (peskin-2002, mittal-2008,
+  berger-2021, giuliani-2022-b, natarajan-2022, liu-2025 in
+  `high-order-capturing-schemes`; jones-2026 in `div-free-amr`).
+
+### Printed slips (reference lists)
+
+- pember-1995 ref. 18 prints 1969 for Math. Comput. 22:745 (1968), aliased to
+  chorin-1968; ref. 45 prints 1944 for an AIAA paper of 1994; ref. 58 prints
+  "J. Comput. Phys. 23(1):125" for Computers & Fluids 23:125, aliased by
+  ye-1999's Crossref record; ref. 65 prints 1993 for the 1983 AIAA conference.
+- goldstein-1993 ref. 2 is "Deleted in proof"; ref. 1's author reads
+  "Bae-Lev" in the OCR, entered as Bar-Lev.
+
+### Bibliography decisions taken
+
+- Undated citations (in press, submitted, in preparation, "200x") are keyed
+  by the citing paper's year with a note: chu-1993, colella-1995,
+  khadra-1999, jiang-1999, liu-1999, mayo-1994, lim-2002, schmid-2002,
+  zhang-2002, peskin-1993-b, tu-1993. peskin-1993-b has the title of
+  peskin-1992 and tu-1993 is probably tu-1992; both kept distinct as
+  pre-publication citations (standing ruling on preprints).
+- fedkiw-1999-b (the isobaric-fix paper, JCP 148) is suffixed although it
+  appeared before the ingested fedkiw-1999, whose slug is fixed.
+- peskin-1972-b is Peskin's 1972 PhD thesis, distinct from the paper.
+
+### Bundle fit
+
+All ten papers fit this bundle. fedkiw-1999 (multimaterial ghost fluid) and
+leveque-1994 (elliptic interface problems) are interface methods rather than
+solid-body methods; they are central to the archive's sharp-interface line.

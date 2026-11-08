@@ -680,3 +680,40 @@ as D17 candidates; no copy is made without the human's decision, and the
 bundle never links to another bundle (D12). The archive is in
 chronological order, so chunk 1 holds the founding papers and the
 registry and the reading guide are built from them.
+
+## D32 — Immersed-boundary bundle (2026-11-08)
+
+**Decision (user):** a new bundle for immersed boundary methods, compiled
+from the user's immersed-boundary bibliography,
+`~/papers/mosaic/immersed-boundary` (57 PDFs, papers of 1972–2026), in
+chunks of 10 (D26), with a per-chunk digest in
+`immersed-boundary-methods/INGESTION-ISSUES.md`. The user named the archive
+and the chunk size and asked for a bundle specific to the topic even though
+other bundles overlap it; the bundle name `immersed-boundary-methods` was
+chosen by the compiler and is the human's to change before the first
+commit.
+
+**Compiled unattended and inline.** As for D31, the ingestion runs under the
+night protocol: each chunk is one snapshot step with one prepared commit
+message `docs(immersed-boundary-methods): ingest chunk N: <slugs>`, and the
+human commits the chain in order. Following the owner's standing
+instruction of 2026-11-02, no subagents are used: the main session reads
+the sources, writes the pages, merges the reference lists and audits.
+
+**The archive's composition, recorded because it shapes the bundle:** the
+page-1 and checksum check found 57 distinct works and no byte copies; all
+were matched on Crossref, 22 by bibliographic search because page 1 prints
+no DOI; two are image-only scans read through OCR. Seven works are Source
+pages of other bundles (`high-order-capturing-schemes`, `div-free-amr`) and
+are read again here in this bundle's notation (D12). Five papers have no
+deposited Crossref reference list; their printed lists are transcribed.
+
+**How the scope is kept:** the archive spans Peskin's method for
+fluid–structure interaction, continuous and discrete forcing, penalization,
+sharp-interface ghost-cell, immersed-interface and ghost-fluid methods,
+cut-cell finite volumes with their stabilization, immersed finite elements
+(CutFEM, shifted boundary method), inverse Lax–Wendroff boundary
+treatments, and high-order, compressible, MHD and plasma applications. All
+are ingested in full: the user's bibliography defines the domain. Overlaps
+with other bundles are left to the documentation site's computed overlaps;
+the bundle never links to another bundle (D12).

@@ -1,0 +1,76 @@
+---
+okf_version: "0.1"
+---
+
+# immersed-boundary-methods — Knowledge Bundle
+
+Immersed boundary methods, as collected in an immersed-boundary bibliography
+of 1972–2026: methods that compute flows around bodies, or across
+interfaces, on grids that do not conform to them — by forcing the flow
+equations, by correcting stencils with interface jumps, by ghost values, or
+by clipping finite volumes — together with their accuracy, conservation and
+stability, and the fluid–structure, compressible and high-order problems they
+are applied to.
+
+**Start here:** the [Notation registry](/notation.md), which is normative for
+every page ($\Omega_s$ the body, $\Gamma$ the immersed boundary with normal
+$\mathbf n$ out of the body, $\mathbf X(\mathbf s,t)$ its Lagrangian configuration,
+$\mathbf F$ and $\mathbf f$ the Lagrangian and Eulerian force densities, $\delta_h$
+the regularized delta function with kernel $\varphi$, $\mathcal S$ and $\mathcal J$
+spreading and interpolation, $\eta$ and $\chi_s$ the penalization parameter and
+body mask, $\kappa$ the cut-cell volume fraction, $\phi$ the level set), and the
+[update log](/log.md).
+
+**Corpus:** 10 of the 57 archived papers ingested (chunk 1, the founding
+papers of 1972–2002):
+[Peskin (1972)](/sources/peskin-1972.md) invents the immersed boundary method
+for heart valves, and [Peskin (2002)](/sources/peskin-2002.md) gives its
+mathematical structure; [Goldstein et al. (1993)](/sources/goldstein-1993.md)
+introduce feedback forcing; [LeVeque & Li (1994)](/sources/leveque-1994.md)
+the immersed interface method; [Pember et al. (1995)](/sources/pember-1995.md)
+the compressible embedded-boundary method with redistribution;
+[Fedkiw et al. (1999)](/sources/fedkiw-1999.md) the ghost fluid method;
+[Ye et al. (1999)](/sources/ye-1999.md) the incompressible cut-cell method;
+[Angot et al. (1999)](/sources/angot-1999.md) the convergence theory of
+penalization; [Fadlun et al. (2000)](/sources/fadlun-2000.md) and
+[Kim et al. (2001)](/sources/kim-2001.md) direct forcing.
+
+## Reading guide
+
+1. **What an immersed boundary method is.**
+   [Immersed boundary method](/definitions/immersed-boundary-method.md) is the
+   hub: continuous versus discrete forcing, and the families.
+   [Sharp and diffuse interface representations](/definitions/sharp-and-diffuse-interface.md)
+   is the second classification, and the one that decides accuracy.
+2. **Peskin's method and its operators.**
+   [Classical (Peskin) immersed boundary method](/methods/classical-immersed-boundary-method.md),
+   built on the [regularized delta function](/operators/regularized-delta-function.md)
+   and the adjoint pair of [spreading and interpolation operators](/operators/spreading-and-interpolation.md).
+3. **Forcing a prescribed boundary.**
+   [Feedback forcing](/methods/feedback-forcing.md) (a controller, stiff) and
+   [direct forcing](/methods/direct-forcing.md) (solved from the discrete
+   equations, accuracy set by the velocity reconstruction);
+   [volume penalization](/methods/volume-penalization.md) and its
+   [convergence theory](/results/convergence-of-volume-penalization.md).
+4. **Sharp interfaces.**
+   The [immersed interface method](/methods/immersed-interface-method.md),
+   the [ghost fluid method](/methods/ghost-fluid-method.md), and the
+   [cut-cell method](/methods/cut-cell-method.md) with its
+   [small-cell problem](/definitions/small-cell-problem.md) and
+   [redistribution](/methods/redistribution.md).
+5. **Cross-cutting properties.**
+   [First-order accuracy of regularized-delta forcing](/results/first-order-accuracy-of-regularized-delta-forcing.md)
+   and [discrete conservation](/properties/discrete-conservation.md).
+6. **Validation cases.** [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
+   and [flow past a sphere](/benchmarks/flow-past-sphere.md).
+
+## Catalogs
+
+- [Definitions](/definitions/index.md)
+- [Methods](/methods/index.md)
+- [Operators](/operators/index.md)
+- [Results](/results/index.md)
+- [Properties](/properties/index.md)
+- [Benchmarks](/benchmarks/index.md)
+- [Sources](/sources/index.md)
+- [Bibliography](/bibliography.md) — every work cited by an ingested source.
