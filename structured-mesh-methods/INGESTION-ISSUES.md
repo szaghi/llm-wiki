@@ -6,6 +6,34 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 5 — 2024–2026: adaptation, RL and neural meshing, GCL for Runge–Kutta, mimetic metrics, curving reviews (2026-11-08)
+
+Sources (10): wang-2024, dzanic-2024, ma-2024, kim-2025, liao-2025,
+chen-2025, wang-2025, bach-2025, hu-2026, kirilov-2026. 48 of 56 ingested,
+20 concept pages plus the registry, 1710 bibliography entries.
+
+### Decisions for the human
+
+1. **Versions read.** dzanic-2024 (arXiv:2310.01695v2), kim-2025
+   (arXiv:2402.15079v1, earlier title), bach-2025 (arXiv:2410.14502v2;
+   the archive file is labelled Europe PMC), hu-2026 (journal pre-proof,
+   volume not yet assigned); the others are versions of record.
+2. **Reading depth.** hu-2026 (review) read in scope: abstract, contents,
+   §1 and §5.
+3. **Garbled deposit entries.** The hu-2026 Crossref deposit holds some
+   unparsable references (titles "forum", "fluid dynamics conference");
+   kept as deposited, flagged for the closing sweep.
+
+### Contradictions
+
+None opened.
+
+### Bundle fit
+
+- wang-2024 (tokamak MHD) touches `fusion-mhd-simulation`; bach-2025
+  (de Rham projections) touches `div-free-amr`; read here in this bundle's
+  notation (D12).
+
 ## Chunk 4 — 2022–2024: upwind free-stream preservation, mesh morphing and correction, NekMesh (2026-11-08)
 
 Sources (9): han-2022, barrera-2023, rochery-2023, peng-2023, su-2023,

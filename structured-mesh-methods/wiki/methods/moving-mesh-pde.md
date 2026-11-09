@@ -5,7 +5,7 @@ description: "Continuous equations for the node motion of a mesh with a fixed nu
 status: established
 aliases: [MMPDE, MMPDE4, MMPDE5, MMPDE6, r-adaptivity, dynamic mesh adaptation]
 tags: [moving-mesh, adaptation, monitor-function]
-timestamp: 2026-11-08T20:46:00Z
+timestamp: 2026-11-08T21:01:00Z
 ---
 
 # Moving mesh partial differential equations
@@ -69,8 +69,20 @@ Optimization-based node movement toward targets
 adaptation ([anisotropic mesh adaptation](/methods/anisotropic-mesh-adaptation.md))
 are the other forms of r-adaptivity in the corpus.
 
+## Moving meshes for tokamak MHD
+
+[Wang et al. (2024)](/sources/wang-2024.md) add a moving poloidal mesh to a
+finite-difference tokamak MHD code: the equations are written in
+curvilinear coordinates on a uniform computational mesh, and the physical
+mesh follows a variational mesh equation with a monitor built from the
+perturbed fields, evolved together with the MHD equations. For tearing and
+internal kink modes the moving mesh resolves the thin singular layers with
+the same number of points, with better stability and convergence than the
+uniform mesh.
+
 # Citations
 
 - [Huang, Ren & Russell (1994)](/sources/huang-1994.md) — §1–§3, §5.
 - [Tang & Tang (2003)](/sources/tang-2003.md) — §1–§4.
 - [Dobrev et al. (2022)](/sources/dobrev-2022.md) — introduction.
+- [Wang et al. (2024)](/sources/wang-2024.md) — §1–§2, results.

@@ -19,7 +19,7 @@ $g_{ij}$, the metric terms $J\mathbf a^i$, the grid velocity $\dot{\mathbf x}$,
 control functions $P^i$, the monitor function $M$, the target Jacobian
 $\mathsf W$ and $\mathsf T=\mathsf A\mathsf W^{-1}$), and the [update log](/log.md).
 
-**Corpus:** 38 of the 56 archived papers ingested in 4 chunks (two archive files are not the papers their names announce; see the issues digest). Chunk 1 holds
+**Corpus:** 48 of the 56 archived papers ingested in 5 chunks (two archive files are not the papers their names announce; see the issues digest). Chunk 1 holds
 the founding papers of 1966–2001: [Winslow (1966)](/sources/winslow-1966.md)
 builds meshes from inverted Laplace equations;
 [Gordon & Hall (1973)](/sources/gordon-1973.md) introduce transfinite
@@ -63,6 +63,16 @@ remeshing of curved meshes ([Rochery & Loseille 2023](/sources/rochery-2023.md))
 the open-source generator NekMesh ([Green et al. 2024](/sources/green-2024.md)),
 mapped-mesh AMR for detonations ([Peng & Deiterding 2023](/sources/peng-2023.md))
 and a neural generator trained with coarse-mesh data ([Chen et al. 2023](/sources/chen-2023.md)).
+Chunk 5 (2024–2026) brings moving meshes for tokamak MHD ([Wang et al. 2024](/sources/wang-2024.md)),
+reinforcement-learning refinement and meshing ([Dzanic et al. 2024](/sources/dzanic-2024.md),
+[Kim et al. 2025](/sources/kim-2025.md)), multi-resolution adaptation on
+curvilinear grids ([Ma et al. 2024](/sources/ma-2024.md)), the geometric
+conservation law for Runge–Kutta methods ([Liao & Jin 2025](/sources/liao-2025.md)),
+linear-stream preservation ([Chen et al. 2025](/sources/chen-2025.md)),
+mimetic metrics ([Bach et al. 2025](/sources/bach-2025.md)), a further neural
+generator ([Wang et al. 2025](/sources/wang-2025.md)), a review of high-order
+curvilinear meshing ([Hu & Chen 2026](/sources/hu-2026.md)) and curving of
+third-party meshes ([Kirilov et al. 2026](/sources/kirilov-2026.md)).
 
 ## Reading guide
 
@@ -100,7 +110,8 @@ and a neural generator trained with coarse-mesh data ([Chen et al. 2023](/source
    [anisotropic mesh adaptation](/methods/anisotropic-mesh-adaptation.md).
 8. **Applications and new tools.**
    [Shock fitting on structured grids](/methods/shock-fitting.md) and
-   [neural-network mesh generation](/methods/neural-network-mesh-generation.md).
+   [neural-network mesh generation](/methods/neural-network-mesh-generation.md)
+   and [reinforcement-learning meshing](/methods/reinforcement-learning-meshing.md).
 9. **Software.** [NekMesh](/software/nekmesh.md), an open-source high-order
    mesh generator.
 

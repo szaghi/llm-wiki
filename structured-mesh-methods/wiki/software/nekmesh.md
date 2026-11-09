@@ -5,7 +5,7 @@ description: "Open-source generator of valid curvilinear high-order meshes for s
 status: established
 aliases: [NekMesh]
 tags: [software, high-order-mesh, curving, boundary-layer, optimization]
-timestamp: 2026-11-08T20:53:00Z
+timestamp: 2026-11-08T21:01:00Z
 ---
 
 # NekMesh
@@ -36,6 +36,13 @@ same family of approaches as [high-order mesh curving](/methods/high-order-mesh-
 and [variational grid generation](/methods/variational-grid-generation.md).
 Examples include aeronautical and automotive geometries.
 
+## Third-party meshes
+
+[Kirilov et al. (2026)](/sources/kirilov-2026.md) extend the NekMesh workflow
+to meshes from other generators by reconstructing mesh–CAD connectivity
+before curving and optimization.
+
 # Citations
 
 - [Green et al. (2024)](/sources/green-2024.md) — abstract, program summary, §1–§2.
+- [Kirilov et al. (2026)](/sources/kirilov-2026.md) — §1.

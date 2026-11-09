@@ -5,7 +5,7 @@ description: "Computing the metric terms of a curvilinear discretization in a co
 status: established
 aliases: [conservative metric method, CMM, symmetrical conservative metric method, SCMM, conservative curl form, invariant curl form, Thomas–Lombard metrics]
 tags: [free-stream-preservation, metric-identities, high-order, finite-difference]
-timestamp: 2026-11-08T20:53:00Z
+timestamp: 2026-11-08T21:01:00Z
 ---
 
 # Conservative metric evaluation
@@ -135,6 +135,24 @@ Three later routes for upwind and WENO fluxes:
   that metrics and fluxes share their discretization, so low-order metrics
   can serve poor meshes while the flow is reconstructed at high order.
 
+## Multi-resolution, linear streams and mimetic metrics
+
+- [Ma et al. (2024)](/sources/ma-2024.md) remove the metric errors of the
+  WENO-ZQ dissipation and make the prediction and projection operators of
+  adaptive multi-resolution respect the metrics, so that refinement on
+  curvilinear grids keeps the geometric conservation law.
+- [Chen, Liu & Artola-Zúñiga (2025)](/sources/chen-2025.md) build on the
+  discrete-equivalence approach with a gradient-based interpolation that
+  preserves a **linear** flow exactly, a stronger requirement than a uniform
+  one ([free-stream preservation](/properties/free-stream-preservation.md)).
+- [Bach et al. (2025)](/sources/bach-2025.md) compute discontinuous
+  Galerkin spectral-element metrics with projections that commute with the
+  discrete de Rham complex (Lagrange and edge polynomials), writing
+  $J\mathbf a^i$ as the curl of a projected field; the discrete divergence then
+  vanishes by construction. In 2-D this equals Kopriva's curl form; in 3-D
+  it differs, and its rounding errors are more than an order of magnitude
+  smaller.
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — conservative metric form.
@@ -149,3 +167,6 @@ Three later routes for upwind and WENO fluxes:
 - [Han, Xu & Liu (2022)](/sources/han-2022.md) — §I, §III, §V.
 - [Su et al. (2023)](/sources/su-2023.md) — abstract, method.
 - [Su et al. (2023b)](/sources/su-2023-b.md) — abstract, method.
+- [Ma et al. (2024)](/sources/ma-2024.md) — abstract, §1, §3.
+- [Chen, Liu & Artola-Zúñiga (2025)](/sources/chen-2025.md) — abstract, §I.
+- [Bach et al. (2025)](/sources/bach-2025.md) — §1–§4.

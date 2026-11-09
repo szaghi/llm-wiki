@@ -5,7 +5,7 @@ description: "A posteriori generation of curved high-order meshes: a straight-si
 status: established
 aliases: [a posteriori curving, curved mesh generation, mesh untangling, elastic analogy, high-order mesh optimization]
 tags: [high-order-mesh, curving, untangling, optimization]
-timestamp: 2026-11-08T20:53:00Z
+timestamp: 2026-11-08T21:01:00Z
 ---
 
 # High-order mesh curving
@@ -73,9 +73,28 @@ adaptation of curved meshes.
 boundary-layer splitting and variational optimization in an open-source
 pipeline ([Green et al. 2024](/sources/green-2024.md)).
 
+## A map of the field, and meshes without CAD links
+
+[Hu & Chen (2026)](/sources/hu-2026.md) classify high-order generation into
+direct methods (advancing front, envelope approaches) and indirect ones
+(mechanical analogies, Winslow smoothing, radial-basis-function
+interpolation, energy minimization including minimal-surface and weighted
+squared-volume functionals), with isoparametric splitting for boundary
+layers, and compare them by whether they need a linear mesh, guarantee
+validity explicitly, implicitly or not at all, control quality, and
+interpolate or approximate the boundary.
+[Kirilov et al. (2026)](/sources/kirilov-2026.md) curve meshes imported from
+other software by first reconstructing the missing link between mesh
+entities and CAD entities and projecting vertices onto the CAD, which works
+even for invalid, non-watertight CAD given a valid linear volume mesh; order
+elevation, optimization with nodes sliding on the CAD and boundary-layer
+splitting follow, up to an automotive case.
+
 # Citations
 
 - [Xie et al. (2013)](/sources/xie-2013.md) — §1–§4, §6.
 - [Toulorge et al. (2013)](/sources/toulorge-2013.md) — §1–§4, §6–§7.
 - [Rochery & Loseille (2023)](/sources/rochery-2023.md) — abstract, §1–§3.
 - [Green et al. (2024)](/sources/green-2024.md) — §1.
+- [Hu & Chen (2026)](/sources/hu-2026.md) — abstract, §4–§5.
+- [Kirilov et al. (2026)](/sources/kirilov-2026.md) — abstract, §1.

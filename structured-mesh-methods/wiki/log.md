@@ -2,6 +2,26 @@
 
 ## 2026-11-08
 
+**Chunk 5 ingested (night protocol, D33).** Sources: wang-2024,
+dzanic-2024, ma-2024, kim-2025, liao-2025, chen-2025, wang-2025, bach-2025,
+hu-2026, kirilov-2026 (48 of 56).
+
+- Concept page created (1): methods/reinforcement-learning-meshing.
+- Concept pages updated (8): methods/moving-mesh-pde (tokamak MHD),
+  methods/conservative-metric-evaluation (multi-resolution, linear streams,
+  mimetic metrics), properties/free-stream-preservation (stronger
+  requirements), properties/geometric-conservation-law (Runge–Kutta),
+  methods/neural-network-mesh-generation (attention and Fourier features),
+  methods/high-order-mesh-curving (review classification, third-party
+  meshes), software/nekmesh, definitions/high-order-mesh-validity.
+- Source pages created (10); audit lists regenerated, no older list changed.
+- Bibliography: 1710 entries (from 1338), FLAGS 0. wang-2025-c (a grid
+  stitching paper) separated from the ingested key; two anonymous 2018
+  Chinese papers printed in swapped order resolved by title; the ECCOMAS
+  paper turner-2016-b and the ADIGMA book kroll-2010-b merged across title
+  variants. The hu-2026 deposit contains garbled entries (e.g. titles
+  "forum", "fluid dynamics conference"); they are kept as deposited.
+
 **Chunk 4 ingested (night protocol, D33).** Sources: han-2022,
 barrera-2023, rochery-2023, peng-2023, su-2023, camier-2023, su-2023-b,
 chen-2023, green-2024 (38 of 56). Archive file 036, named after Galbraith et

@@ -5,7 +5,7 @@ description: "A scheme on a curvilinear grid preserves a uniform flow exactly on
 status: established
 aliases: [freestream preservation, discrete metric identities, surface conservation law, uniform-flow preservation]
 tags: [free-stream-preservation, metric-identities, conservation]
-timestamp: 2026-11-08T20:46:00Z
+timestamp: 2026-11-08T21:01:00Z
 ---
 
 # Free-stream preservation
@@ -71,6 +71,15 @@ metric-dependent correction functions applied to the whole split form give
 provably stable flux reconstruction, whereas applying the corrections to the
 surface terms only diverges.
 
+## Stronger requirements
+
+Uniform-flow preservation does not guarantee accuracy on non-smooth grids:
+[Chen, Liu & Artola-Zúñiga (2025)](/sources/chen-2025.md) ask that a linear
+flow field also be preserved exactly and show that schemes meeting this
+reduce errors on non-smooth curvilinear grids. Divergence-free discrete
+metric terms are also a prerequisite of entropy stability on curvilinear
+grids ([Bach et al. 2025](/sources/bach-2025.md)).
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — uniform-flow analysis, conservative metrics.
@@ -79,3 +88,5 @@ surface terms only diverges.
 - [Kopriva (2006)](/sources/kopriva-2006.md) — §1.
 - [Deng et al. (2011)](/sources/deng-2011.md) — §1–§2.
 - [Cicchino et al. (2022)](/sources/cicchino-2022.md) — Theorem 1, conclusions.
+- [Chen, Liu & Artola-Zúñiga (2025)](/sources/chen-2025.md) — abstract, §I.
+- [Bach et al. (2025)](/sources/bach-2025.md) — abstract.

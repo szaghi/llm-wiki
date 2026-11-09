@@ -5,7 +5,7 @@ description: "On moving grids the volume element must change exactly as the swep
 status: established
 aliases: [GCL, volume conservation law, discrete geometric conservation law]
 tags: [gcl, moving-mesh, conservation, metric-identities]
-timestamp: 2026-11-08T20:37:00Z
+timestamp: 2026-11-08T21:01:00Z
 ---
 
 # Geometric conservation law
@@ -62,9 +62,21 @@ meshes (pitching airfoil, fluttering panel). [Deng et al. (2011)](/sources/deng-
 call this part the volume conservation law and the spatial part the surface
 conservation law ([free-stream preservation](/properties/free-stream-preservation.md)).
 
+## Runge–Kutta time stepping
+
+[Liao & Jin (2025)](/sources/liao-2025.md) satisfy the discrete law for
+explicit and implicit Runge–Kutta methods in a high-order cell-centred
+finite-difference method: the time-difference combination that each method
+applies to the cell-centred solution is extracted and applied to the face
+time metrics, the grid is moved by integrating the grid velocities with the
+same Runge–Kutta scheme, and a conservative spatial difference removes the
+volume-conservation error to machine precision. Both of the time-metric
+forms they compare preserve the free stream with high-order time accuracy.
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — GCL, modified finite-volume method, applications.
 - [Thompson, Warsi & Mastin (1982)](/sources/thompson-1982.md) — Section P.
 - [Visbal & Gaitonde (2002)](/sources/visbal-2002.md) — §4.3.
 - [Deng et al. (2011)](/sources/deng-2011.md) — §1.
+- [Liao & Jin (2025)](/sources/liao-2025.md) — abstract, §1–§2.
