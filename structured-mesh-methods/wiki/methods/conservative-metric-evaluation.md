@@ -5,7 +5,7 @@ description: "Computing the metric terms of a curvilinear discretization in a co
 status: established
 aliases: [conservative metric method, CMM, symmetrical conservative metric method, SCMM, conservative curl form, invariant curl form, Thomas–Lombard metrics]
 tags: [free-stream-preservation, metric-identities, high-order, finite-difference]
-timestamp: 2026-11-08T20:37:00Z
+timestamp: 2026-11-08T20:46:00Z
 ---
 
 # Conservative metric evaluation
@@ -86,6 +86,31 @@ points; making each pair share one half-point Jacobian and metric set makes
 the dissipation vanish in a uniform flow, for linear-upwind, WENO and hybrid
 schemes.
 
+## WENO on the solution, and MHD
+
+The obstacle for finite-difference WENO is that it reconstructs fluxes.
+In the alternative formulation of Shu and Osher the WENO interpolation acts
+on the solution, and the flux difference is a linear central operation to
+which the conservative metric technique applies, so the free stream is
+preserved on stationary and moving curvilinear grids
+([Yu, Jiang & Zhang 2020](/sources/yu-2020.md)). For ideal MHD with
+unstaggered constrained transport, where the magnetic field is the discrete
+curl of a vector potential advanced by a Hamilton–Jacobi equation, Yu et al.
+note that a free stream needs a potential that is linear in physical space,
+which standard Hamilton–Jacobi WENO on the computational lattice need not
+keep; a Lax–Friedrichs-type monotone Hamiltonian with metric terms designed
+to cancel keeps linear potentials, and so the free stream, on stationary and
+moving grids.
+
+## Curved elements of flux reconstruction
+
+[Cicchino et al. (2022)](/sources/cicchino-2022.md) use Kopriva's
+conservative curl form (interpolate the product to the flux nodes, then
+take the reference curl) to satisfy the metric identities a priori in
+energy-stable flux reconstruction, and recall Abe et al.'s use of separate
+interpolation operators for mapping points and flux nodes so that face
+normals agree at facet cubature points.
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — conservative metric form.
@@ -95,3 +120,5 @@ schemes.
 - [Deng et al. (2011)](/sources/deng-2011.md) — §2–§3, §5.
 - [Deng et al. (2013)](/sources/deng-2013.md) — symmetrical conservative form, concluding remarks.
 - [Zhu & Hu (2019)](/sources/zhu-2019.md) — §3, §5.
+- [Yu, Jiang & Zhang (2020)](/sources/yu-2020.md) — introduction, method, conclusions.
+- [Cicchino et al. (2022)](/sources/cicchino-2022.md) — metric-term appendix.

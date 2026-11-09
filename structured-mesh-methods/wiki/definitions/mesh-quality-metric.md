@@ -5,7 +5,7 @@ description: "A scalar function of an element's node positions that measures a g
 status: established
 aliases: [element quality metric, algebraic quality metric, shape metric, condition number metric, mean ratio]
 tags: [mesh-quality, element-jacobian, target-matrix]
-timestamp: 2026-11-08T20:37:00Z
+timestamp: 2026-11-08T20:46:00Z
 ---
 
 # Mesh quality metric
@@ -58,7 +58,15 @@ straight-sided element, bounded from its Bézier expansion
 ([validity of high-order curvilinear elements](/definitions/high-order-mesh-validity.md);
 [Johnen, Remacle & Geuzaine 2013](/sources/johnen-2013.md)).
 
+## Optimizing with the metrics
+
+Knupp's referenced metrics became the objective functions of
+[target-matrix optimization](/methods/target-matrix-optimization.md), with
+targets at sub-element points for high-order elements
+([Dobrev et al. 2019](/sources/dobrev-2019.md)).
+
 # Citations
 
 - [Knupp (2001)](/sources/knupp-2001.md) — §1–§9, conclusions.
 - [Johnen, Remacle & Geuzaine (2013)](/sources/johnen-2013.md) — distortion.
+- [Dobrev et al. (2019)](/sources/dobrev-2019.md) — §2.

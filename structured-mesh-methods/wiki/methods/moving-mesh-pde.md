@@ -5,7 +5,7 @@ description: "Continuous equations for the node motion of a mesh with a fixed nu
 status: established
 aliases: [MMPDE, MMPDE4, MMPDE5, MMPDE6, r-adaptivity, dynamic mesh adaptation]
 tags: [moving-mesh, adaptation, monitor-function]
-timestamp: 2026-11-08T20:37:00Z
+timestamp: 2026-11-08T20:46:00Z
 ---
 
 # Moving mesh partial differential equations
@@ -61,7 +61,16 @@ the solver is. Shocks in 1-D and 2-D (Riemann problems, double Mach
 reflection, flow past a cylinder) are resolved with far fewer points than
 on uniform meshes.
 
+## Related node-moving methods
+
+Optimization-based node movement toward targets
+([target-matrix optimization](/methods/target-matrix-optimization.md);
+[Dobrev et al. 2022](/sources/dobrev-2022.md)) and metric-driven anisotropic
+adaptation ([anisotropic mesh adaptation](/methods/anisotropic-mesh-adaptation.md))
+are the other forms of r-adaptivity in the corpus.
+
 # Citations
 
 - [Huang, Ren & Russell (1994)](/sources/huang-1994.md) — §1–§3, §5.
 - [Tang & Tang (2003)](/sources/tang-2003.md) — §1–§4.
+- [Dobrev et al. (2022)](/sources/dobrev-2022.md) — introduction.

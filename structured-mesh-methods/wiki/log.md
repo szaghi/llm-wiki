@@ -2,6 +2,25 @@
 
 ## 2026-11-08
 
+**Chunk 3 ingested (night protocol, D33).** Sources: dobrev-2019,
+dobrev-2020, yu-2020, dobrev-2022, assonitis-2022, elaouad-2022, chen-2022,
+cicchino-2022, nikl-2022 (29 of 56). Archive file 025, named after
+Pietroni et al.'s hex-mesh survey, holds the VTK file-format manual and is
+not ingested (left to the human).
+
+- Concept pages created (4): methods/target-matrix-optimization,
+  methods/shock-fitting, methods/neural-network-mesh-generation,
+  methods/anisotropic-mesh-adaptation.
+- Concept pages updated (5): methods/conservative-metric-evaluation (WENO
+  on the solution, MHD potential, flux-reconstruction curl forms),
+  properties/free-stream-preservation (stability on curved elements),
+  definitions/boundary-fitted-coordinate-system (curvilinear Lagrangian
+  meshes), definitions/mesh-quality-metric, methods/moving-mesh-pde.
+- Source pages created (9); audit lists regenerated, knupp-2001 changed.
+- Bibliography: 1045 entries (from 678), FLAGS 0. cerveny-2018 (a 2018
+  citation without venue) kept distinct from the SISC paper cerveny-2019;
+  cicchino-2022-b separated from the ingested key; kolev-2009-b normalized.
+
 **Chunk 2 ingested (night protocol, D33).** Sources: visbal-2002,
 tang-2003, kopriva-2006, nonomura-2010, deng-2011, xie-2013, deng-2013,
 johnen-2013, toulorge-2013, zhu-2019 (20 of 56).

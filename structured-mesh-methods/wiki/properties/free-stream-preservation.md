@@ -5,7 +5,7 @@ description: "A scheme on a curvilinear grid preserves a uniform flow exactly on
 status: established
 aliases: [freestream preservation, discrete metric identities, surface conservation law, uniform-flow preservation]
 tags: [free-stream-preservation, metric-identities, conservation]
-timestamp: 2026-11-08T20:37:00Z
+timestamp: 2026-11-08T20:46:00Z
 ---
 
 # Free-stream preservation
@@ -60,6 +60,17 @@ schemes. How the identities are met — conservative forms, matching
 operators, and the special difficulty of upwind and WENO fluxes — is on
 [conservative metric evaluation](/methods/conservative-metric-evaluation.md).
 
+## Beyond the metric identities: stability on curved elements
+
+Satisfying the metric identities is not sufficient for stability.
+[Cicchino et al. (2022)](/sources/cicchino-2022.md) prove that on curvilinear
+elements the conservative and non-conservative strong forms of discontinuous
+Galerkin differ even with exact integration and exact metric terms, because
+discrete integration by parts fails in physical space; a split form and
+metric-dependent correction functions applied to the whole split form give
+provably stable flux reconstruction, whereas applying the corrections to the
+surface terms only diverges.
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — uniform-flow analysis, conservative metrics.
@@ -67,3 +78,4 @@ operators, and the special difficulty of upwind and WENO fluxes — is on
 - [Visbal & Gaitonde (2002)](/sources/visbal-2002.md) — §4.2.
 - [Kopriva (2006)](/sources/kopriva-2006.md) — §1.
 - [Deng et al. (2011)](/sources/deng-2011.md) — §1–§2.
+- [Cicchino et al. (2022)](/sources/cicchino-2022.md) — Theorem 1, conclusions.

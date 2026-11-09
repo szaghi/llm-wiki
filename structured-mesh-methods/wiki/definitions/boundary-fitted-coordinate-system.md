@@ -5,7 +5,7 @@ description: "A structured (curvilinear) grid viewed as a one-to-one mapping fro
 status: established
 aliases: [body-fitted coordinates, boundary-conforming coordinates, curvilinear grid, structured grid, natural coordinate system]
 tags: [structured-grid, curvilinear-grid, grid-generation, classification]
-timestamp: 2026-11-08T20:37:00Z
+timestamp: 2026-11-08T20:46:00Z
 ---
 
 # Boundary-fitted coordinate system
@@ -96,9 +96,23 @@ obtained by curving a straight-sided mesh
 ([high-order mesh curving](/methods/high-order-mesh-curving.md);
 [Xie et al. 2013](/sources/xie-2013.md)).
 
+## Curvilinear meshes in Lagrangian methods
+
+High-order curvilinear finite elements let a Lagrangian mesh follow
+strongly deforming flow longer without tangling or imprinting on the
+solution: [Nikl, Kuchařík & Weber (2022)](/sources/nikl-2022.md) build
+conservative high-order Lagrangian resistive MHD on such meshes, with
+continuous kinematic and discontinuous thermodynamic spaces and a magnetic
+field on spaces of the de Rham complex whose Piola maps keep the magnetic
+flux invariant, so that mass, momentum, magnetic flux and energy are
+conserved and the field stays divergence free. Mesh optimization for the
+arbitrary Lagrangian–Eulerian variant is on
+[target-matrix optimization](/methods/target-matrix-optimization.md).
+
 # Citations
 
 - [Gordon & Hall (1973)](/sources/gordon-1973.md) — mapping view of curvilinear coordinates.
 - [Thompson, Thames & Mastin (1974)](/sources/thompson-1974.md) — introduction and transformation.
 - [Thompson, Warsi & Mastin (1982)](/sources/thompson-1982.md) — Sections A–B, classification C–Q.
 - [Xie et al. (2013)](/sources/xie-2013.md) — §1.
+- [Nikl, Kuchařík & Weber (2022)](/sources/nikl-2022.md) — abstract, §3, conclusions.

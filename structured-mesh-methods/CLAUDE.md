@@ -90,6 +90,11 @@ again here, in this bundle's notation.
 
 ## Status
 
+**Chunk 3 compiled 2026-11-08 (night step 03, awaiting the human's
+commit):** 9 papers of 2019–2022; 29 of 56 ingested (file 025 is not the
+paper it is named after), 18 concept pages plus the registry, 1045
+bibliography entries, compiler self-audit done, no contradiction open.
+
 **Chunk 2 compiled 2026-11-08 (night step 02, awaiting the human's
 commit):** 10 papers of 2002–2019; 20 of 56 ingested, 14 concept pages plus
 the registry, 678 bibliography entries, compiler self-audit done, no

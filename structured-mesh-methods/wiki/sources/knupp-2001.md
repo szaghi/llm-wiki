@@ -40,6 +40,7 @@ Version of record, SIAM J. Sci. Comput. 23, 193–218 (2001). §§1–9 and the 
 
 # Pages created or updated
 
-Chunk 1 (2026-11-08). This source is cited on:
+Chunk 1 (2026-11-08), list updated in chunk 3 (2026-11-08). This source is cited on:
 
 - [Mesh quality metric](/definitions/mesh-quality-metric.md)
+- [Target-matrix optimization (TMOP)](/methods/target-matrix-optimization.md)

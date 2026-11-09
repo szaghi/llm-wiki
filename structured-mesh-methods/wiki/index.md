@@ -19,7 +19,7 @@ $g_{ij}$, the metric terms $J\mathbf a^i$, the grid velocity $\dot{\mathbf x}$,
 control functions $P^i$, the monitor function $M$, the target Jacobian
 $\mathsf W$ and $\mathsf T=\mathsf A\mathsf W^{-1}$), and the [update log](/log.md).
 
-**Corpus:** 20 of the 56 archived papers ingested in 2 chunks. Chunk 1 holds
+**Corpus:** 29 of the 56 archived papers ingested in 3 chunks (one archive file is not the paper its name announces; see the issues digest). Chunk 1 holds
 the founding papers of 1966–2001: [Winslow (1966)](/sources/winslow-1966.md)
 builds meshes from inverted Laplace equations;
 [Gordon & Hall (1973)](/sources/gordon-1973.md) introduce transfinite
@@ -45,6 +45,15 @@ moving meshes for conservation laws ([Tang & Tang 2003](/sources/tang-2003.md)),
 and the curving, validation and untangling of high-order meshes
 ([Xie et al. 2013](/sources/xie-2013.md), [Johnen et al. 2013](/sources/johnen-2013.md),
 [Toulorge et al. 2013](/sources/toulorge-2013.md)).
+Chunk 3 (2019–2022) brings target-matrix mesh optimization for high-order
+and ALE meshes with hr-adaptivity ([Dobrev et al. 2019](/sources/dobrev-2019.md),
+[2020](/sources/dobrev-2020.md), [2022](/sources/dobrev-2022.md)),
+free-stream preserving WENO for MHD ([Yu et al. 2020](/sources/yu-2020.md)),
+stable flux reconstruction on curved elements ([Cicchino et al. 2022](/sources/cicchino-2022.md)),
+Lagrangian MHD on curvilinear elements ([Nikl et al. 2022](/sources/nikl-2022.md)),
+shock fitting on structured grids ([Assonitis et al. 2022](/sources/assonitis-2022.md)),
+anisotropic body-fitted adaptation ([El Aouad et al. 2022](/sources/elaouad-2022.md))
+and neural-network grid generation ([Chen et al. 2022](/sources/chen-2022.md)).
 
 ## Reading guide
 
@@ -76,6 +85,13 @@ and the curving, validation and untangling of high-order meshes
 6. **Curved high-order meshes.**
    [High-order mesh curving](/methods/high-order-mesh-curving.md):
    elastic analogy and untangling by optimization.
+7. **Optimizing and adapting meshes.**
+   [Target-matrix optimization](/methods/target-matrix-optimization.md)
+   (node movement toward targets, hr-adaptivity) and
+   [anisotropic mesh adaptation](/methods/anisotropic-mesh-adaptation.md).
+8. **Applications and new tools.**
+   [Shock fitting on structured grids](/methods/shock-fitting.md) and
+   [neural-network mesh generation](/methods/neural-network-mesh-generation.md).
 
 ## Catalogs
 
