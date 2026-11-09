@@ -1,0 +1,27 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Structured mesh methods"
+summary = "Structured and curvilinear mesh generation and its numerical consequences, 1966–2026: boundary-fitted coordinate systems from transfinite interpolation and from elliptic (Winslow, Thompson), hyperbolic and variational generators, mesh-point clustering, adaptive and moving meshes (equidistribution, moving mesh PDEs, r- and hr-adaptivity), algebraic mesh quality metrics and target-matrix mesh optimization, high-order curvilinear meshes (validity, untangling, morphing, curving third-party meshes), metric identities, the geometric conservation law and free-stream preservation of finite-difference, WENO, DG and flux-reconstruction schemes, shock fitting on structured grids, hex meshing and machine-learning mesh generation."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/structured-mesh"
+keywords = [
+  "structured mesh",
+  "boundary-fitted coordinates",
+  "curvilinear grid",
+  "grid generation",
+  "transfinite interpolation",
+  "elliptic grid generation",
+  "hyperbolic grid generation",
+  "variational grid generation",
+  "moving mesh",
+  "equidistribution",
+  "mesh adaptation",
+  "mesh quality metrics",
+  "mesh optimization",
+  "TMOP",
+  "high-order curvilinear mesh",
+  "metric identities",
+  "geometric conservation law",
+  "free-stream preservation",
+  "hexahedral mesh",
+]

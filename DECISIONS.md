@@ -717,3 +717,37 @@ treatments, and high-order, compressible, MHD and plasma applications. All
 are ingested in full: the user's bibliography defines the domain. Overlaps
 with other bundles are left to the documentation site's computed overlaps;
 the bundle never links to another bundle (D12).
+
+## D33 — Structured-mesh bundle (2026-11-08)
+
+**Decision (user):** a new bundle for structured and curvilinear mesh
+methods, compiled from the user's structured-mesh bibliography,
+`~/papers/mosaic/structured-mesh` (56 PDFs, papers of 1966–2026), in chunks
+of 10 (D26), with a per-chunk digest in
+`structured-mesh-methods/INGESTION-ISSUES.md`, by the same procedure as D32.
+The bundle name `structured-mesh-methods` was chosen by the compiler after
+the archive folder and is the human's to change before the first commit.
+
+**Compiled unattended and inline.** As for D31 and D32, the ingestion runs
+under the night protocol: each chunk is one snapshot step with one prepared
+commit message `docs(structured-mesh-methods): ingest chunk N: <slugs>`, and
+the human commits the chain in order. No subagents are used (owner's
+standing instruction of 2026-11-02).
+
+**The archive's composition, recorded because it shapes the bundle:** the
+page-1 and checksum check found 56 distinct works and no byte copies; all
+were matched on Crossref, most by bibliographic search because page 1 prints
+no DOI; none is an image-only scan, and every work has a deposited Crossref
+reference list. No work is a Source page of another bundle.
+
+**How the scope is kept:** the archive spans boundary-fitted coordinate
+generation (algebraic, elliptic, hyperbolic, variational), adaptive and
+moving meshes, mesh quality metrics and optimization, high-order curvilinear
+meshes (including unstructured ones), metric identities, the geometric
+conservation law and free-stream preservation, and applications such as
+shock fitting, plasma coordinates and machine-learning mesh generation. All
+are ingested in full: the user's bibliography defines the domain, and the
+name's "structured" is the archive's, not a filter. The overlap with
+`curvilinear-metric-discretization` (metric identities, GCL) and with
+`overset-grid-methods` is left to the documentation site's computed
+overlaps; the bundle never links to another bundle (D12).
