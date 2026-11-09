@@ -90,33 +90,27 @@ again here, in this bundle's notation.
 
 ## Status
 
-**Chunk 6 compiled 2026-11-08 (night step 06, awaiting the human's
-commit): archive complete,** 54 of 56 ingested (files 025 and 036 are not
+**Chunk 6 committed 2026-11-09 (7859531): archive complete,** 54 of 56 ingested (files 025 and 036 are not
 the papers they are named after), 20 concept pages plus the registry, 2132
 bibliography entries after the closing duplicate sweep, whole-bundle deep
 lint done, no contradiction open.
 
-**Chunk 5 compiled 2026-11-08 (night step 05, awaiting the human's
-commit):** 10 papers of 2024–2026; 48 of 56 ingested, 20 concept pages plus
+**Chunk 5 committed 2026-11-09 (b0f9ecf):** 10 papers of 2024–2026; 48 of 56 ingested, 20 concept pages plus
 the registry, 1710 bibliography entries, compiler self-audit done, no
 contradiction open.
 
-**Chunk 4 compiled 2026-11-08 (night step 04, awaiting the human's
-commit):** 9 papers of 2022–2024; 38 of 56 ingested (files 025 and 036 are
+**Chunk 4 committed 2026-11-09 (262d8bb):** 9 papers of 2022–2024; 38 of 56 ingested (files 025 and 036 are
 not the papers they are named after), 19 concept pages plus the registry,
 1338 bibliography entries, compiler self-audit done, no contradiction open.
 
-**Chunk 3 compiled 2026-11-08 (night step 03, awaiting the human's
-commit):** 9 papers of 2019–2022; 29 of 56 ingested (file 025 is not the
+**Chunk 3 committed 2026-11-09 (854924d):** 9 papers of 2019–2022; 29 of 56 ingested (file 025 is not the
 paper it is named after), 18 concept pages plus the registry, 1045
 bibliography entries, compiler self-audit done, no contradiction open.
 
-**Chunk 2 compiled 2026-11-08 (night step 02, awaiting the human's
-commit):** 10 papers of 2002–2019; 20 of 56 ingested, 14 concept pages plus
+**Chunk 2 committed 2026-11-09 (b8d298e):** 10 papers of 2002–2019; 20 of 56 ingested, 14 concept pages plus
 the registry, 678 bibliography entries, compiler self-audit done, no
 contradiction open.
 
-**Chunk 1 compiled 2026-11-08 (night step 01, awaiting the human's
-commit):** the 10 founding papers of 1966–2001; 10 of 56 ingested, 11
+**Chunk 1 committed 2026-11-09 (d59290d):** the 10 founding papers of 1966–2001; 10 of 56 ingested, 11
 concept pages plus the registry, 470 bibliography entries, compiler
 self-audit done, no contradiction open.
