@@ -19,7 +19,7 @@ $g_{ij}$, the metric terms $J\mathbf a^i$, the grid velocity $\dot{\mathbf x}$,
 control functions $P^i$, the monitor function $M$, the target Jacobian
 $\mathsf W$ and $\mathsf T=\mathsf A\mathsf W^{-1}$), and the [update log](/log.md).
 
-**Corpus:** 48 of the 56 archived papers ingested in 5 chunks (two archive files are not the papers their names announce; see the issues digest). Chunk 1 holds
+**Corpus:** 54 of the 56 archived papers ingested in 6 chunks — the whole archive (two archive files are not the papers their names announce; see the issues digest). Chunk 1 holds
 the founding papers of 1966–2001: [Winslow (1966)](/sources/winslow-1966.md)
 builds meshes from inverted Laplace equations;
 [Gordon & Hall (1973)](/sources/gordon-1973.md) introduce transfinite
@@ -73,6 +73,13 @@ mimetic metrics ([Bach et al. 2025](/sources/bach-2025.md)), a further neural
 generator ([Wang et al. 2025](/sources/wang-2025.md)), a review of high-order
 curvilinear meshing ([Hu & Chen 2026](/sources/hu-2026.md)) and curving of
 third-party meshes ([Kirilov et al. 2026](/sources/kirilov-2026.md)).
+Chunk 6 (2026) closes the archive: shock fitting near corners
+([Muktieh & Assam 2026](/sources/muktieh-2026.md)), a survey of AI for
+meshing ([Owen et al. 2026](/sources/owen-2026.md)), anisotropic adaptation
+of curved meshes ([Coppeans et al. 2026](/sources/coppeans-2026.md)),
+entropy-stable DG on curvilinear hybrid meshes ([Keim et al. 2026](/sources/keim-2026.md)),
+field-aligned coordinates through X-points ([Shukla et al. 2026](/sources/shukla-2026.md))
+and high-order ALE MHD with mesh smoothing ([Mao & Xi 2026](/sources/mao-2026.md)).
 
 ## Reading guide
 

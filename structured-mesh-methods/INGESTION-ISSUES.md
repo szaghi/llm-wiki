@@ -6,6 +6,47 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 6 — 2026: shock fitting, AI survey, curved adaptation, hybrid DG, X-point coordinates, ALE MHD; closing sweeps (2026-11-08)
+
+Sources (6): muktieh-2026, owen-2026, coppeans-2026, keim-2026, shukla-2026,
+mao-2026. 54 of 56 ingested (archive complete apart from the two
+misnamed files), 20 concept pages plus the registry, 2132 bibliography
+entries.
+
+### Decisions for the human
+
+1. **Two archive files to fix** (from chunks 3 and 4): 025 (VTK manual
+   filed as Pietroni et al. 2023) and 036 (Spalart–Allmaras note filed as
+   Galbraith et al. 2023). Replacing them with the right PDFs would let a
+   later chunk ingest the two papers.
+2. **Versions read.** owen-2026 (arXiv:2512.23719v2), shukla-2026
+   (arXiv:2510.21676v2); the others are versions of record.
+3. **Reading depth.** owen-2026 (survey) read in scope: abstract,
+   introduction, §8 and §13.
+4. **Bibliography keys kept distinct on judgement:** reprints of classic
+   JCP papers (harten, roe, van Leer 1997), karniadakis editions,
+   conference vs journal versions (johnen, kirilov), pre-publication
+   citations (brackbill-1981, cerveny-2018, camier-2022), and six groups of
+   different papers whose deposited "title" is a proceedings name.
+
+### Contradictions
+
+None opened.
+
+### Bibliography items still open after the sweep
+
+- Garbled deposit entries in hu-2026 and owen-2026 (titles such as
+  "forum", "fluid dynamics conference", keys like williamschen-2020) are
+  kept as deposited.
+- anon-* keys for references deposited without authors remain where no
+  duplicate was found.
+
+### Bundle fit
+
+- shukla-2026 (gyrokinetic X-point coordinates) and mao-2026 (ALE MHD)
+  touch `fusion-mhd-simulation`; keim-2026 touches
+  `high-order-capturing-schemes`; read here in this bundle's notation (D12).
+
 ## Chunk 5 — 2024–2026: adaptation, RL and neural meshing, GCL for Runge–Kutta, mimetic metrics, curving reviews (2026-11-08)
 
 Sources (10): wang-2024, dzanic-2024, ma-2024, kim-2025, liao-2025,

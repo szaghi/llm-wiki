@@ -5,7 +5,7 @@ description: "A structured (curvilinear) grid viewed as a one-to-one mapping fro
 status: established
 aliases: [body-fitted coordinates, boundary-conforming coordinates, curvilinear grid, structured grid, natural coordinate system]
 tags: [structured-grid, curvilinear-grid, grid-generation, classification]
-timestamp: 2026-11-08T20:53:00Z
+timestamp: 2026-11-08T21:07:00Z
 ---
 
 # Boundary-fitted coordinate system
@@ -119,6 +119,22 @@ prolongation are weighted by the unequal volumes of mapped cells, and a
 coarse–fine flux correction keeps the scheme conservative; detonations in
 a pipe bend and a round tube are computed.
 
+## Field-aligned coordinates through X-points
+
+Coordinates aligned with a magnetic field exploit the anisotropy of tokamak
+turbulence but are singular where the poloidal field vanishes (X- and
+O-points, $J=0$). [Shukla et al. (2026)](/sources/shukla-2026.md) build a
+multi-block field-aligned grid whose blocks conform to the separatrix and
+meet at the X-point with no gap, and never evaluate geometric quantities or
+fluxes at the singular points, because their discontinuous Galerkin scheme
+uses quadrature nodes interior to cells and faces; between blocks with
+different mappings, a common flux per face keeps the scheme consistent.
+For high-order ALE MHD on curvilinear meshes,
+[Mao & Xi (2026)](/sources/mao-2026.md) smooth the moving mesh by solving
+$-\epsilon\nabla^2\mathbf x_{\mathrm{new}}+\mathbf x_{\mathrm{new}}=\mathbf x_{\mathrm{old}}$
+with fixed boundary nodes ($\epsilon\approx10^{-4}$), triggered by quality
+indicators, before structure-preserving remapping.
+
 # Citations
 
 - [Gordon & Hall (1973)](/sources/gordon-1973.md) — mapping view of curvilinear coordinates.
@@ -127,3 +143,5 @@ a pipe bend and a round tube are computed.
 - [Xie et al. (2013)](/sources/xie-2013.md) — §1.
 - [Nikl, Kuchařík & Weber (2022)](/sources/nikl-2022.md) — abstract, §3, conclusions.
 - [Peng & Deiterding (2023)](/sources/peng-2023.md) — §2.
+- [Shukla et al. (2026)](/sources/shukla-2026.md) — §1–§2, Appendix A.
+- [Mao & Xi (2026)](/sources/mao-2026.md) — §3.3.

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: physical and curvilinear coordinates, the mapping and its Jacobian matrix, covariant and contravariant base vectors, the metric tensor, metric terms and metric identities, moving grids and the geometric conservation law, grid-generation operators and control functions, variational functionals, equidistribution and monitor functions, element Jacobians, targets and quality metrics, and the flow symbols; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-11-08T20:53:00Z
+timestamp: 2026-11-08T21:07:00Z
 ---
 
 # Notation registry
@@ -82,6 +82,7 @@ polynomial degree $k$.
 | $w(\mathbf x)$ | weight function of a variational or adaptive generator |
 | $\lambda_o$, $\lambda_v$ | weights of the functionals in a combined variational principle |
 | $\sigma(\mathbf x)$, $w_\sigma$ | level-set (implicit geometry) function whose zero isocontour is a target surface; weight of a fitting penalty |
+| $\epsilon$ | smoothing parameter of limited harmonic mesh smoothing, $-\epsilon\nabla^2\mathbf x_{\mathrm{new}}+\mathbf x_{\mathrm{new}}=\mathbf x_{\mathrm{old}}$ |
 
 ## Adaptation and moving meshes
 

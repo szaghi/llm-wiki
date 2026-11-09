@@ -4,8 +4,8 @@ title: "NekMesh (open-source high-order mesh generator)"
 description: "Open-source generator of valid curvilinear high-order meshes for spectral/hp element simulation: a CAD-independent pipeline of modules that meshes from CAD or curves linear meshes from many formats, splits a thick curved prism layer into boundary-layer elements, and optimizes and untangles meshes in a variational framework that generalizes elastic and Winslow models."
 status: established
 aliases: [NekMesh]
-tags: [software, high-order-mesh, curving, boundary-layer, optimization]
-timestamp: 2026-11-08T21:01:00Z
+tags: [software, high-order-mesh, curving, boundary-layer, mesh-optimization]
+timestamp: 2026-11-08T21:10:00Z
 ---
 
 # NekMesh

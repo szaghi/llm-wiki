@@ -90,6 +90,12 @@ again here, in this bundle's notation.
 
 ## Status
 
+**Chunk 6 compiled 2026-11-08 (night step 06, awaiting the human's
+commit): archive complete,** 54 of 56 ingested (files 025 and 036 are not
+the papers they are named after), 20 concept pages plus the registry, 2132
+bibliography entries after the closing duplicate sweep, whole-bundle deep
+lint done, no contradiction open.
+
 **Chunk 5 compiled 2026-11-08 (night step 05, awaiting the human's
 commit):** 10 papers of 2024–2026; 48 of 56 ingested, 20 concept pages plus
 the registry, 1710 bibliography entries, compiler self-audit done, no

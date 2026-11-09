@@ -5,7 +5,7 @@ description: "Computing the metric terms of a curvilinear discretization in a co
 status: established
 aliases: [conservative metric method, CMM, symmetrical conservative metric method, SCMM, conservative curl form, invariant curl form, Thomas–Lombard metrics]
 tags: [free-stream-preservation, metric-identities, high-order, finite-difference]
-timestamp: 2026-11-08T21:01:00Z
+timestamp: 2026-11-08T21:07:00Z
 ---
 
 # Conservative metric evaluation
@@ -153,6 +153,16 @@ Three later routes for upwind and WENO fluxes:
   it differs, and its rounding errors are more than an order of magnitude
   smaller.
 
+## Hybrid curved meshes
+
+[Keim et al. (2026)](/sources/keim-2026.md) build entropy-stable
+discontinuous Galerkin spectral-element schemes on curvilinear meshes of
+triangles, quadrilaterals, tetrahedra, prisms, pyramids and hexahedra by
+collapsed coordinates; the metric terms are computed in the conservative
+curl form on the polytopal reference element, interpolated to the
+quadrature nodes and mapped by the collapse, so the discrete identities —
+needed for free-stream preservation and entropy stability — hold.
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — conservative metric form.
@@ -170,3 +180,4 @@ Three later routes for upwind and WENO fluxes:
 - [Ma et al. (2024)](/sources/ma-2024.md) — abstract, §1, §3.
 - [Chen, Liu & Artola-Zúñiga (2025)](/sources/chen-2025.md) — abstract, §I.
 - [Bach et al. (2025)](/sources/bach-2025.md) — §1–§4.
+- [Keim et al. (2026)](/sources/keim-2026.md) — §1, §2.

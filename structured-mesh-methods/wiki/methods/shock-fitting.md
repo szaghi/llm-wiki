@@ -5,7 +5,7 @@ description: "Treating shocks as discontinuities with Rankine–Hugoniot jumps i
 status: established
 aliases: [shock-fitting, structured extrapolated shock fitting, SESF, floating shock fitting, boundary shock fitting]
 tags: [shock, structured-grid, compressible]
-timestamp: 2026-11-08T20:46:00Z
+timestamp: 2026-11-08T21:07:00Z
 ---
 
 # Shock fitting on structured grids
@@ -42,6 +42,21 @@ and shock–wall interactions are handled. On a supersonic cylinder and on
 regular and Mach reflections, the global convergence order is about two
 (design) with fitting and slightly below one with capturing.
 
+## Unstructured shock fitting near corners
+
+[Muktieh & Assam (2026)](/sources/muktieh-2026.md) work with an open-source
+unstructured shock-fitting code in which the shock is an internal boundary:
+cells around it are removed, the region is remeshed locally (Delaunay
+triangulation), the downstream state follows from the Rankine–Hugoniot
+relations and the shock moves. They automate the setup (shock points
+extracted from a shock-capturing solution, fitted initial shock lines, mesh
+generation, configuration) with a released Python toolkit, and add special
+points for shock initiation and reflection at geometric corners and a
+revised regular-reflection point; the instabilities previously seen near
+corners disappear on transonic airfoils, supersonic wedges and reflection
+problems.
+
 # Citations
 
 - [Assonitis et al. (2022)](/sources/assonitis-2022.md) — introduction, algorithm, results, conclusions.
+- [Muktieh & Assam (2026)](/sources/muktieh-2026.md) — abstract, §2–§3.

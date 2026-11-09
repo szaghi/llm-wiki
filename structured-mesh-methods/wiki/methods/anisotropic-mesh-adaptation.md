@@ -4,8 +4,8 @@ title: "Anisotropic mesh adaptation"
 description: "Adapting the size, shape and orientation of elements to a metric tensor built from solution or geometry derivatives (Hessians, recovered gradients, edge-based error estimates), so that elements stretch along features; combined with node relocation and edge swapping it can turn an immersed level-set description into a body-fitted anisotropic mesh."
 status: established
 aliases: [metric-based adaptation, anisotropic remeshing, body-fitted anisotropic adaptation]
-tags: [adaptation, anisotropic, metric-tensor, unstructured]
-timestamp: 2026-11-08T20:46:00Z
+tags: [adaptation, anisotropic-adaptation, metric-tensor, unstructured]
+timestamp: 2026-11-08T21:07:00Z
 ---
 
 # Anisotropic mesh adaptation
@@ -33,6 +33,21 @@ anisotropic, body-fitted mesh with unchanged numbers of vertices and
 elements; the order of the two steps matters. Two-dimensional cases with a
 variational multiscale Navier–Stokes solver show the procedure.
 
+## Adapting curved high-order meshes
+
+Metric-based adaptation of curved meshes usually linearizes the mesh,
+adapts it and re-curves it; lowering an element's order can invert it, and
+re-curving can fail. [Coppeans, Fidkowski & Martins (2026)](/sources/coppeans-2026.md)
+extend edge split, edge collapse, edge swap and node movement to curved
+elements of any order, placing high-order nodes by mesh-warping ideas and
+rejecting any operation that would create an invalid element
+([validity](/definitions/high-order-mesh-validity.md)). With output-based
+error estimation and metric optimization for a high-order discontinuous
+Galerkin method, four 2-D cases keep valid curved meshes of various aspect
+ratios and recover optimal error convergence, comparable to global
+remeshing at similar cost.
+
 # Citations
 
 - [El Aouad, Larcher & Hachem (2022)](/sources/elaouad-2022.md) — method, test cases, conclusions.
+- [Coppeans, Fidkowski & Martins (2026)](/sources/coppeans-2026.md) — abstract, §1, §6, §8.

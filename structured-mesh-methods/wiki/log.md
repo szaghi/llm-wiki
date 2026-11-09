@@ -2,6 +2,44 @@
 
 ## 2026-11-08
 
+**Chunk 6 ingested (night protocol, D33); archive complete.** Sources:
+muktieh-2026, owen-2026, coppeans-2026, keim-2026, shukla-2026, mao-2026
+(54 of 56; files 025 and 036 are not the papers they are named after).
+
+- Concept pages updated (7): methods/shock-fitting (unstructured, corners),
+  methods/anisotropic-mesh-adaptation (curved meshes),
+  definitions/high-order-mesh-validity, methods/conservative-metric-evaluation
+  (hybrid curved meshes), definitions/boundary-fitted-coordinate-system
+  (field-aligned coordinates, ALE smoothing),
+  methods/reinforcement-learning-meshing (survey).
+- Registry extended: smoothing parameter $\epsilon$ of limited harmonic
+  smoothing.
+- Source pages created (6); audit lists regenerated, no older list changed.
+- Bibliography: 2150 entries after the chunk merge (FLAGS 0); dobrev-2021
+  (online-first citation) merged into the ingested key dobrev-2022;
+  wang-2025-e (CAD-GPT) separated from the ingested key.
+- **Closing bibliography sweep:** `bib_merge --dupes` (15 groups) plus the
+  DOI, title, venue and fuzzy sweeps. Merged (citedby union): anon-2001 →
+  liu-1994-c, anon-1978 → pulliam-1978, anon-1978-b → thomas-1978,
+  anon-1981-b → hindman-1981-b, anon-2008 → cai-2008, anon-2020 →
+  zhang-2020, anon-2023-b → rochery-2023, ccanuto-1987 → canuto-1987,
+  rssutton-2018 → sutton-2018, sedovl-1993 → sedov-1993, gordonw-1973 →
+  gordon-1973-b, dxue-2005 → xue-2005, dobrevv-2018 → dobrev-2019-b,
+  software-2026 → software-2022, anon-1998 → jf-1998, fpedregosa-2012 and
+  anon-2012 → fpedregosa-2011; rekeyed mfem-2022, thompson-1998 (Handbook
+  of Grid Generation), pedregosa-2011. Kept distinct after review: papers
+  sharing a proceedings title (6 groups), reprints (harten-1987/1997,
+  roe-1981/1997, vanleer-1982/1997), editions (karniadakis-2004/2013),
+  conference vs journal versions (johnen-2011/2013, kirilov-2024/2026),
+  pre-publication citations (brackbill-1981, cerveny-2018, camier-2022).
+  2132 entries; `--dupes` leaves only the 6 shared-proceedings-title groups.
+- **Whole-bundle deep lint:** canonical notation (polynomial degree $k$, no
+  $p$ as degree); tag synonyms merged (anisotropic → anisotropic-adaptation,
+  optimization → mesh-optimization, grid-quality → mesh-quality); every
+  concept page reachable from the reading guide and linked from at least two
+  other pages; no forbidden math delimiters; ingested-key check clean; no
+  contradiction open.
+
 **Chunk 5 ingested (night protocol, D33).** Sources: wang-2024,
 dzanic-2024, ma-2024, kim-2025, liao-2025, chen-2025, wang-2025, bach-2025,
 hu-2026, kirilov-2026 (48 of 56).

@@ -8,8 +8,8 @@ authors: [Toulorge T., Geuzaine C., Remacle J.-F., Lambrechts J.]
 year: 2013
 venue: "J. Comput. Phys. 254:8–26"
 local_file: "/home/stefano/papers/mosaic/structured-mesh/2013_Crossref_Journal_of_Computational_Physics_Toulorge_Robust_untangling_of_curvilinear_meshes.pdf"
-tags: [high-order-mesh, untangling, optimization]
-timestamp: 2026-11-08T20:38:00Z
+tags: [high-order-mesh, untangling, mesh-optimization]
+timestamp: 2026-11-08T21:10:00Z
 ---
 
 # Summary

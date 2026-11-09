@@ -4,8 +4,8 @@ title: "High-order mesh curving"
 description: "A posteriori generation of curved high-order meshes: a straight-sided mesh is generated first, its boundary entities are curved onto the CAD geometry, and the interior is deformed — by a linear elasticity analogy with the boundary displacements as loads, or by optimization of node positions with log-barriers on the element distortion that untangles invalid elements locally."
 status: established
 aliases: [a posteriori curving, curved mesh generation, mesh untangling, elastic analogy, high-order mesh optimization]
-tags: [high-order-mesh, curving, untangling, optimization]
-timestamp: 2026-11-08T21:01:00Z
+tags: [high-order-mesh, curving, untangling, mesh-optimization]
+timestamp: 2026-11-08T21:10:00Z
 ---
 
 # High-order mesh curving

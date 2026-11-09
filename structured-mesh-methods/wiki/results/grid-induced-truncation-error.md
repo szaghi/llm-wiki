@@ -4,8 +4,8 @@ title: "Grid-induced truncation error"
 description: "The truncation error of difference formulas on a curvilinear grid depends on the rate of change of the spacing and on the departure from orthogonality, not only on the spacing: a central difference stays second order only if the spacing varies slowly (x_ξξ of order x_ξ²), and nonorthogonality adds a term in the cotangent of the line angle."
 status: established
 aliases: [stretching error, skewness error, grid smoothness requirements]
-tags: [accuracy, truncation-error, grid-quality]
-timestamp: 2026-11-08T20:37:00Z
+tags: [accuracy, truncation-error, mesh-quality]
+timestamp: 2026-11-08T21:10:00Z
 ---
 
 # Grid-induced truncation error
