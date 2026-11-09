@@ -1,43 +1,46 @@
 /*
- * llm-wiki brand theme: the Sumi family (Washi light, Silver ink dark) on the VitePress default theme.
- * Import it in docs/.vitepress/theme/index.ts AFTER './custom.css'. Values come from tokens/sumi-tokens.json.
- * Fonts (Shippori Mincho 800, Inter, JetBrains Mono) are loaded by the <link> tags in config-head.mts.
+ * llm-wiki brand theme: the Sumi family look (mark, seal, AMR ground, display face, square buttons) on the VitePress
+ * default theme, in the Hasegawa Tōhaku palette (Pine Trees, c. 1595): Mist light, Fog night dark.
+ * Import it in docs/.vitepress/theme/index.ts AFTER './custom.css'. The mark's SVGs and rasters in public/brand/ carry
+ * the same ground, ink, mesh and seal values. The palettes considered and not chosen, the original Sumi Washi/Silver
+ * ink among them, are archived in public/brand/palettes/ (palettes.css holds each one ready to paste over the two
+ * blocks below). Fonts (Shippori Mincho 800, Inter, JetBrains Mono) are loaded by the head links in config.mts.
  */
 
-/* ---- Washi (light) ---- */
+/* ---- Mist (light): sumi ink in mist, pine-green links, faded cinnabar seal ---- */
 :root {
-  --llmw-ground: #f3ede1;
-  --llmw-ground-alt: #ebe3d3;
-  --llmw-ground-raised: #f7f2e8;
-  --llmw-line: #ddd4c3;
-  --llmw-ink: #1d1b18;
-  --llmw-ink-muted: #5f5a52;
-  --llmw-mesh: #6f6a62;
-  --llmw-link: #b23417;
-  --llmw-seal: #c73e1d;
-  --llmw-action: #b23417;
-  --llmw-action-pressed: #8f2a12;
+  --llmw-ground: #ecebe6;
+  --llmw-ground-alt: #e4e3dc;
+  --llmw-ground-raised: #f1f0ec;
+  --llmw-line: #d1d0cb;
+  --llmw-ink: #191a1a;
+  --llmw-ink-muted: #5a5a58;
+  --llmw-mesh: #6a6a68;
+  --llmw-link: #2c5a47;
+  --llmw-seal: #a4462f;
+  --llmw-action: #2c5a47;
+  --llmw-action-pressed: #183127;
   --llmw-on-action: #ffffff;
-  --llmw-focus-ring: #1d1b18;
+  --llmw-focus-ring: #191a1a;
 
   --llmw-font-display: 'Shippori Mincho', 'Hiragino Mincho ProN', serif;
 }
 
-/* ---- Silver ink (dark) ---- */
+/* ---- Fog night (dark) ---- */
 .dark {
-  --llmw-ground: #0e1116;
-  --llmw-ground-alt: #0a0d11;
-  --llmw-ground-raised: #141820;
-  --llmw-line: #222831;
-  --llmw-ink: #e8ecf0;
-  --llmw-ink-muted: #a9b1bb;
-  --llmw-mesh: #8b949e;
-  --llmw-link: #ffc24d;
-  --llmw-seal: #ffb020;
-  --llmw-action: #ffb020;
-  --llmw-action-pressed: #c98500;
-  --llmw-on-action: #1a1204;
-  --llmw-focus-ring: #ffc24d;
+  --llmw-ground: #111312;
+  --llmw-ground-alt: #0e100f;
+  --llmw-ground-raised: #191c1b;
+  --llmw-line: #262827;
+  --llmw-ink: #e6e8e6;
+  --llmw-ink-muted: #a2a4a2;
+  --llmw-mesh: #868887;
+  --llmw-link: #a8cdb8;
+  --llmw-seal: #c2725c;
+  --llmw-action: #a8cdb8;
+  --llmw-action-pressed: #81b798;
+  --llmw-on-action: #0c1511;
+  --llmw-focus-ring: #a8cdb8;
 }
 
 /* ---- the tokens mapped onto the VitePress variables (both themes) ---- */

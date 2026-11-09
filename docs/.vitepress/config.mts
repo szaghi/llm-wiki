@@ -97,8 +97,8 @@ export default withMermaid({
     ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/llm-wiki/brand/favicons/favicon-16.png' }],
     ['link', { rel: 'alternate icon', href: '/llm-wiki/brand/favicons/favicon.ico' }],
     ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/llm-wiki/brand/favicons/apple-touch-icon.png' }],
-    ['meta', { name: 'theme-color', content: '#f3ede1', media: '(prefers-color-scheme: light)' }],
-    ['meta', { name: 'theme-color', content: '#0e1116', media: '(prefers-color-scheme: dark)' }],
+    ['meta', { name: 'theme-color', content: '#ecebe6', media: '(prefers-color-scheme: light)' }],
+    ['meta', { name: 'theme-color', content: '#111312', media: '(prefers-color-scheme: dark)' }],
     // fonts of the Sumi family
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],

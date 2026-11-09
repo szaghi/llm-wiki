@@ -1,0 +1,995 @@
+/* llm-wiki palettes considered on 2026-11-09; tohaku is the one in use (theme/llm-wiki-brand.css).
+ * Each block replaces the two token blocks of llm-wiki-brand.css. The mark keeps ground, ink, mesh and seal
+ * in its SVGs: recolour those token for token and re-render the rasters when switching. */
+
+/* llm-wiki palette: Sumi, The original palette (2026) */
+:root {
+  --llmw-ground: #f3ede1;
+  --llmw-ground-alt: #ebe3d3;
+  --llmw-ground-raised: #f7f2e8;
+  --llmw-line: #ddd4c3;
+  --llmw-ink: #1d1b18;
+  --llmw-ink-muted: #5f5a52;
+  --llmw-mesh: #6f6a62;
+  --llmw-link: #b23417;
+  --llmw-seal: #c73e1d;
+  --llmw-action: #b23417;
+  --llmw-action-pressed: #8f2a12;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #1d1b18;
+}
+.dark {
+  --llmw-ground: #0e1116;
+  --llmw-ground-alt: #0a0d11;
+  --llmw-ground-raised: #141820;
+  --llmw-line: #222831;
+  --llmw-ink: #e8ecf0;
+  --llmw-ink-muted: #a9b1bb;
+  --llmw-mesh: #8b949e;
+  --llmw-link: #ffc24d;
+  --llmw-seal: #ffb020;
+  --llmw-action: #ffb020;
+  --llmw-action-pressed: #c98500;
+  --llmw-on-action: #1a1204;
+  --llmw-focus-ring: #ffc24d;
+}
+
+/* llm-wiki palette: Katsushika Hokusai, Under the Wave off Kanagawa (c. 1831) */
+:root {
+  --llmw-ground: #eeebe2;
+  --llmw-ground-alt: #e7e3d7;
+  --llmw-ground-raised: #f2f0e9;
+  --llmw-line: #d2d0ca;
+  --llmw-ink: #141c26;
+  --llmw-ink-muted: #575b5f;
+  --llmw-mesh: #686b6d;
+  --llmw-link: #1d4a7a;
+  --llmw-seal: #2b5f96;
+  --llmw-action: #1d4a7a;
+  --llmw-action-pressed: #112c49;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #141c26;
+}
+.dark {
+  --llmw-ground: #0b1220;
+  --llmw-ground-alt: #090f1b;
+  --llmw-ground-raised: #10192d;
+  --llmw-line: #212835;
+  --llmw-ink: #e4ebf3;
+  --llmw-ink-muted: #9fa6af;
+  --llmw-mesh: #828994;
+  --llmw-link: #9cc6f0;
+  --llmw-seal: #6aa6e0;
+  --llmw-action: #6aa6e0;
+  --llmw-action-pressed: #3788d5;
+  --llmw-on-action: #020305;
+  --llmw-focus-ring: #9cc6f0;
+}
+
+/* llm-wiki palette: Hasegawa Tōhaku, Pine Trees (c. 1595) */
+:root {
+  --llmw-ground: #ecebe6;
+  --llmw-ground-alt: #e4e3dc;
+  --llmw-ground-raised: #f1f0ec;
+  --llmw-line: #d1d0cb;
+  --llmw-ink: #191a1a;
+  --llmw-ink-muted: #5a5a58;
+  --llmw-mesh: #6a6a68;
+  --llmw-link: #2c5a47;
+  --llmw-seal: #a4462f;
+  --llmw-action: #2c5a47;
+  --llmw-action-pressed: #183127;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #191a1a;
+}
+.dark {
+  --llmw-ground: #111312;
+  --llmw-ground-alt: #0e100f;
+  --llmw-ground-raised: #191c1b;
+  --llmw-line: #262827;
+  --llmw-ink: #e6e8e6;
+  --llmw-ink-muted: #a2a4a2;
+  --llmw-mesh: #868887;
+  --llmw-link: #a8cdb8;
+  --llmw-seal: #c2725c;
+  --llmw-action: #a8cdb8;
+  --llmw-action-pressed: #81b798;
+  --llmw-on-action: #0c1511;
+  --llmw-focus-ring: #a8cdb8;
+}
+
+/* llm-wiki palette: Ogata Kōrin, Irises (c. 1701–05) */
+:root {
+  --llmw-ground: #efe3bf;
+  --llmw-ground-alt: #ebddb1;
+  --llmw-ground-raised: #f1e7c8;
+  --llmw-line: #d4c9a8;
+  --llmw-ink: #1c180d;
+  --llmw-ink-muted: #5e5744;
+  --llmw-mesh: #6d654f;
+  --llmw-link: #203f8c;
+  --llmw-seal: #2d7a58;
+  --llmw-action: #203f8c;
+  --llmw-action-pressed: #15295a;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #1e190e;
+}
+.dark {
+  --llmw-ground: #120f0c;
+  --llmw-ground-alt: #0e0c0a;
+  --llmw-ground-raised: #1d1813;
+  --llmw-line: #282420;
+  --llmw-ink: #efe6d2;
+  --llmw-ink-muted: #a8a193;
+  --llmw-mesh: #8c8579;
+  --llmw-link: #e5c46e;
+  --llmw-seal: #d4a93c;
+  --llmw-action: #d4a93c;
+  --llmw-action-pressed: #ad8726;
+  --llmw-on-action: #030202;
+  --llmw-focus-ring: #e5c46e;
+}
+
+/* llm-wiki palette: Itō Jakuchū, Colorful Realm of Living Beings (1757–66) */
+:root {
+  --llmw-ground: #f4eee3;
+  --llmw-ground-alt: #efe6d6;
+  --llmw-ground-raised: #f7f3eb;
+  --llmw-line: #d8d2c8;
+  --llmw-ink: #1c1715;
+  --llmw-ink-muted: #615c57;
+  --llmw-mesh: #716c66;
+  --llmw-link: #a3122a;
+  --llmw-seal: #c8102e;
+  --llmw-action: #a3122a;
+  --llmw-action-pressed: #6c0c1c;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #1c1715;
+}
+.dark {
+  --llmw-ground: #120d0e;
+  --llmw-ground-alt: #0e0a0b;
+  --llmw-ground-raised: #1c1416;
+  --llmw-line: #282324;
+  --llmw-ink: #f0e8e6;
+  --llmw-ink-muted: #a9a2a1;
+  --llmw-mesh: #8c8585;
+  --llmw-link: #ff8f9c;
+  --llmw-seal: #ff5d6e;
+  --llmw-action: #ff5d6e;
+  --llmw-action-pressed: #ff2037;
+  --llmw-on-action: #030202;
+  --llmw-focus-ring: #ff8f9c;
+}
+
+/* llm-wiki palette: Johannes Vermeer, Girl with a Pearl Earring (c. 1665) */
+:root {
+  --llmw-ground: #ecebe4;
+  --llmw-ground-alt: #e5e3da;
+  --llmw-ground-raised: #f1f0eb;
+  --llmw-line: #d1d0cb;
+  --llmw-ink: #1a1c22;
+  --llmw-ink-muted: #595a5c;
+  --llmw-mesh: #696a6a;
+  --llmw-link: #283f9e;
+  --llmw-seal: #ae7c26;
+  --llmw-action: #283f9e;
+  --llmw-action-pressed: #1c2c6d;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #1a1c22;
+}
+.dark {
+  --llmw-ground: #0d1120;
+  --llmw-ground-alt: #0b0f1c;
+  --llmw-ground-raised: #12182d;
+  --llmw-line: #232735;
+  --llmw-ink: #e8eaf2;
+  --llmw-ink-muted: #a2a5af;
+  --llmw-mesh: #858893;
+  --llmw-link: #a8b8ff;
+  --llmw-seal: #f0c94c;
+  --llmw-action: #f0c94c;
+  --llmw-action-pressed: #ebb814;
+  --llmw-on-action: #020305;
+  --llmw-focus-ring: #a8b8ff;
+}
+
+/* llm-wiki palette: James McNeill Whistler, Nocturne: Blue and Gold – Old Battersea Bridge (c. 1872–75) */
+:root {
+  --llmw-ground: #e8eae9;
+  --llmw-ground-alt: #dfe1e0;
+  --llmw-ground-raised: #eeefef;
+  --llmw-line: #cdd0d0;
+  --llmw-ink: #141c23;
+  --llmw-ink-muted: #545a61;
+  --llmw-mesh: #656a6f;
+  --llmw-link: #2a4868;
+  --llmw-seal: #b07c22;
+  --llmw-action: #2a4868;
+  --llmw-action-pressed: #182a3c;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #18202b;
+}
+.dark {
+  --llmw-ground: #0e1720;
+  --llmw-ground-alt: #0c141c;
+  --llmw-ground-raised: #13202c;
+  --llmw-line: #232c35;
+  --llmw-ink: #e2e8ee;
+  --llmw-ink-muted: #9ea5ac;
+  --llmw-mesh: #838a91;
+  --llmw-link: #e8bc62;
+  --llmw-seal: #e3b04f;
+  --llmw-action: #e3b04f;
+  --llmw-action-pressed: #d39622;
+  --llmw-on-action: #020305;
+  --llmw-focus-ring: #e8bc62;
+}
+
+/* llm-wiki palette: Mark Rothko, Seagram murals (1958–59) */
+:root {
+  --llmw-ground: #efe6e1;
+  --llmw-ground-alt: #e9dcd5;
+  --llmw-ground-raised: #f3ece8;
+  --llmw-line: #d4cbc6;
+  --llmw-ink: #231315;
+  --llmw-ink-muted: #625554;
+  --llmw-mesh: #726564;
+  --llmw-link: #801c24;
+  --llmw-seal: #8f1d14;
+  --llmw-action: #801c24;
+  --llmw-action-pressed: #4e1116;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #231315;
+}
+.dark {
+  --llmw-ground: #1a0c0e;
+  --llmw-ground-alt: #140909;
+  --llmw-ground-raised: #25131a;
+  --llmw-line: #302223;
+  --llmw-ink: #f2e4e0;
+  --llmw-ink-muted: #ad9f9d;
+  --llmw-mesh: #918382;
+  --llmw-link: #f39478;
+  --llmw-seal: #d8472b;
+  --llmw-action: #d84f33;
+  --llmw-action-pressed: #e27b66;
+  --llmw-on-action: #040202;
+  --llmw-focus-ring: #f39478;
+}
+
+/* llm-wiki palette: Giorgio Morandi, Natura morta (1950s) */
+:root {
+  --llmw-ground: #ebe5db;
+  --llmw-ground-alt: #e5ddd0;
+  --llmw-ground-raised: #efeae2;
+  --llmw-line: #d2ccc3;
+  --llmw-ink: #1b1814;
+  --llmw-ink-muted: #5b5751;
+  --llmw-mesh: #6a665f;
+  --llmw-link: #6a4f36;
+  --llmw-seal: #ad756a;
+  --llmw-action: #5d4a38;
+  --llmw-action-pressed: #372c21;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #2a2723;
+}
+.dark {
+  --llmw-ground: #1a1917;
+  --llmw-ground-alt: #171614;
+  --llmw-ground-raised: #23221f;
+  --llmw-line: #2f2e2b;
+  --llmw-ink: #eee8e0;
+  --llmw-ink-muted: #a9a49d;
+  --llmw-mesh: #8e8a83;
+  --llmw-link: #d9c2a2;
+  --llmw-seal: #c9a194;
+  --llmw-action: #c9a194;
+  --llmw-action-pressed: #b47d6b;
+  --llmw-on-action: #040403;
+  --llmw-focus-ring: #d9c2a2;
+}
+
+/* llm-wiki palette: Henri Matisse, Blue Nudes (1952) */
+:root {
+  --llmw-ground: #f5f2ea;
+  --llmw-ground-alt: #efebde;
+  --llmw-ground-raised: #f9f7f2;
+  --llmw-line: #d7d6d1;
+  --llmw-ink: #121726;
+  --llmw-ink-muted: #5b5d65;
+  --llmw-mesh: #6c6e72;
+  --llmw-link: #1c3ea3;
+  --llmw-seal: #1f45b5;
+  --llmw-action: #1c3ea3;
+  --llmw-action-pressed: #132a6f;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #121726;
+}
+.dark {
+  --llmw-ground: #0b1230;
+  --llmw-ground-alt: #0a102b;
+  --llmw-ground-raised: #121c42;
+  --llmw-line: #222844;
+  --llmw-ink: #eef1fb;
+  --llmw-ink-muted: #a5aaba;
+  --llmw-mesh: #888da0;
+  --llmw-link: #9db6ff;
+  --llmw-seal: #ffd23f;
+  --llmw-action: #ffd23f;
+  --llmw-action-pressed: #ffc402;
+  --llmw-on-action: #020307;
+  --llmw-focus-ring: #9db6ff;
+}
+
+/* llm-wiki palette: Hilma af Klint, The Ten Largest (1907) */
+:root {
+  --llmw-ground: #f3e8de;
+  --llmw-ground-alt: #eedfd1;
+  --llmw-ground-raised: #f6eee6;
+  --llmw-line: #d8cdc5;
+  --llmw-ink: #221a20;
+  --llmw-ink-muted: #605758;
+  --llmw-mesh: #706766;
+  --llmw-link: #8e3528;
+  --llmw-seal: #e25b3e;
+  --llmw-action: #8e3528;
+  --llmw-action-pressed: #5e231b;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #221a20;
+}
+.dark {
+  --llmw-ground: #171320;
+  --llmw-ground-alt: #14111c;
+  --llmw-ground-raised: #1f1a2b;
+  --llmw-line: #2d2835;
+  --llmw-ink: #f2e9ee;
+  --llmw-ink-muted: #aca5ac;
+  --llmw-mesh: #8f8991;
+  --llmw-link: #f6b8a1;
+  --llmw-seal: #f2a07e;
+  --llmw-action: #f2a07e;
+  --llmw-action-pressed: #ec7746;
+  --llmw-on-action: #030305;
+  --llmw-focus-ring: #f6b8a1;
+}
+
+/* llm-wiki palette: Claude Monet, Water Lilies (1897–1926) */
+:root {
+  --llmw-ground: #edefe8;
+  --llmw-ground-alt: #e5e8dd;
+  --llmw-ground-raised: #f2f4ef;
+  --llmw-line: #d2d4cf;
+  --llmw-ink: #1b1d24;
+  --llmw-ink-muted: #5b5d60;
+  --llmw-mesh: #6a6c6c;
+  --llmw-link: #4b3a8f;
+  --llmw-seal: #4f8a55;
+  --llmw-action: #4b3a8f;
+  --llmw-action-pressed: #342863;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #1b1d24;
+}
+.dark {
+  --llmw-ground: #10141a;
+  --llmw-ground-alt: #0e1116;
+  --llmw-ground-raised: #171c25;
+  --llmw-line: #262930;
+  --llmw-ink: #e9ebf2;
+  --llmw-ink-muted: #a4a6ad;
+  --llmw-mesh: #878a91;
+  --llmw-link: #c5b8ff;
+  --llmw-seal: #8fc48c;
+  --llmw-action: #8fc48c;
+  --llmw-action-pressed: #68af64;
+  --llmw-on-action: #020304;
+  --llmw-focus-ring: #c5b8ff;
+}
+
+/* llm-wiki palette: Dan Flavin, untitled (Marfa project) (1996–2000) */
+:root {
+  --llmw-ground: #f3f3f0;
+  --llmw-ground-alt: #ebebe6;
+  --llmw-ground-raised: #f8f8f6;
+  --llmw-line: #d6d6d4;
+  --llmw-ink: #141416;
+  --llmw-ink-muted: #5b5b5c;
+  --llmw-mesh: #6f6f6f;
+  --llmw-link: #0a7532;
+  --llmw-seal: #e8329f;
+  --llmw-action: #ff4fd8;
+  --llmw-action-pressed: #ff12ca;
+  --llmw-on-action: #080809;
+  --llmw-focus-ring: #141416;
+}
+.dark {
+  --llmw-ground: #09090c;
+  --llmw-ground-alt: #060609;
+  --llmw-ground-raised: #111116;
+  --llmw-line: #202023;
+  --llmw-ink: #f2f2f5;
+  --llmw-ink-muted: #a7a7aa;
+  --llmw-mesh: #89898c;
+  --llmw-link: #7dff8a;
+  --llmw-seal: #ff4fd8;
+  --llmw-action: #ff4fd8;
+  --llmw-action-pressed: #ff12ca;
+  --llmw-on-action: #010102;
+  --llmw-focus-ring: #7dff8a;
+}
+
+/* llm-wiki palette: Andy Warhol, Shot Marilyns (1964) */
+:root {
+  --llmw-ground: #fbeef4;
+  --llmw-ground-alt: #f8e0eb;
+  --llmw-ground-raised: #fdf7fa;
+  --llmw-line: #ded1d7;
+  --llmw-ink: #1c0f18;
+  --llmw-ink-muted: #63565e;
+  --llmw-mesh: #776a72;
+  --llmw-link: #a8106a;
+  --llmw-seal: #ff309f;
+  --llmw-action: #14c8b8;
+  --llmw-action-pressed: #0e9085;
+  --llmw-on-action: #0b060a;
+  --llmw-focus-ring: #1c0f18;
+}
+.dark {
+  --llmw-ground: #120a18;
+  --llmw-ground-alt: #0f0814;
+  --llmw-ground-raised: #1b0f25;
+  --llmw-line: #29212e;
+  --llmw-ink: #fbeef6;
+  --llmw-ink-muted: #b0a5af;
+  --llmw-mesh: #928792;
+  --llmw-link: #3fe6d4;
+  --llmw-seal: #ff3fa4;
+  --llmw-action: #3fe6d4;
+  --llmw-action-pressed: #1bcdba;
+  --llmw-on-action: #030204;
+  --llmw-focus-ring: #3fe6d4;
+}
+
+/* llm-wiki palette: Yayoi Kusama, Pumpkin (1994) */
+:root {
+  --llmw-ground: #faf8f0;
+  --llmw-ground-alt: #f6f2e3;
+  --llmw-ground-raised: #fdfcf8;
+  --llmw-line: #dcdad3;
+  --llmw-ink: #121110;
+  --llmw-ink-muted: #5c5b58;
+  --llmw-mesh: #73726e;
+  --llmw-link: #b3101f;
+  --llmw-seal: #e01b24;
+  --llmw-action: #ffd400;
+  --llmw-action-pressed: #c2a100;
+  --llmw-on-action: #070706;
+  --llmw-focus-ring: #121110;
+}
+.dark {
+  --llmw-ground: #0c0c0c;
+  --llmw-ground-alt: #090909;
+  --llmw-ground-raised: #151515;
+  --llmw-line: #242421;
+  --llmw-ink: #fff8e0;
+  --llmw-ink-muted: #b1ac9c;
+  --llmw-mesh: #928e81;
+  --llmw-link: #ffd400;
+  --llmw-seal: #ff2a2a;
+  --llmw-action: #ffd400;
+  --llmw-action-pressed: #c2a100;
+  --llmw-on-action: #020202;
+  --llmw-focus-ring: #ffd400;
+}
+
+/* llm-wiki palette: Tadanori Yokoo, Koshimaki Osen (1966) */
+:root {
+  --llmw-ground: #fdf0e0;
+  --llmw-ground-alt: #fce8cf;
+  --llmw-ground-raised: #fef5eb;
+  --llmw-line: #dfd3c4;
+  --llmw-ink: #1a0f0a;
+  --llmw-ink-muted: #63574e;
+  --llmw-mesh: #786c62;
+  --llmw-link: #b4002e;
+  --llmw-seal: #ff2d55;
+  --llmw-action: #2fd36b;
+  --llmw-action-pressed: #22a251;
+  --llmw-on-action: #0a0604;
+  --llmw-focus-ring: #1a0f0a;
+}
+.dark {
+  --llmw-ground: #10061a;
+  --llmw-ground-alt: #0d0515;
+  --llmw-ground-raised: #190929;
+  --llmw-line: #281d31;
+  --llmw-ink: #fbf0ff;
+  --llmw-ink-muted: #b0a5b6;
+  --llmw-mesh: #918798;
+  --llmw-link: #ffe14d;
+  --llmw-seal: #ff2d55;
+  --llmw-action: #39ff88;
+  --llmw-action-pressed: #00fb64;
+  --llmw-on-action: #020104;
+  --llmw-focus-ring: #ffe14d;
+}
+
+/* llm-wiki palette: Peter Halley, Two Cells with Circulating Conduit (1985) */
+:root {
+  --llmw-ground: #f0f0ec;
+  --llmw-ground-alt: #e8e8e2;
+  --llmw-ground-raised: #f5f5f2;
+  --llmw-line: #d3d3d0;
+  --llmw-ink: #121212;
+  --llmw-ink-muted: #595958;
+  --llmw-mesh: #6d6d6b;
+  --llmw-link: #b03a00;
+  --llmw-seal: #ee5800;
+  --llmw-action: #c6ff3d;
+  --llmw-action-pressed: #b4ff00;
+  --llmw-on-action: #070707;
+  --llmw-focus-ring: #121212;
+}
+.dark {
+  --llmw-ground: #101010;
+  --llmw-ground-alt: #0d0d0d;
+  --llmw-ground-raised: #191919;
+  --llmw-line: #272726;
+  --llmw-ink: #f4f4f0;
+  --llmw-ink-muted: #ababa8;
+  --llmw-mesh: #8d8d8b;
+  --llmw-link: #c6ff3d;
+  --llmw-seal: #ff6a13;
+  --llmw-action: #c6ff3d;
+  --llmw-action-pressed: #b4ff00;
+  --llmw-on-action: #020202;
+  --llmw-focus-ring: #c6ff3d;
+}
+
+/* llm-wiki palette: Nam June Paik, Electronic Superhighway (1995) */
+:root {
+  --llmw-ground: #eef1f6;
+  --llmw-ground-alt: #e2e7f0;
+  --llmw-ground-raised: #f5f7fa;
+  --llmw-line: #d1d4da;
+  --llmw-ink: #0d1220;
+  --llmw-ink-muted: #555964;
+  --llmw-mesh: #6a6e78;
+  --llmw-link: #0052b8;
+  --llmw-seal: #ff2e63;
+  --llmw-action: #00c8ff;
+  --llmw-action-pressed: #0098c2;
+  --llmw-on-action: #05070d;
+  --llmw-focus-ring: #0d1220;
+}
+.dark {
+  --llmw-ground: #05070f;
+  --llmw-ground-alt: #03050a;
+  --llmw-ground-raised: #090d1c;
+  --llmw-line: #1c1e27;
+  --llmw-ink: #e8f0ff;
+  --llmw-ink-muted: #9fa5b2;
+  --llmw-mesh: #828793;
+  --llmw-link: #4dd9ff;
+  --llmw-seal: #ff2e63;
+  --llmw-action: #ff2e63;
+  --llmw-action-pressed: #f0003d;
+  --llmw-on-action: #010102;
+  --llmw-focus-ring: #4dd9ff;
+}
+
+/* llm-wiki palette: Kanagawa, rebelot () */
+:root {
+  --llmw-ground: #f2ecbc;
+  --llmw-ground-alt: #efe8ad;
+  --llmw-ground-raised: #f4efc5;
+  --llmw-line: #ddd8b1;
+  --llmw-ink: #494959;
+  --llmw-ink-muted: #696762;
+  --llmw-mesh: #8a877b;
+  --llmw-link: #4b6797;
+  --llmw-seal: #c84053;
+  --llmw-action: #4d699b;
+  --llmw-action-pressed: #394d72;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #545464;
+}
+.dark {
+  --llmw-ground: #1f1f28;
+  --llmw-ground-alt: #16161d;
+  --llmw-ground-raised: #2a2a37;
+  --llmw-line: #323137;
+  --llmw-ink: #dcd7ba;
+  --llmw-ink-muted: #a09c8b;
+  --llmw-mesh: #878478;
+  --llmw-link: #7e9cd8;
+  --llmw-seal: #c34043;
+  --llmw-action: #7e9cd8;
+  --llmw-action-pressed: #4f78ca;
+  --llmw-on-action: #050506;
+  --llmw-focus-ring: #7e9cd8;
+}
+
+/* llm-wiki palette: Solarized, Ethan Schoonover (2011) */
+:root {
+  --llmw-ground: #fdf6e3;
+  --llmw-ground-alt: #eee8d5;
+  --llmw-ground-raised: #fef9ed;
+  --llmw-line: #e8e4d5;
+  --llmw-ink: #394f51;
+  --llmw-ink-muted: #5e6b69;
+  --llmw-mesh: #88918c;
+  --llmw-link: #256e98;
+  --llmw-seal: #cb4b16;
+  --llmw-action: #268bd2;
+  --llmw-action-pressed: #1d8ae0;
+  --llmw-on-action: #172020;
+  --llmw-focus-ring: #586e75;
+}
+.dark {
+  --llmw-ground: #002b36;
+  --llmw-ground-alt: #002630;
+  --llmw-ground-raised: #073642;
+  --llmw-line: #0f3741;
+  --llmw-ink: #b3c1c1;
+  --llmw-ink-muted: #869da1;
+  --llmw-mesh: #597479;
+  --llmw-link: #2f93d9;
+  --llmw-seal: #b58900;
+  --llmw-action: #268bd2;
+  --llmw-action-pressed: #1d7bc2;
+  --llmw-on-action: #000608;
+  --llmw-focus-ring: #268bd2;
+}
+
+/* llm-wiki palette: Gruvbox, Pavel Pertsev (morhetz) (2012) */
+:root {
+  --llmw-ground: #fbf1c7;
+  --llmw-ground-alt: #ebdbb2;
+  --llmw-ground-raised: #f9f5d7;
+  --llmw-line: #e2d9b4;
+  --llmw-ink: #3c3836;
+  --llmw-ink-muted: #666051;
+  --llmw-mesh: #918a76;
+  --llmw-link: #076678;
+  --llmw-seal: #9d0006;
+  --llmw-action: #af3a03;
+  --llmw-action-pressed: #732602;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #3c3836;
+}
+.dark {
+  --llmw-ground: #282828;
+  --llmw-ground-alt: #1d2021;
+  --llmw-ground-raised: #32302f;
+  --llmw-line: #3c3a36;
+  --llmw-ink: #ebdbb2;
+  --llmw-ink-muted: #ada286;
+  --llmw-mesh: #938a74;
+  --llmw-link: #83a598;
+  --llmw-seal: #fb4934;
+  --llmw-action: #fabd2f;
+  --llmw-action-pressed: #e6a306;
+  --llmw-on-action: #060606;
+  --llmw-focus-ring: #83a598;
+}
+
+/* llm-wiki palette: Nord, Arctic Ice Studio (2016) */
+:root {
+  --llmw-ground: #eceff4;
+  --llmw-ground-alt: #e5e9f0;
+  --llmw-ground-raised: #f3f5f8;
+  --llmw-line: #d3d7dd;
+  --llmw-ink: #2e3440;
+  --llmw-ink-muted: #646973;
+  --llmw-mesh: #848891;
+  --llmw-link: #466d88;
+  --llmw-seal: #bf616a;
+  --llmw-action: #5e81ac;
+  --llmw-action-pressed: #697db2;
+  --llmw-on-action: #12151a;
+  --llmw-focus-ring: #2e3440;
+}
+.dark {
+  --llmw-ground: #2e3440;
+  --llmw-ground-alt: #2b313c;
+  --llmw-ground-raised: #3b4252;
+  --llmw-line: #414752;
+  --llmw-ink: #eceff4;
+  --llmw-ink-muted: #afb3ba;
+  --llmw-mesh: #969ba3;
+  --llmw-link: #88c0d0;
+  --llmw-seal: #bf616a;
+  --llmw-action: #88c0d0;
+  --llmw-action-pressed: #5ca9bf;
+  --llmw-on-action: #07080a;
+  --llmw-focus-ring: #88c0d0;
+}
+
+/* llm-wiki palette: Catppuccin, the Catppuccin community () */
+:root {
+  --llmw-ground: #eff1f5;
+  --llmw-ground-alt: #e6e9ef;
+  --llmw-ground-raised: #f6f7f9;
+  --llmw-line: #dadce3;
+  --llmw-ink: #474a64;
+  --llmw-ink-muted: #65687b;
+  --llmw-mesh: #878a9a;
+  --llmw-link: #125af5;
+  --llmw-seal: #d20f39;
+  --llmw-action: #8839ef;
+  --llmw-action-pressed: #6812d9;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #4c4f69;
+}
+.dark {
+  --llmw-ground: #1e1e2e;
+  --llmw-ground-alt: #181825;
+  --llmw-ground-raised: #313244;
+  --llmw-line: #303042;
+  --llmw-ink: #cdd6f4;
+  --llmw-ink-muted: #959bb5;
+  --llmw-mesh: #7e839b;
+  --llmw-link: #89b4fa;
+  --llmw-seal: #f38ba8;
+  --llmw-action: #cba6f7;
+  --llmw-action-pressed: #aa6ef2;
+  --llmw-on-action: #050507;
+  --llmw-focus-ring: #89b4fa;
+}
+
+/* llm-wiki palette: Rosé Pine, the Rosé Pine project () */
+:root {
+  --llmw-ground: #faf4ed;
+  --llmw-ground-alt: #f2e9e1;
+  --llmw-ground-raised: #fffaf3;
+  --llmw-line: #e5dfde;
+  --llmw-ink: #4e4968;
+  --llmw-ink-muted: #6c677f;
+  --llmw-mesh: #908b9d;
+  --llmw-link: #286983;
+  --llmw-seal: #b4637a;
+  --llmw-action: #286983;
+  --llmw-action-pressed: #1a4354;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #575279;
+}
+.dark {
+  --llmw-ground: #191724;
+  --llmw-ground-alt: #161520;
+  --llmw-ground-raised: #1f1d2e;
+  --llmw-line: #2d2b39;
+  --llmw-ink: #e0def4;
+  --llmw-ink-muted: #a09eb1;
+  --llmw-mesh: #868496;
+  --llmw-link: #9ccfd8;
+  --llmw-seal: #eb6f92;
+  --llmw-action: #ebbcba;
+  --llmw-action-pressed: #dd8e8b;
+  --llmw-on-action: #040305;
+  --llmw-focus-ring: #9ccfd8;
+}
+
+/* llm-wiki palette: Tokyo Night, enkia () */
+:root {
+  --llmw-ground: #e1e2e7;
+  --llmw-ground-alt: #d7d8df;
+  --llmw-ground-raised: #e7e8ec;
+  --llmw-line: #cbd1e2;
+  --llmw-ink: #1f407f;
+  --llmw-ink-muted: #3e5ba8;
+  --llmw-mesh: #687ec3;
+  --llmw-link: #165bbc;
+  --llmw-seal: #f52a65;
+  --llmw-action: #954ef1;
+  --llmw-action-pressed: #7315ed;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #3760bf;
+}
+.dark {
+  --llmw-ground: #1a1b26;
+  --llmw-ground-alt: #16161e;
+  --llmw-ground-raised: #24283b;
+  --llmw-line: #2b2c3b;
+  --llmw-ink: #c0caf5;
+  --llmw-ink-muted: #8b92b3;
+  --llmw-mesh: #757b98;
+  --llmw-link: #7aa2f7;
+  --llmw-seal: #f7768e;
+  --llmw-action: #bb9af7;
+  --llmw-action-pressed: #9561f3;
+  --llmw-on-action: #040406;
+  --llmw-focus-ring: #7aa2f7;
+}
+
+/* llm-wiki palette: Dracula, Zeno Rocha (2013) */
+:root {
+  --llmw-ground: #f8f8f2;
+  --llmw-ground-alt: #f2f2e6;
+  --llmw-ground-raised: #fcfcf9;
+  --llmw-line: #ddddda;
+  --llmw-ink: #282a36;
+  --llmw-ink-muted: #6b6c72;
+  --llmw-mesh: #86878b;
+  --llmw-link: #7c4dd4;
+  --llmw-seal: #ff3db2;
+  --llmw-action: #bd93f9;
+  --llmw-action-pressed: #9a59f6;
+  --llmw-on-action: #101116;
+  --llmw-focus-ring: #282a36;
+}
+.dark {
+  --llmw-ground: #282a36;
+  --llmw-ground-alt: #21222c;
+  --llmw-ground-raised: #343746;
+  --llmw-line: #3d3f49;
+  --llmw-ink: #f8f8f2;
+  --llmw-ink-muted: #b5b6b6;
+  --llmw-mesh: #9a9b9d;
+  --llmw-link: #8be9fd;
+  --llmw-seal: #ff79c6;
+  --llmw-action: #bd93f9;
+  --llmw-action-pressed: #9a59f6;
+  --llmw-on-action: #060608;
+  --llmw-focus-ring: #8be9fd;
+}
+
+/* llm-wiki palette: Atom One, the Atom team at GitHub (2015) */
+:root {
+  --llmw-ground: #fafafa;
+  --llmw-ground-alt: #f0f0f0;
+  --llmw-ground-raised: #ffffff;
+  --llmw-line: #e1e1e2;
+  --llmw-ink: #383a42;
+  --llmw-ink-muted: #6c6d73;
+  --llmw-mesh: #8f9095;
+  --llmw-link: #2860f2;
+  --llmw-seal: #e45649;
+  --llmw-action: #427af2;
+  --llmw-action-pressed: #7ba2f6;
+  --llmw-on-action: #16171a;
+  --llmw-focus-ring: #383a42;
+}
+.dark {
+  --llmw-ground: #282c34;
+  --llmw-ground-alt: #21252b;
+  --llmw-ground-raised: #2c313a;
+  --llmw-line: #353942;
+  --llmw-ink: #b8bfcc;
+  --llmw-ink-muted: #9298a4;
+  --llmw-mesh: #707680;
+  --llmw-link: #61afef;
+  --llmw-seal: #e06c75;
+  --llmw-action: #61afef;
+  --llmw-action-pressed: #2993e9;
+  --llmw-on-action: #060708;
+  --llmw-focus-ring: #61afef;
+}
+
+/* llm-wiki palette: Everforest, sainnhe () */
+:root {
+  --llmw-ground: #fdf6e3;
+  --llmw-ground-alt: #f4f0d9;
+  --llmw-ground-raised: #fef9ed;
+  --llmw-line: #e8e4d4;
+  --llmw-ink: #44525a;
+  --llmw-ink-muted: #676e6d;
+  --llmw-mesh: #8b908c;
+  --llmw-link: #26739d;
+  --llmw-seal: #f85552;
+  --llmw-action: #8da101;
+  --llmw-action-pressed: #769101;
+  --llmw-on-action: #1b2124;
+  --llmw-focus-ring: #5c6a72;
+}
+.dark {
+  --llmw-ground: #2d353b;
+  --llmw-ground-alt: #232a2e;
+  --llmw-ground-raised: #343f44;
+  --llmw-line: #3e4446;
+  --llmw-ink: #dccfbc;
+  --llmw-ink-muted: #ada795;
+  --llmw-mesh: #888578;
+  --llmw-link: #7fbbb3;
+  --llmw-seal: #e67e80;
+  --llmw-action: #a7c080;
+  --llmw-action-pressed: #8bac57;
+  --llmw-on-action: #070809;
+  --llmw-focus-ring: #7fbbb3;
+}
+
+/* llm-wiki palette: GitHub, GitHub Primer () */
+:root {
+  --llmw-ground: #ffffff;
+  --llmw-ground-alt: #f6f8fa;
+  --llmw-ground-raised: #ffffff;
+  --llmw-line: #d1d9e0;
+  --llmw-ink: #1f2328;
+  --llmw-ink-muted: #67696d;
+  --llmw-mesh: #848689;
+  --llmw-link: #0969da;
+  --llmw-seal: #cf222e;
+  --llmw-action: #1f883d;
+  --llmw-action-pressed: #145627;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #1f2328;
+}
+.dark {
+  --llmw-ground: #0d1117;
+  --llmw-ground-alt: #010409;
+  --llmw-ground-raised: #151b23;
+  --llmw-line: #24282e;
+  --llmw-ink: #f0f6fc;
+  --llmw-ink-muted: #a7adb3;
+  --llmw-mesh: #8a8f95;
+  --llmw-link: #4493f8;
+  --llmw-seal: #f85149;
+  --llmw-action: #238636;
+  --llmw-action-pressed: #165522;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #4493f8;
+}
+
+/* llm-wiki palette: Monokai, Wimer Hazenberg (2006) */
+:root {
+  --llmw-ground: #fafaf5;
+  --llmw-ground-alt: #f4f4e9;
+  --llmw-ground-raised: #fefefc;
+  --llmw-line: #dfdfda;
+  --llmw-ink: #272822;
+  --llmw-ink-muted: #6b6b66;
+  --llmw-mesh: #868681;
+  --llmw-link: #b5174f;
+  --llmw-seal: #f92672;
+  --llmw-action: #a6e22e;
+  --llmw-action-pressed: #84b91a;
+  --llmw-on-action: #10100e;
+  --llmw-focus-ring: #272822;
+}
+.dark {
+  --llmw-ground: #272822;
+  --llmw-ground-alt: #1e1f1c;
+  --llmw-ground-raised: #3e3d32;
+  --llmw-line: #3c3d37;
+  --llmw-ink: #f8f8f2;
+  --llmw-ink-muted: #b5b5af;
+  --llmw-mesh: #9a9a94;
+  --llmw-link: #66d9ef;
+  --llmw-seal: #f92672;
+  --llmw-action: #a6e22e;
+  --llmw-action-pressed: #84b91a;
+  --llmw-on-action: #060605;
+  --llmw-focus-ring: #66d9ef;
+}
+
+/* llm-wiki palette: GMK Nerve, Manu, with Baionlenja and Loobedswitches (2024) */
+:root {
+  --llmw-ground: #e6e6e3;
+  --llmw-ground-alt: #d8d8d5;
+  --llmw-ground-raised: #f1f1ef;
+  --llmw-line: #c9c9c6;
+  --llmw-ink: #1b0a2a;
+  --llmw-ink-muted: #5b4f6a;
+  --llmw-mesh: #5d5e5d;
+  --llmw-link: #55289a;
+  --llmw-seal: #341855;
+  --llmw-action: #c7d40c;
+  --llmw-action-pressed: #919a09;
+  --llmw-on-action: #341855;
+  --llmw-focus-ring: #341855;
+}
+.dark {
+  --llmw-ground: #18171b;
+  --llmw-ground-alt: #1d1529;
+  --llmw-ground-raised: #232228;
+  --llmw-line: #2e2d33;
+  --llmw-ink: #eaeae7;
+  --llmw-ink-muted: #a1a1a0;
+  --llmw-mesh: #878787;
+  --llmw-link: #d4e10f;
+  --llmw-seal: #c7d40c;
+  --llmw-action: #c7d40c;
+  --llmw-action-pressed: #919a09;
+  --llmw-on-action: #341855;
+  --llmw-focus-ring: #d4e10f;
+}
