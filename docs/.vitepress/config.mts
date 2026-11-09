@@ -87,6 +87,23 @@ export default withMermaid({
   // not see; in a scoped build, the pages of the other parts are not in the build either
   ignoreDeadLinks: [/\.bib$/, ...(scope === undefined ? [] : [(url: string) => partOf(url, split) !== scope])],
   lastUpdated: true,
+  // brand (Sumi family): favicons, theme colour, fonts. Unlike themeConfig.logo, head hrefs are not
+  // prefixed with the base, so they carry '/llm-wiki/' explicitly
+  head: [
+    // favicons: Washi tile in light browsers, Silver ink tile in dark ones
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/llm-wiki/brand/favicons/llm-wiki-favicon.svg', media: '(prefers-color-scheme: light)' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/llm-wiki/brand/favicons/llm-wiki-favicon-dark.svg', media: '(prefers-color-scheme: dark)' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/llm-wiki/brand/favicons/favicon-32.png' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/llm-wiki/brand/favicons/favicon-16.png' }],
+    ['link', { rel: 'alternate icon', href: '/llm-wiki/brand/favicons/favicon.ico' }],
+    ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/llm-wiki/brand/favicons/apple-touch-icon.png' }],
+    ['meta', { name: 'theme-color', content: '#f3ede1', media: '(prefers-color-scheme: light)' }],
+    ['meta', { name: 'theme-color', content: '#0e1116', media: '(prefers-color-scheme: dark)' }],
+    // fonts of the Sumi family
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+    ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@800&family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap' }],
+  ],
   markdown: {
     // KaTeX at build time: the wiki's math law is KaTeX syntax ($...$, $$...$$), so the site doubles as its check.
     // A formula KaTeX cannot parse renders in red (class katex-error) instead of failing the whole build.
@@ -106,6 +123,12 @@ export default withMermaid({
     },
   },
   themeConfig: {
+    // the favicon tile beside the site title in the nav bar (prefixed with the base by VitePress)
+    logo: {
+      light: '/brand/favicons/llm-wiki-favicon.svg',
+      dark: '/brand/favicons/llm-wiki-favicon-dark.svg',
+      alt: 'llm-wiki',
+    },
     // read by the theme: links that leave the part being shown load the target page in full
     buildScope: scope ?? 'all',
     splitBundles: split,

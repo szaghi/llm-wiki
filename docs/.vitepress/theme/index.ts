@@ -7,6 +7,7 @@ import BundleMap from './components/BundleMap.vue'
 import BundleCards from './components/BundleCards.vue'
 import 'katex/dist/katex.min.css'
 import './custom.css'
+import './llm-wiki-brand.css'
 import { partOf } from '../parts.mjs'
 
 export default {

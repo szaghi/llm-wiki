@@ -1,0 +1,141 @@
+/*
+ * llm-wiki brand theme: the Sumi family (Washi light, Silver ink dark) on the VitePress default theme.
+ * Import it in docs/.vitepress/theme/index.ts AFTER './custom.css'. Values come from tokens/sumi-tokens.json.
+ * Fonts (Shippori Mincho 800, Inter, JetBrains Mono) are loaded by the <link> tags in config-head.mts.
+ */
+
+/* ---- Washi (light) ---- */
+:root {
+  --llmw-ground: #f3ede1;
+  --llmw-ground-alt: #ebe3d3;
+  --llmw-ground-raised: #f7f2e8;
+  --llmw-line: #ddd4c3;
+  --llmw-ink: #1d1b18;
+  --llmw-ink-muted: #5f5a52;
+  --llmw-mesh: #6f6a62;
+  --llmw-link: #b23417;
+  --llmw-seal: #c73e1d;
+  --llmw-action: #b23417;
+  --llmw-action-pressed: #8f2a12;
+  --llmw-on-action: #ffffff;
+  --llmw-focus-ring: #1d1b18;
+
+  --llmw-font-display: 'Shippori Mincho', 'Hiragino Mincho ProN', serif;
+}
+
+/* ---- Silver ink (dark) ---- */
+.dark {
+  --llmw-ground: #0e1116;
+  --llmw-ground-alt: #0a0d11;
+  --llmw-ground-raised: #141820;
+  --llmw-line: #222831;
+  --llmw-ink: #e8ecf0;
+  --llmw-ink-muted: #a9b1bb;
+  --llmw-mesh: #8b949e;
+  --llmw-link: #ffc24d;
+  --llmw-seal: #ffb020;
+  --llmw-action: #ffb020;
+  --llmw-action-pressed: #c98500;
+  --llmw-on-action: #1a1204;
+  --llmw-focus-ring: #ffc24d;
+}
+
+/* ---- the tokens mapped onto the VitePress variables (both themes) ---- */
+:root,
+.dark {
+  --vp-c-bg: var(--llmw-ground);
+  --vp-c-bg-alt: var(--llmw-ground-alt);
+  --vp-c-bg-soft: var(--llmw-ground-alt);
+  --vp-c-bg-elv: var(--llmw-ground-raised);
+
+  --vp-c-text-1: var(--llmw-ink);
+  --vp-c-text-2: var(--llmw-ink-muted);
+  --vp-c-text-3: var(--llmw-mesh);
+
+  --vp-c-divider: var(--llmw-line);
+  --vp-c-gutter: var(--llmw-line);
+  --vp-c-border: var(--llmw-mesh);
+
+  /* links, the active nav item, the primary button */
+  --vp-c-brand-1: var(--llmw-link);
+  --vp-c-brand-2: var(--llmw-action-pressed);
+  --vp-c-brand-3: var(--llmw-action);
+  --vp-c-brand-soft: color-mix(in srgb, var(--llmw-seal) 14%, transparent);
+
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--llmw-on-action);
+  --vp-button-brand-bg: var(--llmw-action);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: var(--llmw-on-action);
+  --vp-button-brand-hover-bg: var(--llmw-action-pressed);
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: var(--llmw-on-action);
+  --vp-button-brand-active-bg: var(--llmw-action-pressed);
+
+  --vp-button-alt-border: var(--llmw-mesh);
+  --vp-button-alt-text: var(--llmw-ink);
+  --vp-button-alt-bg: transparent;
+  --vp-button-alt-hover-border: var(--llmw-ink);
+  --vp-button-alt-hover-text: var(--llmw-ink);
+  --vp-button-alt-hover-bg: var(--llmw-ground-raised);
+
+  /* the hero: solid ink name, no gradient, no glow behind the mark */
+  --vp-home-hero-name-color: var(--llmw-ink);
+  --vp-home-hero-name-background: none;
+  --vp-home-hero-image-background-image: none;
+  --vp-home-hero-image-filter: none;
+
+  --vp-font-family-base: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --vp-code-block-bg: var(--llmw-ground-alt);
+}
+
+/* ---- names in Shippori Mincho 800, tracked, in capitals (Sumi family rule) ---- */
+.VPNavBarTitle .title {
+  font-family: var(--llmw-font-display);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.VPHero .name,
+.VPHero .name .clip {
+  font-family: var(--llmw-font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  -webkit-text-fill-color: var(--llmw-ink);
+  color: var(--llmw-ink);
+}
+.VPHero .text,
+.vp-doc h1 {
+  font-family: var(--llmw-font-display);
+  font-weight: 800;
+}
+
+/* ---- feature cards: raised paper, hairline edge, links in link colour ---- */
+.VPFeature {
+  background-color: var(--llmw-ground-raised) !important;
+  border: 1px solid var(--llmw-line) !important;
+  border-radius: 8px !important;
+}
+.VPFeature .icon {
+  background-color: transparent !important;
+}
+.VPFeature .link-text-value {
+  color: var(--llmw-link);
+}
+
+/* ---- buttons near-square, like a carved seal ---- */
+.VPButton {
+  border-radius: 4px !important;
+}
+
+/* ---- focus: solid 2px ring, 2px gap of ground ----
+ * a bare :focus-visible (0,1,0) loses to the default theme's button:focus-visible (0,1,1) and
+ * .DocSearch-Button:focus (0,2,0), which keep the browser ring on every button: hence :root */
+:root :focus-visible,
+:root .DocSearch-Button:focus-visible {
+  outline: 2px solid var(--llmw-focus-ring);
+  outline-offset: 2px;
+}
