@@ -5,7 +5,7 @@ description: "A structured (curvilinear) grid viewed as a one-to-one mapping fro
 status: established
 aliases: [body-fitted coordinates, boundary-conforming coordinates, curvilinear grid, structured grid, natural coordinate system]
 tags: [structured-grid, curvilinear-grid, grid-generation, classification]
-timestamp: 2026-11-08T20:46:00Z
+timestamp: 2026-11-08T20:53:00Z
 ---
 
 # Boundary-fitted coordinate system
@@ -109,6 +109,16 @@ conserved and the field stays divergence free. Mesh optimization for the
 arbitrary Lagrangian–Eulerian variant is on
 [target-matrix optimization](/methods/target-matrix-optimization.md).
 
+## Block-structured refinement of mapped meshes
+
+[Peng & Deiterding (2023)](/sources/peng-2023.md) run a block-structured
+adaptive finite-volume framework on structured curvilinear meshes by
+mapping its Cartesian index space onto the physical mesh: Riemann solvers
+work in face-aligned frames through rotation matrices, restriction and
+prolongation are weighted by the unequal volumes of mapped cells, and a
+coarse–fine flux correction keeps the scheme conservative; detonations in
+a pipe bend and a round tube are computed.
+
 # Citations
 
 - [Gordon & Hall (1973)](/sources/gordon-1973.md) — mapping view of curvilinear coordinates.
@@ -116,3 +126,4 @@ arbitrary Lagrangian–Eulerian variant is on
 - [Thompson, Warsi & Mastin (1982)](/sources/thompson-1982.md) — Sections A–B, classification C–Q.
 - [Xie et al. (2013)](/sources/xie-2013.md) — §1.
 - [Nikl, Kuchařík & Weber (2022)](/sources/nikl-2022.md) — abstract, §3, conclusions.
+- [Peng & Deiterding (2023)](/sources/peng-2023.md) — §2.

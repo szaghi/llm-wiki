@@ -5,7 +5,7 @@ description: "Computing the metric terms of a curvilinear discretization in a co
 status: established
 aliases: [conservative metric method, CMM, symmetrical conservative metric method, SCMM, conservative curl form, invariant curl form, Thomas–Lombard metrics]
 tags: [free-stream-preservation, metric-identities, high-order, finite-difference]
-timestamp: 2026-11-08T20:46:00Z
+timestamp: 2026-11-08T20:53:00Z
 ---
 
 # Conservative metric evaluation
@@ -111,6 +111,30 @@ energy-stable flux reconstruction, and recall Abe et al.'s use of separate
 interpolation operators for mapping points and flux nodes so that face
 normals agree at facet cubature points.
 
+## Upwind schemes without consistent metrics
+
+Three later routes for upwind and WENO fluxes:
+
+- [Han, Xu & Liu (2022)](/sources/han-2022.md) solve the full transformed
+  equations — the strong form plus the source term that the metric
+  identities would cancel — and require that fluxes and source-term
+  derivatives use the same operator; freezing the metrics and the
+  Jacobian over each stencil during flux splitting does this for any linear
+  upwind or WENO scheme without discretizing the source term, on stationary
+  and moving grids. Even analytic metrics leave a nonzero discrete source
+  term.
+- [Su et al. (2023)](/sources/su-2023.md) rewrite the WENO5 dissipation as a
+  combination of sub-stencil reconstructions and prove that it vanishes for
+  uniform flow if the metrics take the same value under those sub-stencil
+  reconstructions — a sufficient condition from which free-stream
+  preserving metrics for WENO5 and WENO7 are built, with the central part of
+  the flux raised in order to keep accuracy.
+- [Su et al. (2023b)](/sources/su-2023-b.md) subtract a reference cell-face
+  state from every cell-centre value of the stencil, so the dissipation is
+  reformulated and vanishes for a uniform flow; this lifts the requirement
+  that metrics and fluxes share their discretization, so low-order metrics
+  can serve poor meshes while the flow is reconstructed at high order.
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — conservative metric form.
@@ -122,3 +146,6 @@ normals agree at facet cubature points.
 - [Zhu & Hu (2019)](/sources/zhu-2019.md) — §3, §5.
 - [Yu, Jiang & Zhang (2020)](/sources/yu-2020.md) — introduction, method, conclusions.
 - [Cicchino et al. (2022)](/sources/cicchino-2022.md) — metric-term appendix.
+- [Han, Xu & Liu (2022)](/sources/han-2022.md) — §I, §III, §V.
+- [Su et al. (2023)](/sources/su-2023.md) — abstract, method.
+- [Su et al. (2023b)](/sources/su-2023-b.md) — abstract, method.

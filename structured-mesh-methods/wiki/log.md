@@ -2,6 +2,31 @@
 
 ## 2026-11-08
 
+**Chunk 4 ingested (night protocol, D33).** Sources: han-2022,
+barrera-2023, rochery-2023, peng-2023, su-2023, camier-2023, su-2023-b,
+chen-2023, green-2024 (38 of 56). Archive file 036, named after Galbraith et
+al.'s HLPW-4/GMGW-3 summary, holds the Allmaras–Johnson–Spalart note on the
+Spalart–Allmaras model and is not ingested (left to the human); a title-word
+check of all 56 files finds no further mismatch.
+
+- Concept page created (1): software/nekmesh.
+- Concept pages updated (6): methods/conservative-metric-evaluation (three
+  upwind routes), methods/target-matrix-optimization (GPUs, implicit
+  geometries), methods/high-order-mesh-curving (linear-programming
+  correction, cavity remeshing, production tools),
+  definitions/high-order-mesh-validity, methods/neural-network-mesh-generation
+  (coarse-mesh data), definitions/boundary-fitted-coordinate-system
+  (mapped-mesh AMR).
+- Registry extended: level-set function $\sigma$ and penalty weight
+  $w_\sigma$.
+- Source pages created (9); audit lists regenerated, no older list changed.
+- Bibliography: 1338 entries (from 1045), FLAGS 0. chen-2023's deposit
+  lists the paper itself (reference 36), not entered; camier-2022 (a 2022
+  citation without venue) kept distinct from the ingested camier-2023; the
+  two Liao 2015 papers resolved by DOI; rochery-2023-b (the author's thesis)
+  separated from the ingested key; turner-2016 cited with two venues (the
+  DOI-bearing Procedia Eng. 163:340 and a misprinted 82:127) kept as one.
+
 **Chunk 3 ingested (night protocol, D33).** Sources: dobrev-2019,
 dobrev-2020, yu-2020, dobrev-2022, assonitis-2022, elaouad-2022, chen-2022,
 cicchino-2022, nikl-2022 (29 of 56). Archive file 025, named after

@@ -6,6 +6,39 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 4 — 2022–2024: upwind free-stream preservation, mesh morphing and correction, NekMesh (2026-11-08)
+
+Sources (9): han-2022, barrera-2023, rochery-2023, peng-2023, su-2023,
+camier-2023, su-2023-b, chen-2023, green-2024. 38 of 56 ingested, 19
+concept pages plus the registry, 1338 bibliography entries.
+
+### Decisions for the human
+
+1. **Archive file 036 is not the paper.**
+   `2023_Crossref_Journal_of_Aircraft_Galbraith_HLPW-4GMGW-3_High-Order_Discretization_Technology_Focus_Grou.pdf`
+   contains Allmaras, Johnson & Spalart, "Modifications and clarifications
+   for the implementation of the Spalart-Allmaras turbulence model",
+   ICCFD7-1902 (2012), not Galbraith et al., J. Aircraft (2023). Not
+   ingested. A title-word check of all 56 files against their Crossref
+   titles finds no other mismatch than 025 and 036.
+2. **Versions read.** barrera-2023 (arXiv:2208.05062v2), su-2023
+   (arXiv:2009.03802v2, earlier title), camier-2023 (arXiv:2205.12721v2),
+   su-2023-b (arXiv:2101.05886v1); the others are versions of record.
+3. **Self-citation in a deposit.** chen-2023's Crossref reference list
+   includes the paper itself (reference 36); it is not entered.
+
+### Contradictions
+
+None opened.
+
+### Bundle fit
+
+- han-2022, su-2023, su-2023-b (free-stream preserving WENO) touch
+  `weno-teno` and `curvilinear-metric-discretization`; peng-2023 (mapped
+  AMR for detonations) touches `div-free-amr` and
+  `chemical-airbreathing-propulsion`; read here in this bundle's notation
+  (D12).
+
 ## Chunk 3 — 2019–2022: mesh optimization, curved-element stability, shock fitting, ML meshing (2026-11-08)
 
 Sources (9): dobrev-2019, dobrev-2020, yu-2020, dobrev-2022, assonitis-2022,

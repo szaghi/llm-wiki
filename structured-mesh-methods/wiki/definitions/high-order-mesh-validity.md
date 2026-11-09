@@ -5,7 +5,7 @@ description: "A curved polynomial element is geometrically valid when its Jacobi
 status: established
 aliases: [geometrical validity, curved element validity, scaled Jacobian, Jacobian bounds, Bézier bounds]
 tags: [high-order-mesh, validity, element-jacobian, mesh-quality]
-timestamp: 2026-11-08T20:37:00Z
+timestamp: 2026-11-08T20:53:00Z
 ---
 
 # Validity of high-order curvilinear elements
@@ -45,7 +45,15 @@ and they are the curved-element counterpart of the
 [mesh quality metrics](/definitions/mesh-quality-metric.md) of linear
 elements.
 
+## Optimizing the bound itself
+
+Since the Bézier coefficients bound the Jacobian, the smallest coefficient
+can be maximized directly; with one control point free this is a linear
+program solved exactly by the simplex method
+([Rochery & Loseille 2023](/sources/rochery-2023.md)).
+
 # Citations
 
 - [Johnen, Remacle & Geuzaine (2013)](/sources/johnen-2013.md) — whole paper.
 - [Xie et al. (2013)](/sources/xie-2013.md) — validity and distortion measure.
+- [Rochery & Loseille (2023)](/sources/rochery-2023.md) — method.

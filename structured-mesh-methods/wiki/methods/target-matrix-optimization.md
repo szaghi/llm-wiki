@@ -5,7 +5,7 @@ description: "Mesh optimization by node movement that minimizes an integral of a
 status: established
 aliases: [TMOP, target-matrix optimization paradigm, r-adaptivity, hr-adaptivity, high-order mesh optimization]
 tags: [mesh-optimization, mesh-quality, target-matrix, high-order-mesh, adaptation]
-timestamp: 2026-11-08T20:46:00Z
+timestamp: 2026-11-08T20:53:00Z
 ---
 
 # Target-matrix optimization (TMOP)
@@ -74,9 +74,29 @@ TMOP complements the moving-barrier untangling of
 [high-order mesh curving](/methods/high-order-mesh-curving.md) and the
 equidistribution-based [moving mesh PDEs](/methods/moving-mesh-pde.md).
 
+## GPUs and implicit geometries
+
+[Camier et al. (2023)](/sources/camier-2023.md) recast high-order TMOP as
+finite-element operations with partial assembly: sum factorization and
+matrix-free evaluation of the objective, gradient and Hessian action, a
+global Newton solve with MINRES and Jacobi preconditioning, and
+advection-based remap of the fields that define adaptive targets. The
+result is unchanged and the cost per element drops to the
+partial-assembly complexity, which suits GPUs; a reproducible mesh
+optimization benchmark is proposed.
+[Barrera et al. (2023)](/sources/barrera-2023.md) add to the TMOP objective a
+penalty $w_\sigma\sum_s\sigma^2(\mathbf x_s)$ that drives selected nodes onto the zero
+isocontour of a discrete function $\sigma$ (a level set), morphing a mesh to
+fit boundaries and material interfaces given implicitly; the faces to fit
+and the penalty weight are chosen adaptively, and $\sigma$ lives on an
+adaptively refined background mesh from which it is interpolated before
+each Newton step.
+
 # Citations
 
 - [Knupp (2001)](/sources/knupp-2001.md) — algebraic metrics and targets.
 - [Dobrev et al. (2019)](/sources/dobrev-2019.md) — §2–§4, §6.
 - [Dobrev et al. (2020)](/sources/dobrev-2020.md) — §3–§4.
 - [Dobrev et al. (2022)](/sources/dobrev-2022.md) — method, conclusions.
+- [Camier et al. (2023)](/sources/camier-2023.md) — §2–§3, §5.
+- [Barrera et al. (2023)](/sources/barrera-2023.md) — §2–§3.

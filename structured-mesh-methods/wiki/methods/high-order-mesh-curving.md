@@ -5,7 +5,7 @@ description: "A posteriori generation of curved high-order meshes: a straight-si
 status: established
 aliases: [a posteriori curving, curved mesh generation, mesh untangling, elastic analogy, high-order mesh optimization]
 tags: [high-order-mesh, curving, untangling, optimization]
-timestamp: 2026-11-08T20:37:00Z
+timestamp: 2026-11-08T20:53:00Z
 ---
 
 # High-order mesh curving
@@ -53,7 +53,29 @@ constant $J$ can have different stable steps. A barrier on the smallest
 eigenvalue of the element metric tensor recovers larger stable steps for
 discontinuous Galerkin shallow-water computations.
 
+## Correction by linear programming, and cavity remeshing
+
+[Rochery & Loseille (2023)](/sources/rochery-2023.md) correct invalid curved
+elements by maximizing the smallest Bézier control coefficient of the
+Jacobian that depends on one control point; this is a linear program whose
+global optimum the simplex algorithm finds in about the time of eight
+evaluations, for any element type and degree. Placed in an iterative
+smoother, it corrects second-order tetrahedral meshes of up to twenty
+million elements in seconds to minutes. Interior curvature follows from
+minimizing edge lengths in a Riemannian metric (with log-Euclidean metric
+interpolation extended to high order), and a cavity operator (insertion,
+collapse, swaps) extended to second-order meshes allows topological
+adaptation of curved meshes.
+
+## Production tools
+
+[NekMesh](/software/nekmesh.md) gathers CAD-based and a posteriori curving,
+boundary-layer splitting and variational optimization in an open-source
+pipeline ([Green et al. 2024](/sources/green-2024.md)).
+
 # Citations
 
 - [Xie et al. (2013)](/sources/xie-2013.md) — §1–§4, §6.
 - [Toulorge et al. (2013)](/sources/toulorge-2013.md) — §1–§4, §6–§7.
+- [Rochery & Loseille (2023)](/sources/rochery-2023.md) — abstract, §1–§3.
+- [Green et al. (2024)](/sources/green-2024.md) — §1.

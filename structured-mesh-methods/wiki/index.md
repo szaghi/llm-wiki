@@ -19,7 +19,7 @@ $g_{ij}$, the metric terms $J\mathbf a^i$, the grid velocity $\dot{\mathbf x}$,
 control functions $P^i$, the monitor function $M$, the target Jacobian
 $\mathsf W$ and $\mathsf T=\mathsf A\mathsf W^{-1}$), and the [update log](/log.md).
 
-**Corpus:** 29 of the 56 archived papers ingested in 3 chunks (one archive file is not the paper its name announces; see the issues digest). Chunk 1 holds
+**Corpus:** 38 of the 56 archived papers ingested in 4 chunks (two archive files are not the papers their names announce; see the issues digest). Chunk 1 holds
 the founding papers of 1966–2001: [Winslow (1966)](/sources/winslow-1966.md)
 builds meshes from inverted Laplace equations;
 [Gordon & Hall (1973)](/sources/gordon-1973.md) introduce transfinite
@@ -54,6 +54,15 @@ Lagrangian MHD on curvilinear elements ([Nikl et al. 2022](/sources/nikl-2022.md
 shock fitting on structured grids ([Assonitis et al. 2022](/sources/assonitis-2022.md)),
 anisotropic body-fitted adaptation ([El Aouad et al. 2022](/sources/elaouad-2022.md))
 and neural-network grid generation ([Chen et al. 2022](/sources/chen-2022.md)).
+Chunk 4 (2022–2024) adds further free-stream preserving upwind and WENO
+schemes ([Han et al. 2022](/sources/han-2022.md), [Su et al. 2023](/sources/su-2023.md),
+[Su et al. 2023b](/sources/su-2023-b.md)), mesh morphing to implicit
+geometries and GPU mesh optimization ([Barrera et al. 2023](/sources/barrera-2023.md),
+[Camier et al. 2023](/sources/camier-2023.md)), exact correction and cavity
+remeshing of curved meshes ([Rochery & Loseille 2023](/sources/rochery-2023.md)),
+the open-source generator NekMesh ([Green et al. 2024](/sources/green-2024.md)),
+mapped-mesh AMR for detonations ([Peng & Deiterding 2023](/sources/peng-2023.md))
+and a neural generator trained with coarse-mesh data ([Chen et al. 2023](/sources/chen-2023.md)).
 
 ## Reading guide
 
@@ -92,6 +101,8 @@ and neural-network grid generation ([Chen et al. 2022](/sources/chen-2022.md)).
 8. **Applications and new tools.**
    [Shock fitting on structured grids](/methods/shock-fitting.md) and
    [neural-network mesh generation](/methods/neural-network-mesh-generation.md).
+9. **Software.** [NekMesh](/software/nekmesh.md), an open-source high-order
+   mesh generator.
 
 ## Catalogs
 
@@ -99,5 +110,6 @@ and neural-network grid generation ([Chen et al. 2022](/sources/chen-2022.md)).
 - [Methods](/methods/index.md)
 - [Results](/results/index.md)
 - [Properties](/properties/index.md)
+- [Software](/software/index.md)
 - [Sources](/sources/index.md)
 - [Bibliography](/bibliography.md) — every work cited by an ingested source.
