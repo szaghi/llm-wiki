@@ -6,6 +6,35 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 2 — 2002–2019: metric identities, free-stream preservation, curved high-order meshes (2026-11-08)
+
+Sources (10): visbal-2002, tang-2003, kopriva-2006, nonomura-2010, deng-2011,
+xie-2013, deng-2013, johnen-2013, toulorge-2013, zhu-2019. 20 of 56
+ingested, 14 concept pages plus the registry, 678 bibliography entries.
+
+### Decisions for the human
+
+1. **Versions read.** toulorge-2013 (preprint submitted to JCP), zhu-2019
+   (arXiv:1811.06325v1); the others are versions of record.
+2. **Bibliography repair of chunk 1.** Three ingested keys (thomas-1979,
+   steger-1979, steger-1980) held other works of the same author and year
+   cited by thompson-1982; they were rekeyed in this chunk (see the log).
+   The chunk-1 commit therefore carries those wrong identities until the
+   chunk-2 commit corrects them.
+3. **Same-paper years.** thompson-1982's deposit dates Thomas & Lombard
+   1980 (AIAA J. 17 is 1979); merged into thomas-1979 on DOI.
+
+### Contradictions
+
+None opened.
+
+### Bundle fit
+
+- visbal-2002, kopriva-2006, nonomura-2010, deng-2011, deng-2013, zhu-2019
+  (metric identities, free-stream preservation) touch
+  `curvilinear-metric-discretization`; nonomura-2010 and zhu-2019 (WENO,
+  WCNS) touch `weno-teno`; read here in this bundle's notation (D12).
+
 ## Chunk 1 — 1966–2001: the founding papers (2026-11-08)
 
 Sources (10): winslow-1966, gordon-1973, thompson-1974, thomas-1979,

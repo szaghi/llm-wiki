@@ -5,7 +5,7 @@ description: "The truncation error of difference formulas on a curvilinear grid 
 status: established
 aliases: [stretching error, skewness error, grid smoothness requirements]
 tags: [accuracy, truncation-error, grid-quality]
-timestamp: 2026-11-08T20:24:00Z
+timestamp: 2026-11-08T20:37:00Z
 ---
 
 # Grid-induced truncation error
@@ -40,6 +40,21 @@ quantify element by element and that the
 [elliptic](/methods/elliptic-grid-generation.md) and
 [variational](/methods/variational-grid-generation.md) generators control.
 
+## High-order schemes on nonsmooth meshes
+
+Compact sixth-order schemes on meshes with sudden spacing jumps or sustained
+metric variation produce spurious oscillations; a discriminating high-order
+low-pass filter restores stability and keeps their accuracy advantage over
+second-order schemes even across large grid discontinuities
+([Visbal & Gaitonde 2002](/sources/visbal-2002.md)). Grids with
+discontinuous point derivatives (randomized grids) amplify the metric errors
+of schemes that do not satisfy the discrete metric identities
+([Nonomura, Iizuka & Fujii 2010](/sources/nonomura-2010.md);
+[Deng et al. 2013](/sources/deng-2013.md)).
+
 # Citations
 
 - [Thompson, Warsi & Mastin (1982)](/sources/thompson-1982.md) — Section O.
+- [Visbal & Gaitonde (2002)](/sources/visbal-2002.md) — §4.1.
+- [Nonomura, Iizuka & Fujii (2010)](/sources/nonomura-2010.md) — conclusion.
+- [Deng et al. (2013)](/sources/deng-2013.md) — numerical tests.

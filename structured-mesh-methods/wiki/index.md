@@ -19,7 +19,7 @@ $g_{ij}$, the metric terms $J\mathbf a^i$, the grid velocity $\dot{\mathbf x}$,
 control functions $P^i$, the monitor function $M$, the target Jacobian
 $\mathsf W$ and $\mathsf T=\mathsf A\mathsf W^{-1}$), and the [update log](/log.md).
 
-**Corpus:** 10 of the 56 archived papers ingested in 1 chunk. Chunk 1 holds
+**Corpus:** 20 of the 56 archived papers ingested in 2 chunks. Chunk 1 holds
 the founding papers of 1966–2001: [Winslow (1966)](/sources/winslow-1966.md)
 builds meshes from inverted Laplace equations;
 [Gordon & Hall (1973)](/sources/gordon-1973.md) introduce transfinite
@@ -34,7 +34,17 @@ variationally; the review of [Thompson, Warsi & Mastin (1982)](/sources/thompson
 fixes the classification and the error analysis;
 [Huang, Ren & Russell (1994)](/sources/huang-1994.md) derive moving mesh
 PDEs; and [Knupp (2001)](/sources/knupp-2001.md) gives an algebraic theory of
-mesh quality metrics.
+mesh quality metrics. Chunk 2 (2002–2019) turns to the discretization on
+curvilinear meshes and to curved high-order meshes: high-order compact
+schemes on curvilinear and deforming meshes ([Visbal & Gaitonde 2002](/sources/visbal-2002.md)),
+metric identities for spectral elements ([Kopriva 2006](/sources/kopriva-2006.md)),
+free-stream preservation of WENO and weighted compact schemes
+([Nonomura et al. 2010](/sources/nonomura-2010.md), [Deng et al. 2011](/sources/deng-2011.md),
+[Deng et al. 2013](/sources/deng-2013.md), [Zhu & Hu 2019](/sources/zhu-2019.md)),
+moving meshes for conservation laws ([Tang & Tang 2003](/sources/tang-2003.md)),
+and the curving, validation and untangling of high-order meshes
+([Xie et al. 2013](/sources/xie-2013.md), [Johnen et al. 2013](/sources/johnen-2013.md),
+[Toulorge et al. 2013](/sources/toulorge-2013.md)).
 
 ## Reading guide
 
@@ -56,11 +66,16 @@ mesh quality metrics.
    and the [moving mesh PDEs](/methods/moving-mesh-pde.md) built on it.
 4. **Discretizing on the grid.**
    [Free-stream preservation](/properties/free-stream-preservation.md)
-   (discrete metric identities) and the
-   [geometric conservation law](/properties/geometric-conservation-law.md)
+   (discrete metric identities), achieved by
+   [conservative metric evaluation](/methods/conservative-metric-evaluation.md),
+   and the [geometric conservation law](/properties/geometric-conservation-law.md)
    (moving grids); the [truncation error the grid adds](/results/grid-induced-truncation-error.md).
 5. **Measuring the grid.**
-   [Mesh quality metrics](/definitions/mesh-quality-metric.md).
+   [Mesh quality metrics](/definitions/mesh-quality-metric.md) and the
+   [validity of high-order curvilinear elements](/definitions/high-order-mesh-validity.md).
+6. **Curved high-order meshes.**
+   [High-order mesh curving](/methods/high-order-mesh-curving.md):
+   elastic analogy and untangling by optimization.
 
 ## Catalogs
 

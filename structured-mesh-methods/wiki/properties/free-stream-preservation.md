@@ -5,7 +5,7 @@ description: "A scheme on a curvilinear grid preserves a uniform flow exactly on
 status: established
 aliases: [freestream preservation, discrete metric identities, surface conservation law, uniform-flow preservation]
 tags: [free-stream-preservation, metric-identities, conservation]
-timestamp: 2026-11-08T20:24:00Z
+timestamp: 2026-11-08T20:37:00Z
 ---
 
 # Free-stream preservation
@@ -39,7 +39,31 @@ grid is generated at the half points too.
 On moving grids the same requirement extends to the time metric terms
 through the [geometric conservation law](/properties/geometric-conservation-law.md).
 
+## High order: three dimensions, errors, schemes
+
+The 2-D practice of differencing the metrics with the flux operator does not
+carry over to 3-D: with the cross-product form, central and compact schemes
+violate the identities on curvilinear meshes, the error shrinks with order
+but remains unacceptable even at sixth order, and analytic metrics should be
+avoided altogether ([Visbal & Gaitonde 2002](/sources/visbal-2002.md)).
+[Kopriva (2006)](/sources/kopriva-2006.md) shows what the violation does: a
+uniform Mach 0.6 flow on a curved spectral-element mesh develops a
+stationary pressure pattern and spurious sound waves radiating from the
+centre, whereas with the identities satisfied the pressure error is
+$2\times10^{-14}$ — spurious waves of the size of real acoustic signals
+($10^{-4}$–$10^{-6}$ of the mean pressure) would otherwise contaminate
+aeroacoustic results. [Deng et al. (2011)](/sources/deng-2011.md) split the
+geometric conservation law into a volume law (moving grids) and a
+**surface conservation law** — the discrete metric identities, which matter
+on stationary grids and whose violation causes instabilities with high-order
+schemes. How the identities are met — conservative forms, matching
+operators, and the special difficulty of upwind and WENO fluxes — is on
+[conservative metric evaluation](/methods/conservative-metric-evaluation.md).
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — uniform-flow analysis, conservative metrics.
 - [Thompson, Warsi & Mastin (1982)](/sources/thompson-1982.md) — Section P.
+- [Visbal & Gaitonde (2002)](/sources/visbal-2002.md) — §4.2.
+- [Kopriva (2006)](/sources/kopriva-2006.md) — §1.
+- [Deng et al. (2011)](/sources/deng-2011.md) — §1–§2.

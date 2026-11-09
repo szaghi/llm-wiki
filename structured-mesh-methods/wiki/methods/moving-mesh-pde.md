@@ -5,7 +5,7 @@ description: "Continuous equations for the node motion of a mesh with a fixed nu
 status: established
 aliases: [MMPDE, MMPDE4, MMPDE5, MMPDE6, r-adaptivity, dynamic mesh adaptation]
 tags: [moving-mesh, adaptation, monitor-function]
-timestamp: 2026-11-08T20:24:00Z
+timestamp: 2026-11-08T20:37:00Z
 ---
 
 # Moving mesh partial differential equations
@@ -45,6 +45,23 @@ concentration of points in several dimensions
 On moving grids the discretization must respect the
 [geometric conservation law](/properties/geometric-conservation-law.md).
 
+## Redistribution with conservative interpolation
+
+[Tang & Tang (2003)](/sources/tang-2003.md) separate a moving mesh step into
+two independent parts: the solution is evolved by any high-resolution
+finite-volume scheme on the current mesh, and the mesh is then redistributed
+by iterating a variational (harmonic-map type) equation with a smoothed
+monitor, while the solution is carried to the new mesh by a conservative
+interpolation. In one dimension, with $c_j$ the node displacement, the new
+cell averages satisfy
+$\Delta\tilde x_{j+1/2}\tilde u_{j+1/2}=\Delta x_{j+1/2}u_{j+1/2}-\big[(cu)_{j+1}-(cu)_j\big]$
+with an upwind flux for $cu$, which conserves mass and makes the
+redistribution total variation diminishing, so the whole scheme is TVD when
+the solver is. Shocks in 1-D and 2-D (Riemann problems, double Mach
+reflection, flow past a cylinder) are resolved with far fewer points than
+on uniform meshes.
+
 # Citations
 
 - [Huang, Ren & Russell (1994)](/sources/huang-1994.md) — §1–§3, §5.
+- [Tang & Tang (2003)](/sources/tang-2003.md) — §1–§4.

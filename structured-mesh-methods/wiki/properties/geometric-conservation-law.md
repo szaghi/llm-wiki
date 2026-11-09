@@ -5,7 +5,7 @@ description: "On moving grids the volume element must change exactly as the swep
 status: established
 aliases: [GCL, volume conservation law, discrete geometric conservation law]
 tags: [gcl, moving-mesh, conservation, metric-identities]
-timestamp: 2026-11-08T20:24:00Z
+timestamp: 2026-11-08T20:37:00Z
 ---
 
 # Geometric conservation law
@@ -45,7 +45,26 @@ steady supersonic flow; Thompson, Warsi and Mastin (1982, Section P) list
 the conservation-law forms of the time-dependent equations that make the
 time variation of $J$ explicit.
 
+## Time metrics at high order
+
+[Visbal & Gaitonde (2002)](/sources/visbal-2002.md) split the time derivative
+as $\partial_t(J\mathbf q)=J\,\partial_t\mathbf q+\mathbf q\,\partial_tJ$ (not strictly
+conservative in time, so not meant for fast strong shocks) and take
+$\partial_tJ$ not from the grid coordinates but from the law itself,
+$\partial_tJ=-\sum_i\delta_i(J\xi^i_t)$, with
+$\xi^i_t=-\dot{\mathbf x}\cdot\mathbf a^i$ and the conservatively evaluated
+spatial metrics. The free-stream residual then regroups into the four
+discrete identities, which all vanish, whatever way the grid velocities are
+obtained, analytically or numerically; an analytic $\partial_tJ$ brings back
+errors like those of analytic spatial metrics. With sixth-order compact
+schemes and filters this keeps a uniform flow uniform on rapidly deforming
+meshes (pitching airfoil, fluttering panel). [Deng et al. (2011)](/sources/deng-2011.md)
+call this part the volume conservation law and the spatial part the surface
+conservation law ([free-stream preservation](/properties/free-stream-preservation.md)).
+
 # Citations
 
 - [Thomas & Lombard (1979)](/sources/thomas-1979.md) — GCL, modified finite-volume method, applications.
 - [Thompson, Warsi & Mastin (1982)](/sources/thompson-1982.md) — Section P.
+- [Visbal & Gaitonde (2002)](/sources/visbal-2002.md) — §4.3.
+- [Deng et al. (2011)](/sources/deng-2011.md) — §1.

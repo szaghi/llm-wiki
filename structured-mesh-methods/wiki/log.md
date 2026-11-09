@@ -2,6 +2,35 @@
 
 ## 2026-11-08
 
+**Chunk 2 ingested (night protocol, D33).** Sources: visbal-2002,
+tang-2003, kopriva-2006, nonomura-2010, deng-2011, xie-2013, deng-2013,
+johnen-2013, toulorge-2013, zhu-2019 (20 of 56).
+
+- Concept pages created (3): methods/conservative-metric-evaluation,
+  definitions/high-order-mesh-validity, methods/high-order-mesh-curving.
+- Concept pages updated (6): properties/free-stream-preservation (3-D,
+  error forms, surface conservation law), properties/geometric-conservation-law
+  (time metrics from the GCL), methods/moving-mesh-pde (conservative
+  interpolation), results/grid-induced-truncation-error (filters, randomized
+  grids), definitions/mesh-quality-metric (curved elements),
+  definitions/boundary-fitted-coordinate-system (unstructured curvilinear
+  meshes).
+- Registry extended: flux and metric operators $\delta_i$,
+  $\delta^{\mathrm o}_i$, $\delta^{\mathrm{in}}_i$; interpolation $\mathcal I_k$;
+  straight-sided Jacobian $J_0$ and distortion $\mathcal D$.
+- Source pages created (10); audit lists regenerated, thomas-1979 changed.
+- Bibliography: 678 entries (from 470), FLAGS 0. **Chunk-1 record
+  repaired:** three ingested keys held other works cited by thompson-1982
+  (thomas-1979 a boundary-condition report, steger-1979 an FSI report,
+  steger-1980 the aileron-buzz paper); they were rekeyed (thomas-1979-b,
+  steger-1979-c, steger-1980-e), the ingested JCP note moved to steger-1979,
+  and thomas-1980 (same DOI as the ingested paper, deposit year 1980) to
+  thomas-1979. A check that every ingested key holds its own work now runs
+  after each merge. Three keys normalized (karniadakis-2004,
+  zienkiewicz-1983, zienkiewicz-2000).
+- Deep lint (self-audit of the 9 touched pages): canonical notation; the
+  inverse-Jacobian convention of visbal-2002 translated on its Source page.
+
 **Chunk 1 ingested; bundle founded (night protocol, D33).** Sources:
 winslow-1966, gordon-1973, thompson-1974, thomas-1979, steger-1979,
 steger-1980, brackbill-1982, thompson-1982, huang-1994, knupp-2001

@@ -5,7 +5,7 @@ description: "A structured (curvilinear) grid viewed as a one-to-one mapping fro
 status: established
 aliases: [body-fitted coordinates, boundary-conforming coordinates, curvilinear grid, structured grid, natural coordinate system]
 tags: [structured-grid, curvilinear-grid, grid-generation, classification]
-timestamp: 2026-11-08T20:24:00Z
+timestamp: 2026-11-08T20:37:00Z
 ---
 
 # Boundary-fitted coordinate system
@@ -86,8 +86,19 @@ identities and, on moving grids, the geometric conservation law
 Element shape, size and validity are measured by
 [mesh quality metrics](/definitions/mesh-quality-metric.md).
 
+## Unstructured curvilinear meshes
+
+The same mapping view applies element by element to high-order curved
+meshes, where each element is the image of a reference element by a
+polynomial map whose positivity must be checked
+([validity](/definitions/high-order-mesh-validity.md)) and which is usually
+obtained by curving a straight-sided mesh
+([high-order mesh curving](/methods/high-order-mesh-curving.md);
+[Xie et al. 2013](/sources/xie-2013.md)).
+
 # Citations
 
 - [Gordon & Hall (1973)](/sources/gordon-1973.md) — mapping view of curvilinear coordinates.
 - [Thompson, Thames & Mastin (1974)](/sources/thompson-1974.md) — introduction and transformation.
 - [Thompson, Warsi & Mastin (1982)](/sources/thompson-1982.md) — Sections A–B, classification C–Q.
+- [Xie et al. (2013)](/sources/xie-2013.md) — §1.

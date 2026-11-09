@@ -42,7 +42,8 @@ Version of record (scan with text layer), AIAA J. 17, 1030–1037 (1979). Method
 
 # Pages created or updated
 
-Chunk 1 (2026-11-08). This source is cited on:
+Chunk 1 (2026-11-08), list updated in chunk 2 (2026-11-08). This source is cited on:
 
+- [Conservative metric evaluation](/methods/conservative-metric-evaluation.md)
 - [Free-stream preservation](/properties/free-stream-preservation.md)
 - [Geometric conservation law](/properties/geometric-conservation-law.md)

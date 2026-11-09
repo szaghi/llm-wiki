@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: physical and curvilinear coordinates, the mapping and its Jacobian matrix, covariant and contravariant base vectors, the metric tensor, metric terms and metric identities, moving grids and the geometric conservation law, grid-generation operators and control functions, variational functionals, equidistribution and monitor functions, element Jacobians, targets and quality metrics, and the flow symbols; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-11-08T20:24:00Z
+timestamp: 2026-11-08T20:37:00Z
 ---
 
 # Notation registry
@@ -99,6 +99,8 @@ polynomial degree $k$.
 | $\mathsf T=\mathsf A\mathsf W^{-1}$ | Jacobian of the map from the target to the physical element |
 | $|\mathsf T|$ | Frobenius norm $\sqrt{\mathrm{tr}(\mathsf T^{\mathsf T}\mathsf T)}$ |
 | $\kappa(\mathsf T)=|\mathsf T||\mathsf T^{-1}|$ | condition number of an element |
+| $J_0$ | Jacobian determinant of the straight-sided (linear) element from which a curved element is built |
+| $\mathcal D(\boldsymbol\xi)=J/J_0$ | distortion (scaled Jacobian) of a curved high-order element; valid iff $\mathcal D>0$ everywhere |
 | $\mu(\mathsf T)$ | a quality (distortion) metric; shape metrics are $1$ for a scaled rotation of the target and $0$ for a degenerate element |
 
 ## Discretization and flow
@@ -107,7 +109,9 @@ polynomial degree $k$.
 |---|---|
 | $\mathbf q$ | conserved variables; $\hat{\mathbf q}=J\mathbf q$ in curvilinear coordinates |
 | $\boldsymbol{\mathcal F}=(\mathbf f_1,\dots,\mathbf f_d)$ | physical flux; contravariant flux $\hat{\mathbf f}^i=J\mathbf a^i\cdot\boldsymbol{\mathcal F}$ (moving grids: plus $J\xi^i_t\,\mathbf q$) |
-| $\delta_i$ | a discrete derivative operator in direction $\xi^i$ |
+| $\delta_i$ | the discrete derivative operator applied to the fluxes in direction $\xi^i$ |
+| $\delta^{\mathrm o}_i$, $\delta^{\mathrm{in}}_i$ | outer and inner discrete operators of the conservative metric forms (e.g. $J\xi_x=\delta^{\mathrm o}_\zeta(z\,\delta^{\mathrm{in}}_\eta y)-\delta^{\mathrm o}_\eta(z\,\delta^{\mathrm{in}}_\zeta y)$) |
+| $\mathcal I_k$ | interpolation onto polynomials of degree $k$ (element-wise) |
 | $r$; $k$ | order of accuracy; polynomial degree of a discretization |
 | $\rho$, $\mathbf u$, $p$, $E$, $\gamma$ | density, velocity, pressure, total energy per unit volume, ratio of specific heats |
 
