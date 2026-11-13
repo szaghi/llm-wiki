@@ -89,7 +89,7 @@ immersed boundaries on overlapping grids also live in
 
 ## Status
 
-**Chunk 7 snapshot 2026-11-13 (night protocol, awaiting the owner's commit):** the 8 papers of the owner's
+**Chunk 7 committed 2026-11-13 (85b392f):** the 8 papers of the owner's
 moving-cut-cell list (1993–2023); 65 of 65 ingested, 32 concept pages plus
 the registry, 2767 bibliography entries, one contradiction open
 (spurious-force-oscillations).
