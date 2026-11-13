@@ -21,7 +21,7 @@ spreading and interpolation, $\eta$ and $\chi_s$ the penalization parameter and
 body mask, $\kappa$ the cut-cell volume fraction, $\phi$ the level set), and the
 [update log](/log.md).
 
-**Corpus:** all 57 archived papers ingested in 6 chunks. Chunk 1 holds
+**Corpus:** all 65 archived papers ingested in 7 chunks. Chunk 1 holds
 the founding papers of 1972–2002:
 [Peskin (1972)](/sources/peskin-1972.md) invents the immersed boundary method
 for heart valves, and [Peskin (2002)](/sources/peskin-2002.md) gives its
@@ -80,6 +80,15 @@ energy-stable DG with state redistribution ([Taylor et al. 2025](/sources/taylor
 constrained-transport MHD embedded boundaries ([Jones et al. 2026](/sources/jones-2026.md)),
 shock-adaptive high-order ghost cells ([Yang et al. 2026](/sources/yang-2026.md)) and
 Riemann-based ghost fluids for shocked energetic materials ([Okafor et al. 2026](/sources/okafor-2026.md)).
+Chunk 7 (2026-11-13) adds eight papers on bodies moving across fixed grids:
+cell merging for moving cut cells ([Bayyuk et al. 1993](/sources/bayyuk-1993.md)),
+implicit space-time cut cells ([Murman et al. 2003](/sources/murman-2003.md)),
+the geometric-conservation origin of spurious pressure oscillations
+([Seo & Mittal 2011](/sources/seo-2011.md)), smoothly varying moving cut cells
+([Meinke et al. 2013](/sources/meinke-2013.md), [Schneiders et al. 2013](/sources/schneiders-2013.md),
+[Schneiders et al. 2016](/sources/schneiders-2016.md)), moving-boundary flux
+stabilization ([Bennett et al. 2018](/sources/bennett-2018.md)) and space-time
+aggregated finite elements ([Badia et al. 2023](/sources/badia-2023.md)).
 
 ## Reading guide
 
@@ -104,7 +113,8 @@ Riemann-based ghost fluids for shocked energetic materials ([Okafor et al. 2026]
    The [immersed interface method](/methods/immersed-interface-method.md),
    the [ghost fluid method](/methods/ghost-fluid-method.md), and the
    [cut-cell method](/methods/cut-cell-method.md) with its
-   [small-cell problem](/definitions/small-cell-problem.md) and
+   [small-cell problem](/definitions/small-cell-problem.md),
+   [cell merging](/methods/cell-merging.md) and
    [redistribution](/methods/redistribution.md); the
    [ghost-cell method](/methods/ghost-cell-method.md), the workhorse of
    sharp-interface finite differences, its [fresh-cell problem](/definitions/fresh-cell-problem.md)
@@ -121,7 +131,10 @@ Riemann-based ghost fluids for shocked energetic materials ([Okafor et al. 2026]
    embedded boundaries and hybrid compact–WENO interiors, side by side.
 6. **Moving and deforming bodies.** [Fluid–structure coupling](/methods/fluid-structure-coupling.md):
    loose and strong coupling, added mass, and the structural models;
-   [spurious force and pressure oscillations](/definitions/spurious-force-oscillations.md).
+   [spurious force and pressure oscillations](/definitions/spurious-force-oscillations.md)
+   (one contradiction open on their primary cause) and the
+   [geometric conservation law](/definitions/geometric-conservation-law.md)
+   that cells changing status violate.
 7. **High Reynolds numbers.** [Wall models for immersed boundaries](/methods/wall-models-for-immersed-boundaries.md).
 8. **Cross-cutting properties.**
    [First-order accuracy of regularized-delta forcing](/results/first-order-accuracy-of-regularized-delta-forcing.md)

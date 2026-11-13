@@ -5,7 +5,7 @@ description: "Unfitted finite element framework in which the geometry is represe
 status: established
 aliases: [cut finite element method, unfitted Nitsche method, Nitsche fictitious domain method]
 tags: [cutfem, finite-element, nitsche, ghost-penalty, unfitted, level-set, small-cell]
-timestamp: 2026-11-08T18:32:00Z
+timestamp: 2026-11-13T05:47:00Z
 ---
 
 # CutFEM (cut finite element method)
@@ -94,9 +94,26 @@ strong stabilization by extension that eliminates unstable degrees of freedom
 hybridization, and time-dependent domains. Robustness with respect to the
 position of the geometry relative to the mesh is the stated design goal.
 
+## Moving domains in space-time
+
+[Badia, Dilip & Verdugo (2023)](/sources/badia-2023.md) discretize parabolic
+problems on moving domains with unfitted finite elements in space and a
+discontinuous Galerkin method in time on space-time slabs. Robustness to the
+cut position comes from aggregation rather than the ghost penalty: a cell of a
+slab is well posed when its fraction inside the domain over the whole slab
+exceeds a threshold, each aggregate holds exactly one well-posed cell, and the
+degrees of freedom of the others are constrained to it. Aggregating slab by
+slab gives a discrete space that is a tensor product of a spatial and a
+temporal space on each slab, which their analysis needs for stability,
+condition-number bounds and optimal anisotropic error estimates; an earlier
+space-time extended finite element scheme, whose space lacks that structure,
+is neither robust nor optimal in time. A space-time ghost penalty is proposed
+as the alternative. See [cell merging](/methods/cell-merging.md).
+
 # Citations
 
 - [Burman et al. (2015)](/sources/burman-2015.md) — §1–§6.
 - [Main & Scovazzi (2018)](/sources/main-2018.md) — §1.
 - [de Prenter et al. (2023)](/sources/deprenter-2023.md) — §3–§4.
 - [Burman et al. (2025)](/sources/burman-2025.md) — §1–§9 (scoped reading).
+- [Badia, Dilip & Verdugo (2023)](/sources/badia-2023.md) — §1–§4, §6.

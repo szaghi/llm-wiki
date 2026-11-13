@@ -5,7 +5,7 @@ description: "In sharp-interface immersed boundary methods with moving bodies, a
 status: established
 aliases: [freshly cleared cells, fresh cells, emerging cells]
 tags: [moving-boundary, sharp-interface, ghost-cell, cut-cell]
-timestamp: 2026-11-08T18:22:00Z
+timestamp: 2026-11-13T05:47:00Z
 ---
 
 # Fresh-cell problem
@@ -54,6 +54,45 @@ the solid-volume change enters the continuity equation consistently.
 intercepted cells to violations of the geometric conservation law and to
 [spurious force oscillations](/definitions/spurious-force-oscillations.md).
 
+## Vanishing and newborn cells in moving cut cells
+
+[Bayyuk, Powell & van Leer (1993)](/sources/bayyuk-1993.md) name the two
+cases for a body crossing a stationary Cartesian grid: a **vanishing** cell
+swept over by the body, whose final conserved state is not guaranteed to
+vanish (mass or energy would enter through the body, or become negative), and
+a **newborn** cell uncovered by the body, across whose new face no flux can be
+computed for lack of a state. Splitting the step at the exact covering and
+exposure times would need exceptional handling of each such cell and its
+neighbours; they instead [merge cells](/methods/cell-merging.md) so that no
+combined cell changes its intersection status during a step.
+[Murman, Aftosmis & Berger (2003)](/sources/murman-2003.md), §4, follow the
+same cells in space-time: the flux a vanishing cell receives before its
+vertex is crossed is passed to the next cell ahead of the front, and a cell
+emerging behind the front is integrated from the time it appears, its
+discretization kept through the step, so that no merged state has to be
+reconstructed.
+
+## Smooth and conservative entry and exit
+
+- [Seo & Mittal (2011)](/sources/seo-2011.md), §2, show that dead cells
+  (fluid becoming solid) produce pressure peaks as large as fresh cells, and
+  that both act as spurious mass sources violating the
+  [geometric conservation law](/definitions/geometric-conservation-law.md).
+- [Meinke et al. (2013)](/sources/meinke-2013.md), §3.1, and
+  [Schneiders et al. (2013)](/sources/schneiders-2013.md), §4.2, give an
+  emerging cell a least-squares weight that grows smoothly from zero as it
+  leaves the body, over about ten time steps, so that it enters the
+  reconstruction stencils of its neighbours gradually.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md), §3.8, give the
+  contents of a submerging cell to its fluid neighbours by fixed fractions and
+  link an emerging cell to a neighbour for one step, the combined volume being
+  stabilized by redistribution however small it is.
+- [Bennett, Nikiforakis & Klein (2018)](/sources/bennett-2018.md) fill a newly
+  uncovered cell by volume-weighted averaging of its neighbours and give the
+  contents of a newly covered cell to its neighbours; in their dimensionally
+  split scheme global conservation is kept only approximately
+  ([discrete conservation](/properties/discrete-conservation.md)).
+
 # Citations
 
 - [Mittal & Iaccarino (2005)](/sources/mittal-2005.md) — moving-boundary section.
@@ -61,3 +100,10 @@ intercepted cells to violations of the geometric conservation law and to
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2.
 - [Xie et al. (2022)](/sources/xie-2022.md) — §3.
 - [Raj et al. (2023)](/sources/raj-2023.md) — §1–§2.
+- [Bayyuk, Powell & van Leer (1993)](/sources/bayyuk-1993.md) — moving-body and merging sections.
+- [Murman, Aftosmis & Berger (2003)](/sources/murman-2003.md) — §4.
+- [Seo & Mittal (2011)](/sources/seo-2011.md) — §2.
+- [Meinke et al. (2013)](/sources/meinke-2013.md) — §3.1.
+- [Schneiders et al. (2013)](/sources/schneiders-2013.md) — §4.2.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md) — §3.8.
+- [Bennett, Nikiforakis & Klein (2018)](/sources/bennett-2018.md) — §1, §4.

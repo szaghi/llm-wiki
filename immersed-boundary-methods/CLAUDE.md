@@ -29,7 +29,7 @@ immersed boundaries on overlapping grids also live in
 ## Corpus
 
 - Primary archive: `~/papers/mosaic/immersed-boundary/*.pdf` (read-only;
-  Layer 1), 57 PDFs at founding (2026-11-08), named
+  Layer 1), 57 PDFs at founding (2026-11-08), 65 since chunk 7 (2026-11-13), named
   `year_Crossref_Venue_Surname_Title-prefix.pdf`. Papers added later are
   ingested in further chunks, found with
   `tools/worklist.sh immersed-boundary-methods`.
@@ -88,6 +88,11 @@ immersed boundaries on overlapping grids also live in
 - Commits: `docs(immersed-boundary-methods): ingest chunk N: <slugs>`.
 
 ## Status
+
+**Chunk 7 snapshot 2026-11-13 (night protocol, awaiting the owner's commit):** the 8 papers of the owner's
+moving-cut-cell list (1993–2023); 65 of 65 ingested, 32 concept pages plus
+the registry, 2767 bibliography entries, one contradiction open
+(spurious-force-oscillations).
 
 **Chunk 6 committed 2026-11-08 (ad2cb2e): archive complete,** 57 of 57 ingested, 30 concept pages plus the
 registry, 2598 bibliography entries after the closing duplicate sweep,

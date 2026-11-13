@@ -5,7 +5,7 @@ description: "Whether an immersed boundary discretization conserves mass, moment
 status: established
 aliases: [conservation, conservative immersed boundary, mass conservation]
 tags: [conservation, cut-cell, coupling-operator, ghost-fluid, direct-forcing]
-timestamp: 2026-11-08T18:43:00Z
+timestamp: 2026-11-13T05:47:00Z
 ---
 
 # Discrete conservation
@@ -87,6 +87,31 @@ volume) to avoid the small-cell time-step limit; magnetic flux is not
 conserved at their embedded boundary, though the constrained-transport field
 stays free of monopoles.
 
+## Conservation for bodies crossing the grid
+
+- [Murman, Aftosmis & Berger (2003)](/sources/murman-2003.md), §4, keep
+  conservation discretely at every level of their hierarchy of space-time
+  approximations of the moving boundary; the levels differ only in accuracy
+  ([geometric conservation law](/definitions/geometric-conservation-law.md)).
+  A piston at Mach 2 forms the correct shock only with a conservative scheme
+  (§5).
+- [Seo & Mittal (2011)](/sources/seo-2011.md) restore local mass
+  conservation near a moving body in an otherwise finite-difference
+  ghost-cell method by applying cut-cell fractions to the pressure equation.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md) conserve mass,
+  momentum and energy strictly, also for large displacements, by combining
+  [redistribution](/methods/redistribution.md) with conservative handling of
+  submerging and emerging cells; they conjecture that this speeds the
+  convergence of the fluid–solid coupling (§4).
+- [Bennett, Nikiforakis & Klein (2018)](/sources/bennett-2018.md) accept an
+  approximate global conservation: dimensional splitting moves the wall
+  separately in each direction, so the swept volumes do not add up to the
+  two-dimensional one (a loss Gokhale showed for a diagonal piston). They
+  counter it with boundary properties averaged over the time step and a
+  conservative redistribution of the contents of newly covered cells, and
+  measure the remaining mass error, which depends on resolution and on where
+  sharp corners fall in the cells.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §2.6.
@@ -106,3 +131,7 @@ stays free of monopoles.
 - [Xie et al. (2022)](/sources/xie-2022.md) — §2, §4.
 - [Reiss (2022)](/sources/reiss-2022.md) — §2.
 - [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) — §1, §4.
+- [Murman, Aftosmis & Berger (2003)](/sources/murman-2003.md) — §4–§5.
+- [Seo & Mittal (2011)](/sources/seo-2011.md) — §3.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md) — §1, §3.8, §4.
+- [Bennett, Nikiforakis & Klein (2018)](/sources/bennett-2018.md) — §2, §3.

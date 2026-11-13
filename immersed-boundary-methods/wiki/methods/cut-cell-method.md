@@ -5,7 +5,7 @@ description: "Sharp-interface finite-volume method on a Cartesian grid whose cel
 status: established
 aliases: [embedded boundary method, Cartesian cut-cell method, Cartesian grid method, volume-of-fluid boundary representation]
 tags: [cut-cell, embedded-boundary, sharp-interface, finite-volume, conservation, compressible, incompressible]
-timestamp: 2026-11-08T18:43:00Z
+timestamp: 2026-11-13T05:47:00Z
 ---
 
 # Cut-cell (embedded-boundary) finite-volume method
@@ -167,6 +167,50 @@ a [ghost fluid method](/methods/ghost-fluid-method.md). The scheme converges
 at second order for smooth problems and at first order with a material
 discontinuity.
 
+## Moving bodies across fixed grids, 1993–2018
+
+- [Bayyuk, Powell & van Leer (1993)](/sources/bayyuk-1993.md) move and deform
+  bodies across a stationary, solution-adaptive quadtree grid for the Euler
+  equations (Roe fluxes, least-squares linear reconstruction, a
+  predictor–corrector step, second order in space and time). Each motion step
+  coarsens the grid around the bodies, moves them, and rebuilds the cut cells
+  down to the intersection level, so only cells near the bodies are touched;
+  [cell merging](/methods/cell-merging.md) removes small, vanishing and
+  newborn cells.
+- [Murman, Aftosmis & Berger (2003)](/sources/murman-2003.md) split a motion
+  into a rigid motion of the whole domain, treated by an arbitrary
+  Lagrangian–Eulerian formulation with precomputed rotations of the Cartesian
+  face normals and a van Leer flux-vector splitting written with the Mach
+  number relative to the moving boundary (Galilean invariant, with a
+  consistent energy flux), plus a relative motion of bodies through the fixed
+  mesh, analysed in space-time ([geometric conservation law](/definitions/geometric-conservation-law.md)).
+  An implicit dual-time scheme lets the time step follow the physics. A
+  Mach-2 piston and a pitching NACA 0012 airfoil match the exact solution and
+  experiment (§5).
+- [Meinke et al. (2013)](/sources/meinke-2013.md) and
+  [Schneiders et al. (2013)](/sources/schneiders-2013.md) build a
+  three-dimensional viscous compressible cut-cell method on octree grids with
+  boundaries from a level set $\phi$, whose discrete operator changes smoothly
+  as the boundary moves ([spurious force oscillations](/definitions/spurious-force-oscillations.md));
+  Meinke et al. use separate level sets for independently moving parts, such
+  as a valve and a cylinder head, and a modified marching-cubes algorithm for
+  cells cut several times or split into unconnected parts.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md) extend it to freely
+  moving rigid bodies and add a predictor–corrector reformulation of the
+  low-storage multistage Runge–Kutta scheme: each stage combines the residual
+  at $t^n$, stored from the previous step, with the residual at $t^{n+1}$, so
+  the stability polynomial is unchanged but the cut-cell geometry and the
+  least-squares systems are built once per step instead of once per stage —
+  1.4 to 2.5 times faster for five stages, second order in time (§3.2, §5.1).
+- [Bennett, Nikiforakis & Klein (2018)](/sources/bennett-2018.md) move rigid
+  bodies through a dimensionally split cut-cell scheme with flux
+  stabilization ([small-cell problem](/definitions/small-cell-problem.md)),
+  using time-averaged boundary geometry over each step. The cut cells are
+  locally first order and the global error approaches second order under
+  refinement; the scheme is not strictly conservative, and the mass error of
+  a wedge passing a shock depends on resolution and on where the wedge's
+  corners fall in the cells.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1–§4.
@@ -179,3 +223,9 @@ discontinuity.
 - [Sharan et al. (2022)](/sources/sharan-2022.md) — §1–§5.
 - [Xie et al. (2022)](/sources/xie-2022.md) — §2–§4.
 - [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) — §3–§4, §7.
+- [Bayyuk, Powell & van Leer (1993)](/sources/bayyuk-1993.md) — whole paper.
+- [Murman, Aftosmis & Berger (2003)](/sources/murman-2003.md) — §2–§5.
+- [Meinke et al. (2013)](/sources/meinke-2013.md) — §3.
+- [Schneiders et al. (2013)](/sources/schneiders-2013.md) — §3–§4.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md) — §3, §5.
+- [Bennett, Nikiforakis & Klein (2018)](/sources/bennett-2018.md) — §2–§4.

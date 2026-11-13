@@ -1,5 +1,35 @@
 # Update log
 
+## 2026-11-13
+
+**Chunk 7 ingested (night protocol).** Sources: bayyuk-1993, murman-2003,
+seo-2011, meinke-2013, schneiders-2013, schneiders-2016, bennett-2018,
+badia-2023 — the owner's moving-cut-cell list, all already archived (65 of
+65).
+
+- Concept pages created (2): methods/cell-merging,
+  definitions/geometric-conservation-law.
+- Concept pages updated (8): definitions/spurious-force-oscillations
+  (2011–2018 papers; **contradiction opened**: is conservation enough?),
+  definitions/fresh-cell-problem (vanishing, newborn, emerging and
+  submerging cells), definitions/small-cell-problem (moving boundaries),
+  methods/cut-cell-method (moving bodies 1993–2018), methods/redistribution
+  (interpolated stable update), properties/discrete-conservation (bodies
+  crossing the grid), methods/cutfem (space-time aggregation),
+  methods/fluid-structure-coupling (freely moving rigid bodies). Root index:
+  corpus paragraph and reading guide.
+- Source pages created (8); audit lists regenerated, ye-1999's list changed
+  (cell merging).
+- Bibliography: 409 references merged (FLAGS 0), then repairs of earlier
+  silent mis-merges (jameson-1986 / jameson-1986-b, murman-2003 /
+  murman-2003-b) and folds (zeeuw-1991 → dezeeuw-1991; preu-2018, preu-2021,
+  domains-2018 → preuss-2018); 2767 entries; `--dupes` 0 groups.
+- Notation: no registry extension; page-local clashes (Schneiders' blending
+  weight $\kappa$, Badia's $\eta$, $p$, $q$) recorded in the notation maps.
+- Deep lint of the touched pages: notation against the registry, links,
+  tags (unfitted-fem merged into unfitted), section citations checked
+  against the notes.
+
 ## 2026-11-08
 
 **Chunk 6 ingested (night protocol, D32); archive complete.** Sources:

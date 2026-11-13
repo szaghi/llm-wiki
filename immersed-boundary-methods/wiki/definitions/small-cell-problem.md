@@ -5,7 +5,7 @@ description: "The stability defect of explicit cut-cell (embedded-boundary) fini
 status: established
 aliases: [small cell problem, arbitrarily small cells, cut-cell stability]
 tags: [cut-cell, embedded-boundary, stability, conservation]
-timestamp: 2026-11-08T18:43:00Z
+timestamp: 2026-11-13T05:47:00Z
 ---
 
 # Small-cell problem
@@ -100,6 +100,49 @@ Cartesian faces and does not treat a cut cell as smaller than its full
 volume: the time step is not restricted, at the cost of local conservation
 errors in the boundary cells.
 
+## Moving boundaries
+
+A moving body changes the volume fractions every step, so a cell can pass from
+regular to cut, from cut to small, or vanish within a single step, and the
+treatment of the small cell must follow it.
+
+- [Bayyuk, Powell & van Leer (1993)](/sources/bayyuk-1993.md) state the
+  problem for a quadtree grid: the ratio of the smallest cut cell to the
+  smallest uncut cell can be arbitrarily close to zero, the smallest cells
+  set the global time step, and such cells are numerically decoupled from the
+  flow because their residual is a small difference of large fluxes. Their
+  remedy is [cell merging](/methods/cell-merging.md) with criteria that hold
+  over a whole motion step.
+- [Murman, Aftosmis & Berger (2003)](/sources/murman-2003.md) remove the
+  explicit limit with an implicit dual-time scheme whose time step follows the
+  physics; the body then needs to be re-intersected with the mesh less often,
+  which in three dimensions is the costly and robustness-critical operation.
+- [Seo & Mittal (2011)](/sources/seo-2011.md) meet the problem only in the
+  pressure equation of an incompressible ghost-cell method and handle cells of
+  volume fraction below $0.5$ by moving their mass balance to neighbours.
+- [Schneiders et al. (2013)](/sources/schneiders-2013.md), §4, blend the
+  regular update of a small cell with a stable value interpolated by a
+  first-order Taylor expansion about the boundary, and give the resulting
+  conservation defect to the neighbours ([redistribution](/methods/redistribution.md));
+  the blending weight varies smoothly with the cell volume, so that a cell
+  becoming small does not switch the scheme abruptly.
+  [Schneiders et al. (2016)](/sources/schneiders-2016.md), §3.4, compute the
+  interpolation by a weighted Taylor series solved with a singular-value
+  decomposition, robust for arbitrary geometries.
+- [Bennett, Nikiforakis & Klein (2018)](/sources/bennett-2018.md) extend the
+  flux stabilization of Klein et al. (2009) to moving rigid bodies: within a
+  dimensionally split scheme the flux of a cut cell is a linear combination of
+  "standard" fluxes computed without regard to small cells, along a
+  one-dimensional extended stencil, with weights from the cut-cell volume and
+  face fractions; for arbitrarily small cells the stable time step is of the
+  order of that of regular cells, and any numerical flux can be used. For
+  moving walls the weights use the time-dependent fractions.
+- In unfitted finite elements the same geometry produces ill-conditioning:
+  shape functions with arbitrarily small support give almost singular
+  matrices. [Badia, Dilip & Verdugo (2023)](/sources/badia-2023.md) aggregate
+  badly cut cells slab by slab in space-time, so that the condition numbers of
+  mass and stiffness matrices stay bounded however the body cuts the mesh.
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1, §2.6.
@@ -115,3 +158,10 @@ errors in the boundary cells.
 - [de Prenter et al. (2023)](/sources/deprenter-2023.md) — §2–§4.
 - [Taylor, Wilcox & Chan (2025)](/sources/taylor-2025.md) — §1.1.
 - [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) — §1, §3.
+- [Bayyuk, Powell & van Leer (1993)](/sources/bayyuk-1993.md) — small-cell and merging sections.
+- [Murman, Aftosmis & Berger (2003)](/sources/murman-2003.md) — §1–§2.
+- [Seo & Mittal (2011)](/sources/seo-2011.md) — §3.
+- [Schneiders et al. (2013)](/sources/schneiders-2013.md) — §4.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md) — §3.3–§3.4.
+- [Bennett, Nikiforakis & Klein (2018)](/sources/bennett-2018.md) — §1–§2.
+- [Badia, Dilip & Verdugo (2023)](/sources/badia-2023.md) — §1–§2, §5.3.

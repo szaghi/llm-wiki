@@ -5,7 +5,7 @@ description: "Stabilization of explicit cut-cell finite-volume schemes that take
 status: established
 aliases: [redistribution, algebraic redistribution, mass-weighted redistribution, flux redistribution]
 tags: [cut-cell, embedded-boundary, conservation, stability, small-cell]
-timestamp: 2026-11-08T18:10:00Z
+timestamp: 2026-11-13T05:47:00Z
 ---
 
 # Flux redistribution for cut cells
@@ -85,9 +85,28 @@ instead. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §2, use the
 hybrid divergence of Colella et al. with volume-weighted redistribution
 ($\sum_{\mathbf j}\kappa_{\mathbf j}w_{\mathbf j}=1$) for moving embedded boundaries.
 
+## Interpolated stable update for moving boundaries (Schneiders et al.)
+
+[Schneiders et al. (2013)](/sources/schneiders-2013.md), §4.1, take as stable
+update of a small cut cell not the reference update of Pember et al. but a
+value interpolated by a first-order Taylor expansion about the boundary
+centroid, with the gradient from the non-small neighbours. After each
+Runge–Kutta stage the cell takes a blend of its regular update and this
+value; the defect between the two is given to its direct neighbours with
+weights that sum to one, directed towards increasing distance from the
+boundary, which keeps the scheme conservative. They relate the construction
+to the redistribution of Pember et al. and Colella et al. and to Meyer et al.,
+and make the blending weight a smooth function of the cell volume for moving
+boundaries ([spurious force oscillations](/definitions/spurious-force-oscillations.md)).
+[Schneiders et al. (2016)](/sources/schneiders-2016.md) use the same weights
+to give the contents of a cell that disappears into the body to its fluid
+neighbours (§3.8).
+
 # Citations
 
 - [Pember et al. (1995)](/sources/pember-1995.md) — §1, §2.6, §3.
 - [Colella et al. (2006)](/sources/colella-2006.md) — §2 (stable evolution, redistribution).
 - [Berger & Giuliani (2021)](/sources/berger-2021.md) — §1.
 - [Natarajan et al. (2022)](/sources/natarajan-2022.md) — §2.
+- [Schneiders et al. (2013)](/sources/schneiders-2013.md) — §4.1.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md) — §3.3, §3.8.

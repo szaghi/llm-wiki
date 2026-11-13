@@ -6,6 +6,78 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 7 — moving bodies across fixed grids: cell merging, GCL, smooth moving cut cells, space-time aggregation (2026-11-13)
+
+Sources (8), the papers of the owner's `fossil-wp3-moving-cut-cells.bib`
+list, all already in the archive: bayyuk-1993, murman-2003, seo-2011,
+meinke-2013, schneiders-2013, schneiders-2016, bennett-2018, badia-2023.
+65 of 65 ingested, 32 concept pages plus the registry, 2767 bibliography
+entries. Compiled under the night protocol (snapshot step `07-chunk-7`).
+
+### Decisions for the human
+
+1. **Versions read.** bennett-2018 (arXiv:1711.11361v2) and badia-2023
+   (arXiv:2206.03626v2); the others are versions of record.
+   bayyuk-1993 is a degraded scan: its text layer was read in full, but the
+   equations and figures are not legible and no equation is reproduced.
+2. **Identity.** Page 1 and Crossref agree for all eight. Crossref lists
+   bayyuk-1993's third author as "VA"; page 1 reads Bram van Leer, used here.
+3. **New pages (2).** methods/cell-merging (Bayyuk et al.'s criteria,
+   flux-telescoping equivalence, virtual merging, the merging on/off switch,
+   finite-element aggregation; 7 sources) and
+   definitions/geometric-conservation-law (3 sources). Updated (8):
+   spurious-force-oscillations, fresh-cell-problem, small-cell-problem,
+   cut-cell-method, redistribution, discrete-conservation, cutfem,
+   fluid-structure-coupling; root index and reading guide.
+4. **Reading depth.** murman-2003 and schneiders-2016: three-dimensional
+   results read in outline; badia-2023: proofs of §4 not read, statements
+   only.
+
+### Contradictions
+
+- **Opened: "Is conservation enough?"** on
+  [spurious force oscillations](wiki/definitions/spurious-force-oscillations.md).
+  seo-2011 (and xie-2022) attribute the oscillations primarily to violated
+  geometric conservation and remove most of them by restoring local mass
+  conservation; schneiders-2013 attributes them to abrupt changes of the
+  discrete operator and shows them in a conservative cut-cell scheme with
+  cell merging. Left open: no source settles which mechanism is primary.
+
+### Bibliography
+
+- Deposited lists used for all eight (409 printed references). bayyuk-1993's
+  deposit has a tenth entry that is a figure label ("Pressure Line
+  Contours"), dropped; its entries 1, 2 and 9 were completed from the
+  printed list.
+- **Repairs to entries merged in earlier chunks** (silent mis-merges found
+  by this chunk's checks): jameson-1986 had taken the title and DOI of a
+  different 1986 paper (Jameson & Mavriplis, AIAA J. 24:611), now
+  jameson-1986-b; murman-2003 had taken the DOI of the companion paper
+  (Simulations of 6-DOF motion, AIAA 2003-1246), now murman-2003-b, cited by
+  murman-2003 itself; zeeuw-1991 folded into dezeeuw-1991 (both AIAA
+  91-1542); preu-2018, preu-2021 and domains-2018 folded into preuss-2018
+  (one Göttingen master's thesis); berger-1991's title cleaned.
+- **Kept distinct (silenced pairs, each a claim):** dezeeuw-1990
+  (bayyuk-1993 prints AIAA Paper "90-0000", 1990, a placeholder number; the
+  title is that of dezeeuw-1991 and dezeeuw-1993, but the printed form
+  identifies neither — **owner's call** whether to fold it into
+  dezeeuw-1991); clarke-1985 (conference) vs clarke-1986 (AIAA J.);
+  venkatakrishnan-1995 (ICASE report; the deposit links the AIAA conference
+  paper doi:10.2514/6.1995-1705, not adopted) vs venkatakrishnan-1996 (J.
+  Comput. Phys.); badia-2022-e (arXiv, cited by badia-2023) vs badia-2022-c
+  (published).
+- forrer-1999: murman-2003 and schneiders-2013 print 1998 (conference year);
+  merged on the printed pages 315–324, note added.
+- `--dupes`: 0 groups; scratch sweep (DOI, cross-year titles, fuzzy titles)
+  shows no new pair beyond those listed.
+
+### Bundle fit
+
+- murman-2003, schneiders-2013 and schneiders-2016 (moving cut cells,
+  space-time conservation) would also fit `overset-grid-methods` as the
+  alternative to overlapping grids that murman-2003 discusses; read here
+  only.
+
 ## Chunk 6 — 2025–2026: SBM for shocks, ILW–FSI, energy-stable SRD, MHD embedded boundaries; closing sweeps (2026-11-08)
 
 Sources (7): boscheri-2025, liu-2025, taylor-2025, zeng-2025, jones-2026,

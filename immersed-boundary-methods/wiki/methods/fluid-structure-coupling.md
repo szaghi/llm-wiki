@@ -5,7 +5,7 @@ description: "How immersed boundary methods couple the flow with a moving or def
 status: established
 aliases: [FSI coupling, strong coupling, loose coupling, weak coupling, added-mass instability, partitioned FSI]
 tags: [fluid-structure-interaction, coupling, stability, added-mass, moving-boundary]
-timestamp: 2026-11-08T18:43:00Z
+timestamp: 2026-11-13T05:47:00Z
 ---
 
 # Fluid–structure coupling in immersed boundary methods
@@ -107,6 +107,20 @@ conditions into one interface system keeps the explicit scheme stable for
 density ratios from $10^{-2}$ to $10^{2}$
 ([inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
 
+## Freely moving rigid bodies in compressible cut cells
+
+[Schneiders et al. (2016)](/sources/schneiders-2016.md), §4, couple rigid
+bodies to a conservative compressible cut-cell solver by an implicit,
+strongly coupled predictor–corrector iteration: the body is predicted with
+the forces of the previous step, the flow step is computed, and the
+translation (implicit) and rotation (Crank–Nicolson, Newton iteration) are
+corrected until the body velocities converge. Their predictor–corrector
+Runge–Kutta scheme needs boundary states only at $t^{n+1}$, so the body need
+not be moved within a step. In compressible flow the added-mass effect does
+not destabilize the coupling for small enough time steps. Settling spheres,
+an ellipsoid in shear and a particle cloud in isotropic turbulence are
+computed (§5).
+
 # Citations
 
 - [Uhlmann (2005)](/sources/uhlmann-2005.md) — §4.
@@ -118,3 +132,4 @@ density ratios from $10^{-2}$ to $10^{2}$
 - [Boustani et al. (2022)](/sources/boustani-2022.md) — §4.
 - [Agrawal et al. (2024)](/sources/agrawal-2024.md) — §1–§5.
 - [Liu, Jiang, Shu & Zhang (2025)](/sources/liu-2025.md) — §1, §4.
+- [Schneiders et al. (2016)](/sources/schneiders-2016.md) — §3.2, §4, §5.
