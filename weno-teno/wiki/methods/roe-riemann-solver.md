@@ -5,7 +5,7 @@ description: "Roe's solver upwinds every characteristic field of a linearized fl
 status: established
 aliases: [Roe flux, Roe scheme, Roe solver, linearized Riemann solver, Roe–Harten flux]
 tags: [riemann-solver, numerical-flux, characteristic, finite-volume]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # Roe approximate Riemann solver
@@ -61,7 +61,15 @@ $\bar a=0$ and "should not be used" across a sonic rarefaction without an entrop
 p. 253). In their ENO schemes the Riemann flux evaluated on the two Cauchy–Kowalewski expansions
 only acts as a "pointer" to the expansion whose domain of validity contains the interface, so the
 exact Godunov flux can be replaced by Roe's without loss of order (§4, pp. 252–253), and the
-Riemann solver matters less as the order grows (§7 A2, p. 274). In
+Riemann solver matters less as the order grows (§7 A2, p. 274). The review of
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§2.1, Eq. (15)) prints the same scalar flux as the
+example of finite-volume flux-difference splitting, at the reconstructed states,
+$h^{\mathrm{Roe}}(u^-_{i+1/2},u^+_{i+1/2})=\tfrac12\big(f(u^-_{i+1/2})+f(u^+_{i+1/2})\big)-\tfrac12\lvert\bar a_{i+1/2}\rvert(u^+_{i+1/2}-u^-_{i+1/2})$
+with $\bar a_{i+1/2}=\big(f(u^+_{i+1/2})-f(u^-_{i+1/2})\big)/(u^+_{i+1/2}-u^-_{i+1/2})$, "a
+characteristic speed associated with the intermediate state", without an entropy fix; with
+piecewise-constant data, $h(\bar u_i,\bar u_{i+1})$, it is first order (Eq. (16)). The review also
+evaluates the spectral radius of the Jameson–Schmidt–Turkel dissipation at "Roe's (1981) average state"
+(§3.3; [artificial viscosity](/methods/artificial-viscosity.md)). In
 [Harten (1983a)](/sources/harten-1983.md) (§8, Eq. (8.5)) "ROE" is the first-order scheme, the
 member $\mathfrak Q(x)=\lvert x\rvert$ of the paper's viscosity family (page-local $\mathfrak Q$, Harten's $Q$), against which the second-order
 [TVD scheme](/methods/harten-tvd-scheme.md) is compared. [Jiang & Shu (1996)](/sources/jiang-1996.md)
@@ -243,6 +251,7 @@ micro-jet that LWLS-WENO-Z gives (§5.2.3, Fig. 14).
 - [Harten (1983a)](/sources/harten-1983.md) — §4, §5 (Eq. (5.3)), §7 (Eq. (7.4)), §8 (Eq. (8.5)) (NYU report DOE/ER/03077-175).
 - [Harten et al. (1987a)](/sources/harten-1987.md) — §4 (Eq. (4.21)), §5 (Eqs. (5.11a–c)), §6 (Eq. (6.9), Remark 6.1), §7 A2 (Eqs. (7.8a–d)), §7 B.
 - [Liu et al. (1994)](/sources/liu-1994.md) — §2, Eqs. (2.6a)–(2.6b); §4.2.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.1, Eqs. (14)–(16); §3.3 (review).
 - [Jiang & Shu (1996)](/sources/jiang-1996.md) — §2, §4 (Eq. (4.1)), §7 (author preprint).
 - [Fu et al. (2016)](/sources/fu-2016.md) — §5.3.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §1, §2.2–2.3 (Eqs. (2.5)–(2.8)).

@@ -5,7 +5,7 @@ description: "Flux vector splitting writes the flux as a sum of parts whose Jaco
 status: established
 aliases: [FVS, flux-vector splitting, Steger–Warming splitting, upwind flux splitting, van Leer splitting, van Leer–Hänel splitting, Toro–Vázquez splitting]
 tags: [numerical-flux, flux-splitting, finite-difference, finite-volume, characteristic, bound-preserving]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-11-17T08:44:05Z
 ---
 
 # Flux vector splitting
@@ -25,6 +25,17 @@ and TENO schemes collected on that page. A splitting
 **by eigenvalue sign** differs from a splitting **by physical sub-system** (advection against
 pressure), used by semi-implicit all-Mach schemes to treat one part explicitly and the other
 implicitly (last section); both are called flux splittings in the sources.
+
+The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§1, §2.1) states the scalar form,
+$f=f^++f^-$ with $df^+/du\ge0$, $df^-/du\le0$, discretized by left- and right-biased approximations
+"thus ensuring linear stability", calls it "the standard practice in the FD framework" (Steger &
+Warming 1981, as recalled), and notes as useful for its design that the Euler fluxes are homogeneous of
+degree one in the conserved variables, $f^{(d)}=A^{(d)}u$ (§1) — the property used for the Steger–Warming
+formula below.
+It contrasts it with flux-difference splitting (Godunov-type Riemann solvers) in finite volumes, and
+assesses upwinding of either kind as damping the highest resolved wavenumbers: successful in DNS of
+shock-free turbulence, but harmful for LES, where it "may hamper the effect of subgrid-scale models"
+(Park et al. 2004, as recalled).
 
 ## Three splittings for the Euler equations
 
@@ -220,3 +231,4 @@ described in full on [semi-implicit all-Mach schemes](/methods/semi-implicit-all
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3, §4 (Table 1) (author preprint).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — §5.1.
 - [Ren et al. (2025)](/sources/ren-2025.md) — §4.1.2 (Figs. 11–12, 15).
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §1 (homogeneity of the Euler flux); §2.1 (upwinding by FVS and FDS, its effect on LES) (review).

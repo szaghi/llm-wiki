@@ -5,7 +5,7 @@ description: "ENO schemes build, in each cell or at each interface, one interpol
 status: established
 aliases: [ENO, ENO scheme, essentially non-oscillatory scheme, adaptive-stencil reconstruction, Harten–Engquist–Osher–Chakravarthy ENO, flux ENO, Shu–Osher ENO]
 tags: [reconstruction, finite-volume, finite-difference, characteristic, limiting]
-timestamp: 2026-10-30T08:44:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # ENO reconstruction (essentially non-oscillatory schemes)
@@ -173,6 +173,12 @@ The weighted schemes keep ENO's candidate polynomials and replace the selection 
   obtaining a convergence proof", and one order more accuracy from the convex combination. They
   recall that standard ENO "experienced an (easily fixed) loss of accuracy" on $\sin^4(\pi x)$ data
   and report "No such degeneracy" for WENO (p. 207, Table II).
+- **Free stencil adaptation.** The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.1)
+  recalls that ENO schemes "have problems of convergence to steady solutions and loss of accuracy,
+  due to free stencil adaptation" (Rogerson & Meiburg 1990), resolved by Shu (1990) "by biasing toward
+  the best central stencil in the adaptation procedure", and that the review states the total-variation
+  bound of order-$r$ ENO reconstructions as guaranteed, where Harten et al. (1987a) conjecture it for
+  the scheme ([ENO property](/definitions/eno-property.md)). Both recalled works are outside the bundle.
 - **Cost.** Liu et al. (1994, Remark 2) state that WENO is "a little more expensive" than ENO of the
   same order on sequential computers and "much less expensive" on parallel ones, because ENO's
   stencil choice moves more data. Jiang & Shu (1996, §7, Table 6) time both in one code: on a CRAY
@@ -203,3 +209,4 @@ Later ENO-type selections in the bundle keep the binary choice but change what i
 - [Liu et al. (1994)](/sources/liu-1994.md) — §1; §3.2; Remark 2; p. 207, Table II.
 - [Jiang & Shu (1996)](/sources/jiang-1996.md) — §3; §7, Table 6; §8.3 Ex. 4.
 - [Shu (2009a)](/sources/shu-2009.md) — §2.1, p. 86; §2.2.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1: free stencil adaptation (Rogerson & Meiburg; Shu 1990, as recalled) and the TV bound.

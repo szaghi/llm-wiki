@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS, WENO-LF-5, WENO-RF-5, WENO-Roe-5, weighted ENO]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-30T08:44:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # WENO-JS reconstruction
@@ -78,11 +78,29 @@ weights computed from pressure and entropy, which cut the characteristic project
 artificial compression for contacts (§5; [artificial compression](/methods/artificial-compression.md)),
 and a threshold that sets $\omega_k=d_k$ when some $\beta_k<\tfrac12$ (Eq. (8.2), §8.3 Ex. 4).
 
+**The $2r$-point presentation of the review.** [Pirozzoli (2011a)](/sources/pirozzoli-2011.md)
+(§3.1, Eqs. (23)–(26), Fig. 2) writes finite-difference WENO for $f^+$ with $r+1$ candidates
+$S_k=\{x_{i-r+1+k},\dots,x_{i+k}\}$, $k=0,\dots,r$, on the $2r$-point stencil
+$\{x_{i-r+1},\dots,x_{i+r}\}$: $\hat f_{i+1/2}=\sum_{k=0}^r\omega_k\hat f^{(k)}_{i+1/2}$,
+$\omega_k=\alpha_k/\sum_l\alpha_l$, $\alpha_k=d_k/(\epsilon+\beta_k)^2$, and $\beta_k$ a sum of squared
+linear combinations of the $r$ values of $S_k$. Linear weights chosen for the maximal order $2r$ give the
+central scheme; "in Jiang & Shu's (1996) original approach" the right-most candidate is discarded,
+$d_r=0$, which reduces the stencil and the order to $2r-1$, the scheme of this page. Weirs & Candler
+(1997, as recalled) keep the central stencil to reduce the numerical viscosity and bias it by setting
+$\beta_r=\max_{0\le k\le r}\beta_k$, which prevents the selection of the fully downwind $S_r$; the
+review points to Weirs & Candler, Balsara & Shu (2000) and Gerolymos et al. (2009) for coefficient
+tables. It lists the provable properties as "limited to the scalar case": convergence for smooth
+solutions (Jiang & Shu 1996) and existence and stability of discrete shock profiles for the
+third-order scheme (Jiang & Yu, printed 1996; published 1998).
+
 **Cost.** On a CRAY C-90, 1D/2D/3D CPU times for $10^{4-d}$ iterations are 7.45/60.84/78.89 s for
 WENO-LF-5 against 16.67/122.52/171.42 s for fourth-order ENO and 1.75/13.13/15.48 s for a
 second-order scheme, all WENO variants running near 500 MFlops, "50% of the peak speed" (Jiang &
 Shu 1996, §7, Tables 6–7). The characteristic projections "are responsible for most of the floating
-point operations" (§4).
+point operations" (§4). Pirozzoli (2011a, §3.1) states from experience that WENO schemes are
+"computationally expensive, mostly because of the large number of floating point operations required
+for the evaluation of the smoothness measurements"; the two attributions concern different settings
+(Jiang & Shu time characteristic-wise Euler runs), and neither page measures the split.
 
 ## Construction
 
@@ -259,7 +277,14 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
   Fu (2023, §1) states that for broadband turbulence this excess dissipation can underpredict
   "approximately the upper 3/4 of the resolvable wavenumbers". In the inviscid Taylor–Green vortex
   WENO7-JS dissipates more kinetic energy at $128^3$ than the seventh-order linear upwind scheme at
-  $64^3$ (Li et al. 2022b, §4.5, Fig. 11). In the normalised-variable plane WENO3-JS lies close to
+  $64^3$ (Li et al. 2022b, §4.5, Fig. 11). The review of Pirozzoli (2011a, §2.5, §3.5, Fig. 1) shows
+  the same on inviscid isotropic turbulence ($32^3$): seventh-order WENO (W7) performs "substantially
+  poorer (in terms of increased numerical dissipation)" than "its linearized seventh-order upwind
+  version" (D7), as evidence that "the nonlinear features have a dramatic impact" not captured by the
+  frozen-weight transfer function; it adds that "spectral-like resolution is never achieved owing to
+  the noxious effect of the nonlinear weights, unless the weights are locally frozen in smooth regions"
+  (§3.1; [approximate dispersion relation](/definitions/approximate-dispersion-relation.md), where Luo &
+  Wu's contrary result for WENO-Z+M is recorded). In the normalised-variable plane WENO3-JS lies close to
   the MinMod limiter on $0<\tilde u_i<1$ (Deng 2023, Fig. 5;
   [normalised-variable diagram](/definitions/normalised-variable-diagram.md)).
 - **Symmetry.** Fu (2023, §3.8) recalls that WENO9-JS breaks the symmetry of the Rayleigh–Taylor
@@ -313,7 +338,10 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
   limiters, WENO and artificial viscosity are first order near shocks, "which translates into a globally
   first-order accurate scheme", and that WENO has "not been demonstrated on unstructured meshes for
   practical problems" ([implicit shock tracking](/methods/implicit-shock-tracking.md)); see
-  Qualifications.
+  Qualifications. Pirozzoli (2011a, §3.5, Summary 5) states the same loss earlier for all
+  shock-capturing schemes, with a mechanism: shocks have zero measure and "their location is only known
+  to $O(\Delta x)$", so even nominally uniformly high-order schemes are first order downstream of moving
+  shocks ([order of accuracy behind shocks](/results/order-of-accuracy-behind-shocks.md)).
 - **Not TVD.** Bryngelson et al. (2021, §4.2.2) note that "the WENO schemes we utilize are, in
   general, not TVD", which can cause instability "even when the usual CFL criteria are met", and add
   an optional flux limiter.
@@ -361,6 +389,8 @@ reconstructing fluxes.
   $(\tfrac34,\tfrac14)$ only $\tfrac12(3u_i-u_{i-1})$ gives the quadratic interpolant $\tfrac18(-u_{i-1}+6u_i+3u_{i+1})$ at
   $x_{i+1/2}$, and the central candidate on $\{i,i+1\}$ has the jump $u_{i+1}-u_i$, so the indicator labels are swapped
   relative to the candidates.)*
+- Pirozzoli (2011a, Eq. (26)) prints the inner sum of the indicator from $n=1$ to $r-1$, which leaves
+  out the first point of $S_k$; the Jiang–Shu indicators use all $r$ values (see the Source page).
 - Li et al. (2022b, Eq. (8)) call the rescaled Legendre basis of Balsara et al. "Hermite
   polynomials"; it has nothing to do with [Hermite WENO](/methods/hermite-weno.md).
 
@@ -402,6 +432,7 @@ reconstructing fluxes.
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5; §6, Table 4.
 - [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §2.2, Eqs. (8)–(9); §5, Table 2.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §1.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.5, Fig. 1; §3.1, Eqs. (23)–(26), Fig. 2; §3.5; Summary 5 (review).
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §3.3.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §8.7, Table 12.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §2.2, Eqs. (2.10)–(2.23).

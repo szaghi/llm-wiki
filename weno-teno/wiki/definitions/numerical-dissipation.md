@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Numerical dissipation and anti-dissipation"
-description: "Numerical dissipation is the part of a scheme's error that damps resolved content, anti-dissipation the part that amplifies or steepens it; the page fixes three measures (flux viscosity term, leading truncation error, imaginary part of the modified wavenumber), the design levers of the sources, including scale-adaptive control, the non-dissipative alternative, and the implicit-LES evidence on dissipation order."
+description: "Numerical dissipation is the part of a scheme's error that damps resolved content, anti-dissipation the part that amplifies or steepens it; the page fixes three measures (flux viscosity term, leading truncation error, imaginary part of the modified wavenumber), the design levers of the sources, including scale-adaptive control, the non-dissipative alternative, the implicit-LES evidence on dissipation order and the case against low-order dissipation as a subgrid model, and the damping of turbulence crossing a captured shock."
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-17T08:29:38Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -16,7 +16,13 @@ gradients and Fourier modes; **anti-dissipation** (anti-diffusion, negative
 dissipation) is error of the opposite sign, which steepens profiles and amplifies
 modes. Shock capturing needs some dissipation at discontinuities; the
 low-dissipation literature of this bundle tries to remove it everywhere else.
-The sources measure it in three compatible ways, each tied to a
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) defines it in the same
+spirit as "nonphysical dissipation introduced to stabilize shock
+calculations" (margin glossary beside §2.1) and divides methods into two families:
+those for smooth flows aim at nonlinear stability "without introducing
+numerical dissipation", those for shocked flows stabilize "through the
+addition of some (possibly not excessive) numerical dissipation" (Summary
+Point 1). The sources measure it in three compatible ways, each tied to a
 different object.
 
 ## 1. The viscosity term of the numerical flux
@@ -244,22 +250,29 @@ authors blend it with a second-order term switched on by a shock sensor (§3,
 Eqs. (30)–(31)):
 
 $$\begin{aligned}
-D_{i+1/2}&=a_{i+1/2}\Big[\mathsf c_{2}\,[\![u]\!]_{i+1/2}+(-1)^{P+1}\mathsf c_{2P+4}\,\Delta^{2P+3}u_{i+1/2}\Big],\\
-\mathsf c_{2}&=k_2\max(\Xi_i,\Xi_{i+1}),\qquad
-\mathsf c_{2P+4}=\max\big(0,\ k_{2P+4}-k_\varepsilon\,\mathsf c_2\big),
+\mathcal D_{i+1/2}&=a_{i+1/2}\Big[\varepsilon_{2,i+1/2}\,[\![u]\!]_{i+1/2}+(-1)^{P+1}\varepsilon_{2(P+2),i+1/2}\,\Delta^{2P+3}u_{i+1/2}\Big],\\
+\varepsilon_{2,i+1/2}&=k_2\max(\Xi_i,\Xi_{i+1}),\qquad
+\varepsilon_{2(P+2),i+1/2}=\max\big(0,\ k_{2(P+2)}-k_\varepsilon\,\varepsilon_{2,i+1/2}\big),
 \end{aligned}$$
 
-with $\hat f_{i+1/2}$ the central part minus $D_{i+1/2}$ (page-local:
-$\mathsf c_2$, $\mathsf c_{2P+4}$ the blended coefficients, $k_2$, $k_{2P+4}$,
-$k_\varepsilon$ constants, $\Xi_i$ the sensor). The default is the
+with $\hat f_{i+1/2}$ the central part minus $\mathcal D_{i+1/2}$ (page-local,
+as on [artificial viscosity](/methods/artificial-viscosity.md):
+$\varepsilon_2$, $\varepsilon_{2(P+2)}$ the blended coefficients, $k_2$,
+$k_{2(P+2)}$, $k_\varepsilon$ constants, $\Xi_i$ the sensor). For $P=0$ and
+$k_\varepsilon=1$ this is the second-order Jameson–Schmidt–Turkel dissipation
+that [Ducros et al. (1999)](/sources/ducros-1999.md) and
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) recall, with $\Xi$ in place of
+Jameson's pressure sensor (written out on the artificial-viscosity page). The default is the
 ninth-order member, $P=3$, with $k_2=1$ and $k_{10}=1/1260$, the upwind value;
 the shock tubes use $k_2=2$, $k_{10}=1/630$. The sensor is the product of three
 factors (§3, Eq. (36)):
 
-$$\Xi_i=\tfrac12\Big[1-\tanh\Big(2.5+10\,\tfrac{\Delta x}{c}\nabla\!\cdot v\Big)\Big]\cdot\frac{(\nabla\!\cdot v)^2}{(\nabla\!\cdot v)^2+\lvert\nabla\times v\rvert^2+\epsilon}\cdot\Big\lvert\frac{p_{i+1}-2p_i+p_{i-1}}{p_{i+1}+2p_i+p_{i-1}}\Big\rvert,\qquad\epsilon=10^{-16},$$
+$$\Xi_i=\tfrac12\Big[1-\tanh\Big(2.5+10\,\tfrac{\Delta x}{c}\nabla\!\cdot v\Big)\Big]\cdot\frac{(\nabla\!\cdot v)^2}{(\nabla\!\cdot v)^2+\lvert\nabla\times v\rvert^2+\epsilon_{\mathrm D}}\cdot\Big\lvert\frac{p_{i+1}-2p_i+p_{i-1}}{p_{i+1}+2p_i+p_{i-1}}\Big\rvert,\qquad\epsilon_{\mathrm D}=10^{-16},$$
 
 the Bhagatwala–Lele dilatation switch, the Ducros dilatation-to-vorticity ratio
-and Jameson's pressure sensor. On an underexpanded jet the authors show each
+$\Phi_{\mathrm D}$ and Jameson's pressure sensor $\varphi_{\mathrm J}$; the last
+two factors are the product with which Ducros et al. (1999) introduced the
+ratio ([Ducros shock sensor](/definitions/ducros-shock-sensor.md)). On an underexpanded jet the authors show each
 factor's failure alone (Ducros close to one in smooth irrotational regions,
 Jameson unable to separate a shock from a high-vorticity solenoidal region,
 Bhagatwala–Lele over-damping dilatation on coarse grids) and the product
@@ -337,7 +350,23 @@ cited here). Measured this way:
 - THINC with $\beta_{\mathrm T}=1.6$ is anti-diffusive in some wavenumber
   ranges, like Superbee ([Takagi et al. (2022)](/sources/takagi-2022.md), §2.3);
 - WENO-Z+ with a large coefficient has a narrow band of negative dissipation
-  near $\vartheta\approx1.18$ ([Luo & Wu (2021)](/sources/luo-2021-b.md), §3).
+  near $\vartheta\approx1.18$ ([Luo & Wu (2021)](/sources/luo-2021-b.md), §3);
+- the third-order five-point background of TENO5-A is deliberately
+  anti-dissipative: [Fu et al. (2019d)](/sources/fu-2019-d.md) (Abstract, §IV.A,
+  §VI item 4) take Arshed–Hoffmann weights that introduce "slight
+  antidissipation at low wave numbers", a "tiny positive hump" at moderate
+  wavenumbers, so that "the dissipation is delayed to wave numbers at which
+  the dispersion error is large", and conclude that a TENO scheme whose
+  linear scheme "has built-in antidissipation in a certain wave number range"
+  suits compressible gas dynamics and turbulence
+  ([adaptive TENO](/methods/adaptive-teno.md)). *(Compiler check, not in the
+  sources: with the printed weights $d=(0.5065006634,\,0.3699651429,\,0.1235341937)$
+  on the TENO5 candidates, $\tilde\vartheta_i>0$ on $0<\vartheta<1.016$, with a
+  maximum of $2.59\times10^{-3}$ at $\vartheta\approx0.817$.)* The paper's
+  Eq. (27) writes the imaginary part with the sign opposite to the convention
+  of this section (positive for dissipation, so that a positive target there
+  "corresponds to dissipation"), its Eq. (39) and Fig. 2 with this one; the band above is in this section's
+  convention.
 
 **Dissipation added by mesh interfaces.** [Wang et al. (2026)](/sources/wang-2026.md) (§4.4.1,
 Fig. 5) extend the measure to a two-level AMR grid by a Bloch-wave analysis of the composite
@@ -541,7 +570,17 @@ numerical dissipation, so the decay comes from the damping term $-\mathsf Bu$ al
 
 A scheme can also carry no upwind dissipation and receive an explicit viscosity instead, whose
 amount and spectral distribution are design choices
-([artificial viscosity](/methods/artificial-viscosity.md)).
+([artificial viscosity](/methods/artificial-viscosity.md), where the second-order
+Jameson–Schmidt–Turkel form with a pressure sensor, the oldest of the switched forms, is written
+out).
+
+- **Upwinding and filtering drain energy.** [Pirozzoli (2011a)](/sources/pirozzoli-2011.md)
+  (§2.1–2.2) grants that upwinding and filtering of a central scheme remove spurious instabilities,
+  but filtering, like upwinding, "implies artificial energy draining that adds to the physical
+  energy draining caused by molecular viscosity"; after Park et al. (2004), as recalled, upwind
+  dissipation "can be harmful for LES", for which the marginally resolved wavenumbers matter, "as
+  it may hamper the effect of subgrid-scale models". The review prefers methods that conserve
+  energy without viscosity (see the non-dissipative alternative above).
 
 - **Spectral shape.** [Sousa & Scalo (2022)](/sources/sousa-2022.md) (§2.3, Fig. 1) compute the
   exact subfilter energy flux of the filtered inviscid Burgers equation as a shock forms: it
@@ -579,6 +618,18 @@ amount and spectral distribution are design choices
 
 ## Dissipation as an implicit subgrid model
 
+In [implicit LES](/definitions/implicit-large-eddy-simulation.md) "the
+discretization truncation error of the convective terms functions as a
+subgrid-scale model" ([Fu et al. (2019d)](/sources/fu-2019-d.md), §V.F), so the
+scheme's numerical dissipation is the model, while explicit models "strongly
+depend" on a low-dissipation discretization because "the numerical truncation
+error, and the SGS model may interact". After Hickel et al. (ALDM) and
+Schranner et al., as cited, Fu et al. judge TENO6-A a physically consistent
+implicit model by the Kolmogorov $k_w^{-5/3}$ range it keeps in the inviscid
+Taylor–Green vortex on $64^3$ up to $t=80$, without energy pile-up at high
+wavenumbers (§V.F.1, Fig. 9), and by a viscous Taylor–Green dissipation rate
+at Re 100–3000 "comparable to that of ALDM" (§V.F.2, Fig. 10;
+[adaptive TENO](/methods/adaptive-teno.md)).
 [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) use the ninth-order
 dissipation as implicit LES regularization, acting only on
 $\vartheta\gtrsim0.35\pi$ ([approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
@@ -640,6 +691,54 @@ their multi-resolution WENO by the observation, recalled from Johnsen et al.,
 that WENO dissipation can overwhelm physical dissipation in turbulence (§1), and
 find the new scheme the closest of four WENO schemes to the DNS kinetic-energy
 history of the Taylor–Green vortex at $128^3$ (Example 5.13, Fig. 5.22).
+
+**Against low-order dissipation as the model.** [Ducros et al. (1999)](/sources/ducros-1999.md)
+(§4.1, Table I, Figs. 1–3) test the second- and fourth-order Jameson–Schmidt–Turkel dissipation
+([artificial viscosity](/methods/artificial-viscosity.md)) of a second-order skew-symmetric
+finite-volume scheme on inviscid decaying compressible turbulence on $32^3$, against an LES with the
+filtered-structure-function model and no artificial dissipation. With fourth-order dissipation the
+energy near the cut-off falls "by more than a decade"; with the second-order term alone and the
+model the classical term still perturbs the model; with the sensor-weighted second-order term and
+no model the spectrum becomes $k_w^2$, "symptomatic of an equipartition equilibrium", so that dissipation
+prevents divergence "but not to play a role equivalent to a SGS model". Their conclusion: such
+dissipation "always brings a spurious dissipation, too large when the fourth order is employed and
+too weak when the second order alone is employed. In consequence, it is not able to mimic the
+dissipation of a true subgrid-scale model, and therefore is not well adapted to LES." Their
+spectral reading (§5, Eq. (29)): for an equivalent incompressible flow the second-order term acts
+like an eddy viscosity, $\propto k_w^2E_k$, the fourth-order one like $\propto k_w^4E_k$, so a
+fourth-order coefficient fixed a priori quickly over-dissipates ($E_k(k_w,t)$ the resolved energy
+spectrum, page-local). The orders differ from Sciacovelli et al.'s ninth-order dissipation, so the
+two positions do not test the same claim.
+
+**Shock-capturing dissipation against turbulence crossing a shock.** In 3D LES of isotropic
+turbulence through a Mach 1.2 shock ([shock–turbulence interaction](/benchmarks/shock-turbulence-interaction.md)),
+Ducros et al. (§4.4, Fig. 24) find away from the shock the subgrid dissipation dominant but the
+standard second-order term "non-negligible (around 10%)", made negligible by the
+[Ducros sensor](/definitions/ducros-shock-sensor.md) factor; inside the shock the numerical
+dissipation dominates the subgrid one, "leading to a weak influence of the subgrid scale modeling in
+such regions, at least for the numerical scheme used here". The second-order term captures the
+shock within about three cells, so its width $\lambda_{\mathrm{sh}}$ (page-local) is about the LES
+cut-off length on their coarse grid. When the smallest resolved energetic eddies are as small as
+that width, the shock-capturing dissipation damps them as they cross: lower growth of turbulent
+kinetic energy, Reynolds stresses and transverse vorticity, and a spurious drop of streamwise
+vorticity. Refining the shock-normal mesh separates the two scales and restores the trends of
+linear interaction analysis and DNS; pre-filtering the resolved field to a cut-off larger than the
+shock width is the other remedy proposed (§5, §6). The authors draw this from second-order
+schemes and expect it to "be modified" with higher-order ones (§6).
+
+**Shock capturing through a subgrid model.** [Pirozzoli (2011a)](/sources/pirozzoli-2011.md)
+(§3.4, Eqs. (35)–(37)) recalls the approximate deconvolution method of Adams & Stolz (2002), which
+regularizes shocks with the closure of an explicitly filtered equation:
+$\partial_t\hat u+\partial_xf(\hat u)=\mathcal G_1+\mathcal R$ for $\hat u=\mathcal F\star u$,
+with $\mathcal G_1=\partial_xf(\hat u)-\partial_xf(\tilde u)$ as printed, $\tilde u=\mathcal Q\star\hat u$,
+and the relaxation $\mathcal R=-\chi(\hat u-\mathcal F_2\star\hat u)$, driven by the energy at
+the smallest resolved scales (page-local: primary filter $\mathcal F$, secondary filter
+$\mathcal F_2$, regularized deconvolution $\mathcal Q\approx\mathcal F^{-1}$, relaxation constant
+$\chi$). The weak point is $\chi$, which "apparently cannot be established a priori"; von Kaenel et
+al. (2004) estimate it dynamically, as recalled. *(Compiler check, not in the sources: filtering
+$\partial_tu+\partial_xf(u)=0$ gives the exact closure $\partial_xf(\hat u)-\mathcal F\star\partial_xf(u)$,
+so with $u\approx\tilde u$ the deconvolved term would carry the filter $\mathcal F$; the printed
+$\mathcal G_1$ has none.)*
 
 ## Measured from the decay of an exact wave or a proxy
 
@@ -763,6 +862,9 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.3: anti-diffusive THINC.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §§3–4: negative dissipation, nonlinear dissipation of weights.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §1, §3 (Eqs. (20)–(36)), §4.2–4.4, §5.1–5.2 (Figs. 4, 8–12): scalar dissipation, Lerat–Corre family, JST-type blend, sensor, ILES (arXiv v1).
+- [Ducros et al. (1999)](/sources/ducros-1999.md) — §1; §4.1 (Table I, Figs. 1–3); §4.4 (Fig. 24); §5 (Eq. (29)); §6: JST dissipation is not a subgrid model, off-shock and in-shock dissipation budget, damping of eddies as small as the captured shock.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.1–2.2; §3.4 (Eqs. (35)–(37)); margin glossary; Summary Point 1: definition, two families, energy draining by upwinding and filtering, approximate deconvolution.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — Abstract; §IV.A, Eq. (27); §IV.B, Eq. (39); §V.F (Figs. 9–10); §VI: anti-dissipative TENO5-A background, ILES premise and Kolmogorov-scaling test.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §1, Example 5.13 (Fig. 5.22): WENO dissipation in turbulence.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.4, §2.5.2, §3.4 (Fig. 25): HLLC instead of Lax–Friedrichs, dissipative zero-order mixing.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §3.1, Figs. 3–4: Rusanov versus HLLC at low Mach.

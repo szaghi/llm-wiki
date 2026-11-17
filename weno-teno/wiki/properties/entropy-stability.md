@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-11-17T08:41:50Z
 ---
 
 # Entropy stability
@@ -143,6 +143,64 @@ source-free lemma of the authors' earlier scheme (pp. 1272–1275, Eqs.
 discrete inequality is left open. For collocated hydrostatic-reconstruction
 schemes they recall that it has been shown only up to an error vanishing
 with the mesh, or with ad hoc artificial viscosity (p. 1275).
+
+## Entropy splitting and symmetrization in finite differences
+
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) recalls the
+finite-difference route to entropy conservation, which works on the
+symmetrized equations rather than on a two-point flux (§1, §2.4). For
+smooth flow the Euler equations conserve the integral of $\rho g(s)$ for
+any differentiable $g$ of the physical entropy $s$,
+
+$$\frac{d}{dt}\int_V\rho g(s)\,dV+\oint_{\partial V}\rho g(s)\,v\cdot n\,dS=0$$
+
+(Eq. (6), after Harten 1983b), a balance that fails at shocks. With the
+page-local entropy variables $\mathsf w_{\mathrm H}=\partial(\rho g(s))/\partial u$
+(the review's $v$; it is $-w$ for the entropy $\eta=-\rho g(s)$, and is
+affinely related to the registry's $w$ for $\eta=-\rho s/(\gamma-1)$ only when
+$g$ is affine in $s$),
+Harten writes the system in the symmetrized form
+$\mathsf P_{\mathrm H}\partial_t\mathsf w_{\mathrm H}+\sum_d\mathsf B^{(d)}_{\mathrm H}\partial_{x_d}\mathsf w_{\mathrm H}=0$,
+with $\mathsf P_{\mathrm H}=\partial u/\partial\mathsf w_{\mathrm H}$ symmetric positive
+definite and $\mathsf B^{(d)}_{\mathrm H}=\partial f^{(d)}/\partial\mathsf w_{\mathrm H}$
+symmetric (Eq. (7), page-local symbols). On a 1D interval $[a,b]$ the review
+prints the energy estimate
+$\frac{d}{dt}\int_a^b\mathsf w_{\mathrm H}\cdot\mathsf P_{\mathrm H}\mathsf w_{\mathrm H}\,dx=-[\mathsf w_{\mathrm H}\cdot\mathsf B_{\mathrm H}\mathsf w_{\mathrm H}]_a^b$
+(Eq. (8)), and recalls that Tadmor (1984) showed that it implies entropy
+conservation. For Harten's choice
+$g(s)=\beta_{\mathrm{ES}}\exp\big(s/(\beta_{\mathrm{ES}}(\gamma-1))\big)$, with
+page-local $\beta_{\mathrm{ES}}$ (the review's $\beta$), $u$ and $f^{(d)}$ are
+homogeneous of degree $\beta_{\mathrm{ES}}$ in $\mathsf w_{\mathrm H}$ (Eq. (9)).
+
+- **Entropy splitting (SHOEC).** Gerritsen & Olsson use the homogeneity to
+  split the flux derivative into a conservative and a non-conservative part,
+  $\partial_xf=\frac{\beta_{\mathrm{ES}}}{\beta_{\mathrm{ES}}+1}\,\partial_xf+\frac1{\beta_{\mathrm{ES}}+1}\,\mathsf B_{\mathrm H}\,\partial_x\mathsf w_{\mathrm H}$
+  (Eq. (22)), an identity in the continuum since
+  $\mathsf B_{\mathrm H}\partial_x\mathsf w_{\mathrm H}=\partial_xf$ by the chain rule
+  *(compiler check, not in the sources)*. With
+  [summation-by-parts](/operators/summation-by-parts-operator.md) first
+  derivatives it gives a discrete analogue of Eq. (8), hence discrete entropy
+  conservation in the sense of Eq. (6): the split high-order entropy
+  conserving (SHOEC) schemes (§2.4).
+- **The parameter.** The review reports that the performance depends on
+  $\beta_{\mathrm{ES}}$: Sandham et al. (2002) suggest $\beta_{\mathrm{ES}}\approx4$
+  for compressible turbulence, and $\beta_{\mathrm{ES}}\approx2$ suits
+  zero-viscosity isotropic turbulence (Honein & Moin 2004) (§2.4).
+- **Cost.** Like every formulation in entropy variables, SHOEC loses
+  efficiency on the swap between conservative and entropy variables, which
+  needs transcendental operations (§2.4); the same remark applies to
+  Tadmor's path-integral flux
+  ([entropy-conservative two-point fluxes](/methods/entropy-conservative-flux.md)).
+- **Entropy-equation splitting.** Honein & Moin (2004) apply the Feiereisen
+  [split convective form](/methods/split-convective-forms.md) to the Euler
+  equations with the entropy equation in place of total energy, which
+  preserves the integrals of $\rho s$ and $\rho s^2$, and show that the
+  internal- and total-energy equations can be manipulated so that the split
+  entropy equation follows, "particularly advantageous" since codes
+  usually solve total energy (§2.4). In the review's zero-viscosity
+  isotropic-turbulence test their sixth-order scheme reproduces the
+  limiting inviscid behaviour at turbulent Mach 0.07 but diverges at 0.3
+  (§2.5, Fig. 1).
 
 ## Entropy-stable DG
 
@@ -916,6 +974,13 @@ blend reduces the oscillations (§8.2–8.4).
   general (Eqs. (73)–(74)); a direct entropy discretization conserves
   $\rho s$ but loses total energy (§4.2.5, Table 2;
   [split convective forms](/methods/split-convective-forms.md)).
+  The KEEP scheme of Kuya et al. and its pressure-equilibrium-preserving
+  variant KEEP-PE are "entropy preserving" in this approximate sense only:
+  [Shima et al. (2021)](/sources/shima-2021.md) state that the KEEP total
+  entropy "is not strictly preserved at the discrete level" (§2.1.1), and in
+  their inviscid Taylor–Green vortex KEEP-PE loses slightly more entropy than
+  KEEP, a trade-off they leave unanalysed (§2.2.3, §3.2, Fig. 2b;
+  [KEEP and KEEP-PE schemes](/methods/keep-scheme.md)).
 - **Printed slip (Rueda-Ramírez et al. (2024), arXiv v1).** Eq. (39)
   prints the numerator of $\alpha^s$ as $[\![w]\!]\cdot\hat f^{\mathrm{FV}}-[\![\psi]\!]+\epsilon$,
   the opposite sign of the bound obtained by substituting their Eq. (38)
@@ -927,6 +992,8 @@ blend reduces the oscillations (§8.2–8.4).
 
 # Citations
 
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §1 Eqs. (6)–(9), §2.4 Eq. (22), §2.5 Fig. 1.
+- [Shima et al. (2021)](/sources/shima-2021.md) — §2.1.1, §2.2.3, §3.2 Fig. 2b.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — Def. 2.5, §2, §5, §6.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.2, §4 items (1)–(3), §5.1 Eqs. (37)–(40) Figs. 2–3, §5.2.2 Eqs. (47)–(48), §5.2.3.
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §3, §7.4 Figs. 6–8.

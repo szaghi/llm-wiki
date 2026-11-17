@@ -5,7 +5,7 @@ description: "Quasi-spectral viscosity (QSV) is one explicit eddy/artificial vis
 status: established
 aliases: [QSV, QSV closure, quasi-spectral eddy viscosity]
 tags: [low-dissipation, turbulence, finite-difference, compact-scheme, central-scheme]
-timestamp: 2026-10-22T09:49:00Z
+timestamp: 2026-11-17T08:44:05Z
 ---
 
 # Quasi-spectral viscosity
@@ -71,14 +71,16 @@ Let $\vartheta=k_w\Delta x$ be the reduced wavenumber (registry §9), so that
 the grid cutoff is $\vartheta=\pi$.
 
 **Sixth-order Padé filter** (Lele, as recalled; Eqs. (20)–(22)):
-$$\alpha_{\mathrm P}\tilde f_{i-1}+\tilde f_i+\alpha_{\mathrm P}\tilde f_{i+1}=a_0f_i+\sum_{j=1}^{3}\frac{a_j}{2}\big(f_{i+j}+f_{i-j}\big),\qquad
-\hat G_{\mathrm P}(\vartheta)=\frac{a_0+\sum_{j=1}^3a_j\cos(j\vartheta)}{1+2\alpha_{\mathrm P}\cos\vartheta},$$
+$$\alpha_{\mathrm P}\tilde f_{i-1}+\tilde f_i+\alpha_{\mathrm P}\tilde f_{i+1}=a_0f_i+\sum_{m=1}^{3}\frac{a_m}{2}\big(f_{i+m}+f_{i-m}\big),\qquad
+\hat G_{\mathrm P}(\vartheta)=\frac{a_0+\sum_{m=1}^3a_m\cos(m\vartheta)}{1+2\alpha_{\mathrm P}\cos\vartheta},$$
 with $a_0=\frac{11+10\alpha_{\mathrm P}}{16}$, $a_1=\frac{15+34\alpha_{\mathrm P}}{32}$,
 $a_2=\frac{-3+6\alpha_{\mathrm P}}{16}$, $a_3=\frac{1-2\alpha_{\mathrm P}}{32}$
 and $\alpha_{\mathrm P}\in(0,\tfrac12)$ (page-local; larger is weaker), so
 that $\hat G_{\mathrm P}(0)=1$ and $\hat G_{\mathrm P}(\pi)=0$
 *(compiler check, not in the sources: $a_0+a_1+a_2+a_3=1+2\alpha_{\mathrm P}$ and
-$a_0-a_1+a_2-a_3=0$ for every $\alpha_{\mathrm P}$)*.
+$a_0-a_1+a_2-a_3=0$ for every $\alpha_{\mathrm P}$)*. The same tridiagonal family at eighth order, and its use to
+stabilize central schemes on curvilinear meshes, are on
+[compact low-pass filter](/methods/compact-low-pass-filter.md).
 
 **Cutoff-energy estimate** (§3.1, Eqs. (23)–(26)). The residual
 $1-\hat G_{\mathrm P}$ concentrates near the cutoff, the more so as
@@ -136,7 +138,9 @@ discretizations" (§3.2).
 The reference shock-capturing method is the local artificial diffusivity
 (LAD) of Cook and Kawai–Lele (artificial shear and bulk viscosity and
 conductivity, with an explicit Padé filter of strength 0.495), not written
-out in the paper. All runs use sixth-order compact differences and a
+out in the paper; the Cook–Cabot form and its corrections, as recalled by
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.3), are on the page
+[localized artificial diffusivity](/methods/localized-artificial-diffusivity.md). All runs use sixth-order compact differences and a
 third-order Runge–Kutta method.
 
 | Test | Finding (Sousa & Scalo 2022) |
@@ -181,3 +185,4 @@ exact compressible energy norm instead, which decays monotonically (§7.1).
 # Citations
 
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — arXiv v2: §1; §2.2 (Eqs. (8)–(17), Table 1); §2.3 (Fig. 1); §3.1 (Eqs. (20)–(26), Fig. 2); §3.2 (Eqs. (27)–(35), Fig. 3); §4.2 (Eqs. (36)–(51)); §5 (Figs. 4–11); §6 (Figs. 12–15, Tables 2–3); §7.1 (Figs. 16–19); §8; Apps. A–B.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.3: the LAD of Cook & Cabot, as recalled (review).

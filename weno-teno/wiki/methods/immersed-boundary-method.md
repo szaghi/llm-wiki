@@ -5,7 +5,7 @@ description: "Treatments of walls and interfaces off the mesh: ghost-cell immers
 status: established
 aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP, image line, HO-e, discrete forcing, eikonal extrapolation]
 tags: [immersed-boundary, finite-volume, flux-reconstruction, interface-capturing, multiphase]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # Immersed-boundary and cut-cell methods
@@ -30,6 +30,12 @@ penalization**, is a *diffuse-interface* method: it only marks points as
 inside or outside the body and adds a relaxation source there, so the
 exact wall position is not represented
 ([Kou et al. (2022)](/sources/kou-2022.md), §1, §4.6).
+
+In the review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§4.1), the immersed-boundary
+approach (Mittal & Iaccarino 2005, as recalled) "promises simple handling of complex geometries in the
+FD framework" as an alternative to body-fitted grids, but "relatively few applications of the method to
+compressible flows have appeared" by 2010 (de Tullio et al. 2007, Ghias et al. 2007, Hu et al. 2006, as
+recalled); every other source of this page is later than that judgement.
 
 ## Ghost-cell immersed boundaries
 
@@ -626,6 +632,7 @@ Figs. 8–9).
 - [Wang et al. (2022a)](/sources/wang-2022.md) — §1; §2.1–2.3, Eqs. (16)–(38), Figs. 1–2; §3.1–3.7, Tables 1–2, Figs. 3–20.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1; §2.2; §2.5.2–2.5.3, Eqs. (27)–(29); Appendix A.
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §1 (accepted manuscript).
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §4.1: few compressible immersed-boundary applications by 2010 (review).
 - [Deng (2023)](/sources/deng-2023.md) — §8, Fig. 38.
 - [Kou et al. (2022)](/sources/kou-2022.md) — §1, §4.1 Eqs. (23)–(35), §4.2–4.4 Eqs. (36)–(43), §4.6 Eqs. (44)–(46), §5.1–5.5 Table 1, Figs. 8–21, Apps. B–D.
 - [Funada & Imamura (2023)](/sources/funada-2023.md) — §1, §2.3 Eqs. (14)–(23), Figs. 4–9, §3.2–3.4 Tables 1–3 Figs. 12–25, §4.

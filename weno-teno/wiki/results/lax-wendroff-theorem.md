@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Lax–Wendroff theorem"
-description: "The Lax–Wendroff theorem makes conservation in flux form with consistent fluxes the condition for convergence to a weak solution; the founding TVD and ENO papers pair it with total-variation bounds and entropy consistency; later sources invoke it for Active Flux, DGSEM subcells and multi-medium schemes, extend it to a vanishing conservation defect, and show wrong shock speeds without conservation."
+description: "The Lax–Wendroff theorem makes conservation in flux form with consistent fluxes the condition for convergence to a weak solution; the founding TVD and ENO papers pair it with total-variation bounds and entropy consistency; later sources invoke it for split central fluxes, Active Flux, DGSEM subcells and multi-medium schemes, extend it to a vanishing conservation defect, and show wrong shock speeds without conservation."
 status: established
 aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
 tags: [finite-volume, finite-difference, dg]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-17T08:30:16Z
 ---
 
 # Lax–Wendroff theorem
@@ -67,6 +67,18 @@ The finite-difference statement is the same with point values: [Jeong et al. (20
 with a numerical flux $\hat f$ that is Lipschitz and consistent, $\hat f(u,\dots,u)=f(u)$, and
 invoke the theorem for convergence to weak solutions of their
 [RBF-based WENO](/methods/rbf-weno.md) ([conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)).
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§2) states it for explicit, "even
+nonlinear", fluxes $\hat f_{i+1/2}=\hat f(u_{i-r+1},\dots,u_{i+r})$ (page-local
+half-width $r$) with $\hat f(u,\dots,u)=f(u)$: they conserve the integral of $u$ (and
+total mass, momentum and energy for Euler) by telescoping and "satisfy the
+hypotheses of the Lax-Wendroff theorem ..., which guarantees convergence to weak
+solutions, provided the approximation itself converges". In the conclusions the
+review encourages a locally conservative discretization "in all cases", at "no
+extra cost", noting that numerical fluxes exist for energy- and entropy-consistent
+schemes and that hybridization with shock-capturing schemes, "always formulated
+in conservation form", is then "more natural" (§6); on smoothly mapped meshes the
+strong conservation form extends such approximations and keeps convergence to weak
+solutions (§4.1).
 
 ## Which schemes satisfy the flux-form hypothesis
 
@@ -79,6 +91,15 @@ invoke the theorem for convergence to weak solutions of their
   form](/results/local-conservation-flux-form.md)). They cite Perot: "any method that is
   globally conservative, and that has weight functions with local support, must also be
   locally conservative" (Remark 1).
+- **Non-dissipative split central schemes.** [Pirozzoli (2010)](/sources/pirozzoli-2010.md)
+  (§1, §4) makes local conservation of split central fluxes the condition for using
+  them as the smooth branch of hybrid shock-capturing schemes: once the split
+  derivative is a flux difference, the theorem ensures convergence to a weak solution
+  "provided the approximation itself converges", while "some artificial viscosity
+  must be provided" to inhibit Gibbs oscillations and select the entropy solution.
+  The paper supplies such fluxes for explicit central differences of any order
+  ([conservative split central derivative](/operators/conservative-split-derivative.md))
+  but runs no hybrid.
 - **Active Flux.** The averages are updated by the exact finite-volume balance with the
   interface point values as flux arguments, hence conservatively, while the point values are
   free of the conservation constraint; Abgrall & Barsukow report that an analogue of the
@@ -222,3 +243,5 @@ Four sources show the consequence the theorem warns of, a wrong shock speed:
 - [Chu et al. (2022)](/sources/chu-2022.md) — §1, §2 (Eq. (2.1)).
 - [Jeong et al. (2022)](/sources/jeong-2022.md) — §2.1.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §1, §4.1 (Eqs. (47)–(51), Prop. 1), §4.3 (Props. 2–5), §4.4 (Eq. (67)), §5.1.4 (Fig. 3), Apps. A–B (arXiv v1).
+- [Pirozzoli (2010)](/sources/pirozzoli-2010.md) — §1, §4.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2 (Eqs. (12)–(13)), §4.1, §6.

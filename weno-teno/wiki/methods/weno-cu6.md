@@ -5,7 +5,7 @@ description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that add
 status: established
 aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M, WENO-CU6-M1, EWENO-CU6, EWENO-CU]
 tags: [weno, reconstruction, low-dissipation, finite-difference, turbulence]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-11-17T08:25:36Z
 ---
 
 # WENO-CU6
@@ -111,6 +111,28 @@ decomposition, global Lax–Friedrichs splitting, CFL 0.6):
   [double Mach reflection](/benchmarks/double-mach-reflection.md) (§5.3, §5.5, §6), and on the viscous shock
   tube is "slightly distorted due to the lack of dissipation in high wave-number range" (§5.7).
 
+In the original adaptive-TENO paper ([Fu et al. (2019d)](/sources/fu-2019-d.md); Roe-averaged
+characteristic decomposition, Rusanov splitting, SSP-RK3 at CFL 0.4) WENO-CU6 is the six-point
+comparator of TENO5-A and TENO6-A ([adaptive TENO](/methods/adaptive-teno.md)). The paper repeats that
+WENO-CU6 "may generate spurious waves as the underlying background linear scheme is nondissipative"
+(§I) and finds:
+
+- **Spectral properties.** Its ADR "departs from its underlying scheme at a very low wave number",
+  while TENO5-A and TENO6-A follow theirs up to 1.7; both have "significantly better" dispersion,
+  and TENO6-A is less dissipative than WENO-CU6 "for all wave numbers" (§IV.C, Fig. 2).
+- **Tests.** On Shu–Osher ($N_x=200$) WENO-CU6 is on par with TENO5-A and TENO6-A (Fig. 4); on the
+  [blast waves](/benchmarks/woodward-colella-blast-wave.md) ($N_x=200$, Roe flux) it resolves the right
+  density peak less well and shows pressure overshoots near $x\approx0.85$ (Fig. 5); on
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) ($512\times128$) the TENO-A schemes
+  resolve the density fluctuations around the Mach stem "significantly better" (Fig. 6); on
+  [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) ($64\times256$) WENO-CU6, TENO5-A and
+  TENO6-A are all "significantly better" than WENO5-Z (Fig. 8); on
+  [compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md) ($64^3$) both
+  TENO-A schemes are "significantly better" (Figs. 11–12).
+- **Cost.** 256 s against 222 s for WENO5-JS, 361 s for TENO5-A and 527 s for TENO6-A on double Mach
+  reflection at $512\times128$ (§V.D; hardware not stated) *(compiler check, not in the sources:
+  WENO-CU6 $+15\%$ over WENO5-JS)*.
+
 WENO-CU6 is the main comparator of Fu (2021), all runs FD with Roe-averaged characteristic
 decomposition and SSP-RK3:
 
@@ -197,6 +219,7 @@ differences with characteristic decomposition and TVD-RK3 at CFL 0.3:
 # Citations
 
 - [Fu, Hu & Adams (2016)](/sources/fu-2016.md) — §1; §2.3, Eqs. (16)–(20); §3.1.2; §3.3, Fig. 4; §4.1, Fig. 5; §§5.2–5.7; §6: WENO-CU6 and WENO-CU6-M recalled in full, spectra, failures of WENO-CU6-M.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §I; §IV.C, Fig. 2; §§V.B–V.E, V.G, Figs. 4–8, 11–12: WENO-CU6 as the comparator of TENO5-A and TENO6-A, spectra, timing.
 - [Fu (2021)](/sources/fu-2021.md) — §1; §4.2, Eq. (28); §5.4–5.8, Figs. 4–15.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1; §2.2, Eq. (6); §3.4–3.5, Eqs. (28)–(39).
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §1.

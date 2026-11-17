@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Free-stream preservation"
-description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers DGSEM and subcell metrics, warped-mesh tests, moving-mesh geometric conservation laws (TPE(0) of transport polynomial exactness), constant states under divergence-free transport, gradient-based finite differences, and an untested TENO claim."
+description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers DGSEM and subcell metrics, warped-mesh tests, moving-mesh geometric conservation laws (TPE(0) of transport polynomial exactness), constant states under divergence-free transport, gradient-based finite differences, central split-form finite differences with metrics taken by the convective operator, and an untested TENO claim."
 status: established
 aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization, constant-state preservation, TPE(0)]
 tags: [dg, finite-difference, limiting, entropy-stable, reconstruction]
-timestamp: 2026-11-01T18:41:00Z
+timestamp: 2026-11-17T08:42:21Z
 ---
 
 # Free-stream preservation
@@ -436,6 +436,41 @@ $360^2$ grid matches a stationary run in kinetic energy and enstrophy
 (§8.2.2–8.2.3, Figs. 11–12). The metric arrays are 71 of the 117 arrays the
 GPU version stores, about 60 % of its memory (§9.4).
 
+## Central split-form finite differences
+
+In this section $\xi_j$ are the computational coordinates of a curvilinear finite-difference
+mesh with unit spacing (registry §10), not the DG reference nodes $\xi_j$ of the sections above.
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) computes every metric derivative with the
+same central operator as the convective derivatives, $\partial x_k/\partial\xi_j\approx\delta_jx_k$
+with $\delta_jf_i=\sum_{\ell=1}^{L_{\mathrm s}}\mathsf a_\ell(f_{i+\ell}-f_{i-\ell})$ along $\xi_j$
+(registry §10; Eqs. (3), (33)), "to minimize sources of errors associated with failure to
+preserve the undisturbed free-stream conditions", after Visbal & Gaitonde. The paper claims
+nothing more and prints no free-stream test; its schemes, a kinetic-energy-preserving
+two-point flux and plain divergence-form central differencing, are on
+[KEP split forms in curvilinear coordinates](/methods/curvilinear-kinetic-energy-preserving-split-forms.md).
+In 2D the recipe is exact *(compiler check, not in the sources)*:
+
+- the contravariant metric terms are the cofactors $Ja^{(1)}=(\delta_2x_2,-\delta_2x_1)$ and
+  $Ja^{(2)}=(-\delta_1x_2,\delta_1x_1)$, linear in the coordinates, so
+  $\sum_j\delta_j(Ja^{(j)})=\delta_1\delta_2x-\delta_2\delta_1x=0$ because tensor-product central
+  operators commute, the mechanism of Duan & Tang's proof above;
+- for a uniform state every two-point average in the fluxes reduces to a constant times
+  $\{\!\{Ja^{(j)}\}\!\}$, whose flux difference is $\delta_j(Ja^{(j)})$, so the residual vanishes
+  for both schemes, with the scaled metric of Eq. (1) (see the pressure-metric slip on the
+  [Source page](/sources/pirozzoli-2011-b.md)). Numerically, on a periodic $32\times24$ mesh
+  displaced by sinusoids of amplitude 0.4 and 1.6 grid spacings plus uniform random
+  perturbations of up to 0.05 spacing, the eighth-order flux form leaves a residual of about
+  $3\times10^{-15}$, against about $4\times10^{-2}$ when the metrics are taken with the
+  second-order operator instead; the latter number depends on the mesh distortion.
+
+In 3D the metric terms are products of derivatives, and the identity needs the conservative
+(cross-product) form recalled above for Duan & Tang and Chandravamsi et al.; the paper runs
+2D only. On a mesh randomized by 20 % of the spacing *(where the 2D identity still holds;
+compiler check)*, both the split scheme and the filtered divergence scheme (FDFD) develop
+dispersive oscillations that "eventually lead to divergence at later times" (§3.1.2), so
+free-stream exactness does not by itself give stability on non-smooth meshes *(compiler
+check, not in the sources)*.
+
 ## Finite-difference reconstruction schemes
 
 [Ye et al. (2022)](/sources/ye-2022.md) argue that [AFTENO](/methods/afteno.md)
@@ -464,6 +499,9 @@ the source.
   (2026) prove the stronger TPE(2) for their moving-mesh finite volumes
   and test TPE(0)–TPE(2) on random meshes, in an arXiv preprint without a
   journal version (Thms. 4.3–4.7, Table 1).
+  Pirozzoli (2011b) computes the metrics with the convective operator to
+  minimize free-stream errors and claims no exactness; the 2D exactness
+  recorded above is a compiler check (§3, Eq. (33)).
 - **Chandravamsi et al.'s proof.** The metric-identity cancellation is
   shown symbolically, partly in a supplementary notebook, for MEG6 only;
   for MIG4 it is asserted (§7). The first lines of their Eqs. (41)–(42)
@@ -507,3 +545,4 @@ the source.
 - [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.1 (arXiv v1).
 - [Deng et al. (2025)](/sources/deng-2025.md) — §4.7.
 - [Cai, Cheng, Wu & Qiu (2026)](/sources/cai-2026.md) — §1.3, §3.1.1, Def. 2.1, Props. 4.1, 4.4, Thms. 4.3, 4.6, 4.7, §5.1 Table 1, §5.2 Table 2, §6 (arXiv v1).
+- [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) — §2 Eq. (3), §3 Eq. (33), §3.1.2.

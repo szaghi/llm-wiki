@@ -5,7 +5,7 @@ description: "One-dimensional Euler benchmark of a Mach 3 shock running into a s
 status: established
 aliases: [Shu–Osher problem, shock–density wave interaction, shock–entropy wave interaction, Titarev–Toro problem]
 tags: [benchmark, low-dissipation, weno, teno]
-timestamp: 2026-11-01T18:54:00Z
+timestamp: 2026-11-17T08:43:44Z
 ---
 
 # Shu–Osher shock–entropy-wave problem
@@ -16,7 +16,7 @@ entropy wave. Passing through the shock, the wave is compressed into a
 band of short, steep density oscillations, followed by weak shocklets.
 A dissipative scheme damps the short waves; an oscillatory one creates
 spurious waves near the shocklets. The problem is the most widely run
-one-dimensional resolution test in the bundle: seventy-four sources run it
+one-dimensional resolution test in the bundle: seventy-six sources run it
 or a variant (one of them a review reproducing earlier figures), in
 several placements of one set of data, plus a high-frequency variant attributed
 to Titarev & Toro, a Mach 10 variant, two-medium variants, a radial
@@ -47,7 +47,7 @@ ends at $t=1.8$.
 | $[-5,5]$ | $x=-4$ | $1+0.2\sin(kx)$, $k=5$ and $k=10$ | 2 ($k=5$); not printed ($k=10$) | [Borges et al. (2008)](/sources/borges-2008.md) §5.2.2, Eq. (51) ("Mach 3 shock–density wave", post-shock state printed $(3.857143,2.629369,\tfrac{31}3)$) |
 | $[-5,15]$ | $x=-4$ | $1+0.2\sin(5x)$ | 5 | [Chu et al. (2025a)](/sources/chu-2025.md) Example 2 (free boundaries; arXiv v1); [Wang et al. (2023a)](/sources/wang-2023.md) §4.4, Eq. (26) (left state in exact form $(27/7,\,4\sqrt{35}/9,\,31/3)$; called the "extended Mach 3 shock–density-wave interaction") |
 | $[-4.5,4.5]\times[0,1]$ | $x=-4$ | $1+0.2\sin(5x)$ | 1.8 | [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.3 (strip on triangles, periodic in $y$) |
-| $[0,10]$ | $x=1$ | $1+0.2\sin(5(x-5))$ | 1.8 | [Fu (2021)](/sources/fu-2021.md) §5.4; [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.5; [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.5 (two-dimensional strip on triangles); [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.4, Eq. (41) (likewise); [Huang et al. (2025a)](/sources/huang-2025.md) §5.4, Eq. (46) (boundaries not stated); [Liang et al. (2025)](/sources/liang-2025.md) §4.3, Eq. (34) (strip $[0,10]\times[0,2]$ on triangles) |
+| $[0,10]$ | $x=1$ | $1+0.2\sin(5(x-5))$ | 1.8 | [Fu (2021)](/sources/fu-2021.md) §5.4; [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.5; [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.5 (two-dimensional strip on triangles); [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.4, Eq. (41) (likewise); [Huang et al. (2025a)](/sources/huang-2025.md) §5.4, Eq. (46) (boundaries not stated); [Liang et al. (2025)](/sources/liang-2025.md) §4.3, Eq. (34) (strip $[0,10]\times[0,2]$ on triangles); [Fu et al. (2019d)](/sources/fu-2019-d.md) §V.B, Eq. (43) (post-shock state printed $(3.857,2.629,10.333)$); [Fu (2019b)](/sources/fu-2019-b.md) §6.4, Eq. (6.7) (same printed state; final time not printed) |
 | $[0,10]$ | $x=1$ | $1+0.2\sin(5x)$ as printed | 1.8 | [Fu et al. (2016)](/sources/fu-2016.md) §5.4 (post-shock state printed $(3.857,2.629,10.333)$); [Ye et al. (2022)](/sources/ye-2022.md) §4.4; [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.4, Eq. (33); [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2; [Liang et al. (2022)](/sources/liang-2022.md) §4.4; [Qin et al. (2023)](/sources/qin-2023.md) §3.4.3; [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.3; [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (48) |
 | $[0,10]$ | $x=1$ | $1+0.2\sin(5x)$ as printed | 0.2 as printed | [Wang et al. (2026)](/sources/wang-2026.md) §6.3.3, Fig. 15 (left state $(3.857143,2.629369,10.333333)$ on $[0,1]$; the time is the figure caption's, see Qualifications) |
 | $[-5,5]$ | $x=-4$ | $1+0.2\sin(5(x-5))$ as printed | 1.8 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.11; [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.5 |
@@ -93,6 +93,8 @@ slip for $\sin(5x)$.
 | [Borges et al. (2008)](/sources/borges-2008.md) | 200, 300 ($k=5$); 510 ($k=10$) | WENO-M, 2000 | [WENO-Z](/methods/weno-z.md) vs [mapped WENO](/methods/mapped-weno.md), WENO-JS; characteristic-wise Lax–Friedrichs splitting |
 | [Fu et al. (2016)](/sources/fu-2016.md) | 200 | WENO5-JS, 2000 | [TENO](/methods/targeted-eno.md) TENO5, TENO5-opt, TENO6, TENO6-opt vs WENO-JS, WENO-Z, [WENO-CU6](/methods/weno-cu6.md), WENO-CU6-M |
 | [Fu (2021)](/sources/fu-2021.md) | 200 | WENO5-JS, 2000 | [TENO-AA](/methods/adaptive-teno.md) vs [WENO-CU6](/methods/weno-cu6.md) |
+| [Fu et al. (2019d)](/sources/fu-2019-d.md) | 200, SSP-RK3 at CFL 0.4, Rusanov splitting, Roe-averaged characteristic decomposition | fifth-order WENO, 2000 | [TENO5-A, TENO6-A](/methods/adaptive-teno.md) vs [WENO-CU6](/methods/weno-cu6.md) |
+| [Fu (2019b)](/sources/fu-2019-b.md) | 200, 400, 800; SSP-RK3 at CFL 0.4 | WENO5-JS, 2000 | [hybrid](/methods/hybrid-weno.md) of the fifth-order upwind flux and characteristic-wise TENO6 switched by the [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md), against the same hybrid switched by MP and TVB ($M_{\mathrm{TVB}}=10,100,1000$) indicators; sensitivity to $\epsilon$ and $C_T$ |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) | 200 | WENO5-JS, 2000 | [TENO-THINC](/methods/teno-thinc.md) vs WENO5-Z, TENO5; CFL 0.4 vs 0.6 |
 | [Ye et al. (2022)](/sources/ye-2022.md) | 200 | WENO5-JS, 2000 | [AFTENO](/methods/afteno.md), TENO, AFWENO |
 | [Li et al. (2022b)](/sources/li-2022-b.md) | 200 | WENO7-Z, 4000 | [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z |
@@ -406,6 +408,11 @@ improves the entropy-wave resolution by suppressing spurious activation
 of Jameson's pressure sensor; it makes no appreciable difference on the
 [shock tubes](/benchmarks/sod-and-lax-shock-tubes.md) (§4.3, Fig. 4).
 
+**TENO-A against WENO-CU6.** [Fu et al. (2019d)](/sources/fu-2019-d.md)
+(§V.B, Fig. 4) find TENO5-A and TENO6-A "as well as" WENO-CU6 on the
+density fluctuations at 200 points, and on par, across papers, with the
+best results of other high-order schemes.
+
 **Oscillations at shocklets.** Fu (2021) reports density and velocity
 oscillations of WENO-CU6 near the shocklets, which TENO-AA avoids;
 Hong, Ye & Ye likewise see WENO-CU6 overshoot near the valleys (§5.4).
@@ -417,7 +424,20 @@ Fig. 8).
 history of their hybrid scheme's detector: only their new detector
 separates the entropy-wave fluctuations from the shocklets throughout
 the run (§4.2, Fig. 16); see [troubled-cell
-indicators](/definitions/troubled-cell-indicator.md).
+indicators](/definitions/troubled-cell-indicator.md). [Fu (2019b)](/sources/fu-2019-b.md) (§6.4, Figs. 10–15)
+chose the problem to grade indicators because it "involves both
+discontinuities and high-wavenumber fluctuations". The TENO-based flag
+separates the smooth waves from the shocklets at 200, 400 and 800
+points, and the share of flagged cells falls with refinement; the MP
+flag marks more cells and, at 800 points, fires on constant data unless
+a change larger than $10^{-10}$ is required (Eq. (6.8)), after which it
+still locates the shocklets less precisely; the TVB flag either lets
+oscillations through (large $M_{\mathrm{TVB}}$) or flags many more cells
+(small $M_{\mathrm{TVB}}$), and fails to separate the physical
+fluctuations from the shocks at 400 points (Fig. 15). Steps of one order of
+magnitude in $\epsilon$ ($10^{-3}$, $10^{-4}$, $10^{-5}$; Fig. 13) or in
+$C_T$ ($5\times10^{-3}$ to $5\times10^{-5}$; Fig. 14) leave the TENO-based flag pattern similar at 400
+points.
 
 **Parameter sensitivity on triangles.** Ji, Liang & Fu sweep the CWENO
 central-stencil linear weight $d'_K\in\{10^3,10^4,10^7,10^{15}\}$
@@ -526,7 +546,10 @@ data ($(1.515695,0.523346,1.80500)$ for $-5\le x<-4.5$) to $t=5$ on 2000
 points or cells against WENO-JS5 on 20000, and state that GMR-WENO
 "perform better" than MR-WENO (Fig. 3.15). They call the density
 "ten times bigger than the density of the standard
-shock/turbulence problem"; the printed data have half the amplitude
+shock/turbulence problem" (meaning this one-dimensional model problem,
+not the three-dimensional
+[shock–turbulence interaction](/benchmarks/shock-turbulence-interaction.md));
+the printed data have half the amplitude
 (0.1 against 0.2) and the wavenumber $20\pi$ against 5, a ratio
 $20\pi/5\approx12.6$ *(compiler check, not in the sources)*.
 
@@ -795,6 +818,8 @@ printed density and pressure.
 - [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.2 Ex. 2, Figs. 5–6; §8.3 Ex. 4, Eq. (8.2), Fig. 14 (author preprint).
 - [Borges et al. (2008)](/sources/borges-2008.md) — §5.2.2, Eq. (51), Figs. 7–8.
 - [Fu et al. (2016)](/sources/fu-2016.md) — §5.4, Figs. 15–16.
+- [Fu (2019b)](/sources/fu-2019-b.md) — §6, §6.4, Eqs. (6.7)–(6.8), Figs. 10–15.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §V, §V.B, Eq. (43), Fig. 4.
 - [Fu (2021)](/sources/fu-2021.md) — §5.4, Figs. 4–5 (arXiv v1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.4, Figs. 6–7.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.4–4.5, Eqs. (44)–(45), Figs. 4–5.

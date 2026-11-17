@@ -5,7 +5,7 @@ description: "Multi-dimensional Euler tests with Sod-type circular, spherical an
 status: established
 aliases: [explosion problem, implosion problem, cylindrical explosion, spherical explosion, 2D explosion, Liska–Wendroff implosion]
 tags: [benchmark, low-dissipation, central-scheme, teno]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-11-17T08:25:23Z
 ---
 
 # Two-dimensional explosion and implosion problems
@@ -135,6 +135,25 @@ finest grid for the new scheme and find NEW slightly less oscillatory,
 with a jet that propagates further, "slightly higher resolution" than
 OLD (Fig. 3.5). Both of their 2D tests are attributed to Liska &
 Wendroff.
+
+**A square variant.** [Fu (2019b)](/sources/fu-2019-b.md) (§6.8,
+Eq. (6.13)) attribute their "more challenging implosion" to Liska &
+Wendroff (and to the Shadowfax code paper of Vandenbroucke & De
+Rijcke) but print the low state $(0.125,0,0,0.14)$ on the square
+$\lvert x-0.3\rvert<0.15$, $\lvert y-0.3\rvert<0.15$ of the periodic box
+$[0,0.6]^2$, ambient $(1,0,0,1)$, on $1024\times1024$ to $t=0.75$.
+*(Compiler check, not in the sources: this is an axis-aligned square of
+side 0.3 and area 0.09, twice the area 0.045 of the diamond above; by
+the symmetry argument above the run is a wall-bounded quadrant whose
+low-pressure corner is a square of side 0.15, not a right triangle. It
+is a different problem from the six runs of the table.)* They use it to
+grade [troubled-cell indicators](/definitions/troubled-cell-indicator.md)
+for their [hybrid](/methods/hybrid-weno.md) fifth-order upwind/TENO6
+scheme: the [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)
+identifies the non-smooth scales and more than 97 % of the cells take
+the linear flux, more than with the MP or TVB indicators, and of the
+TVB settings $M_{\mathrm{TVB}}=1000$ gives the best result (Figs.
+26–29). No jet length or symmetry measure is reported.
 
 **A training variant.** [Bezgin et al. (2023)](/sources/bezgin-2023.md)
 (§7.4, Eq. 49, arXiv v1) use a corner implosion on $[0,1]^2$ as the
@@ -292,6 +311,9 @@ application run, not a test with a reference solution.
   grid against a fine-grid run of the standard scheme, not an order or
   a convergence statement.
 - Liang et al. (2022)'s final time is given only in the caption of Fig. 21.
+- Fu (2019b)'s implosion keeps the Liska–Wendroff name and states but
+  not the diamond; it is recorded as a variant, not merged with the
+  table's rows.
 - Chu et al. (2025a)'s adaptive schemes depend on the constant $C_{\mathrm W}$
   of the residual threshold, tuned per problem; the authors conclude
   that this hurts the robustness of A-WLR and that the minmod-based
@@ -319,3 +341,4 @@ application run, not a test with a reference solution.
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.3, Fig. 14.
 - [Liang et al. (2025)](/sources/liang-2025.md) — §4.7, Figs. 19–20.
 - [Stone et al. (2026)](/sources/stone-2026.md) — §3.1, §3.5, Figs. 2, 10 (cross-reference).
+- [Fu (2019b)](/sources/fu-2019-b.md) — §6.8, Eq. (6.13), Figs. 26–29.

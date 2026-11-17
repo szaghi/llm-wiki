@@ -5,7 +5,7 @@ description: "ADER schemes advance a DG or finite-volume solution in one step: a
 status: established
 aliases: [ADER, ADER-DG, ADER-FV, ADER predictor–corrector, local space–time predictor, one-step ADER, ADER-HWENO]
 tags: [dg, finite-volume, limiting, immersed-boundary, multiphase]
-timestamp: 2026-11-01T18:56:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # ADER schemes
@@ -183,6 +183,21 @@ The authors call theirs "the first study to investigate the Euler equations usin
 ADER schemes of order 8 or higher" (§9), against earlier nonlinear ADER studies to order 7 and
 linear ADER to order 16 that they cite.
 
+The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) recalls the same branch and its
+place among finite-volume methods. ADER (Toro et al. 2001) evaluates the numerical flux "by solving
+the generalized Riemann problem using a semianalytical method", the solution being a Taylor time
+expansion at the interface, which gives "one-step schemes with arbitrary accuracy in both space and
+time" (§2.1). One-step high order in space and time "makes ADER schemes competitive with typical
+shock-capturing FD schemes having comparable accuracy" (Titarev & Toro 2005, as recalled, §4.1).
+Dumbser et al. (2007, as recalled) remove the flux quadratures on unstructured tetrahedra by a
+characteristic WENO reconstruction of the whole cell polynomial and a Cauchy–Kowalewski space–time
+Taylor series integrated analytically; the $P_NP_M$ schemes of Dumbser et al. (2008, as recalled)
+represent the data by degree-$N$ polynomials and compute fluxes from degree-$M\ge N$ reconstructions ($M$ page-local, not the mass matrix),
+recovering finite volumes for $N=0$ and DG for $N=M$, the intermediate members with $M>N$ and $N=0$
+being reported "computationally more efficient" than either (§4.1;
+[discontinuous Galerkin](/methods/discontinuous-galerkin.md)). These statements are the review's; no
+measurement is shown in it.
+
 ## Taylor-expansion ADER for Hermite finite volumes on triangles
 
 [Luo et al. (2026)](/sources/luo-2026.md) (Luo, Zhao, Qiu & Chen; arXiv v1, part II of a structured-mesh
@@ -323,4 +338,5 @@ $h\approx0.9$–$1.9$ (Table 1).
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §1; §3.1–3.4 Eqs. (19)–(41); §4.4; §5 Table 1, Figs. 3, 6, 8.
 - [Balsara et al. (2023)](/sources/balsara-2023.md) — §7.
 - [Yajaman et al. (2025)](/sources/yajaman-2025.md) — §2 (Eqs. (2)–(20)), §2.2, §6, §7.1–7.2 (Fig. 15), §8 (Table 5), §9, Table A.7.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.1; §4.1: ADER, quadrature-free unstructured ADER and $P_NP_M$ as recalled (review).
 - [Luo et al. (2026)](/sources/luo-2026.md) — arXiv v1: Abstract; §1; §2.1 (Eqs. (2.1)–(2.5)); §2.3 (Eqs. (2.11)–(2.15)); §3, Tables 3.1–3.3, Figs. 3.3–3.12; §4.

@@ -5,7 +5,7 @@ description: "MDCD schemes are six-point fourth-order finite-difference fluxes w
 status: established
 aliases: [MDCD, MDAD, MDAD-WENO, MDAD-HY, MDCD-HY, minimized dispersion and adaptive dissipation, Sun–Ren MDCD scheme, WCNS-SA, WCNS-opt, ADADF, ADADF-HY]
 tags: [finite-difference, low-dissipation, weno, turbulence]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Minimized-dispersion and controllable-dissipation (MDCD) schemes
@@ -55,6 +55,24 @@ scheme (Eqs. (14)–(15); [approximate dispersion relation](/definitions/approxi
   $|\partial\tilde\vartheta_r/\partial\vartheta-1|=16c_{\mathrm{disp}}+\tfrac83=3.4087$ and
   $|\tilde\vartheta_i|=32c_{\mathrm{diss}}$, so $\Lambda_{\mathrm{dd}}(\pi)=9$ needs
   $c_{\mathrm{diss}}=0.01184$.)*
+
+**The same family in TENO backgrounds.** *(Compiler check, not in the sources: the fourth-order
+six-point background of TENO6-A ([Fu et al. (2019d)](/sources/fu-2019-d.md), §IV.B, Eqs. (31)–(40);
+[adaptive TENO](/methods/adaptive-teno.md)), designed by a separate dispersion optimization
+(fourth-order constraints plus the minimum of $\int_0^\pi e^{6(\pi-\vartheta)}(\tilde\vartheta_r-\vartheta)^2d\vartheta$)
+and a dissipative part $\tilde\vartheta_i=\tfrac25b_0(\cos\vartheta-1)^3$ with $b_0=0.025$, is the MDCD
+flux above with $c_{\mathrm{disp}}=0.0545455$ and $c_{\mathrm{diss}}=b_0/10=0.0025$: its printed weights
+give the flux $(0.0285227,-0.1714016,0.6503788,0.6253788,-0.1589016,0.0260227)$ on
+$f_{i-2},\dots,f_{i+3}$, which is the MDCD flux with these two values term by term. The six-point
+fourth-order family is exactly the two-parameter MDCD family. Against Sun et al.'s
+$c_{\mathrm{disp}}=0.0463783$ the dispersion weight differs ($e^{6(\pi-\vartheta)}$ against
+$e^{-8\vartheta}$), and $c_{\mathrm{diss}}=0.0025$ is about a fifth of the recommended $0.012$; the
+ratio $\Lambda_{\mathrm{dd}}(\pi)=(16c_{\mathrm{disp}}+\tfrac83)/(32c_{\mathrm{diss}})=44.2$, against the
+bound 9 of Li, Chen & Ren. The TENO6-A paper sets $b_0$ by $\zeta\approx O(10)$ without stating where.
+The "fourth-order TENO6" of [Fu (2019b)](/sources/fu-2019-b.md) (§2.2.3), the nonlinear branch of
+TENO-HY below, prints the same four linear weights, so its background is the same MDCD member.)* Neither
+paper mentions MDCD in this connection; Fu et al. (2019d) name MDCD6 only as a Rayleigh–Taylor
+comparator (§V.E) and cite the same paper for a Shu–Osher comparison (§V.B, "Fig. 10 of [27]").
 
 ## Adaptive dissipation: MDAD
 
@@ -187,11 +205,15 @@ weights above; results are on the WCNS page.
 
 ## Results (Li, Chen & Ren 2022a, §4)
 
-Comparators: [WENO-Z](/methods/weno-z.md), MDCD-HY and TENO-HY (Fu 2019,
-[targeted ENO](/methods/targeted-eno.md)).
+Comparators: [WENO-Z](/methods/weno-z.md), MDCD-HY and TENO-HY ([Fu (2019b)](/sources/fu-2019-b.md),
+[targeted ENO](/methods/targeted-eno.md), [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)),
+which Li, Chen & Ren describe as upwind-5 plus an optimized TENO6, in agreement with the original: the
+fifth-order upwind flux with global Lax–Friedrichs splitting as the linear branch and the fourth-order
+TENO6 as the nonlinear one (Fu 2019b, Eqs. (2.17), (5.1)).
 
 - **Linear advection** of a multi-wave packet: WENO-Z and TENO-HY converge at fifth order, MDCD-HY and
-  MDAD-HY at fourth; MDAD-HY has the lowest $L_2$ error on relatively coarse grids (§4.1, Fig. 14).
+  MDAD-HY at fourth (*compiler check, not in the sources: the fifth order of TENO-HY is that of its UD5
+  linear branch*); MDAD-HY has the lowest $L_2$ error on relatively coarse grids (§4.1, Fig. 14).
 - **Approximate dispersion relation.** MDAD-HY recovers MDAD dissipation and MDCD dispersion up to
   $\vartheta=2.06$, where its detector starts to fire; TENO-HY and MDCD-HY show irregular dissipation at
   low wavenumbers from detector misjudgments; WENO-Z is the most dissipative (§3.3, Figs. 11–12).
@@ -245,5 +267,7 @@ Comparators: [WENO-Z](/methods/weno-z.md), MDCD-HY and TENO-HY (Fu 2019,
 
 - [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §1; §2.1, Eqs. (6)–(17), Figs. 1–3; §2.3, Eqs. (34)–(38), Figs. 6–7; §3.1–3.4, Eqs. (39)–(69), Table 1, Figs. 8–12; §4, Tables 2–5, Figs. 14–30.
 - [Ye et al. (2022)](/sources/ye-2022.md) — Eq. (29) ($\beta_6$ coefficient).
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §IV.B, Eqs. (31)–(40): the TENO6-A background, an MDCD member (compiler check).
+- [Fu (2019b)](/sources/fu-2019-b.md) — §2.2.3, Eq. (2.17); §5, Eq. (5.1): TENO-HY, the comparator of Li, Chen & Ren; its TENO6 background, the same MDCD member (compiler check).
 - [Li et al. (2023b)](/sources/li-2023-b.md) — §1; §2, Eqs. (3)–(15); §3.1–3.4, Eqs. (16)–(50), Figs. 2–11; §3.5, Eq. (53), Table 1; §4, Figs. 13–25.
 - [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §1; §3, Eqs. (19)–(26), Table 1; §4, Eqs. (27)–(32), Tables 2–3, Fig. 7.

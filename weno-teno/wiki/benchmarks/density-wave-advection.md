@@ -5,7 +5,7 @@ description: "Smooth density (entropy) wave carried at uniform velocity and pres
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-11-01T18:54:00Z
+timestamp: 2026-11-17T08:43:44Z
 ---
 
 # Density-wave advection
@@ -29,6 +29,7 @@ property, and conserves entropy.
 
 | Source | Profile $\rho_0$ | $v_0$, $p_0$ | Domain, boundaries | Grid, time | Use |
 |---|---|---|---|---|---|
+| [Shima et al. (2021)](/sources/shima-2021.md) §3.1 | $2+\sin(2\pi x)$ | 1, 1 | $[0,1]$, periodic | 41 points ($\Delta x=0.025$), RK4 at CFL about 0.1, $\gamma=1.4$; profiles at $t=11$ | pressure equilibrium of second-order KEEP, KEEP-PE and KEP fluxes without dissipation |
 | [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) §4.1 | $1+0.99\sin(x+y)$ (minimum density 0.01) | $(1,1)$, 1 | $[0,2\pi]^2$, periodic | $4^2$–$128^2$, $\Delta x=\Delta y=2\pi/N$; $t=0.1$ | third order of RKDG with the positivity limiter at low density |
 | [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.1 | $1+0.2\sin(\pi x)$ | 1, 1 | period 2 | 10–320 points (Euler), 20–320 (Navier–Stokes); $t=2$ | fifth-order accuracy, CFL 0.6 |
 | Wang et al. (2023c) Example 4.2 | $1+0.2\sin(\pi(x+y))$ | $(1,1)$, 1 | $[0,2]^2$, periodic | $10^2$–$320^2$ (Euler), $20^2$–$320^2$ (Navier–Stokes); $t=2$ | 2D accuracy |
@@ -132,8 +133,24 @@ the linear advection equation without background flow; they state that
 their scheme "works very well even for the linear wave propagation"
 (Fig. 7).
 
-**Pressure equilibrium of kinetic-energy-preserving fluxes.** De
-Michele & Coppola (2023b) compare second-order split fluxes for $\rho$,
+**Pressure equilibrium of kinetic-energy-preserving fluxes.**
+[Shima et al. (2021)](/sources/shima-2021.md) (§3.1, Fig. 1)
+use the test to check pressure equilibrium of split central forms. Their second-order
+[KEEP-PE](/methods/keep-scheme.md) scheme, whose internal-energy flux
+$\{\!\{\rho e\}\!\}\{\!\{v\}\!\}$ reduces to $\{\!\{p\}\!\}\{\!\{v\}\!\}/(\gamma-1)$,
+keeps $v$ and $p$ uniform without any numerical dissipation; the KEEP
+scheme of Kuya et al. and the kinetic-energy-preserving
+(Jameson–Pirozzoli) form develop growing pressure oscillations, KEEP
+smaller than KEP, which disturb the velocity through the pressure
+gradient and then the density through the mass equation, and diverge
+at $t\approx12.9$ (KEEP) and $t\approx11.1$ (KEP); the density wave of
+all three shows a slight phase error of second order. *(Compiler check,
+not in the sources: a rerun of the three schemes on 40 periodic
+intervals with RK4 at CFL 0.1 stops at $t=12.89$ for KEEP and $11.16$
+for KEP, and KEEP-PE runs to $t=20$ with $\max\lvert p-1\rvert$ below
+$5\times10^{-14}$.)* See
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
+De Michele & Coppola (2023b) compare second-order split fluxes for $\rho$,
 $\rho v$ and the internal energy, with a central pressure term: the
 arithmetic-mean $\rho$ and internal-energy flux (Aρ-Ae) is not
 pressure-equilibrium preserving and blows up at $t\approx22$; the
@@ -443,6 +460,12 @@ Their entropy and sound waves are run together; the sound waves are on
 
 ## Qualifications
 
+- Shima et al. (2021) use a pure sine profile, which De Michele &
+  Coppola (2023b) avoid because it gave fortuitous global entropy
+  conservation; Shima et al. measure only $p$ and $v$, which the choice
+  does not affect *(compiler check, not in the sources)*. Their
+  divergence times are stated as approximate, and the profiles are shown
+  only at $t=11$.
 - Yajaman et al.'s text announces "a sequence of five meshes" for the
   density wave, while their Table 4 prints four (16–128 cells), as its
   caption says.
@@ -553,3 +576,4 @@ Their entropy and sound waves are run together; the sound waves are on
 - [Wang et al. (2023a)](/sources/wang-2023.md) — §4.1, Table 1.
 - [Wang et al. (2026)](/sources/wang-2026.md) — §6.1, Eq. (60), Tables 6(b) and 7.
 - [Stone et al. (2026)](/sources/stone-2026.md) — §3.1, Fig. 1.
+- [Shima et al. (2021)](/sources/shima-2021.md) — §3, §3.1, Fig. 1.

@@ -5,7 +5,7 @@ description: "Periodic vortex flow that transitions to turbulence: inviscid at l
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-11-17T08:26:55Z
 ---
 
 # Taylor–Green vortex
@@ -111,6 +111,25 @@ CWENO6: $Q$-criterion iso-surfaces (levels 1, 3, 6, 10) at $t=4,8,10$,
 the kinetic-energy history (the figures reach $t=10$; no end time is
 stated) and $x$-direction kinetic-energy spectra at $t=8$ and $10$ on
 $64^3$.
+[Fu et al. (2019d)](/sources/fu-2019-d.md) §V.F, Eq. (47), after
+Brachet et al. and Shu et al., print the same data ($\gamma$ not
+printed) and run TENO6-A on $64^3$ as an implicit LES: inviscid with
+Roe and Rusanov fluxes, spectra at $t=0$–$10$ and $t=10$–$80$; and
+viscous at $\mathrm{Re}=100$, 200, 400, 800, 1600 and 3000, the
+kinetic-energy dissipation rate against the DNS and against ALDM on
+the same grid ([adaptive TENO](/methods/adaptive-teno.md)).
+
+**Inviscid, compressible ($M_0=0.4$).** [Shima et al. (2021)](/sources/shima-2021.md)
+§3.2 run the inviscid vortex at a compressible Mach number with
+$\rho=\rho_0=1$, $v_1=M_0\sin x\cos y\cos z$, $v_2=-M_0\cos x\sin y\cos z$,
+$v_3=0$ and $p=1/\gamma+\frac{\rho_0M_0^2}{16}(\cos2x+\cos2y)(\cos2z+2)$,
+$M_0=0.4$, $\gamma=1.4$, on $65^3$ equally spaced points of periodic
+$[0,2\pi]^3$ ($\Delta x=2\pi/64$; also $2\pi/32$), with second-order
+central [split forms](/methods/split-convective-forms.md) without any
+dissipation and RK4 at CFL about 0.1 (temporally converged against CFL
+0.01), to $\hat t=M_0t=160$. Diagnostics are the total kinetic energy
+and the total entropy, written $\Delta(\rho s)=-(\rho s-\rho_0s_0)$ with
+$s=\log(p\rho^{-\gamma})$ and normalized by $\rho_0s_0$ in their Fig. 2.
 
 **Inviscid, supersonic.** Maltsev et al. §3.7 run the inviscid form
 of Lusher & Sandham's supersonic vortex: same domain and velocity,
@@ -494,6 +513,38 @@ that they connect, after Honein & Moin, with eventual shocks. See
 [kinetic energy preservation](/properties/kinetic-energy-preservation.md)
 and [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
 
+**Split forms without dissipation at $M_0=0.4$.** In Shima et al.'s
+compressible inviscid vortex (§3.2, Fig. 2), the
+[KEEP](/methods/keep-scheme.md) scheme of Kuya et al. and its
+pressure-equilibrium-preserving variant KEEP-PE run to $\hat t=160$
+without numerical dissipation, keeping the total kinetic energy and
+entropy well, also on the $2\pi/32$ grid; KEEP-PE "slightly increases"
+the kinetic energy and decreases the entropy relative to KEEP, the two
+schemes differing only in the internal-energy flux. The kinetic-energy
+(Jameson–Pirozzoli) split form instead shows a "non-physical rapid
+decrease" of entropy and blows up at $\hat t\approx120$. The drop of
+kinetic energy near $\hat t\approx20$ is physical pressure work. Mass,
+momentum and total energy are conserved discretely by all three. The
+ordering agrees with De Michele & Coppola (2023b) above, whose
+arithmetic-mean internal-energy fluxes Aρ-Ap (the KEEP-PE flux) and
+Aρ-Ae (KEEP) conserve entropy worse than the harmonic- and
+geometric-mean ones; see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
+
+**Implicit LES with adaptive TENO.** [Fu et al. (2019d)](/sources/fu-2019-d.md)
+(§V.F, Figs. 9–10) read the inviscid vortex as a consistency test of
+[implicit LES](/definitions/implicit-large-eddy-simulation.md): on
+$64^3$, TENO6-A reproduces the Kolmogorov $k^{-5/3}$ range "for almost
+all resolved wave numbers" at $t=10$ with a Roe flux and up to
+wavenumber 20 with a Rusanov flux, which is slightly more dissipative at
+high wavenumbers; the scaling persists to $t=80$ and, not shown, later,
+without the high-wavenumber pile-up of Johnsen et al.'s Fig. 2. In the
+viscous runs ALDM is less accurate in the laminar phase and fails to
+predict the dissipation rate between $t=8$ and 10 at $\mathrm{Re}=400$,
+where TENO6-A agrees with the DNS; at higher Reynolds numbers TENO6-A
+is better before $t=4$ and "comparable to that of ALDM" overall, and
+better than WENO-CU6-M (compared across papers).
+
 **Shock-capturing devices must stay off.** Dzanic & Witherden find
 their [entropy filter](/methods/entropy-filtering.md) predominantly
 inactive: all their runs agree with the DNS and are nearly identical to
@@ -697,3 +748,5 @@ cells (§9, Figs. 21–24).
 - [Liang et al. (2025)](/sources/liang-2025.md) — §4.9, Eq. (39), Figs. 24–27.
 - [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §4.5, Tables 4–7, Fig. 6 (arXiv v1).
 - [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §5.3, §5.5, Fig. 21.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §V.F, Eq. (47), Figs. 9–10.
+- [Shima et al. (2021)](/sources/shima-2021.md) — §3, §3.2, Fig. 2.

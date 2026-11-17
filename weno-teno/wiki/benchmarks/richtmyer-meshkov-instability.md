@@ -5,7 +5,7 @@ description: "A planar shock crossing a sinusoidally perturbed interface: air–
 status: established
 aliases: [RMI, Richtmyer–Meshkov, xenon–argon Richtmyer–Meshkov instability, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
 tags: [benchmark, multiphase, interface-capturing, dg]
-timestamp: 2026-10-30T08:08:00Z
+timestamp: 2026-11-17T08:30:13Z
 ---
 
 # Richtmyer–Meshkov instability
@@ -292,6 +292,16 @@ find [ROUND](/methods/round-scheme.md) comparable to a learned
 third-order WENO and its low-dissipation variant finer than WENO5-JS
 (Fig. 14), again by visual comparison.
 
+**Recalled in a review.** [Pirozzoli (2011a)](/sources/pirozzoli-2011.md)
+(§5) cites the LES of a re-shocked Richtmyer–Meshkov instability by
+Hill, Pantano & Pullin (2006) as an application of low-dissipation
+shock capturing: a central, dispersion-relation-preserving-like
+approximation of the convective split form in smooth regions, switched
+near shocks to the tuned WENO of Hill & Pullin by a sensor on the local
+curvature of pressure and density "similar to the Jameson sensor"
+([hybrid schemes](/methods/hybrid-weno.md)). No setup or result is
+restated.
+
 ## Qualifications
 
 - The setups share only the geometry: the Atwood numbers
@@ -356,3 +366,4 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §4, §4.3, Eq. (48), Figs. 4–5.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §4, Ex. 4.10, Fig. 13.
 - [Alberti et al. (2025)](/sources/alberti-2025.md) — §3.1.2, Eqs. (53), (55)–(56), Fig. 6.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §5 (Hill et al. 2006, recalled).

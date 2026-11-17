@@ -5,7 +5,7 @@ description: "Euler problems with fixed shocks (1D stationary shock, quasi-1D no
 status: established
 aliases: [steady shock tests, stationary shock, steady normal shock, regular shock reflection, oblique shock reflection, steady-state convergence tests, planar steady normal shock, quasi-one-dimensional nozzle flow, quasi-1D nozzle]
 tags: [benchmark, teno, weno, riemann-solver, finite-volume, carbuncle]
-timestamp: 2026-10-30T08:44:00Z
+timestamp: 2026-11-17T08:44:05Z
 ---
 
 # Steady shock problems
@@ -112,6 +112,26 @@ factor $\exp(-\kappa_{\mathrm s}\varphi_{\mathrm J}\Psi_{\mathrm D})$, which ble
 toward Lax–Friedrichs; $\varphi_{\mathrm J}$ (page-local, the source's $\varphi_1$) is a Jameson
 pressure sensor and $\Psi_{\mathrm D}$ (the source's $\varphi_2$) the modified, compression-only
 Ducros sensor of the [Ducros shock sensor](/definitions/ducros-shock-sensor.md) page.
+
+**Mach 2 regular reflection.** [Fu et al. (2019d)](/sources/fu-2019-d.md) (§V.H, Fig. 15) run
+a different reflection to check the steady convergence of their
+[adaptive TENO](/methods/adaptive-teno.md) schemes: on $[0,2]\times[0,1]$ a Mach 2 stream from
+the left meets an oblique shock of $38.66^\circ$ imposed through the Rankine–Hugoniot conditions at
+$x=0.1$ on the top boundary, with a reflective bottom and supersonic outflow on the right; the
+states, the grid and $\gamma$ are not printed. The residual is
+$\mathrm{Res}=\sum_{i=1}^N\big(\lvert R_{i,1}\rvert+\lvert R_{i,2}\rvert+\lvert R_{i,3}\rvert+\lvert R_{i,4}\rvert\big)/(4N)$,
+with $R_{i,l}$ the time derivatives of $\rho$, $\rho v_1$, $\rho v_2$ and $E$ at point $i$ (page-local).
+TENO5-A ($\epsilon=10^{-40}$, $10^{-3}$, $10^{-2}$) and TENO6-A ($\epsilon=10^{-40}$) are compared with
+WENO5-JS ($\epsilon=10^{-6}$), with Roe-averaged characteristic decomposition, Rusanov splitting and
+SSP-RK3 at CFL 0.4 (§V). The TENO-A schemes capture the shocks more sharply than WENO5-JS; the
+authors call their convergence "similar to that of the WENO5-JS scheme", attribute the failure to
+reach machine zero to the slight post-shock oscillations of WENO-type schemes, and find that a
+larger $\epsilon$ improves the convergence of TENO5-A. *(Compiler check, not in the sources: in
+Fig. 15 every residual stalls after $t\approx3$ between about $10^{-0.4}$ and $10^{-1.4}$ up to the
+plotted $t\approx9$: TENO6-A at about $10^{-0.4}$, TENO5-A at about $10^{-0.9}$, $10^{-1.05}$ and
+$10^{-1.4}$ for $\epsilon=10^{-40}$, $10^{-3}$, $10^{-2}$, and WENO5-JS at about $10^{-1.2}$, so
+"similar" means that all stall, TENO6-A about 0.8 decade above WENO5-JS; the reflected shock meets the wall at $x=0.1+1/\tan38.66^\circ\approx1.35$, as in the
+density plots.)*
 
 **Further configurations of Liang & Fu.** Liang & Fu (2026) §§5.2–5.7 run five more steady flows,
 all with $\gamma=1.4$, HLLC, SSP-RK2 with local time stepping at CFL 0.4:
@@ -244,11 +264,13 @@ converge. In two dimensions the sources report stalls of their baseline high-ord
 regular reflection, CWENOZ and MRWENO with the global Lax–Friedrichs speed (Wan & Xia), WENO5-Z
 and TENO5 with post-shock oscillations (Liang & Fu); on the heterolateral interaction WENO5-Z and
 TENO5 stall "around $O(1)$" and on the ipsilateral one "around $10^{-1}$", while CENO-AMR reaches
-"around $10^{-13}$" and machine-zero level respectively (Liang & Fu, Figs. 19–24). Wan & Xia's
+"around $10^{-13}$" and machine-zero level respectively (Liang & Fu, Figs. 19–24); on their Mach 2 reflection Fu et al. (2019d) see TENO5-A, TENO6-A
+and WENO5-JS all stall far above machine zero (Fig. 15). Wan & Xia's
 remedy is a three-region hybrid detector with a smooth transition between linear and nonlinear
 reconstruction; Liang & Fu's is the hysteresis of CENO's stencil selection; Duan et al.'s is the
 smooth shock-sensor factor. Each source tests only its own remedy against its own baselines, so the
-three remedies are not compared with one another.
+three remedies are not compared with one another. The accuracy lost behind captured shocks, and the post-shock
+oscillations of moving shocks, are on [order of accuracy behind captured shocks](/results/order-of-accuracy-behind-shocks.md).
 
 **Competing explanations of the stall.** Liang & Fu (2026, §1, §3.2.3), following their
 finite-difference paper, attribute non-convergence to the time variation of the reconstruction
@@ -283,6 +305,8 @@ agreement of Table 2 on one problem.
 - Liang & Fu (2026) print no residual values in the text for most cases (the figures carry them),
   and the stall levels of WENO5-Z and TENO5 refer to their finite-volume implementation with HLLC
   and the mid-point rule.
+- Fu et al. (2019d) print neither the grid nor the final time of their reflection; the stall
+  levels above are read from the plot of Fig. 15 (version read: AIAA J. Article in Advance).
 - Ren et al.'s §4.4 states that §§4.1–4.3 reconstruct primitive variables, while their §2.2 and
   §3.1 present the reconstruction and the analysis in conservative variables; which variables the
   normal-shock results use is ambiguous as printed.
@@ -298,6 +322,7 @@ agreement of Table 2 on one problem.
 # Citations
 
 - [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.1, Ex. 4.4, Figs. 4.4–4.6.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §V, §V.H, Fig. 15.
 - [Liang & Fu (2026)](/sources/liang-2026.md) — §1, §3.2.3, §3.3, §4.1, §§5.1–5.8, Eq. (34), Table 1, Figs. 5–26.
 - [Ren et al. (2025)](/sources/ren-2025.md) — §§3.2–3.4, §4, §5.2.2, §6, Eqs. (34)–(36), Tables 1–3, Figs. 8–13, 21–22, 35.
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4.1.3, Example D.5, Fig. 24 (arXiv v3).

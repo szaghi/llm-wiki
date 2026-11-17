@@ -33,7 +33,8 @@ here, in this bundle's notation.
 
 - Primary archive: `~/papers/mosaic/weno-teno/*.pdf` (read-only; Layer 1),
   207 PDFs at founding (217 after the human added ten founding papers on
-  2026-10-30, ingested as chunk 12; 224 files after six more on 2026-11-01, chunk 13), named `year_Crossref_Journal_Surname_Title-prefix.pdf`.
+  2026-10-30, ingested as chunk 12; 224 files after six more on 2026-11-01, chunk 13;
+  231 files after seven more filed by `mosaic import` on 2026-11-17, chunk 14), named `year_Crossref_Journal_Surname_Title-prefix.pdf`.
   The year in the filename is the online year, the surname is sometimes
   a given name (`Dinshaw` for Balsara, `C` for C. B. Sousa), and roughly a
   third of the files are arXiv, HAL or SSRN preprints despite the "Crossref" in
@@ -104,7 +105,19 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 13 staged 2026-11-01:** five 2026 papers added by the human (Zhang et
+**Chunk 14 compiled 2026-11-17 under the night protocol, awaiting the human's
+commit:** seven founding and older papers added by the human (Ducros et al. 1999,
+Pirozzoli 2010, Pirozzoli 2011a (ARFM review), Pirozzoli 2011b, Fu 2019b, Fu et
+al. 2019d, Shima et al. 2021; the AIAA J. paper read as the Article in Advance);
+226 of 230 archive works ingested (feng-2026, li-2024, wu-2023 and the erratum zhao-2025
+still wait), 244 concept pages plus the registry (nine new: shock–turbulence interaction,
+TENO-based discontinuity indicator, KEEP/KEEP-PE, conservative split central derivative,
+curvilinear KEP split forms, compact low-pass filter, localized artificial diffusivity,
+order of accuracy behind shocks, implicit LES), 5898 bibliography
+entries, deep lint done, nine contradictions open (new: conservation of split forms on
+non-uniform grids).
+
+**Chunk 13 committed 2026-11-01 (ac0a6af):** five 2026 papers added by the human (Zhang et
 al. 2026a/b, Yang & Qiu 2026, Luo et al. 2026, Cai et al. 2026; the last two read
 as arXiv preprints); 219 ingested, 235 concept pages plus the registry (new:
 transport polynomial exactness, `status: hypothesis`), 5781 bibliography entries,

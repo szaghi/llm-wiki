@@ -5,7 +5,7 @@ description: "An isentropic vortex advected through a stationary Mach 1.1 shock 
 status: established
 aliases: [shock–vortex, vortex–shock interaction, shock/vortex interaction]
 tags: [benchmark, weno, dg, bound-preserving, multiphase]
-timestamp: 2026-10-30T07:59:00Z
+timestamp: 2026-11-17T08:43:44Z
 ---
 
 # Shock–vortex interaction
@@ -121,6 +121,39 @@ sources)*.
   isentropic relation; inviscid, grids $192\times96$ to $768\times384$,
   snapshots at $tV_0/L=0.45$, $1.65$, $2.4$ ($V_0$ the inflow speed),
   and a sinusoidally distorted grid variant.
+- **Lamb–Oseen vortex, vorticity amplification.**
+  [Ducros et al. (1999)](/sources/ducros-1999.md) §4.2 (Table II,
+  Figs. 9–11), after Lee, Lele & Moin and Mahesh et al., hold a shock at
+  rest at $x=2$ in $[0,4]\times[0,1]$ (lengths in a reference length
+  $L_{\mathrm{ref}}$), periodic in $y$, and convect through it a
+  "Lamb–Oseen type" vortex centred at $(1,0.5)$ with maximum tangential
+  speed $0.16U_{\mathrm{ref}}$; core radius and circulation are not
+  printed. The upstream Mach number is $M_1=1.2$ (inflow speed
+  $1.42U_{\mathrm{ref}}$) on $128\times16$, $256\times32$ and
+  $512\times64$ (8, 16 and 32 points across the vortex in $y$, twice as
+  many in $x$), and 1.1, 1.4 and 1.7 on the finest grid. The scheme is
+  their second-order central finite-volume scheme with
+  Jameson–Schmidt–Turkel [artificial viscosity](/methods/artificial-viscosity.md),
+  $k_2=1.5$, either classical ($k_4=0.02$, Jameson's pressure sensor) or
+  with $k_4=0$ and the pressure sensor multiplied by the
+  [Ducros](/definitions/ducros-shock-sensor.md) ratio $\Phi_{\mathrm D}$;
+  no subgrid model. The measured quantity is the maximum of
+  $\sqrt{\omega^2(t)/\omega^2(0)}$, $\omega$ the vorticity, against the
+  small-incidence estimate $\omega_2/\omega_1\approx\rho_2/\rho_1=U_1/U_2$
+  (Eq. (25), after Mahesh et al.; subscripts 1 and 2 upstream and
+  downstream, page-local). The classical dissipation loses enstrophy
+  before and/or after the shock on the two coarser grids; the
+  sensor-weighted one keeps a plateau on both sides at every
+  resolution, and the growth through the shock is captured better with
+  resolution and with the sensor. The vortex leaves the shock elliptic,
+  as linear interaction analysis predicts. The authors state that the
+  expected amplification is recovered "qualitatively and quantitatively"
+  for all four Mach numbers. *(Compiler check, not in the sources: the
+  plateaus read from Fig. 11 are about 1.17, 1.32, 1.62 and 2.05 at
+  $M_1=1.1$, 1.2, 1.4, 1.7, against normal-shock density ratios 1.169,
+  1.342, 1.690 and 2.198 for $\gamma=1.4$: within about 2 % up to
+  $M_1=1.2$, about 4 % and 7 % low at 1.4 and 1.7.)* The 3D counterpart
+  of the test is [shock–turbulence interaction](/benchmarks/shock-turbulence-interaction.md).
 - **Relativistic.** [Chen & Wu (2022)](/sources/chen-2022-b.md)
   Ex. 4.10 (arXiv v1) pass their Lorentz-boosted
   [isentropic vortex](/benchmarks/isentropic-vortex.md) (speed $0.9$,
@@ -271,6 +304,12 @@ a numerical result.
   *(compiler check, not in the sources)*.
   They do not define their CFL number of 0.6, so whether the runs meet
   the time-step bound of their positivity theorem cannot be checked.
+- Ducros et al. (1999) do not define $U_{\mathrm{ref}}$; the printed
+  inflow speed $1.42U_{\mathrm{ref}}$ at $M_1=1.2$ equals $1.2\sqrt{1.4}$,
+  which makes $U_{\mathrm{ref}}=\sqrt{p_1/\rho_1}$ for $\gamma=1.4$
+  *(compiler check, not in the sources)*. Their Fig. 11 curves are shifted
+  in time so that the interactions coincide, and no final time is
+  printed.
 - Huang et al. (2026) do not print the final time, so their pressure profiles
   cannot be placed against those of Li et al. (2022b) ($t=0.6$) and Peng et al.
   ($t=0.8$).
@@ -306,3 +345,4 @@ a numerical result.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.6, Eq. (43), Fig. 15.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Example 5.8 (arXiv v1).
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.10, Figs. 3.18–3.19, Table 3.1.
+- [Ducros et al. (1999)](/sources/ducros-1999.md) — §4.2, Eq. (25), Table II, Figs. 9–11.

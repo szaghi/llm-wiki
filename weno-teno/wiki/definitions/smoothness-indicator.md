@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-11-01T18:54:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Smoothness indicators
@@ -198,9 +198,16 @@ Qualifications for a missing term.
 stencils lying beside it, i.e. for extrapolated quadratics, e.g. on $\{i+1,i+2,i+3\}$
 $$\beta=\tfrac13\big|10f_{i+3}^2-49f_{i+2}f_{i+3}+29f_{i+1}f_{i+3}+61f_{i+2}^2-73f_{i+1}f_{i+2}+22f_{i+1}^2\big|,$$
 with analogous forms on $\{i-3,i-2,i-1\}$ and $\{i+2,i+3,i+4\}$; equal stencil sizes keep the cost low
-([hybrid schemes](/methods/hybrid-weno.md)). *(Compiler check, not in the sources: integrating the squared first and
-second derivatives of the quadratic matching $f_{i+1},f_{i+2},f_{i+3}$ as cell averages over the target cell reproduces this
-form exactly.)* The same paper prints the four- and five-point indicators of eight-point TENO (prefactors $\tfrac1{240}$ and
+([hybrid schemes](/methods/hybrid-weno.md)). The form first appears, without absolute value, as Eq. (4.1)
+of [Fu (2019b)](/sources/fu-2019-b.md), for the fourth stencil $\{i+1,i+2,i+3\}$ of the four equal stencils of
+the [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md), chosen "rather than"
+TENO6's four-point stencil to cut cost; Liang & Fu (2024b) add $\{i-3,i-2,i-1\}$ and $\{i+2,i+3,i+4\}$.
+*(Compiler check, not in the sources: the form is a sum of integrals of squares, hence non-negative, so
+Liang & Fu's absolute value is redundant; integrating the squared first and second derivatives of the
+quadratic matching $f_{i+1},f_{i+2},f_{i+3}$ as cell averages over the target cell reproduces this form exactly,
+and integrated over its own centre cell $I_{i+2}$ the same quadratic gives instead
+$\tfrac13(4f_{i+1}^2-13f_{i+1}f_{i+2}+5f_{i+1}f_{i+3}+13f_{i+2}^2-13f_{i+2}f_{i+3}+4f_{i+3}^2)$,
+the classical Jiang–Shu form.)* The same paper prints the four- and five-point indicators of eight-point TENO (prefactors $\tfrac1{240}$ and
 $\tfrac1{5040}$) and recalls $\tau_8=\big|\beta_8-\tfrac16(\beta_{1,3}+\beta_{2,3}+4\beta_{0,3})\big|=O(\Delta x^6)$ in the TENO
 labelling (Eqs. (14)–(16); page-local $\beta_{k,r}$, stencil $k$ of width $r$).
 
@@ -562,6 +569,23 @@ the data, or test stencils pairwise:
   *(Compiler check, not in the sources: the printed form vanishes on samples of polynomials of degree 0
   to 2 but not on cubics, and on samples of $\sin(x_0+j\Delta x)$ it falls by a factor of about 64 per
   halving of $\Delta x$, i.e. it is $O(\Delta x^6)$.)*
+  The form is the original's: [Fu et al. (2019d)](/sources/fu-2019-d.md) (§IV.A, Eq. (25)) introduce
+  it for TENO5-A as "the sixth-order $\tau_5$", and §III.A.2 (Eq. (15)) defines the global indicator of
+  every TENO scheme above fourth order as $\tau_K=\lvert\beta_K-\tfrac16(\beta_1+\beta_2+4\beta_0)\rvert$
+  (TENO labels, $\beta_K$ the full-stencil indicator). *(Compiler check, not in the sources: Eq. (25)
+  equals $\beta_5-\tfrac16(\beta_1+\beta_2+4\beta_0)$ exactly, $\beta_5$ the Jiang–Shu indicator of the
+  degree-4 interpolant on the five points, i.e. Eq. (15) at $K=5$; it is printed without the absolute
+  value, and the quadratic form is indefinite (eigenvalues about $79.6$, $1.67$, $0$, $0$, $-0.0186$), so
+  the bars are needed. On smooth data, with $\phi$ the function whose cell averages are the point fluxes
+  (the Shu–Osher primitive relation, page-local $\phi$),
+  $\tau_5=\Delta x^6\big\lvert\tfrac{481}{720}(\phi''')^2-\tfrac{49}{90}\phi''\phi''''\big\rvert+O(\Delta x^7)$.)*
+  For TENO6-A the same paper prints the four-point indicator of $\{i,\dots,i+3\}$ with prefactor
+  $\tfrac1{240}$ and the six-point $\beta_6$ with prefactor $\tfrac1{120960}$ (Eqs. (29)–(30)), as
+  [Fu (2019b)](/sources/fu-2019-b.md) (§2.2.2, Eqs. (2.10), (2.13)) does for its TENO6, there with
+  $\tau_6=\lvert\beta_6-\tfrac16(\beta_1+\beta_2+4\beta_0)\rvert$ (Eq. (2.12)) and $\beta_6$ printed
+  inside absolute-value bars *(compiler check, not in the sources: both quadratic forms equal the exact
+  Jiang–Shu integrals of the cubic on $\{i,\dots,i+3\}$ and the quintic on $\{i-2,\dots,i+3\}$, and
+  $\tau_6$ vanishes through $\Delta x^5$ on smooth data, so it is $O(\Delta x^6)$)*.
 - **Pairwise relative difference.** Hong et al. (2022, Eqs. (22)–(26)) accept a three-point extension
   stencil of TENO-M only if
   $|\beta^*_{(a,b)}-\beta^*_{(b,a)}|/\big(\max(\beta^*_{(a,b)},\beta^*_{(b,a)})+\epsilon\big)<C_s$, $C_s=0.8$,
@@ -781,6 +805,8 @@ Several sources use "smoothness indicator" for quantities of a different kind:
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (26)–(28).
 - [Gu et al. (2023)](/sources/gu-2023.md) — §2.4, Eq. (2.6).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.2, Eqs. (13)–(16); §3.1, Eqs. (31)–(34).
+- [Fu (2019b)](/sources/fu-2019-b.md) — §2.2.2, Eqs. (2.10)–(2.13); §4.1, Eq. (4.1): TENO6 indicators and $\tau_6$; extrapolated indicator of a stencil beside the target cell.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §III.A.2, Eq. (15); §IV.A, Eq. (25); §IV.B, Eqs. (29)–(30): sixth-order TENO global indicators, the five-point $\tau_5$ of TENO5-A.
 - [Huang & Fu (2024)](/sources/huang-2024.md) — §2, Eqs. (9)–(11); §4.3, Eq. (32); §4.4, Eq. (41); §5.2, Eq. (59).
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.1.2, Eqs. (25)–(26); §3.2.2, Eq. (29).
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.1, Eqs. (12)–(14).

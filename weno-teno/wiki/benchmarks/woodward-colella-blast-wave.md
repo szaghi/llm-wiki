@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-11-01T18:54:00Z
+timestamp: 2026-11-17T08:43:44Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -25,7 +25,7 @@ its left half as a single blast.
 ## Setup
 
 The common data, printed by Harten et al. (1987a), Jiang & Shu (1996),
-Borges et al. (2008), Fu et al. (2016), Fu (2021), Takagi et al., Ye et al., Wang
+Borges et al. (2008), Fu et al. (2016), Fu et al. (2019d), Fu (2019b), Fu (2021), Takagi et al., Ye et al., Wang
 et al. (2023b), Wang et al. (2023c), Zhao et al., Chertock et al., Deng, Huang et al. (2026), Li, Shu & Qiu,
 Wang et al. (2021), Bezgin et al., Fan et al. (2023), Hong, Ye & Ye, Hu,
 Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren, Liang et al., Zhou et
@@ -52,6 +52,8 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.2 Ex. 3 | 199, 399, 799 points, CFL 0.6 (figure headers) | ENO-RF-5, 1600 | finite-difference WENO-RF-3 (RK-3), WENO-RF-4, WENO-RF-5, WENO-RF-5-A (RK-4) |
 | [Borges et al. (2008)](/sources/borges-2008.md) §5.2.3, Eq. (52) | 400, 800 | WENO-M, 4000 | [WENO-Z](/methods/weno-z.md) vs [mapped WENO](/methods/mapped-weno.md), WENO-JS; characteristic-wise Lax–Friedrichs splitting, third-order TVD Runge–Kutta |
 | [Fu et al. (2016)](/sources/fu-2016.md) §5.3 | 400 | WENO5-JS, 2500 | Roe flux with entropy fix; [TENO](/methods/targeted-eno.md) TENO5, TENO5-opt, TENO6, TENO6-opt vs WENO-JS, WENO-Z, [WENO-CU6](/methods/weno-cu6.md), WENO-CU6-M |
+| [Fu et al. (2019d)](/sources/fu-2019-d.md) §V.C, Eq. (44) | 200 | WENO5-JS, 2500 | Roe flux with entropy fix; [TENO5-A, TENO6-A](/methods/adaptive-teno.md) vs [WENO-CU6](/methods/weno-cu6.md) |
+| [Fu (2019b)](/sources/fu-2019-b.md) §6.5, Eq. (6.9) | 400 | WENO5, 2500 | Roe flux with entropy fix; [hybrid](/methods/hybrid-weno.md) fifth-order upwind/TENO6 scheme switched by the [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md) vs an undefined "hybrid WENO5" |
 | [Fu (2021)](/sources/fu-2021.md) §5.5 | 400 | WENO5-JS, 2500 | Roe flux with entropy fix; [TENO-AA](/methods/adaptive-teno.md) vs [WENO-CU6](/methods/weno-cu6.md) |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.5 | 400, also 800–3200 | WENO5-JS, 32000 | CFL 0.35, Roe splitting with entropy fix; [TENO-THINC](/methods/teno-thinc.md) |
 | [Ye et al. (2022)](/sources/ye-2022.md) §4.6, Eq. (46) | 400 (text) | WENO-JS, 2500 | [AFTENO](/methods/afteno.md), AFWENO |
@@ -121,7 +123,13 @@ at $x=0.86$ and the contact near $x=0.8$ better than WENO-M (Figs.
 pressure and velocity better than WENO-JS and WENO-Z, which overshoot
 in velocity near $x=0.86$; WENO-CU6 produces spurious waves near
 $x=0.75$ and $0.86$, and WENO-CU6-M fails on this problem (Figs.
-13–14).
+13–14). Fu et al. (2019d) find TENO5-A and TENO6-A resolving the
+right density peak better than WENO-CU6 on 200 points, and WENO-CU6
+overshooting and oscillating in pressure near $x\approx0.85$ where the
+TENO-A schemes agree with the reference (§V.C, Fig. 5). Fu (2019b)
+find their hybrid TENO6 "much less dissipative" than an undefined "hybrid
+WENO5", with about 80–90 % of the cells taking
+the linear flux during the run (§6.5, Figs. 16–17).
 
 **Density-peak resolution.** The new scheme of each paper sharpens the
 peaks and contacts of its baseline. Fu (2021) gets a better density peak
@@ -398,6 +406,9 @@ with specifications deferred to an earlier paper (Fig. 7).
   (Eq. (7.11)), with reflecting walls by reflection of the cell values
   (Eq. (7.12)); Jiang & Shu print all three intervals open,
   $0<x<0.1$, $0.1<x<0.9$, $0.9<x<1$.
+- Fu (2019b) do not define the "hybrid WENO5" they compare with, and
+  name the reference only "the WENO5 scheme" (Fig. 16 caption). Both
+  Fu (2019b) and Fu et al. (2019d) cite the data to Woodward alone.
 - Kolluru et al. give the Fejér–Korovkin parameters as $(1.35,0.99)$ in
   the text and $(1.355,0.999)$ in the Fig. 17 caption.
 - Chamarthi (2023a) and (2023b) both print the low-pressure region as
@@ -446,6 +457,8 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.2, Ex. 3, Fig. 7 (author preprint).
 - [Borges et al. (2008)](/sources/borges-2008.md) — §5.2.3, Eq. (52), Figs. 9–10.
 - [Fu et al. (2016)](/sources/fu-2016.md) — §5.3, Figs. 13–14.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §V.C, Eq. (44), Fig. 5.
+- [Fu (2019b)](/sources/fu-2019-b.md) — §6.5, Eq. (6.9), Figs. 16–17.
 - [Fu (2021)](/sources/fu-2021.md) — §5.5, Fig. 6 (arXiv v1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.5, Figs. 8–9.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.6, Eq. (46), Fig. 6.

@@ -5,7 +5,7 @@ description: "Symmetry preservation has four meanings in the sources: the mirror
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # Symmetry preservation
@@ -87,7 +87,8 @@ WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
 - *Spurious post-shock oscillations of the shock-capturing term*:
   [Sousa & Scalo (2022)](/sources/sousa-2022.md) (§5.3, Fig. 11) run a Mach 5 shock
   reflecting off a sinusoidal wall with $\gamma=1.15$ on a sixth-order compact central scheme.
-  With the local artificial diffusivity (LAD) of Cook and Kawai–Lele they observe "a high
+  With the local artificial diffusivity (LAD) of Cook and Kawai–Lele
+  ([localized artificial diffusivity](/methods/localized-artificial-diffusivity.md)) they observe "a high
   level of spurious oscillations" and "an early symmetry breaking behavior"; with their
   [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md) the run "preserve[s]
   symmetry". No mechanism is proposed; the authors relate the oscillations to similar
@@ -178,6 +179,14 @@ extrapolation generalizes the Verstappen–Veldman construction from incompressi
 to compressible flow (§6). These results are developed on
 [kinetic energy preservation](/properties/kinetic-energy-preservation.md) and
 [split convective forms](/methods/split-convective-forms.md).
+
+The name is used loosely in the older literature. The review of
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§2.3) calls the Feiereisen split form
+$\partial_{x_d}(\rho v_d\phi)=\tfrac12\partial_{x_d}(\rho v_d\phi)+\tfrac12\phi\,\partial_{x_d}(\rho v_d)+\tfrac12\rho v_d\,\partial_{x_d}\phi$
+(summation over $d$) "often improperly referred to as skew-symmetric", although with
+summation-by-parts derivative operators it gives semi-discrete kinetic-energy preservation (Honein & Moin
+2004, as recalled), and refers to Morinishi (2010) for a convective splitting that "satisfies the
+mathematical conditions required for skew symmetry".
 
 ## 3. Mirror-symmetric smoothness indicators
 
@@ -319,4 +328,5 @@ $\phi_1\le1$ ([bound preservation](/properties/bound-preservation.md);
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — Appendix A, Eqs. (A.3)–(A.5): operation-ordering rules for two-phase BVD with HLLC fluctuations.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §4: round-off symmetry breaking and the Fleischmann et al. technique.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §6.3.2: symmetry breaking of low-dissipation TENO attributed to floating-point truncation.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.3, Eq. (18): "often improperly referred to as skew-symmetric" (review).
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Abstract; §1; §2.1, Eqs. (2.1), (2.10), Remark 2.1; Thm 2.7, Eq. (2.35); Remark 3.1, Thm 3.6: symmetry of the volume fractions.

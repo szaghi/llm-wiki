@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-11-01T18:56:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Characteristic decomposition
@@ -394,9 +394,16 @@ See [five- and six-equation models](/definitions/five-equation-model.md).
 [Chertock et al. (2023)](/sources/chertock-2023.md) (§2.1) state that the minmod limiter
 applied to conservative variables "typically leads to large oscillations", which is why it is
 applied to characteristic variables. [Fu (2023)](/sources/fu-2023.md) (§3.4) makes the cost
-explicit: the hybrid TENO uses the optimal linear scheme **without** characteristic
-decomposition wherever the TENO indicator flags smoothness and reports an overall efficiency
-gain "by a factor of four" ([hybrid central-WENO schemes](/methods/hybrid-weno.md)).
+explicit: it recalls the hybrid TENO as using "the optimal linear scheme without characteristic
+decomposition" wherever the TENO indicator flags smoothness, and reports an overall efficiency
+gain "by a factor of four" ([hybrid central-WENO schemes](/methods/hybrid-weno.md)). In the original,
+[Fu (2019b)](/sources/fu-2019-b.md) (§5, Eq. (5.1), Algorithm 1; Table 1), the linear branch is the
+component-wise fifth-order upwind flux with global Lax–Friedrichs dissipation, not the optimal linear
+scheme of the paper's TENO6, and the flagged cells take TENO6 in characteristic variables with
+Roe-averaged eigenvectors and Rusanov splitting per field; the measured gain over characteristic-wise
+TENO6 on 2D Riemann configuration 3 is 3.2–3.84, with more than 98 % of the cells linear. The saving
+bundles the avoided projection with the avoided nonlinear weights, and the paper does not separate them
+([TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)).
 
 The most direct evidence is that of [Boscarino et al. (2022)](/sources/boscarino-2022.md)
 (Ex. 5.4, Figs. 5.4–5.5): on two [2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)
@@ -503,6 +510,7 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Shu (2009a)](/sources/shu-2009.md) — §3.5.3, §3.5.5.
 - [Fu et al. (2016)](/sources/fu-2016.md) — §5.
 - [Fu (2023)](/sources/fu-2023.md) — §3.4 (Algorithm 1, hybrid TENO, Eqs. (21)–(24)), §3.6 (Algorithm 2).
+- [Fu (2019b)](/sources/fu-2019-b.md) — §1; §5, Eq. (5.1), Algorithm 1; §6, Table 1: projection only in flagged cells of the hybrid TENO; cost.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §2.1 (Eqs. (2.5)–(2.8)), §3, Apps. A–B (arXiv v2).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VI (pointwise algorithm, steps 2–3).
 - [Fu (2021)](/sources/fu-2021.md) — §5.

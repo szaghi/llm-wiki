@@ -5,7 +5,7 @@ description: "Flux differencing replaces the DG volume term D f by symmetric two
 status: established
 aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term, LeFloch–Mercier–Rohde flux, Hadamard-product form]
 tags: [dg, finite-difference, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-11-17T08:43:20Z
 ---
 
 # Flux differencing and split-form DG
@@ -46,7 +46,9 @@ et al. (2022), §2.1, list the properties a suitable volume flux can give:
 
 - kinetic-energy preservation;
 - entropy conservation or dissipation (Ismail–Roe, Chandrashekar);
-- pressure-equilibrium preservation (Shima et al.);
+- pressure-equilibrium preservation ([Shima et al. (2021)](/sources/shima-2021.md),
+  introduced as the KEEP-PE face fluxes of a second-order central scheme, Table 2;
+  [KEEP and KEEP-PE schemes](/methods/keep-scheme.md));
 - several of these together.
 
 The fluxes themselves are on
@@ -71,7 +73,11 @@ with $(\!(1;a)\!)$ the arithmetic mean. Hence a quadratic split form is
 locally conservative with respect to that special average and obeys a
 precise discrete product rule; the identity
 $(\!(a;b)\!)=2(\!(1;a)\!)(\!(1;b)\!)-(\!(1;ab)\!)$ shows the two-point flux
-"extrapolates" between a non-split and a split flux (Eq. (6)). Edoh's
+"extrapolates" between a non-split and a split flux (Eq. (6)). The
+second-order instance, the flux of means $\{\!\{a\}\!\}\{\!\{b\}\!\}$ as half the
+divergence form plus half the product-rule form, was derived directly by
+[Ducros et al. (1999)](/sources/ducros-1999.md) (§3, Eqs. (19)–(21);
+[split convective forms](/methods/split-convective-forms.md)). Edoh's
 page-local *splitting error operator*
 $\mathcal S_D(a,b)=AD\mathbf b+BD\mathbf a-DA\mathbf b=[D\circ((\!(a;b)\!)-(\!(1;ab)\!))]\mathbf 1$
 is telescoping, $\mathbf 1^\top M\mathcal S_D(a,b)=0$ in the periodic
@@ -128,6 +134,37 @@ asymptotically entropy-conservative ones, for which no split-form
 representation exists. They run it at fourth and sixth order on the
 inviscid Taylor–Green vortex (§5;
 [entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
+
+[Pirozzoli (2010)](/sources/pirozzoli-2010.md) had derived the same double sum for
+products of means, for central derivatives of any half-width. With page-local
+$\{\!\{a\}\!\}_{i,\ell}=\tfrac12(a_i+a_{i+\ell})$ and
+$\delta^{[\ell]}a_i=(a_{i+\ell}-a_{i-\ell})/\Delta x$, the elementary split difference
+is
+$\tfrac12\delta^{[\ell]}(ab)_i+\tfrac12a_i\delta^{[\ell]}b_i+\tfrac12b_i\delta^{[\ell]}a_i=\frac2{\Delta x}\big(\{\!\{a\}\!\}_{i,\ell}\{\!\{b\}\!\}_{i,\ell}-\{\!\{a\}\!\}_{i-\ell,\ell}\{\!\{b\}\!\}_{i-\ell,\ell}\big)$,
+which telescopes to the partial flux
+$\hat f^{[\ell]}_{i+1/2}=2\sum_{m=0}^{\ell-1}\{\!\{a\}\!\}_{i-m,\ell}\{\!\{b\}\!\}_{i-m,\ell}$,
+and the flux is $\sum_\ell\mathsf a_\ell\hat f^{[\ell]}_{i+1/2}$ (§2, Eqs. (9)–(14));
+the triple mean $\{\!\{\rho\}\!\}\{\!\{v\}\!\}\{\!\{\phi\}\!\}$ gives the Kennedy–Gruber
+flux (Eqs. (16)–(17); [conservative split central derivative](/operators/conservative-split-derivative.md)).
+This is the formula above with a product of means as $\tilde f$ *(compiler
+check, not in the sources: Pirozzoli does not cite LeFloch–Mercier–Rohde and
+considers no nonlinear two-point flux)*. Pirozzoli's operation counts per node and
+derivative are $2+\tfrac72L_{\mathrm s}+\tfrac12L_{\mathrm s}^2$ for two factors,
+cheaper than differencing the split form directly ($6+6L_{\mathrm s}$) up to
+$L_{\mathrm s}=6$, and $1+\tfrac{11}2L_{\mathrm s}+\tfrac12L_{\mathrm s}^2$ for three, cheaper than
+$20+14L_{\mathrm s}$ up to $L_{\mathrm s}=18$, with the means stored line by line before
+summing (§2, App. A, Figs. 1, 10; the text prints $\tfrac92$ for the three-factor
+count, against its own Fig. 1, see the Source page).
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) applies the same double sum to the
+Kennedy–Gruber triple mean on curvilinear meshes, with the metric inside the
+nodal volume-weighted contravariant velocity, averaged as a whole, and the
+pressure term as $\{\!\{p\}\!\}\{\!\{Ja^{(j)}\}\!\}$ (§2.3, Eqs. (25)–(30)); in the
+curvilinear DG two-point fluxes below (Renac; Ranocha et al.) the metric is
+instead averaged separately, $\{\!\{Ja\}\!\}$ multiplying a Cartesian two-point flux
+*(compiler check, not in the sources)*. The curvilinear scheme costs
+about 1.5 times divergence-form central differencing ("a very affordable 50%"
+overhead, §4;
+[kinetic-energy-preserving split forms in curvilinear coordinates](/methods/curvilinear-kinetic-energy-preserving-split-forms.md)).
 
 The central weights need not be those of maximum order.
 [Liang & Fu (2024b)](/sources/liang-2024-b.md) use the same formula with
@@ -439,3 +476,7 @@ than conservative DG (§7.4, Table 4;
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1 Eqs. (3.2)–(3.11), Thm. 3.1.
 - [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1 Eq. (8), Defs. 2–4, Thm. 1, App. B.
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §3.3 Eqs. (37)–(41), §5, §7.4 Table 4.
+- [Pirozzoli (2010)](/sources/pirozzoli-2010.md) — §2 Eqs. (9)–(17) p. 7183, Fig. 1, App. A Fig. 10.
+- [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) — §2.3 Eqs. (24)–(32), §4.
+- [Ducros et al. (1999)](/sources/ducros-1999.md) — §3 Eqs. (19)–(21).
+- [Shima et al. (2021)](/sources/shima-2021.md) — Table 2.

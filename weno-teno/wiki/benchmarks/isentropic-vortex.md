@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-11-01T18:52:00Z
+timestamp: 2026-11-17T08:43:44Z
 ---
 
 # Isentropic vortex
@@ -81,6 +81,7 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$, stream $(1,1)$ | $T=10$; errors on $25^2$ to $200^2$ (printed "252–2002"); time-step law not stated |
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.1 | $[-5,5]^2$, centre at the origin, periodic | 5 | $T_0=1$, stream $(1,1)$ | $t=10$; $L_2$ density error, $25^2$ to $200^2$, CFL 0.2 |
 | [De Michele & Coppola (2023a)](/sources/demichele-2023.md) §5.1, Eqs. (79)–(81) | unit square, centre $(0.5,0.5)$, periodic | vortex Mach number $M_{\mathrm v}=0.5$, radius $r_{\mathrm v}=1/15$ | $\rho_\infty=1$, $u_\infty=1$, $M_\infty=0.5$ | robustness: $40^2$ to $t=5$, and $30^2$ to $T=50$ at CFL 0.01, 0.1, 0.5 |
+| [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) §3.1 | wavy curvilinear mesh (Kawai & Lele) on $[-12,12]\times[-6,6]$ in units of $r_{\mathrm v}$, $81\times41$, centre $(0,0)$, periodic; and a $51\times51$ mesh on $[-6,6]^2r_{\mathrm v}$ with interior points displaced by 20 % of the spacing | $M_{\mathrm v}=0.1$ and $0.5$ (wavy); $0.0012$ (randomized) | $M_\infty=M_{\mathrm v}$ (wavy), $M_\infty=0.1$ (randomized), stream along $x$ | $tu_\infty/r_{\mathrm v}=720M_{\mathrm v}$, three and fifteen flow-throughs (wavy); $tu_\infty/r_{\mathrm v}=12$ (randomized); RK4 at Courant number 0.25, orders 2–8 |
 | [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) §8.1.2, Eq. (47) | $[0,16]^2$, centre $(8,8)$, periodic; grid randomized by 20 % in the central region | $C/(U_\infty R)=0.02$ | $\rho=1$, $M=0.1$, advection speed 1 | one period, $t=16$; $64\times64$ |
 | [Funada & Imamura (2023)](/sources/funada-2023.md) §3.1 | $[-6,18]\times[-12,12]$, centre at the origin, periodic in $x$, Riemann boundaries in $y$ | $\kappa_{\mathrm v}=0.02$ (page-local) | $\rho=1$, $M_\infty=0.1$, stream along $x$ | $L_\infty$ error of $v_2$ when the vortex reaches $x=8$; $\Delta x=0.375$, $0.1875$, $0.09375$; RK4 |
 | [Zaghi et al. (2023)](/sources/zaghi-2023.md) Appendix, Eqs. (A.1)–(A.6) | periodic cube of side 10 m, centre $(2,5,5)$ m, 3D | vortex Mach number $M_{\mathrm v}=0.1$, radius 0.5 m | $\rho_0=1.226$ kg m$^{-3}$, $p_0=101325$ Pa, free-stream Mach 0.1 along $x$ | period 0.29 s; AMR performance test, WENO3, 4768 blocks, about 2.4M cells |
@@ -146,7 +147,13 @@ $v_2/u_\infty=\frac{M_{\mathrm v}}{M_\infty}\frac{\bar x}{r_{\mathrm v}}e^{(1-\h
 $T/T_\infty=(p/p_\infty)^{(\gamma-1)/\gamma}=(\rho/\rho_\infty)^{\gamma-1}=1-\frac{\gamma-1}2M_{\mathrm v}^2e^{1-\hat r^2}$,
 $\hat r=r/r_{\mathrm v}$, $p=\rho^\gamma/(\gamma M_\infty^2)$
 ($M_{\mathrm v}$, $r_{\mathrm v}$, $\hat r$ page-local): the table's form in
-units of the vortex radius, with stream $(1,0)$. Chandravamsi et al.
+units of the vortex radius, with stream $(1,0)$.
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) (§3.1) prints the
+same velocity and the density and pressure
+$\rho/\rho_\infty=\big(1-\frac{\gamma-1}2M_{\mathrm v}^2e^{1-\hat r^2}\big)^{1/(\gamma-1)}$,
+$p/p_\infty=\big(1-\frac{\gamma-1}2M_{\mathrm v}^2e^{1-\hat r^2}\big)^{\gamma/(\gamma-1)}$,
+the same homentropic, zero-circulation vortex, with $M_{\mathrm v}$
+based on the maximum induced tangential speed. Chandravamsi et al.
 use a different profile with uniform density, hence not isentropic
 *(compiler check, not in the sources)*,
 $v_1=1-\frac{C\bar y}{U_\infty R}e^{-r^2/2}$,
@@ -680,6 +687,38 @@ at CFL 0.5 (Table 3). See [kinetic energy preservation](/properties/kinetic-ener
 [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)
 and [split convective forms](/methods/split-convective-forms.md).
 
+**Kinetic-energy-preserving central schemes on curvilinear meshes.**
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) (§3.1, Figs. 1–9)
+advects the vortex through a smoothly wavy and a randomized mesh to
+test the author's [kinetic-energy-preserving split forms in curvilinear
+coordinates](/methods/curvilinear-kinetic-energy-preserving-split-forms.md)
+(SCFD: the Kennedy–Gruber split with the Jacobian in the contravariant
+velocity, in locally conservative flux form) against central
+differencing of the divergence form, unfiltered (DFD) or with the
+eighth-order [compact low-pass filter](/methods/compact-low-pass-filter.md)
+at $\alpha=0.495$ after every step (FDFD), at orders 2 to 8. On the
+wavy mesh DFD diverges before the final time at every order, with
+growing kinetic energy; second order is "extremely poor" for both other
+schemes and the vortex core becomes rounder with order, SCFD somewhat
+better "especially for the strong vortex"; across the core SCFD is
+quantitatively similar to FDFD, both over-predicting the velocity peaks
+when marginally resolved, and at $M_{\mathrm v}=0.5$ dispersive
+oscillations appear that the filter of FDFD controls better. The
+kinetic energy of SCFD is conserved "with very good accuracy" at every
+order for the weak vortex, while FDFD drifts up or down depending on
+the order; for the strong vortex the energy oscillates quasi-periodically
+between kinetic and internal modes, as Thornber et al. observed, and
+SCFD drifts less than FDFD at eighth order. The sixth-order SCFD
+converges at its nominal order under refinement of the wavy mesh
+(Fig. 7). On the randomized mesh both SCFD and, less, FDFD show strong
+dispersive oscillations and eventually diverge: FDFD by unbounded
+growth of the velocity maximum, SCFD keeping the maximum while the
+oscillations grow; the stronger filtering Visbal & Gaitonde found
+necessary was not tried. Pirozzoli notes that earlier authors mostly
+used much weaker vortices (Visbal & Gaitonde $M_{\mathrm v}=0.0012$) and
+Kok a strong one ($M_\infty=0.5$, $M_{\mathrm v}=0.4$). See also
+[free-stream preservation](/properties/free-stream-preservation.md).
+
 **Free-stream preservation on distorted grids.** Chandravamsi et al.
 advect the vortex for one period through a $64\times64$ grid whose
 central region is randomized by 20 % (maximum included angle about
@@ -849,10 +888,18 @@ on $40^2$ elements (Table 3); see
   $h=1/40$ without a CFL definition; neither $\mathrm{CFL}\,h/(\lvert u\rvert+c)$
   ($8.3\times10^{-5}$) nor $\mathrm{CFL}\,h/u_\infty$ ($2.5\times10^{-4}$)
   reproduces it *(compiler check, not in the sources)*. They also print
-  $T_\infty=720M_{\mathrm v}r_{\mathrm v}$, a value used nowhere else.
+  $T_\infty=720M_{\mathrm v}r_{\mathrm v}$, which they do not use
+  otherwise; it is the final time $tu_\infty/r_{\mathrm v}=720M_{\mathrm v}$
+  of Pirozzoli (2011b)'s wavy-mesh runs.
   Their remark that higher resolution can lower the blow-up time
   compares runs that differ in both grid and order ($40^2$ eighth order,
   $30^2$ fourth order).
+- Pirozzoli (2011b) gives $M_{\mathrm v}=0.0012$ for the randomized mesh
+  in the text (§3.1.2) and $M_{\mathrm v}=0.012$ in the caption of Fig. 9.
+  The captions of Figs. 4–5 announce dotted curves for a second
+  (density-based) formulation that cannot be told apart in the version
+  read, so the text's claim that the velocity-based form is better under
+  compressibility is not visible in the figures.
 - Maltsev et al. state that the simulation runs "for 10 periods" with
   errors at "final time $t=10$"; with stream $(1,1)$ on the periodic
   $[0,10]^2$ one period is $t=10$ *(compiler check, not in the
@@ -933,3 +980,4 @@ on $40^2$ elements (Table 3); see
 - [Wang et al. (2023a)](/sources/wang-2023.md) — §4.5, Eq. (27), Table 2.
 - [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.2, Table 2; Thm. 4.1.
 - [Luo et al. (2026)](/sources/luo-2026.md) — §3, Ex. 3.3, Table 3.3, Fig. 3.4 (arXiv v1).
+- [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) — §3, §3.1, Eq. (33), Figs. 1–9.

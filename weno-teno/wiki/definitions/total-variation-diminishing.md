@@ -5,7 +5,7 @@ description: "TVD schemes do not increase the total variation; the page gives Ha
 status: established
 aliases: [TVD, TVNI, total variation nonincreasing, TVB, total variation bounded, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod, monotonicity algorithm, TVB limiter]
 tags: [limiting, reconstruction, finite-volume, central-scheme]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-17T08:44:05Z
 ---
 
 # Total variation diminishing (TVD) and slope limiters
@@ -62,6 +62,15 @@ forward Euler "in the total variation seminorm, or any other norm or seminorm". 
 stability notion behind both: total variation bounded uniformly in time,
 $TV(u_h(\cdot,t))\le C\,TV(u_0)$, gives convergence of a subsequence to a weak solution; the
 [Godunov scheme](/methods/godunov-scheme.md) and MUSCL are TVD in the scalar case.
+
+The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.1) lists TVD among three properties
+of the scalar entropy solution that shock-capturing schemes were built to imitate: monotonicity
+preservation (Godunov 1959), TVD, $TV(u(\cdot,t_2))\le TV(u(\cdot,t_1))$ for $t_2\ge t_1$
+([Harten 1983a](/sources/harten-1983.md)), and monotonicity, the order preservation of entropy solutions (Harten, Hyman & Lax, printed 1986 for the 1976
+paper; [monotone schemes](/definitions/monotone-scheme.md)). It attributes the popularity of TVD
+schemes "especially in the 1980s" to theorems that "guarantee convergence to weak solutions for TVD
+schemes" (LeVeque 1990, as recalled) together with the first-order limit of monotone schemes, and
+points to Yee (1989) for an overview of the early TVD schemes.
 
 ## TVD conditions in incremental form, explicit and implicit
 
@@ -426,7 +435,10 @@ discontinuous at extrema, which costs one order in the maximum norm there (§1, 
 $\partial_xu=0$ (Harten 1983a, §3, Remark 2). [Zhang & Shu (2010b)](/sources/zhang-2010-b.md)
 (§1, §4.2) recall the same degeneracy for the minmod limiter of RKDG: their TVB limiter with
 parameter $M_{\mathrm{TVB}}=0$ "reduces to a TVD limiter", first order at extrema, with
-unsatisfactory results (next section).
+unsatisfactory results (next section). Pirozzoli (2011a, §3.1) recalls that classical TVD schemes
+"suffer from loss of accuracy at both smooth and non-smooth extrema", which motivated ENO, and that
+Suresh & Huynh (1997) circumvent it by enforcing the monotonicity-preservation constraint at the
+discrete level ([monotonicity-preserving limiter](/methods/monotonicity-preserving-limiter.md)).
 
 [Pazner (2021)](/sources/pazner-2021.md) (§4.4) recalls that TVD schemes are
 provably at most first-order accurate at smooth extrema, and observes the
@@ -482,3 +494,4 @@ bounds to global ones in cells flagged smooth by a modal indicator restores
 - [Van Leer (1979)](/sources/vanleer-1979.md) — §3.3 (Eqs. (101)–(104), Figs. 3–5), App. B (Eq. (B2)): monotonicity algorithms for stored slopes.
 - [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §1, §4.2–4.3 (Eq. (4.2), Fig. 4.4): TVB-corrected minmod, $M=0$ as TVD.
 - [Shu (2009a)](/sources/shu-2009.md) — §3.1: TVD (SSP) Runge–Kutta stability in the total variation seminorm.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1: TVD among the design properties of shock capturing, convergence to weak solutions, accuracy loss at extrema (review).

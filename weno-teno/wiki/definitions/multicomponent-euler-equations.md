@@ -5,7 +5,7 @@ description: "The fully conservative Euler system for a mixture of several gases
 status: established
 aliases: [multi-component Euler equations, multispecies Euler equations, compressible multicomponent Euler system, HRM model (as named by Renac)]
 tags: [multiphase, entropy-stable, positivity, bound-preserving, dg, finite-difference]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-11-17T08:26:01Z
 ---
 
 # Multicomponent Euler equations
@@ -535,7 +535,8 @@ $$\rho Y_k\big|_{i+1/2}=\tfrac12\big(\mathsf w^-\rho Y_{k,i}+\mathsf w^+\rho Y_{
 (Eqs. (38)–(39), (48); page-local $\mathsf w^\pm$, the source's
 $\phi^\pm$). In a second-order central flux these give FC/PE (S), a
 [split form](/methods/split-convective-forms.md) that reduces to the
-KEEP-PE scheme of Shima et al. for one component, and FC/PE (D), a
+[KEEP-PE scheme](/methods/keep-scheme.md) of
+[Shima et al. (2021)](/sources/shima-2021.md) for one component, and FC/PE (D), a
 divergence form (Table 1). Both are fully conservative and preserve
 pressure equilibrium for a uniform velocity. With a nonuniform velocity
 only FC/PE (S) satisfies the extended condition (§5, Eqs. (55)–(59)).
@@ -791,6 +792,7 @@ temperature approaches zero before 50 μs without the entropy limiter, and a
 
 # Citations
 
+- [Shima et al. (2021)](/sources/shima-2021.md) — §2.2.3 Eq. (17), Table 2.
 - [Ching et al. (2025)](/sources/ching-2025.md) — §1; §2, Eqs. (2.1)–(2.7); §3, Eqs. (3.3)–(3.9); §4.1, Lemma 1, Remarks 2–3, 5; §4.2–4.4, Thms 6, 8; §4.7; §5.
 
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §1; §2, Eqs. (1)–(11); §3, Eqs. (22)–(27) (arXiv v1).

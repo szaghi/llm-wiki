@@ -3,9 +3,9 @@ type: Method
 title: "Entropy-conservative and kinetic-energy-preserving two-point fluxes"
 description: "Two-point fluxes satisfying Tadmor's jump condition conserve entropy, and entropy-dissipative ones satisfy it as an inequality; the page states the condition in Cartesian, directional, moving-mesh and non-conservative form and gives the Ranocha, Shima, asymptotically entropy-conservative algebraic, multicomponent, vibrating-air, stiffened-gas, GLM-MHD, relativistic and scalar fluxes and their entropy-stable dissipation."
 status: established
-aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux, AEC flux, asymptotically entropy-conservative flux]
+aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, AEC flux, asymptotically entropy-conservative flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-24T06:02:00Z
+timestamp: 2026-11-17T08:43:12Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes
@@ -36,6 +36,34 @@ $F^{\mathrm{num}}_\eta=\{\!\{w\}\!\}\cdot f^{\mathrm{ec}}-\{\!\{\psi\}\!\}$
 also works, Remark 2.6).
 [Duan & Tang (2022)](/sources/duan-2022.md) use the same form, with metric
 terms, for their moving-mesh scheme (Eqs. (3.20)–(3.21)).
+
+## Tadmor's path-integral flux
+
+Tadmor's entropy-conservative flux integrates the physical flux along the
+straight segment between the two states in entropy variables,
+
+$$f^{\mathrm{ec}}_{i+1/2}=\int_0^1f\big(u(w_i+\xi(w_{i+1}-w_i))\big)\,d\xi$$
+
+(Tadmor (1987), a second-order locally conservative finite volume, also
+considered by Jameson, as recalled by
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md), §2.4, Eq. (21); the review
+writes it in Harten's entropy variables $\partial(\rho g(s))/\partial u$, i.e.
+$-w$ for the entropy $\eta=-\rho g(s)$; the segment is the straight segment
+of the registry's $w$ for $\eta=-\rho s/(\gamma-1)$ only when $g$ is affine in
+$s$, which the review's $g=\beta\exp(s/(\beta(\gamma-1)))$ is not, so the flux
+depends on the entropy chosen). With $w$ and $\psi$ those of the entropy
+used, it satisfies Tadmor's condition: since $\psi'(w)=f(u(w))$,
+$[\![w]\!]\cdot f^{\mathrm{ec}}=\int_0^1\frac{d}{d\xi}\psi\big(w_i+\xi[\![w]\!]\big)\,d\xi=[\![\psi]\!]$
+*(compiler check, not in the sources)*. The review calls it "rather
+expensive": it needs the entropy variables of both states and a quadrature
+of the integral; more general entropy-consistent fluxes are in Tadmor
+(2003) (§2.4). The closed-form fluxes below avoid the quadrature. In the
+review's zero-viscosity isotropic-turbulence comparison the second-order
+Tadmor scheme (T2) helps conserve kinetic energy and entropy at turbulent
+Mach number 0.07 but "exhibits larger errors over long times", without
+divergence, and at 0.3 it is one of the only two schemes (with the
+Kennedy–Gruber split form K6) that do not fail at large times (§2.5, Fig. 1;
+[compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)).
 
 ## Role in DG
 
@@ -92,6 +120,15 @@ $$\begin{aligned}
 f_\rho&=\{\!\{\rho\}\!\}\{\!\{v\cdot n\}\!\},\qquad f_{\rho v}=f_\rho\{\!\{v\}\!\}+\{\!\{p\}\!\}\,n,\\
 f_E&=f_\rho\tfrac12(\!(v;v)\!)+\frac{\{\!\{p\}\!\}\{\!\{v\cdot n\}\!\}}{\gamma-1}+(\!(p;v\cdot n)\!).
 \end{aligned}$$
+
+The flux is the face-flux set of the KEEP-PE scheme of
+[Shima et al. (2021)](/sources/shima-2021.md) (Table 2, Eq. (17);
+[KEEP and KEEP-PE schemes](/methods/keep-scheme.md)), introduced for
+second-order central schemes on Cartesian grids; the directional DG reading
+is Ranocha et al.'s *(compiler check, not in the sources: term-by-term
+comparison with Table 2)*. Shima et al. do not claim entropy conservation:
+in their inviscid Taylor–Green vortex KEEP-PE loses slightly more total
+entropy than KEEP (§2.2.3, §3.2, Fig. 2b).
 
 **Ranocha flux** (EC, kinetic-energy- and pressure-equilibrium-preserving;
 the "expensive" flux; Eq. (3.10)):
@@ -166,15 +203,19 @@ stated, not tested. The splittings are on
 build a second-order central scheme for a diffuse-interface five-equation
 two-phase model from face fluxes chosen to satisfy kinetic-energy,
 mass-summation, interface-equilibrium and pressure-work consistency
-conditions (§3, Eq. (58)). In this page's notation, with $\{\!\{\cdot\}\!\}$
+conditions (§3, Eq. (58)); "KEEP flux" on this page denotes these face
+fluxes, as Jain & Moin call them, while the KEEP scheme of Kuya et al. and
+its variant KEEP-PE are on [KEEP and KEEP-PE schemes](/methods/keep-scheme.md).
+In this page's notation, with $\{\!\{\cdot\}\!\}$
 the two-point average, their single-phase part is
 
 $$f_\rho=\{\!\{\rho\}\!\}\{\!\{v\}\!\},\quad f_{\rho v}=f_\rho\{\!\{v\}\!\}+\{\!\{p\}\!\},\quad f_E=f_\rho\tfrac12(\!(v;v)\!)+\{\!\{\rho e\}\!\}\{\!\{v\}\!\}+(\!(p;v)\!),$$
 
 with $\rho e$ the internal energy per unit volume. For an ideal gas,
 $\rho e=p/(\gamma-1)$ and $\{\!\{\rho e\}\!\}=\{\!\{p\}\!\}/(\gamma-1)$, so this is the
-Shima et al. flux above *(compiler check, not in the sources: neither
-source compares the two)*. Jain & Moin call the scheme kinetic-energy-
+Shima et al. flux above, i.e. the
+[KEEP-PE](/methods/keep-scheme.md) set *(compiler check, not in the
+sources: neither source compares the two)*. Jain & Moin call the scheme kinetic-energy-
 and entropy-preserving, but its entropy conservation is the approximate
 conservation of the physical phase entropies observed in their tests,
 not Tadmor's condition; they also call Chandrashekar's flux an
@@ -227,7 +268,7 @@ and of $e$ in $f_{\rho e}$, all with $f_{\rho v}=f_\rho\{\!\{v\}\!\}$:
 | Aρ-Ge | $\{\!\{\rho\}\!\}\{\!\{v\}\!\}$ | $f_\rho\{\!\{e\}\!\}_{\mathrm G}$ | KEP, not PEP |
 | Gρ-Ge | $\{\!\{\rho\}\!\}_{\mathrm G}\{\!\{v\}\!\}$ | $f_\rho\{\!\{e\}\!\}_{\mathrm G}$ | KEP and PEP |
 | Aρ-He (new) | $\{\!\{\rho\}\!\}\{\!\{v\}\!\}$ | $f_\rho\{\!\{e\}\!\}_{\mathrm H}$ | KEP and PEP |
-| Aρ-Ap | $\{\!\{\rho\}\!\}\{\!\{v\}\!\}$ | $\{\!\{v\}\!\}\{\!\{p\}\!\}/(\gamma-1)$ | KEP and PEP (KEEP-PE of Shima et al.) |
+| Aρ-Ap | $\{\!\{\rho\}\!\}\{\!\{v\}\!\}$ | $\{\!\{v\}\!\}\{\!\{p\}\!\}/(\gamma-1)$ | KEP and PEP ([KEEP-PE](/methods/keep-scheme.md) of Shima et al.) |
 
 (Eqs. (3), (4), (9), (10), (15)). PEP is
 [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
@@ -683,6 +724,8 @@ Table 2).
 
 # Citations
 
+- [Shima et al. (2021)](/sources/shima-2021.md) — §2.2.3 Eq. (17), Table 2, §3.2 Fig. 2b.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.4 Eq. (21), §2.5 Fig. 1.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — Defs. 2.4–2.5, §2, §3.1 Algorithms 1–3 Eqs. (3.3)–(3.6), §3.2 Eqs. (3.7)–(3.11), §4.2 Table 2, §7.2 Fig. 6.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1, §4, §5.1 Eqs. (39)–(40), §5.2, §5.3.
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §5.2 Observation 7, §5.4, Table 1.

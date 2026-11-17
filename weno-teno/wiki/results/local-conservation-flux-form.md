@@ -5,7 +5,7 @@ description: "Coppola and Veldman prove that a banded periodic matrix has vanish
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-11-17T08:43:20Z
 ---
 
 # Local conservation is equivalent to a flux form
@@ -71,6 +71,29 @@ $(I-\mathcal T^{-1})\tfrac12(I+\mathcal T)=\tfrac12(\mathcal T-\mathcal T^{-1})$
   column-sum assumption. For skew-symmetric $D$ this makes global
   kinetic-energy conservation local as well
   ([kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
+- **Closed-form fluxes of split central schemes.** On uniform grids
+  [Pirozzoli (2010)](/sources/pirozzoli-2010.md) gives the face flux of every
+  explicit central split derivative in closed form, a double sum of two-point
+  products of arithmetic means, for the Feiereisen and Blaisdell splits and for
+  the Kennedy–Gruber split at its kinetic-energy-preserving weights (§2,
+  Eqs. (11)–(17); [conservative split central derivative](/operators/conservative-split-derivative.md)).
+  It is an explicit instance of Lemma A.1 for these operators, derived by
+  telescoping the elementary differences rather than from column sums
+  *(compiler check, not in the sources)*. Pirozzoli stresses the consequences:
+  automatic global conservation of mass, momentum and energy and the
+  applicability of the [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)
+  when the scheme is the smooth branch of a hybrid (§1, §4).
+  [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) writes the Kennedy–Gruber split
+  on curvilinear meshes in the same flux form, "entirely equivalent to (but
+  computationally less expensive than)" the split derivative form, and lists
+  three gains: global conservation of mass, momentum and total energy by
+  telescoping, simple insertion into existing conservative solvers, and
+  straightforward hybridization with shock capturing (§2.3, Eqs. (24)–(30);
+  [kinetic-energy-preserving split forms in curvilinear coordinates](/methods/curvilinear-kinetic-energy-preserving-split-forms.md)).
+  [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) defines local discrete
+  conservation as the "property of a numerical scheme that allows the definition
+  of a numerical flux" and recommends it in all cases, at "no extra cost" (§2,
+  §6).
 
 ## The same structure in nodal DG
 
@@ -266,10 +289,56 @@ for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18
   (Observation 2, §2.5). In tests it degrades fourth-order central and
   second-order dual-sided schemes to roughly first order (§7.2, Fig. 1).
   This is a question of accuracy, not of conservation.
+- **Compact operators.** Pirozzoli (2010, §4) writes that "apparently, a
+  conservative formulation cannot be arrived at" when the explicit central
+  operators of a split form are replaced by compact ones, and expects problems
+  with the conservation of linear invariants; the review repeats it
+  (Pirozzoli (2011a), §2.3). Neither proves it. For the unsplit compact derivative
+  the review itself gives the implied flux
+  ([conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)).
+
+## Contradictions
+
+**Conservation of split forms on non-uniform grids.** *Open.*
+
+- [Pirozzoli (2010)](/sources/pirozzoli-2010.md), §3.2: "As pointed out by Ducros
+  et al. [2000], a fully conservative finite-difference discretization using the
+  split form of the convective derivatives is not possible on a mesh with
+  variable spacing." §4: "although local conservation cannot be proved on
+  non-uniform grids, the algorithms work out very well in practice." On the
+  stretched wall-normal grid of the boundary-layer DNS the paper uses "the chain rule to
+  approximate spatial derivatives, and ... conservative discretization in
+  computational space" (§3.2), and the abstract reads the run as indicating the
+  "suitability of the method for non-uniform grids".
+- [Coppola & Veldman (2023)](/sources/coppola-2023.md) derive explicit numerical
+  fluxes "in all finite-difference formulations for which global conservation is
+  guaranteed, even for non-uniform Cartesian meshes" (abstract): on periodic,
+  possibly non-uniform grids, split discretizations conserve mass, momentum and
+  kinetic energy under the duality relations, global conservation is equivalent
+  to local conservation with an explicit face flux (Observation 1, Lemma A.1),
+  and the control volumes $V=\mathrm{diag}(D\mathbf x)$, obtained by the chain rule
+  from a uniform computational grid, keep the order on smoothly stretched grids
+  (§2.5, Eq. (23); §5.3). They describe Pirozzoli's result as solving the problem
+  "for the case of central explicit schemes on uniform meshes" (§1) and their own
+  as extending it to non-uniform grids
+  ([split convective forms](/methods/split-convective-forms.md)).
+- *Compiler's reading (hypothesis, not in the sources; it does not close the
+  entry).* The two sides may differ in what "conservative" means. Pirozzoli's
+  chain-rule discretization, a computational-space flux difference divided by a
+  discrete metric $\delta x$, is the $V=\mathrm{diag}(D\mathbf x)$ case of Coppola &
+  Veldman if the metric is computed with the same central operator, and then
+  conserves the metric-weighted totals $\sum_iV_{ii}\phi_i$ exactly; what
+  Pirozzoli (after Ducros et al.) calls impossible may be conservation of an
+  unweighted physical-space sum, or a flux form in physical space. Neither paper
+  states which sum it means, and Pirozzoli does not say how the metric is
+  computed.
 
 # Citations
 
-- [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §2.4 Eqs. (18)–(22) Observation 1 Remarks 1–2, §2.5 Observation 2, §3.2–3.4 Observations 3, 5 Eqs. (35), (53), App. A Lemma A.1 Eqs. (A.1)–(A.3), Lemma A.3, Corollary A.4, §7.2 Fig. 1.
+- [Coppola & Veldman (2023)](/sources/coppola-2023.md) — abstract, §1, §2.4 Eqs. (18)–(22) Observation 1 Remarks 1–2, §2.5 Eq. (23) Observation 2, §3.2–3.4 Observations 3, 5 Eqs. (35), (53), §5.3, App. A Lemma A.1 Eqs. (A.1)–(A.3), Lemma A.3, Corollary A.4, §7.2 Fig. 1 (arXiv v1).
+- [Pirozzoli (2010)](/sources/pirozzoli-2010.md) — abstract, §1, §2 Eqs. (11)–(17), §3.2, §4.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2 (margin glossary), §2.3, §6.
+- [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) — §2.3 Eqs. (24)–(30).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1 Eqs. (8)–(11).
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2.
 - [Pazner (2021)](/sources/pazner-2021.md) — §4, Props. 8–11, Eqs. (49)–(57) (arXiv v1).

@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a possibly nonlinear s
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-11-01T18:40:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Approximate dispersion relation
@@ -25,7 +25,10 @@ the sources use but do not restate ([Luo & Wu (2021)](/sources/luo-2021-b.md),
 [Huang et al. (2026)](/sources/huang-2026.md), §5.2;
 [Wang et al. (2021)](/sources/wang-2021.md), §4;
 [Bezgin et al. (2022)](/sources/bezgin-2022.md), §4.8;
-[Hiejima (2022)](/sources/hiejima-2022.md), Appendix).
+[Hiejima (2022)](/sources/hiejima-2022.md), Appendix;
+[Fu et al. (2019d)](/sources/fu-2019-d.md), §IV.C). The review of
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.5) refers to the same paper for "the
+impact of nonlinearities on the behavior of shock-capturing schemes in Fourier space".
 
 ## Linear schemes and the sign convention
 
@@ -47,6 +50,13 @@ anti-dissipated, when $\tilde\vartheta_i>0$.)* The same convention is used by
 [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.3, for THINC). All
 chunk-1 sources agree on this sign, none uses the opposite one, and
 [Li, Chen & Ren (2022a)](/sources/li-2022.md) (§2.1, Eqs. (8)–(15)) use it too.
+[Fu et al. (2019d)](/sources/fu-2019-d.md) use both signs in one section: their
+Eq. (27) defines the imaginary part as $+\sum_jc_j\cos(j\vartheta)=-\tilde\vartheta_i$, so
+that, after Arshed and Hoffmann, a positive target "corresponds to dissipation, and a
+negative value corresponds to antidissipation", while their Eq. (39), the remark after it
+("a negative value corresponds to positive numerical dissipation"), the $-\tilde\vartheta_i$
+in the denominator of Eq. (40) and their Fig. 2 use the registry's sign. A reader of that
+paper translates Eq. (27) with a sign change and the rest directly (§IV.A–C).
 
 **A scheme with decoupled dispersion and dissipation.** The fourth-order
 six-point MDCD flux of Sun et al. (2011), as used by
@@ -169,14 +179,15 @@ Fu 2023)
 $$E=\int_0^\pi e^{\sigma(\pi-\vartheta)}\big(\tilde\vartheta_r-\vartheta\big)^2\,d\vartheta ,$$
 
 with a page-local weight $\sigma>0$ that trades low against high wavenumbers
-(Fu 2021 does not print the value used). The $b_j$ follow from an order
+(Fu 2021 does not print the value used; $\sigma=6$ for TENO6-A below). The $b_j$ follow from an order
 constraint plus the dispersion-to-dissipation condition attributed to Hu et al.,
 which both Fu papers call "the approximate dispersion relation":
 
 $$\zeta=\frac{\big\lvert d\tilde\vartheta_r/d\vartheta-1\big\rvert}{-\tilde\vartheta_i}\approx O(10)$$
 
 ($\zeta$ page-local; Fu 2021 prints the numerator without the absolute value,
-[Fu, Hu & Adams (2016)](/sources/fu-2016.md) (§4.1, Eq. (30)) and Fu 2023 with it; Fu et al. (2016)
+[Fu et al. (2016)](/sources/fu-2016.md) (§4.1, Eq. (30)), [Fu et al. (2019d)](/sources/fu-2019-d.md)
+(§IV.B, Eq. (40)) and Fu 2023 with it; Fu et al. (2016)
 take it "for the non-resolved wave-number range", state that its application to nonlinear
 schemes "is fairly straightforward" although it comes from a linear analysis, and plot the same
 regularized form "approximately" in their Fig. 5; Fu 2023 plots the regularized form
@@ -189,6 +200,47 @@ whereas symmetric stencils let dispersion and dissipation be optimized
 separately once the order constraint is relaxed; this is why its TENO8-AA and
 TENO10-AA linear schemes are of order 6 and 8 rather than 8 and 10 (see
 [adaptive TENO](/methods/adaptive-teno.md)).
+
+**The first printed split: TENO6-A.** The split appears with numbers for the six-point
+background of TENO6-A ([Fu et al. (2019d)](/sources/fu-2019-d.md), §IV.B, Eqs. (31)–(40),
+"following" Fu et al. 2017; see [adaptive TENO](/methods/adaptive-teno.md)): $n=3$; the
+$a_j$ from $G_1=1$, $G_2=0$ (the coefficients $G_\ell$ of Zhang et al. below; "fourth-order
+accuracy") and $\partial E/\partial a_3=0$ with $\sigma=6$ over $[0,\pi]$; the $b_j$ from
+the vanishing coefficients of $f$, $\Delta xf''$ and $\Delta x^3f^{(4)}$ ("fifth-order accuracy"
+of the dissipative part) with $b_0$ free, which leaves
+$$\tilde\vartheta_i=\tfrac25\,b_0(\cos\vartheta-1)^3,$$
+dissipative "for all wave numbers" and monotone non-increasing for $b_0>0$ (Eq. (39));
+$b_0=0.025$ from $\zeta\approx O(10)$. *(Compiler check, not in the sources: the solution is
+$a_1=0.8030303802$, $a_2=-0.1924243041$, $a_3=0.0272727427$, $b_1=-\tfrac34b_0$,
+$b_2=\tfrac3{10}b_0$, $b_3=-\tfrac1{20}b_0$, so $D_{\mathrm{diss}}=-\frac{b_0}{20\Delta x}\delta^6$, a
+sixth undivided difference (the eight-point background of Liang & Fu below has the
+eighth); its TENO6 weights reproduce the printed $d_k$ to $2\times10^{-15}$. The symbol is
+the MDCD one above with $c_{\mathrm{disp}}=2a_3=0.0545$ and $c_{\mathrm{diss}}=b_0/10=0.0025$,
+because the six-point fourth-order split family is the two-parameter MDCD family. The
+linear $\zeta$ is 26.8, 19.8, 35.5 and 44.2 at $\vartheta=1$, 1.5, 2 and $\pi$, of order 10
+only as an order of magnitude, and the 1% bandwidth is 1.052, equal to the 1.052
+that Zhang et al. (2024b) report for TENO6-A.)*
+
+**A joint objective with an anti-dissipative target.** The five-point background of
+TENO5-A is not split but optimized jointly ([Fu et al. (2019d)](/sources/fu-2019-d.md),
+§IV.A, Eqs. (26)–(27), "following" Arshed and Hoffmann): with the operator coefficients
+$c_j$, $j=-3,\dots,2$, written through the three linear weights, they minimize
+$$E=\int_0^{\pi/2}e^{\sigma(\pi-\vartheta)}\Big[\lambda_{\mathrm{AH}}(\tilde\vartheta_r-\vartheta)^2+(1-\lambda_{\mathrm{AH}})\big(\tilde\vartheta_i+\alpha_{\mathrm{AH}}\sin^{\mu_{\mathrm{AH}}}(\vartheta/2)\big)^2\Big]d\vartheta$$
+(written in the registry's sign; page-local $\lambda_{\mathrm{AH}}$, $\alpha_{\mathrm{AH}}$,
+$\mu_{\mathrm{AH}}$ for the blend weight, the target amplitude and its exponent) with
+$\lambda_{\mathrm{AH}}=0.5$, $\sigma=10.5$, $\mu_{\mathrm{AH}}=1$ and $\alpha_{\mathrm{AH}}=-0.0011$.
+A negative $\alpha_{\mathrm{AH}}$ introduces "very little antidissipation", a "tiny positive hump"
+at moderate wavenumbers, and delays the dissipation "to wave numbers at which the dispersion
+error is large"; the weights are $d=(0.5065006634,0.3699651429,0.1235341937)$ in TENO labels,
+third order. *(Compiler check, not in the sources: the background is anti-dissipative,
+$\tilde\vartheta_i>0$, on $0<\vartheta<1.016$ with maximum $2.59\times10^{-3}$ at $\vartheta=0.817$;
+its 1% bandwidth is 1.267 against 1.100 for the fifth-order upwind scheme. The printed weights
+are not reproduced by minimizing $E$ with the printed parameters, under either sign of the
+target term: the minimizers differ by about $0.02$–$0.05$ in $d_0$.)* Fu et al. (2016)
+had counted Arshed and Hoffmann's WENO-BO among the schemes that "apparently fail to
+satisfy" the relation because of such anti-dissipation (below); the TENO5-A paper adopts
+it on purpose and concludes that a background "with built-in antidissipation in a certain
+wave number range" suits compressible gas dynamics and turbulence (§VI).
 
 **The founding blend of two sub-schemes.** Before this split, the founding TENO paper
 optimized the background differently ([Fu et al. (2016)](/sources/fu-2016.md), §4, Eqs. (31)–(33),
@@ -440,7 +492,9 @@ supply the dissipation at shocks, so the critique and those uses concern
 different roles of the same condition.)*
 
 **Two meanings of the name.** In the Fu papers "approximate dispersion relation"
-names the condition on $\zeta$; in Pirozzoli's usage, followed by Luo & Wu,
+names the condition on $\zeta$ (Fu et al. 2019d use both senses, the condition in
+§IV.B with a footnote to Hu et al., the spectrum of a nonlinear scheme "following"
+Pirozzoli in §IV.C); in Pirozzoli's usage, followed by Luo & Wu,
 Li et al. (2022b), Deng, Huang et al. (2026), Wang et al. (2021), Bezgin et al., Hiejima, Hong et al.,
 Wan & Xia and Li, Chen & Ren, it names the numerically evaluated
 $\tilde\vartheta(\vartheta)$ of a nonlinear scheme. The two are compatible (the
@@ -458,7 +512,11 @@ is meant.
   wavenumbers: the five-point linear scheme is recovered "up to wave numbers 1.75, 1.85 and 1.95"
   for $C_T=10^{-5}$, $10^{-6}$ and $10^{-7}$; WENO-CU6 departs from its linear scheme at 1.2 and
   TENO6 "significantly" later, with WENO-CU6-M the least dispersive and dissipative of the six-point
-  schemes ([Fu et al. (2016)](/sources/fu-2016.md), §§3.2–3.3, Figs. 3–4). The same property
+  schemes ([Fu et al. (2016)](/sources/fu-2016.md), §§3.2–3.3, Figs. 3–4). For the adaptive
+  TENO5-A and TENO6-A, both schemes "recover the exact spectral properties of the underlying
+  optimum schemes up to wave number 1.7", WENO-CU6 departs from its own "at a very low wave
+  number", and TENO6-A is less dissipative than WENO-CU6 "for all wave numbers"
+  ([Fu et al. (2019d)](/sources/fu-2019-d.md), §IV.C, Fig. 2). The same property
   is stated without a new ADR computation by
   [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.2). See
   [targeted ENO](/methods/targeted-eno.md).
@@ -669,13 +727,24 @@ is meant.
   underlying linear scheme" as contrary to the view, attributed to Pirozzoli,
   that nonlinear shock-capturing mechanisms always degrade spectral
   properties; the mechanism is negative nonlinear dissipation (see
-  [numerical dissipation](/definitions/numerical-dissipation.md)).
+  [numerical dissipation](/definitions/numerical-dissipation.md)). The view is stated in
+  [Pirozzoli (2011a)](/sources/pirozzoli-2011.md): of WENO schemes and their variants, "spectral-like resolution
+  is never achieved owing to the noxious effect of the nonlinear weights, unless the weights
+  are locally frozen in smooth regions" (§3.1, after Hill & Pullin and Taylor et al.), and "the nonlinear features have a dramatic
+  impact on the performance of numerical schemes, and their actual behavior may be quite
+  different from linear predictions", with seventh-order WENO "substantially poorer" (more
+  dissipative) than its linearized upwind scheme (§3.5, Fig. 1). The two claims differ:
+  the review's concerns spectral-like resolution on broadband data, Luo & Wu's the error
+  against UD5 on a smooth test, so they stand side by side as positions, not as a
+  contradiction.
 
 # Citations
 
-- [Fu, Hu & Adams (2016)](/sources/fu-2016.md) — §§3.2–3.3, Figs. 3–4; §4, Eqs. (30)–(33), Tables 3–4, Figs. 5–9: TENO spectra against $C_T$, $\zeta\approx O(10)$, blended optimized backgrounds.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §§3.2–3.3, Figs. 3–4; §4, Eqs. (30)–(33), Tables 3–4, Figs. 5–9: TENO spectra against $C_T$, $\zeta\approx O(10)$, blended optimized backgrounds.
 - [Fu (2021)](/sources/fu-2021.md) — §3.1, §4.1, Eqs. (20)–(24): splitting, error integral, $\zeta\approx O(10)$.
 - [Fu (2023)](/sources/fu-2023.md) — §2.5, Eqs. (12)–(16), Figs. 2–3: sign convention, TENO spectra.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §IV, Eqs. (26)–(40), Fig. 2: Arshed–Hoffmann objective of TENO5-A, dispersion/dissipation split of TENO6-A, both signs of the imaginary part, spectra of TENO5-A, TENO6-A and WENO-CU6.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1; §3.5, Fig. 1: nonlinear weights against spectral-like resolution; pointer to Pirozzoli (2006).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §§3–4, Figs. 1–4: Pirozzoli ADR, negative dissipation of WENO-Z+.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §3.3(3), Fig. 2: WENO-ZN spectra.
 - [Li et al. (2023b)](/sources/li-2023-b.md) — §3.1–3.4, Eqs. (16)–(27), (38)–(50), Figs. 2–3, 8–11: RK3 fully discrete errors, fully discrete integrated error and dispersion–dissipation ratio, ADADF spectra.

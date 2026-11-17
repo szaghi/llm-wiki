@@ -19,7 +19,7 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** 13 chunks ingested (219 of 223 archive works; feng-2026, li-2024 and wu-2023
+**Corpus:** 14 chunks ingested (226 of 230 archive works; feng-2026, li-2024 and wu-2023
 await a re-download, and an erratum awaits its parent paper, see `INGESTION-ISSUES.md`). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
@@ -108,7 +108,12 @@ index lists what is in; a whole-bundle deep lint closed the archive. Chunk 12 (a
 [Zhang et al. (2026a)](/sources/zhang-2026.md), sixth-order finite-volume HWENO with adaptive linear weights of
 [Zhang et al. (2026b)](/sources/zhang-2026-b.md), compact HWENO for degenerate parabolic equations of
 [Yang & Qiu (2026)](/sources/yang-2026.md), ADER-HWENO on triangles of [Luo et al. (2026)](/sources/luo-2026.md) —
-and the transport polynomial exactness of moving meshes of [Cai et al. (2026)](/sources/cai-2026.md).
+and the transport polynomial exactness of moving meshes of [Cai et al. (2026)](/sources/cai-2026.md). Chunk 14 (added
+2026-11-17): founding and older papers on central and hybrid schemes — the Ducros sensor of
+[Ducros et al. (1999)](/sources/ducros-1999.md), the conservative split derivatives of [Pirozzoli (2010)](/sources/pirozzoli-2010.md),
+the high-speed-flow review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md), the curvilinear kinetic-energy-preserving forms of
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md), the TENO discontinuity indicator and hybrid of [Fu (2019b)](/sources/fu-2019-b.md),
+TENO5-A and TENO6-A of [Fu et al. (2019d)](/sources/fu-2019-d.md) and KEEP-PE of [Shima et al. (2021)](/sources/shima-2021.md).
 
 ## Reading guide
 
@@ -157,7 +162,8 @@ values instead of reconstructing fluxes, as do the
 
 **2. TENO and interface sharpening.** [Targeted ENO](/methods/targeted-eno.md)
 replaces weighting by a sharp cut-off; [adaptive TENO](/methods/adaptive-teno.md)
-and [AFTENO](/methods/afteno.md) extend it.
+and [AFTENO](/methods/afteno.md) extend it, and the
+[TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md) turns its cut-off into the switch of hybrid schemes.
 [THINC reconstruction](/methods/thinc-reconstruction.md) and the
 [boundary variation diminishing](/definitions/boundary-variation-diminishing.md)
 principle lead to [TENO-THINC](/methods/teno-thinc.md). The compact-stencil view
@@ -203,7 +209,9 @@ non-conservative systems, with
 [numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
 and [symmetry preservation](/properties/symmetry-preservation.md); the
 [Ducros shock sensor](/definitions/ducros-shock-sensor.md) switches hybrid schemes,
-as in [wall-modelled large-eddy simulation](/methods/wall-modeled-les.md).
+as in [wall-modelled large-eddy simulation](/methods/wall-modeled-les.md);
+[implicit large-eddy simulation](/definitions/implicit-large-eddy-simulation.md) lets the scheme's dissipation act as the subgrid model, and
+[compact low-pass filters](/methods/compact-low-pass-filter.md) stabilize central schemes.
 
 **5. Discontinuous Galerkin and structure preservation.** The
 [discontinuous Galerkin method](/methods/discontinuous-galerkin.md) and
@@ -221,13 +229,16 @@ and [flux reconstruction](/methods/flux-reconstruction.md) with its code
 posteriori; on the
 finite-difference side, [split convective forms](/methods/split-convective-forms.md)
 give [kinetic energy preservation](/properties/kinetic-energy-preservation.md)
+(in conservative form through the [conservative split central derivative](/operators/conservative-split-derivative.md),
+on curved meshes through [curvilinear KEP split forms](/methods/curvilinear-kinetic-energy-preserving-split-forms.md))
 and [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)
-(with the [APEC flux](/methods/apec-scheme.md)),
+(with the [KEEP and KEEP-PE schemes](/methods/keep-scheme.md) and the [APEC flux](/methods/apec-scheme.md)),
 and [local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md).
 [Free-stream preservation](/properties/free-stream-preservation.md) on curved
 meshes and its generalization to [transport polynomial exactness](/properties/transport-polynomial-exactness.md) under arbitrary mesh motion; [adaptive moving meshes](/methods/adaptive-moving-mesh.md),
 [hp-adaptation](/methods/hp-adaptation.md) and
-[implicit shock tracking](/methods/implicit-shock-tracking.md) move or refine the mesh;
+[implicit shock tracking](/methods/implicit-shock-tracking.md) move or refine the mesh, the latter against the
+[first-order accuracy behind captured shocks](/results/order-of-accuracy-behind-shocks.md);
 the codes [Trixi.jl](/software/trixi-jl.md), [FLUXO](/software/fluxo.md) and
 [FLEXI](/software/flexi.md).
 
@@ -235,7 +246,8 @@ the codes [Trixi.jl](/software/trixi-jl.md), [FLUXO](/software/fluxo.md) and
 decide where to act; [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
 [convex limiting](/methods/convex-limiting.md), [OEDG](/methods/oedg.md) and
 [COS(DG)](/methods/cos-dg.md),
-[artificial viscosity](/methods/artificial-viscosity.md),
+[artificial viscosity](/methods/artificial-viscosity.md) (with
+[localized artificial diffusivity](/methods/localized-artificial-diffusivity.md)),
 [MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md) (with a subcell
 correction built on the [equivalence of DG and subcell finite volumes](/results/dg-subcell-finite-volume-equivalence.md)),
 [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md),
@@ -347,8 +359,9 @@ and MHD: the [KPP rotating wave](/benchmarks/kpp-rotating-wave.md), the
 Shallow water: [flow over a bump and lake at rest](/benchmarks/flow-over-a-bump.md) and
 [dam-break problems](/benchmarks/dam-break-problem.md).
 Turbulence: [compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md),
-[turbulent channel flow](/benchmarks/turbulent-channel-flow.md) and the
-[supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md).
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md), the
+[supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md) and
+[shock–turbulence interaction](/benchmarks/shock-turbulence-interaction.md).
 
 ## Catalog
 

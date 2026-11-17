@@ -5,7 +5,7 @@ description: "APEC is a fully conservative kinetic-energy-preserving central flu
 status: established
 aliases: [APEC, approximately pressure-equilibrium-preserving with conservation, PEqC, pressure equilibrium with quasi-conservation, FC-NPE]
 tags: [kinetic-energy-preserving, central-scheme, finite-difference, multiphase, numerical-flux]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-11-17T08:26:01Z
 ---
 
 # APEC flux for approximate pressure equilibrium
@@ -139,6 +139,15 @@ The order refers to the equilibrium residual, not to the scheme.
   recovers Fujiwara's arithmetic internal-energy value (§3.1, Eqs.
   (60)–(61)). The authors "speculate" that Fujiwara's species value makes
   the scheme solve Abgrall's $\gamma$-transport implicitly.
+- **Relation to KEEP-PE.** Apart from the internal-energy face value, the
+  APEC fluxes of the table are those of the KEEP and KEEP-PE schemes of
+  [Shima et al. (2021)](/sources/shima-2021.md) (Tables 1–2), written with
+  partial densities. For one calorically perfect species,
+  $\rho e=p/(\gamma-1)$ does not depend on the density at fixed pressure, so
+  $\mathsf e_1=0$, the correction in Eq. (25) vanishes, and APEC and FC-NPE
+  both reduce to the [KEEP-PE scheme](/methods/keep-scheme.md), which is
+  exactly pressure-equilibrium preserving *(compiler check, not in the
+  sources)*.
 
 ## Evidence
 
@@ -196,5 +205,6 @@ advected periodically
 
 # Citations
 
+- [Shima et al. (2021)](/sources/shima-2021.md) — §2.2.3 Eq. (17), Tables 1–2.
 - [Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) — §1, §2.2–2.8 Eqs. (6)–(40), §2.10 Eq. (48), §2.11 Eqs. (53)–(56), §3.1 Eqs. (57)–(61) Figs. 1–5, §3.2 Figs. 6–14, §4, App. A Eq. (A.4), App. B.
 - [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — §2.3, §3 (the compatibility condition and the exact ideal-gas half-point values APEC is compared with).

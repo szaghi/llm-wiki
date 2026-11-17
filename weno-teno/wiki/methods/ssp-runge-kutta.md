@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-11-01T18:56:00Z
+timestamp: 2026-11-17T08:44:05Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -56,6 +56,7 @@ with it:
 | [Liu et al. (1994)](/sources/liu-1994.md) | FV WENO, $r=2$ with this scheme, $r=3$ with a fourth-order TVD RK | $\Delta t/\Delta x=0.8$ (advection), 0.6 (Burgers, Euler smooth data), 0.4 and 0.2 (Sod, Lax) (§4) |
 | [Jiang & Shu (1996)](/sources/jiang-1996.md) | FD WENO-JS | 0.4 on the composite advection (0.2 with artificial compression); $\Delta t=0.6\Delta x$ with classical RK4 on most Euler problems (§8) |
 | [Borges et al. (2008)](/sources/borges-2008.md) | FD WENO-JS, WENO-M, WENO-Z | 0.4, with $\Delta t$ "bounded by $\Delta x^{5/3}$" (§5) |
+| [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) | second-order TVD (van Leer limiter), WENO5, WENO7 and hybrid compact/WENO on 2D Riemann configuration 13, $\Delta x=\Delta y=1/1200$ | 0.6 (Fig. 3); the same third-order SSP scheme, cited to Shu & Osher (1989), in the zero-viscosity isotropic turbulence runs (§2.5) |
 | [Fu et al. (2016)](/sources/fu-2016.md) | FD TENO5, TENO6 | 0.6; third-order RK in 1D, second-order "strongly stable" RK in 2D, both cited to a multiresolution paper of Domingues et al. (§5) |
 | [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) | positivity-preserving RKDG, $N=2$ | not printed; the stage wave speeds are estimated as 2–3 times those of $u^n$ (Remark 2.7, below) |
 | [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) | DGSEM with subcell limiting | 0.5 (blending recomputed every stage, §5) |
@@ -273,6 +274,17 @@ these "should not be used even if the problem is steady state".
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) (§3.2, Alg. 3) filter after every
   stage and compute the local minimum-entropy bound from the previous stage, which keeps the
   forward-Euler argument stage by stage ([entropy filtering](/methods/entropy-filtering.md)).
+
+- **A practitioner's position.** The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md)
+  (§4.2) recalls the forward-Euler transfer in a chosen norm "(e.g., the TV norm)" and that SSP
+  schemes have been argued "safer" with shocks (Shu 1997), and then states: "In the author's
+  experience, and as confirmed by inspection of the literature on the subject, standard Runge-Kutta
+  time integration will work out just as fine for most typical DNS and LES applications"; it names
+  optimized low-dissipation, low-dispersion Runge–Kutta methods (Hu et al. 1996), their low-storage
+  form (Stanescu & Habashi 1998) and later optimizations (Bogey & Bailly 2004, Berland et al. 2006,
+  Bernardini & Pirozzoli 2009) as alternatives. The statement concerns practice in DNS and LES and
+  stands beside, not against, the provable transfers of this section, which are what the
+  bound-preserving schemes above need.
 
 - [Lin & Chan (2024)](/sources/lin-2024.md) (footnote 7) need SSPRK(3,3) and the CFL
   condition only for positivity; the cell entropy inequality their subcell limiter enforces is
@@ -581,6 +593,7 @@ on transported quadratics ([transport polynomial exactness](/properties/transpor
 # Citations
 
 - [Shu & Osher (1988)](/sources/shu-1988.md) — §II, Eqs. (2.10)–(2.23), Prop. 2.1, Remark 2.1, pp. 7–14; §III, p. 22; §IV, Ex. 3 (ICASE Report 87-33).
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.5; §3.1, Fig. 3; §4.2 (review).
 - [Liu et al. (1994)](/sources/liu-1994.md) — §2, p. 202; §4.
 - [Jiang & Shu (1996)](/sources/jiang-1996.md) — Eqs. (1.3)–(1.4); §6, Theorem 6.1, Table 5; §8 (author preprint).
 - [Borges et al. (2008)](/sources/borges-2008.md) — §5, Eq. (43).

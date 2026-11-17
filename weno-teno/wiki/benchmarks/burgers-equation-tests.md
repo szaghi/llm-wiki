@@ -5,7 +5,7 @@ description: "The inviscid Burgers equation as test bed: 1D to 3D sine data for 
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-11-01T18:54:00Z
+timestamp: 2026-11-17T08:43:44Z
 ---
 
 # Burgers equation tests
@@ -40,6 +40,7 @@ that reduce exactly to Burgers.
 | [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.1 | $u_0=\sin(2\pi x)+2$ | $[0,1]$, periodic | — | $0.5$, $\mathbb P^4$ on 15 and $\mathbb P^{14}$ on 5 elements |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.2 | $u_0=\sin(2\pi x)$, flux printed $u^2$ | $[0,1]$ | — | $0.3$, 80 elements |
 | [Sousa & Scalo (2022)](/sources/sousa-2022.md) §2.3 | $u_0=1+\tfrac12\sin(\pi x)$ | $[-1,1]$, periodic | — | $1$, Fourier pseudo-spectral, 128 points, RK4 |
+| [Fu (2019b)](/sources/fu-2019-b.md) §6.2, Eq. (6.4) | $u_0=0.5+\sin(\pi x)$ | $[0,2]$, periodic | — | $1.5/\pi$, 100 and 200 cells; troubled-cell flags |
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 5 | $u_0=0.5+\sin(\pi x)$ | $[0,2]$, periodic | $0.15$, 20–320 cells | $0.5$, 20 and 40 cells, reference WENO-JS on 10000 |
 | [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) §4.4 | $u_0=\sin(2\pi x)\sin(2\pi y)+0.1$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, boundary conditions not stated | $0.05$, AMR | $0.2$, $0.6$, $1.0$, AMR levels 3–5 |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.2 | $u_0=0.25+0.5\sin(\pi x)$ | $[-1,1]$, periodic, boundary closures kept active | $0.3$, 40–640 points | $4$, $7.9$, $8.1$, 200 points |
@@ -302,6 +303,17 @@ without spurious oscillations on 80 elements with ANN-predicted
 viscosity, whose peak decreases with the degree; a slight asymmetry of
 the viscosity is attributed to the randomness of the training samples
 (§5.2, Figs. 5–6).
+
+**Troubled-cell flags.** [Fu (2019b)](/sources/fu-2019-b.md) (§6.2,
+Figs. 5–6) run the shocked sine as the first nonlinear test (after linear
+advection, §6.1) of their
+[hybrid](/methods/hybrid-weno.md) fifth-order upwind/TENO6 scheme. Here
+the monotonicity-preserving indicator does best, keeping the solution
+monotone and flagging the fewest cells; the
+[TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)
+flags two cells more at $t=1.5/\pi$ on 100 cells; the TVB indicator lets
+oscillations through for $M_{\mathrm{TVB}}=10$, 100 and 1000 alike
+([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 
 **A posteriori subcell correction.** Vilar & Abgrall use the
 two-dimensional data, with its two stationary shocks, to compare two
@@ -859,3 +871,4 @@ going from 5.6338 % to 0 % (Table 4).
 - [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.1, Table 1; Ex. 6.12, Fig. 13; Thm. 2.1.
 - [Liu et al. (2026)](/sources/liu-2026.md) — §5.1.1, §5.1.4, §5.2.1, §5.2.4, Figs. 5.1–5.3, 5.10–5.11 (arXiv v1).
 - [Wang et al. (2026)](/sources/wang-2026.md) — §6.2, Fig. 10, Table 4.
+- [Fu (2019b)](/sources/fu-2019-b.md) — §6.2, Eq. (6.4), Figs. 5–6.

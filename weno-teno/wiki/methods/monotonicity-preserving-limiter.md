@@ -5,7 +5,7 @@ description: "The Suresh–Huynh monotonicity-preserving limiter keeps a high-or
 status: established
 aliases: [MP limiter, MP5, MP3, MP reconstruction, Suresh–Huynh limiter, monotonicity-preserving scheme, monotonicity-preserving reconstruction, improved MP5 limiter, pointwise MP5]
 tags: [limiting, reconstruction, finite-difference, finite-volume, relativistic, mhd]
-timestamp: 2026-10-24T05:42:00Z
+timestamp: 2026-11-17T08:27:46Z
 ---
 
 # Monotonicity-preserving (MP) limiter
@@ -23,7 +23,7 @@ The right state $u^+_{i+1/2}$ follows by mirror symmetry.
 ## The limiter
 
 With $\mathrm{minmod}(a,b)=\tfrac12(\mathrm{sgn}\,a+\mathrm{sgn}\,b)\min(|a|,|b|)$ (page-local $a$, $b$),
-with the multi-argument form zero unless all arguments share one sign and otherwise the argument of least modulus (the sources print only the two-argument form), and a page-local constant $\xi_{\mathrm{MP}}>1$:
+with the multi-argument form zero unless all arguments share one sign and otherwise the argument of least modulus (the Chamarthi-group sources print only the two-argument form; [Fu (2019b)](/sources/fu-2019-b.md), §3.1, Eqs. (3.3)–(3.4), print the multi-argument one after Suresh & Huynh, $\mathrm{minmod}(z_1,\dots,z_k)=s\min(\lvert z_1\rvert,\dots,\lvert z_k\rvert)$ with $s=\tfrac12(\mathrm{sgn}\,z_1+\mathrm{sgn}\,z_2)\big\lvert\tfrac12(\mathrm{sgn}\,z_1+\mathrm{sgn}\,z_3)\cdots\tfrac12(\mathrm{sgn}\,z_1+\mathrm{sgn}\,z_k)\big\rvert$, page-local $z_j$), and a page-local constant $\xi_{\mathrm{MP}}>1$:
 
 1. **Test.** Keep $u^{\mathrm{lin}}_{i+1/2}$ if
    $$\big(u^{\mathrm{lin}}_{i+1/2}-u_i\big)\big(u^{\mathrm{lin}}_{i+1/2}-u^{\mathrm{MP}}\big)\le\varepsilon_{\mathrm{MP}},\qquad
@@ -119,6 +119,27 @@ Chandravamsi et al. (2023, App. E) give neither value.
   Robustness rests on an a priori order reduction that switches flagged cells to WENO3 or piecewise-linear
   reconstruction ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 
+- **As a troubled-cell flag.** [Fu (2019b)](/sources/fu-2019-b.md) (§3.1, Eqs. (3.1)–(3.11)) recalls
+  the limiter with $\xi_{\mathrm{MP}}=2$ in $u^{\mathrm{UL}}$ ("in practice, $\alpha=2$ is recommended"),
+  the large-curvature value written $u_i+\tfrac12(u_i-u_{i-1})+\tfrac\beta3d^{\mathrm M}_{i-1/2}$ with the
+  recommended $\beta=4$ (page-local), i.e. the $u^{\mathrm{LC}}$ above, and the four-argument
+  $d^{\mathrm M}$ for both $u^{\mathrm{MD}}$ and $u^{\mathrm{LC}}$ "following" Suresh & Huynh and Balsara
+  & Shu; the four-argument form "is more restrictive since the room for local extrema to develop is
+  reduced heuristically when the ratio $d_{i+1}/d_i$ is smaller than 1/4 or larger than 4". The test
+  stage is omitted: the clip is the median $u^{\mathrm{lin}}+\mathrm{minmod}(u^{\min}-u^{\mathrm{lin}},u^{\max}-u^{\mathrm{lin}})$
+  of step 4, applied to the interface value of TENO6's linear scheme, and a cell is flagged whenever
+  the clip changes that value, "as indicated in" Qiu & Shu (2005). Fu states the stability condition
+  as CFL $\le1/(1+\xi_{\mathrm{MP}})$, i.e. $1/3$, while running at CFL 0.4; there the limiter only flags
+  and never modifies the solution. The flag fires on constant data unless the change is required to
+  exceed $10^{-10}$ (Eq. (6.8)); it is the best of Fu's three indicators on Burgers and flags far more
+  cells than the TENO switch on the shock tubes, Shu–Osher, 2D Riemann problems and the implosion
+  ([troubled-cell indicators](/definitions/troubled-cell-indicator.md),
+  [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)).
+- **Origin as recalled.** [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.1) recalls Suresh &
+  Huynh (1997) as "an alternative technique to circumvent the loss of accuracy in TVD schemes, based
+  on the enforcement of the monotonicity-preservation constraint at the discrete level"
+  ([total variation diminishing](/definitions/total-variation-diminishing.md)).
+
 - **As a DG limiter.** [Cao et al. (2026)](/sources/cao-2026.md) list the Suresh–Huynh MP limiter and the
   modified MP (MMP) limiter of Rider & Margolin among the limiters that overwrite troubled DG cells, and criticize
   WENO and MP limiters for their wide stencils (§1, §2.1). In their comparisons both run with the KXRCF
@@ -147,3 +168,5 @@ Chandravamsi et al. (2023, App. E) give neither value.
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §3.2; §4.1.1, Tables 1–4; §5.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §1; §3.1–3.2, Eq. (23); §5.1–5.4, §5.6, Tables 1–2, Figs. 6–7 (arXiv v4).
 - [Cao et al. (2026)](/sources/cao-2026.md) — §1; §2.1 (Property 2.1); §6, Figs. 1, 6, 8, 10, 11.
+- [Fu (2019b)](/sources/fu-2019-b.md) — §3.1, Eqs. (3.1)–(3.11); §6, Eq. (6.8), Figs. 5–12, 20–21, 27, 29: MP limiter as a troubled-cell flag.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1: Suresh–Huynh as the alternative to TVD accuracy loss.

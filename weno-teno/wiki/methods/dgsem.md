@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-11-17T08:26:01Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -62,7 +62,7 @@ The choice of the volume flux decides what the DGSEM preserves:
 | volume flux | property | as stated by |
 |---|---|---|
 | central $\{\!\{f\cdot Ja\}\!\}$ | standard DGSEM | Rueda-Ramírez et al. (2022), Eq. (7) |
-| Shima et al. | kinetic energy and pressure equilibrium, not entropy | Ranocha et al. (2023), Eq. (3.7) |
+| Shima et al., the two-point form of the [KEEP-PE](/methods/keep-scheme.md) face fluxes of a second-order central scheme ([Shima et al. (2021)](/sources/shima-2021.md), Table 2) | kinetic energy and pressure equilibrium, not entropy | Ranocha et al. (2023), Eq. (3.7) |
 | Ranocha | entropy, kinetic energy and pressure equilibrium | Ranocha et al. (2023), Eq. (3.10) |
 | Chandrashekar | entropy and kinetic energy | Rueda-Ramírez et al. (2022), §4–5 |
 | Chandrashekar–Klingenberg | entropy (GLM-MHD) | Rueda-Ramírez et al. (2022), §5.3 |
@@ -541,6 +541,7 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
 
 # Citations
 
+- [Shima et al. (2021)](/sources/shima-2021.md) — §2.2.3 Eq. (17), Table 2.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — Ex. 2.3, Eqs. (2.3), (2.5), (2.6), (2.12)–(2.19), (3.7), (3.10), §4 Fig. 1, §6 Fig. 4.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1 Eqs. (2)–(11), §2.2–2.4, §3 Props. 1–2, §5.
 - [Pazner (2021)](/sources/pazner-2021.md) — §2 Eqs. (3)–(15), Props. 1–3, §5 (arXiv v1).

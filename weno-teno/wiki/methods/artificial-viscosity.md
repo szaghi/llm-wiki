@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Artificial viscosity and spectral viscosity"
-description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect, a learned modal decay or a time-evolved SPH-type switch, residual-based finite-element viscosity, spectral and quasi-spectral eddy viscosities, C-function viscosity on moving meshes, a posteriori cellwise viscosity, and modal damping read as dissipation."
+description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the von Neumann–Richtmyer viscosity, the second-order Jameson–Schmidt–Turkel dissipation with a pressure sensor or a Ducros sensor product, the high-order Jameson–Schmidt–Turkel blend, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect, a learned modal decay or a time-evolved SPH-type switch, residual-based finite-element viscosity, spectral and quasi-spectral eddy viscosities, C-function viscosity on moving meshes, a posteriori cellwise viscosity, and modal damping read as dissipation."
 status: established
-aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch]
+aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch, classical JST scheme, modified Jameson dissipation, von Neumann–Richtmyer viscosity]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-17T08:43:53Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -38,7 +38,97 @@ in every cell; the first two need a
 [shock sensor](/definitions/troubled-cell-indicator.md) only to set the
 weight of the low-order part. A further form, a space–time smooth
 viscosity scaled by C-functions on moving meshes, is that of
-[Ramani & Shkoller (2023)](/sources/ramani-2023.md).
+[Ramani & Shkoller (2023)](/sources/ramani-2023.md). The oldest forms, the
+von Neumann–Richtmyer viscosity and the second-order Jameson–Schmidt–Turkel
+dissipation, enter through [Pirozzoli (2011a)](/sources/pirozzoli-2011.md)
+and [Ducros et al. (1999)](/sources/ducros-1999.md), the latter with the
+sensor product that confines it to shocks in large-eddy simulation.
+
+## Von Neumann–Richtmyer and second-order Jameson–Schmidt–Turkel dissipation
+
+**Von Neumann–Richtmyer.** In the original approach, as recalled by
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.3), diffusive terms with
+the viscosity coefficient $\mu^*=c_\mu\rho\Delta x^2\lvert\partial_xv\rvert$
+($c_\mu$ a tunable constant, $\mu^*$ page-local) are added to the momentum and
+energy equations "to spread shock waves to a thickness comparable to the
+local mesh spacing". Spectral vanishing viscosity (Tadmor 1989; Guo et al.
+2001, as recalled there) carries the idea to spectral space (below), and the
+localized artificial diffusivity of Cook & Cabot, which recovers the
+von Neumann–Richtmyer form for its lowest polyharmonic order, to physical space
+([localized artificial diffusivity](/methods/localized-artificial-diffusivity.md)).
+
+**The JST flux.** Jameson, Schmidt & Turkel (1981), as recalled by
+[Ducros et al. (1999)](/sources/ducros-1999.md) (§3, Eqs. (8)–(13)) and by
+Pirozzoli (2011a, §3.3, Eqs. (30)–(32)), add to a second-order central flux
+$\hat f^{\mathrm C}_{i+1/2}$ (page-local) a blend of second- and
+fourth-difference dissipation:
+
+$$\begin{aligned}
+\hat f_{i+1/2}&=\hat f^{\mathrm C}_{i+1/2}-\mathcal D_{i+1/2},\qquad
+\mathcal D_{i+1/2}=a_{i+1/2}\Big[\varepsilon_{2,i+1/2}(u_{i+1}-u_i)-\varepsilon_{4,i+1/2}(u_{i+2}-3u_{i+1}+3u_i-u_{i-1})\Big],\\
+\varepsilon_{2,i+1/2}&=k_2\,\varphi_{\mathrm J,i+1/2},\qquad
+\varepsilon_{4,i+1/2}=\max\big(0,\ k_4-\varepsilon_{2,i+1/2}\big),\\
+\varphi_{\mathrm J,i}&=\Big\lvert\frac{p_{i+1}-2p_i+p_{i-1}}{p_{i+1}+2p_i+p_{i-1}}\Big\rvert,\qquad
+\varphi_{\mathrm J,i+1/2}=\max(\varphi_{\mathrm J,i},\varphi_{\mathrm J,i+1}),
+\end{aligned}$$
+
+with $a_{i+1/2}$ the spectral radius of the flux Jacobian at the face (Roe's
+average in Pirozzoli's recollection), $\varphi_{\mathrm J}$ Jameson's pressure
+sensor, and page-local constants $k_2$, $k_4$ and coefficients
+$\varepsilon_2$, $\varepsilon_4$ (the sources' $k^{(2)}$, $k^{(4)}$,
+$\epsilon^{(2)}$, $\epsilon^{(4)}$; Ducros et al. keep $a_{i+1/2}$ inside the
+coefficients, $\epsilon^{(2)}=k^{(2)}\mathcal R\Psi$, which gives the same
+flux). In Ducros et al.'s finite-volume scheme $\hat f^{\mathrm C}_{i+1/2}=f(\{\!\{u\}\!\}_{i+1/2})$,
+the flux of the mean state. The second-order term acts near shocks, where
+$\varphi_{\mathrm J}$ is large, and switches the fourth-order term off; the
+fourth-order term damps high-frequency modes in smooth regions. Pirozzoli
+gives $k_2\approx1$, $k_4\approx0.01$–$0.05$ and writes the sensor with the
+absolute value of the denominator, $0\le\varphi_{\mathrm J}\le1$, applied to
+pressure for the Euler equations. Sciacovelli et al.'s high-order blend below
+has the same switch-off structure. *(Compiler check, not in the sources: with
+$P=0$ and $k_\varepsilon=1$ it reduces to this flux, with their $\Xi$ in place
+of $\varphi_{\mathrm J}$.)*
+
+**Choice of the coefficients for unsteady shocks.** Following Swanson &
+Turkel, $k_2\varphi_{\mathrm J}\approx0.5$ makes the scalar scheme close to
+first-order upwind. Ducros et al. (§3, pp. 522–523) report
+$\varphi_{\mathrm J}$ "typically around 0.15" for their test case, so the steady-flow value
+$k_2=0.5$ gives $k_2\varphi_{\mathrm J}\approx0.075$ and leaves spurious
+oscillations in unsteady runs; $k_2\varphi_{\mathrm J}\approx0.25$, "half the
+theoretical value", suppresses them, hence $k_2=1.5$, "a nearly TVD-like
+scheme in regions of sharp pressure gradient" (an empirical check, not
+shown). With the sensor product they set $k_4=0$, because the subgrid model damps the
+small-scale oscillations the fourth-order term is meant to remove, and keep
+the second-order term because "the SGS dissipation [is] unable to sustain
+density and pressure discontinuities" (§3).
+
+**The sensor product.** To confine the second-order term to shocks, Ducros
+et al. multiply $\varphi_{\mathrm J}$ by the dilatation–vorticity ratio
+$\Phi_{\mathrm D}$, $\varepsilon_{2,i+1/2}=k_2\max(\varphi_{\mathrm J,i}\Phi_{\mathrm D,i},\varphi_{\mathrm J,i+1}\Phi_{\mathrm D,i+1})$
+(Eqs. (22)–(24); [Ducros shock sensor](/definitions/ducros-shock-sensor.md)).
+The factor is Galilean invariant; the JST dissipation is "no longer Galilean
+invariant due to the artificial viscosity", so the coefficients hold in the
+shock frame (§3, pp. 524–525). *(Compiler check, not in the source: through the spectral radius $\lvert v\rvert+c$, which is not Galilean invariant.)*
+
+**Evidence for LES** (Ducros et al., §4.1, §4.4, §5). On $32^3$ decaying
+compressible turbulence with the filtered-structure-function model, $k_2=1.5$
+with $k_4=0.02$ cuts the energy near the cut-off "by more than a decade";
+with $k_4=0$ the classical second-order term still perturbs the subgrid
+model, most visibly early, when the cut-off energy and hence the subgrid
+dissipation are nearly zero; with the sensor product the LES without
+artificial dissipation is recovered. In 3D shock/turbulence LES the
+standard second-order term is "around 10%" of the subgrid dissipation away
+from the shock and negligible with the sensor product (Fig. 24). Their
+spectral reading of an equivalent incompressible flow (Eq. (29)) is that the
+second-order term acts like $\nu_2k_w^2E_k$ and the fourth-order one like
+$\nu_4k_w^4E_k$ (page-local $\nu_2$, $\nu_4$ for the JST coefficients used
+as viscosities, $E_k(k_w,t)$ the energy spectrum), "which explains why the
+use of the fourth-order dissipation is so crucial for small scales damping and
+can rapidly lead to an over-dissipative behaviour when the coefficient is a
+priori fixed"; Eq. (29) itself prints the fourth-order term divided by
+$k_{w,c}^2$, the squared cut-off wavenumber. The second-order term still damps
+eddies that cross the shock when they are as small as the captured shock
+width ([numerical dissipation](/definitions/numerical-dissipation.md)).
 
 ## High-order Jameson–Schmidt–Turkel dissipation (finite differences)
 
@@ -486,7 +576,11 @@ the magnitude from a filter-residual estimate of the energy at the grid
 cutoff and shapes it in wavenumber with filter residuals, on a sixth-order
 compact central scheme, and is compared with the local artificial
 diffusivity (LAD) of Cook and Kawai–Lele, an artificial shear and bulk
-viscosity and conductivity that needs an explicit filter (§5). At $M=5$,
+viscosity and conductivity that needs an explicit filter (§5). The Cook–Cabot
+formula, its constants and the corrections of Mani et al. and Bhagatwala &
+Lele, as recalled by [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.3,
+Eqs. (33)–(34)), are on
+[localized artificial diffusivity](/methods/localized-artificial-diffusivity.md). At $M=5$,
 $\gamma=1.15$, LAD oscillates and breaks symmetry where QSV does not
 (§5.3).
 
@@ -601,6 +695,21 @@ widths minimum densities 0.5677 (divergence form), 0.6663 (Feiereisen),
 0.6671 (Kennedy–Gruber) and 0.6981 (Div-rot) against the exact 0.5479
 (Figs. B.5–B.6; [split convective forms](/methods/split-convective-forms.md)).
 
+Explicit compact (Padé-type) low-pass filtering of the solution after every
+time step is the usual alternative stabilization of central schemes on
+curvilinear meshes ([compact low-pass filter](/methods/compact-low-pass-filter.md)).
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) applies the eighth-order
+filter with $\alpha_{\mathrm P}=0.495$ (page-local filter parameter), "a minimum
+amount of artificial damping", to all variables at the end of each
+Runge–Kutta cycle of a divergence-form central scheme; on colliding vortex
+dipoles the filtered scheme keeps less kinetic energy than the paper's split scheme
+over long times, "clearly associated with (although minimal) numerical
+dissipation", and a significantly lower enstrophy even in the well-resolved
+run, "suggestive of the action of numerical dissipation at the highest
+wavenumbers resolved" (§3, Eq. (34); §3.2, Fig. 13). Pirozzoli (2011a, §2.2)
+states the general point: filtering "implies artificial energy draining that
+adds to the physical energy draining caused by molecular viscosity".
+
 ## Limiters read as artificial viscosity
 
 [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) state that the
@@ -693,9 +802,46 @@ that the flux and limiter "do not induce excessive numerical viscosity"
   opposite line for turbulent flows: a high-order dissipation applied
   everywhere serves as the subgrid regularization of an implicit LES, and
   the low-order part is confined by the sensor (§3, §5).
+- [Ducros et al. (1999)](/sources/ducros-1999.md) (§1, §4.1) reject
+  numerical dissipation as the subgrid model of LES: second- and fourth-order
+  JST dissipation "always brings a spurious dissipation, too large when the
+  fourth order is employed and too weak when the second order alone is
+  employed", and "is not able to mimic the dissipation of a true
+  subgrid-scale model"; built-in numerical dissipation also "is unable to
+  vanish in near-wall regions as SGS dissipation does", which they call a
+  major drawback of monotone-integrated LES. They keep an explicit subgrid
+  model and restrict the artificial viscosity to shocks. This is the opposite
+  position to Sciacovelli et al.'s, though for second- and fourth-order
+  rather than ninth-order dissipation
+  ([implicit LES](/definitions/implicit-large-eddy-simulation.md)).
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§6, Summary Point 9)
+  calls nonlinear artificial viscosity, "especially in their most recent
+  variants (Mani et al. 2009)", "an attractive alternative to hybrid-WENO
+  schemes": it applies in the same form throughout the domain, needs no
+  hybridization and is straightforward to add to a shock-free Navier–Stokes
+  solver, but "further testing is required to demonstrate comparable
+  reliability to WENO". This stands against the DG-oriented objections of
+  Rueda-Ramírez et al. above. The review also recalls shock capturing by a
+  subgrid model, the approximate deconvolution of Adams & Stolz, as related
+  to artificial viscosity (§3.4;
+  [numerical dissipation](/definitions/numerical-dissipation.md)).
 
 ## Qualifications
 
+- **Second-order JST in LES.** Ducros et al. (1999) support $k_2=1.5$ by an
+  empirical check they do not show, and test the sensor-weighted dissipation
+  only with a second-order central scheme; they expect their conclusion on
+  the shock-width damping to "be modified when using higher order numerical
+  schemes" (§6). Their Eqs. (5)–(7) write the flux with the opposite sign to
+  the one under which the dissipation of Eq. (8) is dissipative; the page
+  uses the physical flux, under which it is
+  ([Ducros et al. (1999)](/sources/ducros-1999.md), Printed slips).
+- Pirozzoli (2011a, §3.2) recalls the 1999 scheme as a nonlinear filter in
+  which the JST artificial flux and the sensor product replace a TVD flux and
+  Harten's switch; Ducros et al. (1999) write it as part of the numerical
+  flux of a Runge–Kutta finite-volume scheme (Eq. (8)) and do not mention
+  filtering ([Ducros shock sensor](/definitions/ducros-shock-sensor.md),
+  Qualifications).
 - **Printed slips in Sciacovelli et al. (arXiv v1).** The text defines
   $k_\varepsilon=a_0/a_P$, but Eqs. (33)–(35) print the factors
   $\tfrac15$, $\tfrac3{70}$, $\tfrac1{105}$, which equal $\lvert a_P/a_0\rvert$
@@ -781,6 +927,9 @@ that the flux and limiter "do not induce excessive numerical viscosity"
 
 # Citations
 
+- [Ducros et al. (1999)](/sources/ducros-1999.md) — §1; §3 (Eqs. (8)–(13), (22)–(24), pp. 522–525); §4.1 (Table I, Figs. 1–3); §4.4 (Fig. 24); §5 (Eq. (29)): second-order JST dissipation in a finite-volume LES scheme, choice of $k_2$ and $k_4$, sensor product, frame dependence, position against numerical dissipation as subgrid model.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.2; §3.2; §3.3 (Eqs. (30)–(34)); §3.4; §6, Summary Point 9: filtering as energy draining, von Neumann–Richtmyer viscosity, JST flux and constants, spectral vanishing viscosity and LAD recalled, assessment against hybrid WENO.
+- [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) — §3, Eq. (34); §3.2, Fig. 13: eighth-order compact filter at $\alpha_{\mathrm P}=0.495$ and its long-run energy and enstrophy loss.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — arXiv v1: §1; §3 (Eqs. (20)–(35), Fig. 1); §4.1; §5.2 (Fig. 11).
 - [Harten (1983a)](/sources/harten-1983.md) — §1, §3 (Eq. (3.1)), §5, §8 (Eq. (8.9)): viscosity as loss of information, numerical-viscosity coefficient, ULT2 (NYU report DOE/ER/03077-175, March 1982).
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — arXiv v1: §3 (Eqs. (4)–(8)); Rem. 2; §6 (Eqs. (16)–(18), Rem. 6); §7.3–§7.4; §8.

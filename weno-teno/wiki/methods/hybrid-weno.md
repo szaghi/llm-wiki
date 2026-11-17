@@ -5,7 +5,7 @@ description: "Hybrid schemes use a cheap linear (central, energy-preserving or o
 status: established
 aliases: [hybrid WENO, TENO-S, TENO-E, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC, SHMR-WENO, KXRCF-switched hybrid WENO]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-11-01T18:56:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Hybrid central-WENO schemes
@@ -60,16 +60,35 @@ threshold 0.3 nor an $\epsilon$.
 - **Compact and spectral partners.** [Shu (2009a)](/sources/shu-2009.md) (§5.2–5.3) lists, among the
   relatives of WENO, a hybrid compact–WENO scheme with a shock detector and hybrid spectral–WENO
   schemes, without details.
-- **Hybrid TENO.** Fu (2023, §3.4, Eqs. (21)–(24)) recalls a hybrid that builds the sensor from the TENO
-  scale separation itself. On four stencils, with $\gamma_k=(\beta_k+\epsilon)^{-q}$, $q=6$, where
-  $\epsilon$ "also functions as a cut-off on the stencil smoothness", and $\chi_k=\gamma_k/\sum\gamma_l$,
-  the flag is 0 (smooth) if $\chi_k>C_T$ for every $k$, with $C_T=5\times10^{-4}$, and 1 otherwise.
-  Flag 0 selects the optimal linear scheme without characteristic decomposition, flag 1 the TENO6
-  reconstruction. With SSP-RK3 the efficiency improves "by a factor of four", with unchanged shock
-  capturing (reproduced 2-D Riemann configuration 12, Fig. 7). Because the indicator separates
-  non-smooth scales in spectral space, Fu calls it "more universal" than physical sensors such as
-  Ducros'. The same indicator has driven steepness-adjustable, minimized-dispersion and
-  artificial-viscosity hybrids ([targeted ENO](/methods/targeted-eno.md)).
+- **Hybrid TENO.** [Fu (2019b)](/sources/fu-2019-b.md) (§4–5, Eqs. (4.1)–(5.2), Algorithm 1) builds the
+  sensor from the TENO scale separation itself
+  ([TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)): on four **equal**
+  three-point stencils spanning $x_{i-2},\dots,x_{i+3}$, $\gamma_k=(\beta_k+\epsilon)^{-6}$,
+  $\chi_k=\gamma_k/\sum_l\gamma_l$, and the flag $\mathrm{Flag}_i$ (registry §10, 1 = troubled) is 0 iff
+  every $\chi_k>C_T=5\times10^{-4}$, with $\epsilon=10^{-4}$ in 1D and $10^{-3}$ in multi-D, read on
+  density (and total energy in 1D) in physical space, dimension by dimension. $\mathrm{Flag}_i=0$
+  selects, component-wise and without [characteristic decomposition](/methods/characteristic-decomposition.md),
+  "the fifth-order Lax-Friedrichs scheme",
+  $$\hat f^{\mathrm{lin}}_{i+1/2}=\tfrac1{60}\big(f_{i-2}-8f_{i-1}+37f_i+37f_{i+1}-8f_{i+2}+f_{i+3}\big)-\tfrac a{60}\big(u_{i+3}-5u_{i+2}+10u_{i+1}-10u_i+5u_{i-1}-u_{i-2}\big)$$
+  (Eq. (5.1), the printed $f_{i+2}$ of the last central term corrected to $f_{i-2}$; page-local
+  $\hat f^{\mathrm{lin}}$), $a$ the maximum wave speed over the whole domain; $\mathrm{Flag}_i=1$ selects
+  the TENO6 flux in characteristic variables, with Roe-averaged eigenvectors and Rusanov splitting per
+  field. *(Compiler check, not in the sources: Eq. (5.1) is exactly the fifth-order upwind flux UD5
+  applied to $f^\pm=\tfrac12(f\pm au)$. The TENO6 of the same paper restores in smooth regions a
+  different, fourth-order dispersion-optimized linear scheme (§2.2.3), so the hybrid is a UD5/TENO6
+  hybrid, not a cheaper TENO6.)* With SSP-RK3 at CFL 0.4, more than 98 % of the cells of 2D Riemann
+  configurations 3 and 12, more than 90 % of double Mach reflection, more than 97 % of a periodic
+  implosion and 80–90 % of the blast-wave cells take the linear flux, and the CPU time of configuration
+  3 drops 3.3, 3.2 and 3.84 times against TENO6 on $256^2$, $512^2$ and $1024^2$ (69.75/21.15 s,
+  593.7/186 s, 5752.1/1499.5 s; Table 1, "the same desktop workstation", unspecified), "much higher"
+  than the Hybrid-cF and Hybrid-MR schemes of Don et al. (2016), a comparison across papers (§6.6).
+  Fu (2023, §3.4, Eqs. (21)–(24)) recalls the scheme as using "the optimal linear scheme without
+  characteristic decomposition", with $\epsilon$ that "also functions as a cut-off on the stencil
+  smoothness", and a gain "by a factor of four" with unchanged shock capturing (configuration 12
+  reproduced in Fig. 7); because the indicator separates non-smooth scales in spectral space, Fu calls
+  it "more universal" than physical sensors such as Ducros'. The same indicator has driven
+  steepness-adjustable, minimized-dispersion and artificial-viscosity hybrids
+  ([targeted ENO](/methods/targeted-eno.md)).
 - **TENO-THINC.** Takagi et al. (2022, §3) also hybridize on TENO flags, but differently: in smooth
   regions the TENO5 flux restores the linear scheme anyway, and the flags select cells where THINC
   replaces TENO at genuine discontinuities. They contrast it with classical hybrids, which "dedicate
@@ -85,14 +104,98 @@ threshold 0.3 nor an $\epsilon$.
   their Examples 4.3–4.7 (Euler).
 
 - **PDE-aware hybrids.** Balsara, Samantaray & Subramanian (2023, §6.3) recall Li & Ren's hybrid, which
-  uses the central stencil wherever the solution is smooth and WENO only in troubled zones. Hong, Ye & Ye (2022, §1) recall Fu's TENO-based-indicator hybrid as the
-  alternative to their own speed-up, which makes TENO itself cheaper instead
+  uses the central stencil wherever the solution is smooth and WENO only in troubled zones. Hong, Ye & Ye (2022, §1) recall Fu's TENO-based-indicator hybrid
+  ([Fu (2019b)](/sources/fu-2019-b.md)) as the alternative to their own speed-up, which makes TENO itself cheaper instead
   ([targeted ENO](/methods/targeted-eno.md)).
+
+## Lineage and practice of central/compact–WENO hybrids
+
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.2) describes the class as "endowing a baseline
+spectral-like scheme with shock-capturing capability through local replacement with a classical
+shock-capturing scheme or through the controlled addition of the dissipative part of a shock-capturing
+scheme, which is made to act as a nonlinear filter", and traces the hybrids of compressible-turbulence
+simulation:
+
+- **A-priori switch.** Lee et al. (1997) coupled a sixth-order compact scheme with a sixth-order ENO
+  scheme for a nominally planar shock in isotropic turbulence; the shock position being approximately
+  known, ENO acted only in the shock-normal direction over 12 points upstream and 12 downstream of the
+  mean shock.
+- **First adaptive hybrid.** Adams & Shariff (1996) coupled a compact upwind scheme with fifth-order
+  ENO, switched on the local gradient of the flux components, and padded the critical cells with
+  buffer cells on each side "to prevent the onset of oscillations arising from the coupling of schemes
+  with different properties".
+- **Conservative compact–WENO.** Pirozzoli (2002) hybridized a fifth-order compact upwind numerical
+  flux with a seventh-order WENO flux, switched on the local density gradient: on Lax & Liu's
+  configuration 13 ($\Delta x=\Delta y=1/1200$, SSP-RK3 at Courant number 0.6) WENO acts at
+  $x_{i+1/2}$ and two neighbouring nodes on each side whenever $\lvert\rho_{i+1}-\rho_i\rvert\ge0.2$; the
+  hybrid gives "additional discrete vortices in the shear layer" but "also yields some spurious wiggles
+  near shocks", at about 50 % of the cost of WENO7 (Fig. 3d;
+  [2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)). This agrees with Liang & Fu
+  (2024b)'s later remark, below, that the compact–WENO hybrid "inevitably generates slight spurious
+  oscillations".
+- **WENO-based sensors.** Ren et al. (2003) and Hill & Pullin (2004), the latter with a DRP-like central
+  baseline tuned for LES and the sensor $\lambda_{\mathrm{HP}}=\max_k\beta_k/(\min_k\beta_k+\epsilon)$
+  (registry §10), large "whenever one or more WENO substencils are crossed by discontinuities"
+  ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
+- **Coupling stability.** Larsson & Gustafsson (2008), with Kreiss theory, found that two separately
+  stable schemes can couple into an unstable system, but that the coupled system is strongly stable "if
+  either scheme is dissipative, ... thus endorsing the use of upwind shock-capturing schemes around
+  discontinuities". The review calls the coupling issues otherwise not "thoroughly investigated" and
+  lists a quantitative analysis of hybridization errors as an open issue (§6, Future Issue 4).
+- **Smooth blending.** Blending functions for a smooth transition (e.g. Ren et al. 2003) do "not add
+  much to the stability and accuracy" in the author's experience (see also Taylor et al. 2007), a
+  position set against Wan & Xia's three-region hybrid below, whose smooth transition is called
+  "essential for the steady-state convergence" (different regimes: unsteady DNS/LES against steady
+  residuals).
+- **Recommendation** (§6, Summary Points 7–8). WENO schemes "are too dissipative for DNS and LES and
+  should be preferably used in hybrid form"; a "suggested best practice is marking critical nodes using
+  a shock sensor and then padding a sufficient number of nodes around the critical ones to make sure
+  that the stencil of the underlying nondissipative scheme does not cross shocked zones", and a locally
+  conservative formulation makes hybridization with conservative shock-capturing schemes "more
+  natural". The review names the Ducros sensor as one simple choice, "with some minor case-by-case
+  modification and tuning of the threshold value" ([Ducros sensor](/definitions/ducros-shock-sensor.md)),
+  and nonlinear [artificial viscosity](/methods/artificial-viscosity.md) as "an attractive alternative to
+  hybrid-WENO schemes" (Summary Point 9).
+
+## Nonlinear (characteristic-based) filters
+
+The second route of the review (Pirozzoli 2011a, §3.2, Eqs. (27)–(29)) keeps the baseline scheme
+everywhere and adds a switched dissipative flux. Yee et al. (1999) augment a SHOEC ("split high-order
+entropy conserving") baseline with the artificial dissipation of a TVD scheme,
+
+$$\frac{du_i}{dt}=-(\delta_xf)_i-\frac1{\Delta x}\big(\hat f^*_{i+1/2}-\hat f^*_{i-1/2}\big),\qquad
+\hat f^*_{i+1/2}=\mathsf k_{\mathrm Y}\,\theta_{\mathrm{AC},i+1/2}\,\hat d^{\mathrm{TVD}}_{i+1/2},$$
+
+with $(\delta_xf)_i$ the baseline derivative, $\mathsf k_{\mathrm Y}$ a "problem-dependent" constant,
+$\hat d^{\mathrm{TVD}}$ the artificial flux of a second-order TVD scheme and $\theta_{\mathrm{AC}}$
+Harten's (1978) switch, near one at shocks and near zero in smooth flow (page-local
+$(\delta_xf)_i$, $\mathsf k_{\mathrm Y}$, $\hat d^{\mathrm{TVD}}$, $\hat f^*$; the source's $k$, $d$,
+$\Phi$). For the Euler equations the filter acts on each characteristic field, hence
+"characteristic-based filters". With explicit multistage time stepping the filter flux can be applied
+once at the end of the full step, "with substantial savings in terms of CPU time (but with some loss in
+terms of robustness)". Ducros et al. (1999) replaced the TVD flux by the
+[JST artificial flux](/methods/artificial-viscosity.md) and Harten's switch by the product of
+Jameson's pressure sensor and the Ducros ratio $\Phi_{\mathrm D}$ (Eq. (29)). Ducros et al. (1999)
+themselves write the dissipation as part of the numerical flux of a four-stage Runge–Kutta finite-volume
+scheme ([Ducros et al. (1999)](/sources/ducros-1999.md), §3, Eq. (8)), with a scalar, not characteristic,
+dissipation model, and do not describe it as a filter ([Ducros sensor](/definitions/ducros-shock-sensor.md)). Garnier et al. (2001)
+used the dissipative part of ENO and WENO as filter flux and found the Ducros sensor better than
+Harten's switch at separating turbulent fluctuations from shocks; Visbal & Gaitonde (2005) and Bogey
+et al. (2009) filter adaptively, capturing shocks by locally decreasing the filter bandwidth. The
+review records uses of such filters in shock/boundary-layer LES (Garnier et al. 2002, a fourth-order
+central baseline with a Ducros-switched WENO filter; Touber & Sandham 2009, SHOEC with a
+Ducros-switched TVD filter; Sandham et al. 2003, SHOEC with TVD filtering) and in Subbareddy &
+Candler's (2009) second-order kinetic-energy-consistent finite-volume scheme for unstructured meshes,
+with a Ducros-switched TVD filter (§4.1, §5;
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
 
 ## A kinetic-energy-preserving TENO hybrid: TENO-S
 
 Liang & Fu (2024b) pair an eight-point TENO with a non-dissipative split-form flux. In cells judged smooth the
-interface flux is the cubic (Kennedy–Gruber) split form in Pirozzoli's locally conservative two-point form, extended to
+interface flux is the cubic (Kennedy–Gruber) split form in Pirozzoli's locally conservative two-point form
+([Pirozzoli (2010)](/sources/pirozzoli-2010.md); [conservative split derivative](/operators/conservative-split-derivative.md);
+that paper runs no hybrid but motivates the flux form as "a building block of hybrid shock-capturing algorithms", since the
+Lax–Wendroff theorem applies, Abstract, §1, §4), extended to
 eight points with dispersion-optimized central coefficients (sixth order), which preserves kinetic energy in smooth
 flow ([split convective forms](/methods/split-convective-forms.md),
 [kinetic energy preservation](/properties/kinetic-energy-preservation.md)); in flagged cells it is a characteristic-wise
@@ -373,7 +476,13 @@ sixth-order fully split energy-preserving central scheme (Pirozzoli; [split conv
 $\Psi_{\mathrm D}=\max\big(-\nabla\cdot v/\sqrt{(\nabla\cdot v)^2+|\nabla\times v|^2+\epsilon_{\mathrm D}},0\big)$ with
 $\epsilon_{\mathrm D}=(v_\infty/\delta_0)^2$ (Eq. (9)), evaluated at interfaces against a threshold
 $\Psi^*$; a flagged interface switches the flagged cell and two, three or four neighbours, depending on the
-WENO/TENO order, to the nonlinear scheme (§3.2). $\Psi^*=0$ is the pure shock-capturing scheme.
+WENO/TENO order, to the nonlinear scheme (§3.2). $\Psi^*=0$ is the pure shock-capturing scheme. The locally conservative
+form of the split central flux was motivated as a building block of such hybrids: on curvilinear meshes, local
+conservation is "of extreme importance if the scheme is to be used as the building block of a hybrid shock-capturing
+algorithm", and hybridization with conservative shock-capturing schemes is "straightforward"
+([Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md), §1, §2.3, §4, citing Larsson et al. and Johnsen et al.;
+[KEP split forms in curvilinear coordinates](/methods/curvilinear-kinetic-energy-preserving-split-forms.md)), though that
+paper tests no hybrid.
 
 - **Wall-modelled LES at Mach 2.** Pure WENO/TENO damp or destroy wall turbulence, most of all WENO-Z3, which
   mispredicts the wall flow regardless of grid resolution; $\Psi^*=0.1$ restores a realistic friction curve and
@@ -540,23 +649,42 @@ exception. Fu (2023, §3.4) recalls a systematic survey of shock sensors for hyb
 that hybrids generally perform better with a low-dissipation TENO than with WENO as the nonlinear
 component, regardless of the sensor. Fu (2023, §5.4) also reports that the TENO6-A variant used for
 transitional shock/boundary-layer interaction replaces the TENO discontinuity measure by a modified
-Ducros sensor ([adaptive TENO](/methods/adaptive-teno.md)).
+Ducros sensor ([adaptive TENO](/methods/adaptive-teno.md)). Earlier, Pirozzoli (2011a, §3.2, Summary
+Point 8) gave shock sensors "a key role" in hybrids and nonlinear filters, compared four of them on a
+shock/boundary-layer interaction ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)),
+and listed among the open issues that "a systematic quantitative analysis of the coupling between
+shock-capturing and nondissipative schemes has not been carried out" (§6). Fu (2019b, §1) states that
+hybrid performance "strongly depends on an effective discontinuity indicator" and that the classical
+indicators are "mostly case-sensitive" because "only low-order information is examined".
 
 ## Limits of the linear target
 
+The view that nonlinear weights only degrade a linear scheme is stated by Pirozzoli (2011a): WENO
+"spectral-like resolution is never achieved owing to the noxious effect of the nonlinear weights,
+unless the weights are locally frozen in smooth regions, as suggested by Hill & Pullin (2004) and
+Taylor et al. (2007)" (§3.1), and "nonlinear features have a dramatic impact", the seventh-order WENO
+being "substantially poorer" (more dissipative) than its linearized seventh-order upwind scheme on
+zero-viscosity turbulence (§3.5, Fig. 1).
 Luo & Wu (2021, §1) quote the common view behind hybridization: "the accuracy and resolution of the
 upwind central are the limits of the improvement of the WENO scheme". They dispute it with WENO-Z+M,
 whose nonlinear weights give smaller errors than the linear scheme UD5 itself on a smooth test
 ([WENO-Z+](/methods/weno-z-plus.md)). A hybrid cannot do better than its linear scheme in smooth
 regions; the gain comes from the choice of that scheme, which TENO papers optimize spectrally
-([approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+([approximate dispersion relation](/definitions/approximate-dispersion-relation.md)). The two claims
+differ: Pirozzoli's concerns spectral-like resolution of broadband (turbulence-like) data by the 2011
+WENO family, Luo & Wu's the error of one scheme against UD5 on one smooth test, so they are recorded as
+positions, not as a contradiction.
 
 ## Qualifications
 
 - **Detector rankings depend on the test.** Fu (2023, §3.4) calls the TENO-based indicator "more
   universal" than physical sensors; Li, Chen & Ren (2022a, Figs. 9–12) measure it correct only below
   $\vartheta=0.64$ on sine waves, with detector inputs normalized by $\max(|f_{\max}|,1)$, a step to which
-  they attribute TENO-HY's better detection than in Fu's own paper (§4.3.1).
+  they attribute TENO-HY's better detection than in Fu's own paper (§4.3.1). Fu (2019b) prints no
+  sine-wave test; the onset $\vartheta\approx0.644$ found by the compiler check on the
+  [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md) page agrees with Li, Chen
+  & Ren's 0.64. Li, Chen & Ren's measured fifth-order convergence of TENO-HY on linear advection (§4.1)
+  is that of the UD5 linear branch, not of the fourth-order TENO6 *(compiler check, not in the sources)*.
 - Chamarthi (2023b) prints the regularization $\varepsilon=\tfrac{0.9\mathfrak s_c}{1-0.9\mathfrak s_c}\xi^2$ (Eq. (37)) but
   not in the detector (Eq. (35)), which is then undefined on constant density; Chamarthi attributes the detector once to
   Li & Jaberi and once, as "the original paper", to Li, Chen & Ren.
@@ -569,10 +697,12 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - Wang et al. (2023c) call their efficiency "the highest among these three methods" (Example 4.1)
   and claim improved efficiency throughout, while their Table 5.1 has the hybrid slower than WENO-JS in
   four of twelve runs (1.01–1.07); it is always faster than the non-hybrid MR-WCNS.
-- **TENO-type indicator settings.** The same construction is run with $\epsilon=10^{-4}$ and threshold $5\times10^{-4}$ on
-  four stencils (Fu's, as recalled by Li, Chen & Ren 2022a) and with $\epsilon=10^{-4}$ or $10^{-2}$ by dimension and
-  threshold $10^{-6}$ on six equal stencils (Liang & Fu 2024b), absolute values applied to the raw conserved variables.
-  Liang & Fu present the parameters as fixed for all tests, yet $\epsilon$ changes with the number of dimensions.
+- **TENO-type indicator settings.** The same construction is run with $\epsilon=10^{-4}$ in 1D and $10^{-3}$ in multi-D
+  and threshold $5\times10^{-4}$ on four equal stencils (Fu 2019b, §4.2; Li, Chen & Ren 2022a recall $\epsilon=10^{-4}$
+  only) and with $\epsilon=10^{-4}$ or $10^{-2}$ by dimension and threshold $10^{-6}$ on six equal stencils (Liang & Fu
+  2024b), absolute values applied to the raw conserved variables. Both papers present the parameters as fixed for all
+  tests ("a fixed set of parameters for all considered benchmarks", Fu 2019b, Abstract, §7), yet $\epsilon$ changes with
+  the number of dimensions.
 - Liang & Fu (2024b, Abstract, §4.10) describe TENO-S as performing inviscid Taylor–Green computations "without numerical
   dissipation". *(Compiler check, not in the sources: the split form conserves kinetic energy semi-discretely only where it
   is used; the TENO branch acts in flagged cells and SSP-RK3 is not kinetic-energy-conservative, so the evidence is the
@@ -593,8 +723,24 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
   without a density jump, such as a shear layer at constant density, would not switch the TENO-E
   sensor; the indicator divides by the target-cell density and is undefined for vanishing density.)*
   The paper discusses neither point.
-- The factor-four speed-up of the hybrid TENO is quoted from earlier work in a review; neither the
-  hardware nor the share of flagged points is given in the review.
+- **Speed-up and linear branch of the hybrid TENO as recalled.** The factor-four speed-up recalled by Fu
+  (2023, §3.4) is, in the original (Fu 2019b, Table 1), 3.2–3.84 on configuration 3 against characteristic-wise
+  TENO6, on an unspecified workstation, with more than 98 % of the cells linear; the comparison with Hybrid-cF and
+  Hybrid-MR (Don et al. 2016) is across papers. The linear branch that Fu (2023) recalls as "the optimal linear
+  scheme" is, in the original, the fifth-order upwind flux with global Lax–Friedrichs dissipation of Eq. (5.1),
+  while the optimal linear scheme of the paper's TENO6 is fourth order (§2.2.3); "the counterpart linear scheme of
+  TENO6" enters the paper only as the value tested by its MP comparison flag (§3.1). Recorded as a recollection
+  that differs from the original (compiler's ruling, chunk 14), the wiki's earlier wording "optimal linear scheme"
+  for the original being corrected above. The speed-up bundles the avoided characteristic projection with the
+  avoided nonlinear weights; the paper does not separate them. *(Compiler check, not in the sources: with more than
+  98 % of the cells linear, a speed-up of 3.2–3.84 means that indicator plus linear flux still cost roughly 26–31 %
+  of the characteristic-wise TENO6 per cell.)*
+- Fu (2019b, §6.5) compares hybrid TENO6 with a "hybrid WENO5" on the blast waves without defining the
+  latter, and relates the 80–90 % linear usage to Fig. 3.12 of Li & Qiu (2010), across papers.
+- The 2D rule that [Huang & Fu (2024)](/sources/huang-2024.md) (§5.1) attribute to Fu's hybrid TENO, a
+  cell flagged "in either one or both directions", is named in the original only as a remedy "if deemed
+  necessary"; the runs keep $\mathrm{Flag}_x$ and $\mathrm{Flag}_y$ separate (Fu 2019b, §6, Figs. 18–28;
+  [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)).
 - **How wide the test interval must be.** Zhang et al. (2026a, §2.2) state that testing only the target
   cell $[x_{i-1/2},x_{i+1/2}]$ "would result in unphysical oscillations due to the insufficient number of
   troubled-cells", and show no run that tests it; Zuo & Zhu (2024a, 2024b) test exactly the target cell and
@@ -618,6 +764,11 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Shu (2009a)](/sources/shu-2009.md) — §5.2–5.3.
 - [Fu et al. (2016)](/sources/fu-2016.md) — §1.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §3.4, Eqs. (21)–(24), Fig. 7; §5.4.
+- [Fu (2019b)](/sources/fu-2019-b.md) — Abstract; §1; §2.2.3; §4–5, Eqs. (4.1)–(5.2), Algorithm 1; §6, Table 1, Figs. 16–29; §7: hybrid TENO (UD5/TENO6) with the TENO-based indicator.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1; §3.2, Eqs. (27)–(29), Fig. 3d; §3.5, Fig. 1; §4.1; §5; §6, Summary Points 7–9, Future Issue 4: lineage of central/compact–WENO hybrids, nonlinear filters, sensors, the nonlinear-weights view.
+- [Pirozzoli (2010)](/sources/pirozzoli-2010.md) — Abstract; §1; §4: locally conservative split flux as a hybrid building block.
+- [Ducros et al. (1999)](/sources/ducros-1999.md) — §3, Eq. (8), pp. 521–522: JST dissipation inside the flux, scalar model.
+- [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) — §1; §2.3; §4: local conservation on curvilinear meshes as a hybrid building block.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1; §3.2.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1; §5.3.1, Table 1.
 - [Fu (2021)](/sources/fu-2021.md) — §1.

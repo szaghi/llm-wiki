@@ -6,7 +6,7 @@ status: established
 symbol: "$Q+Q^\\top=B$"
 aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, hybridized SBP operator, discrete integration by parts]
 tags: [dg, entropy-stable, kinetic-energy-preserving, finite-difference]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-11-17T08:42:21Z
 ---
 
 # Summation-by-parts operator
@@ -307,6 +307,22 @@ passing that SBP matrices fit this class. Their equivalence
 is the periodic analogue of consequence 4. The authors point to SBP as the
 route to non-periodic boundaries, which they do not treat.
 
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) uses SBP in its periodic form,
+$\sum_if_i\,\delta g_i+\sum_ig_i\,\delta f_i=0$ for any grid functions $f$, $g$ and a central
+first-derivative operator $\delta$ (page-local), to sum the local kinetic-energy identity of
+the split forms over the grid, on Cartesian and on curvilinear meshes (Eq. (12);
+[KEP split forms in curvilinear coordinates](/methods/curvilinear-kinetic-energy-preserving-split-forms.md)).
+The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§2.3, Eq. (18)) states the same chain:
+discretizing mass and momentum in the Feiereisen split gives semi-discrete kinetic-energy
+preservation provided the operators are SBP (after Strand), which "automatically holds in the
+case of periodic problems for central (both explicit and implicit) approximations of any
+order" (after Mansour et al.); the split entropy-conserving (SHOEC) schemes of the same review
+also need SBP first derivatives (§2.4, Eq. (22)). In matrix form the periodic statement is
+$\delta+\delta^\top=0$: an explicit central operator is a skew-symmetric circulant, and a
+compact one, $\delta=A^{-1}B$ with $A$ a symmetric and $B$ a skew-symmetric circulant, is
+skew-symmetric because circulants commute *(compiler check, not in the sources)*. This is
+the periodic special case $M=I$, $B=0$ of $Q+Q^\top=B$.
+
 # Citations
 
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — Defs. 2.1–2.2, Ex. 2.3, Eqs. (2.3), (2.5)–(2.7), (2.11), (2.14), §6 Eq. (6.2).
@@ -323,3 +339,5 @@ route to non-periodic boundaries, which they do not treat.
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §2 Eq. (22), §3.3 Eqs. (38)–(39), §6 Thms. 6.1–6.2.
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1 Eqs. (3.4)–(3.8).
 - [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1 Lemmas 1–2, App. B.
+- [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) — §2.1 Eq. (12).
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.3 Eq. (18), §2.4 Eq. (22).

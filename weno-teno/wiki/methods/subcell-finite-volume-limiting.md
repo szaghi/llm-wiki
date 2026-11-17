@@ -5,7 +5,7 @@ description: "Subcell finite-volume limiting makes a nodal DGSEM robust by conve
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-11-17T08:26:01Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -37,8 +37,10 @@ page, with volume matrix $Q-B$ (standard) or $2Q-B$ (split) and a symmetric,
 consistent two-point volume flux $f^{\mathrm{vol}}$ evaluated with averaged
 metric terms (Rueda-Ramírez et al. 2022, Eqs. (2)–(7)). The choice of
 $f^{\mathrm{vol}}$ gives kinetic-energy preservation, entropy conservation
-(Ismail–Roe, Chandrashekar) or pressure-equilibrium preservation (Shima et
-al.) ([entropy-conservative flux](/methods/entropy-conservative-flux.md)).
+(Ismail–Roe, Chandrashekar) or pressure-equilibrium preservation
+([Shima et al. (2021)](/sources/shima-2021.md), introduced as the
+[KEEP-PE](/methods/keep-scheme.md) face fluxes of a second-order central
+scheme, Table 2) ([entropy-conservative flux](/methods/entropy-conservative-flux.md)).
 
 Because DGSEM on LGL nodes is a diagonal-norm SBP discretization, it can be
 written in **flux-differencing (subcell) form** (Eqs. (8)–(11), after Fisher
@@ -635,6 +637,7 @@ DG modes of troubled cells by a same-order CWENOZ reconstruction instead
 
 # Citations
 
+- [Shima et al. (2021)](/sources/shima-2021.md) — §2.2.3 Eq. (17), Table 2.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — arXiv v2: §2.1 (Eqs. (2)–(11)); §2.2 (Eqs. (12)–(15)); §2.3 (Eqs. (16)–(18)); §2.4 (Eqs. (19)–(29)); §3 (Props. 1–2); §4; §5 (Eq. (45), Figs. 2–11); §6.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — arXiv v1: §1; §3 (Eqs. (28), (31)–(37), (41)–(47)); §3.3 (Lemmas 1–3, Eqs. (52)–(71)); §4 (Eqs. (72)–(81)); §5 (Eqs. (82)–(88)); §6 (Tables 1, Figs. 5–19); App. C (Lemmas 4–6, Eq. (150)).
 - [Pazner (2021)](/sources/pazner-2021.md) — arXiv v1: §4.1.3–§4.1.4 (Figs. 2–4); §4.2.2 (Props. 8–11); §4.4; §5 (Table 1, Figs. 7–13).

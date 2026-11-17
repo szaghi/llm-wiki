@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu sett
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-11-01T18:46:00Z
+timestamp: 2026-11-17T08:26:15Z
 ---
 
 # Rayleigh–Taylor instability
@@ -19,19 +19,20 @@ spike whose flanks are Kelvin–Helmholtz unstable. The test serves two
 purposes: the amount of secondary roll-up is a visual gauge of
 [numerical dissipation](/definitions/numerical-dissipation.md), and the
 exact left–right mirror symmetry of the data probes
-[symmetry preservation](/properties/symmetry-preservation.md). Twenty-six
+[symmetry preservation](/properties/symmetry-preservation.md). Twenty-seven
 sources of the bundle discuss it (one of them only in a
 three-dimensional magnetized variant, one only in a three-dimensional
 two-species viscous variant, one only in a diffuse-interface variant,
 one in a spanwise-periodic three-dimensional extension, and one with
-Lagrangian particles); Fu (2021), Takagi et al., Ye et al.,
+Lagrangian particles); Fu et al. (2019d), Fu (2021), Takagi et al., Ye et al.,
 Huang et al. (2026), Huang et al. (2025a), Huang, Liang & Fu (2023) and
 Li, Chen & Ren (2022) cite Xu & Shu for it, Li et al. (2022b, WENO-ZN) and Chu et al. (2025a)
 cite Shi, Zhang & Shu, Li et al. (2022b) also Young et al.
 
 ## Setup
 
-The common data, printed by [Fu (2021)](/sources/fu-2021.md) §5.5.2,
+The common data, printed by [Fu et al. (2019d)](/sources/fu-2019-d.md) §V.E, Eq. (46) (final time not printed),
+[Fu (2021)](/sources/fu-2021.md) §5.5.2,
 [Takagi et al. (2022)](/sources/takagi-2022.md) §4.7,
 [Ye et al. (2022)](/sources/ye-2022.md) §4.7, Eq. (47),
 [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.1, Eq. (45),
@@ -137,6 +138,7 @@ width, as the common setup *(compiler check, not in the sources)*.
 
 | Source | Scheme | Grid | Times |
 |---|---|---|---|
+| [Fu et al. (2019d)](/sources/fu-2019-d.md) §V.E | [TENO5-A, TENO6-A](/methods/adaptive-teno.md) vs WENO5-Z, [WENO-CU6](/methods/weno-cu6.md); Rusanov and Roe | $64\times256$ | not printed; 43 contours 0.9–2.2 |
 | [Fu (2021)](/sources/fu-2021.md) §5.5.2 | very-high-order [TENO](/methods/adaptive-teno.md) vs [WENO-CU6](/methods/weno-cu6.md); Rusanov and Roe | $64\times256$ | 1.95 |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.7 | [TENO-THINC](/methods/teno-thinc.md) vs WENO5-Z, TENO5; Rusanov and Roe | $64\times256$, $128\times512$ | 1.95 |
 | [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.1 | seventh-order [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z | $120\times480$ | 1.95 |
@@ -165,7 +167,13 @@ width, as the common setup *(compiler check, not in the sources)*.
 ## Findings across sources
 
 **Small-scale structure.** Every comparison favours the new scheme by
-the richness of the roll-up on the spike flanks: TENO-THINC over
+the richness of the roll-up on the spike flanks: WENO-CU6, TENO5-A and TENO6-A
+"significantly better" than WENO5-Z, TENO5-A comparable to WENO-CU6 and
+TENO6-A with "much finer" small-scale vortical structures, with both
+Rusanov and Roe fluxes; across papers TENO6-A is better than the
+eight-point MDCD6 at a similar resolution and comparable to WENO9 on
+$240\times960$ (Fu et al. 2019d, §V.E, Fig. 8; the paper does not
+comment on the difference between the two fluxes); TENO-THINC over
 WENO5-Z and TENO5 with both Rusanov and Roe fluxes (Takagi et al.,
 Figs. 14–17); WENO-ZN over WENO-JS and WENO-Z (Li et al. (2022b), Fig. 7);
 AFTENO5 with HLLC richest among the TENO and AFWENO variants (Ye et
@@ -395,6 +403,7 @@ sources)*.
 
 # Citations
 
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §V, §V.E, Eq. (46), Fig. 8.
 - [Fu (2021)](/sources/fu-2021.md) — §5.5.2, Fig. 9 (arXiv v1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.7, Figs. 14–17.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §4.4.1, Eq. (45), Fig. 7.

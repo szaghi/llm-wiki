@@ -5,12 +5,12 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-30T08:10:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Targeted ENO (TENO)
 
-**Targeted ENO**, introduced by [Fu, Hu & Adams (2016)](/sources/fu-2016.md)
+**Targeted ENO**, introduced by [Fu et al. (2016)](/sources/fu-2016.md)
 (§3, Eqs. (21)–(29), Tables 1–2, 5), is a family
 of nonlinear shock-capturing reconstructions in which each candidate stencil is
 either used with its *linear* weight or discarded completely. A $K$-point TENO
@@ -72,7 +72,9 @@ $\hat f^{(2)}=\tfrac16(2f_{i-2}-7f_{i-1}+11f_i)$ (Fu et al. 2016, Table 1; Takag
 
 $$\gamma_k=\Big(C+\frac{\tau_K}{\beta_k+\epsilon}\Big)^q,\qquad C=1,\ q=6,\ \epsilon=10^{-40}$$
 
-(Fu 2023, Eq. (6); Takagi et al., Eq. (8); Ye et al., Eq. (6)), with $\beta_k$
+(Fu 2023, Eq. (6); Takagi et al., Eq. (8); Ye et al., Eq. (6); the earliest in the bundle with all
+three values printed are [Fu (2019b)](/sources/fu-2019-b.md), Eq. (2.11), and
+[Fu et al. (2019d)](/sources/fu-2019-d.md), §III.A.2, Eq. (13)), with $\beta_k$
 the Jiang–Shu [smoothness indicator](/definitions/smoothness-indicator.md) of
 $S_k$ and $\tau_K$ a smoothness measure of the full $K$-point stencil. Fu et al.
 (2016, §3.1.2, Eqs. (22)–(23)) print the measure with $C=1$ and "typically $q=6$"
@@ -115,7 +117,21 @@ note the same form covers WENO-Z ($C=1$) and WENO-CU6 ($C=20$), with $q=2$ in
   "$\approx O(\Delta x^K)$", with $\hat f_K$ the $K$-point polynomial (the printed
   lower limit is $(K+1)/2$ for odd $K$ and $K/2$ for even $K$). The sixth-order
   $\tau_K$ for every $K\ge6$ is therefore the later sources' choice, not the
-  appendix's.
+  appendix's. The earliest in-bundle statements of it are of 2019:
+  [Fu (2019b)](/sources/fu-2019-b.md) (§2.2.2, Eqs. (2.12)–(2.13)) print
+  $\tau_6$ with the absolute value and the six-point $\beta_6$ in full (prefactor
+  $1/120960$, inside absolute-value bars), crediting $\tau_6$ to Fu et al. (2017,
+  not ingested); [Fu et al. (2019d)](/sources/fu-2019-d.md) (§III.A.2, Eq. (15))
+  print the same form "for any $K$th-order TENO scheme (higher than fourth
+  order)", $K=5$ included (the TENO5-A $\tau_5$,
+  [adaptive TENO](/methods/adaptive-teno.md)), and give the reason, "following"
+  Fu et al. (2017): "in combination with the third-order SSP Runge–Kutta
+  time-marching method, a sixth-order-accurate $\tau_K$ is necessary to enable
+  the TENO scheme robust for shock capturing with a reasonably large CFL number",
+  a CFL above 0.4 being "reasonably large". *(Compiler check, not in the sources:
+  Fu (2019b)'s $\beta_6$ is exactly the Jiang–Shu integral of the quintic on
+  $\{i-2,\dots,i+3\}$, and $\beta_6-\tfrac16(\beta_1+\beta_2+4\beta_0)$ vanishes
+  through $\Delta x^5$ on smooth data, so $\tau_6=O(\Delta x^6)$ as printed.)*
 
 **3. Normalization and sharp cut-off.**
 
@@ -159,6 +175,19 @@ et al. *(Compiler check, not in the sources: every row of their Tables 3–4 lie
 $d=(\tfrac12+\tfrac{\eta_{\mathrm b}}4,\tfrac12-\tfrac{\eta_{\mathrm b}}2,\tfrac{\eta_{\mathrm b}}4)$ for five points and
 $d=(\tfrac3{10}+\tfrac{3\eta_{\mathrm b}}{10},\tfrac3{10},\tfrac{\eta_{\mathrm b}}{10},\tfrac25-\tfrac{2\eta_{\mathrm b}}5)$
 for six, e.g. $\eta_{\mathrm b}=0.54$: $0.3+0.162=0.462$, $0.4-0.216=0.184$.)*
+[Fu (2019b)](/sources/fu-2019-b.md) (§2.2.3) and [Fu et al. (2019d)](/sources/fu-2019-d.md)
+(§IV.B, TENO6-A) use another six-point background, "fourth-order accurate" with an approximate
+dispersion relation satisfied "following" Fu et al. (2017), with the same printed weights
+$d=(0.4294317718960898,\ 0.1727270875843552,\ 0.0855682281039113,\ 0.312272912415645)$; Fu et al.
+(2019d) derive them by minimizing the dispersion error with weight $e^{6(\pi-\vartheta)}$ under the
+constraint of fourth order and fixing the dissipation by a single coefficient $b_0=0.025$ (§IV.B, Eqs.
+(31)–(40); [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+*(Compiler check, not in the sources: the combined flux has coefficients
+$(0.02852,-0.17140,0.65038,0.62538,-0.15890,0.02602)$ on $f_{i-2},\dots,f_{i+3}$; its flux difference
+is exact for polynomials of degree up to 4, not 5, i.e. fourth order; $d_1\ne0.3$, so it is not on the
+fifth-order TENO6-opt line above; and it is the [MDCD](/methods/mdcd-scheme.md) flux with
+$c_{\mathrm{disp}}=0.05455$, $c_{\mathrm{diss}}=0.0025$.)* The name TENO6 thus covers three different
+backgrounds in the bundle (see Qualifications).
 [Liang & Fu (2024b)](/sources/liang-2024-b.md) (§2.2, Eqs. (9)–(20);
 §3.3.1, Eqs. (36)–(46)) recall the eight-point recipe in full, stencil
 widths $\{3,3,3,4,4,5\}$, $q=6$, $\epsilon=10^{-40}$ and the sixth-order
@@ -193,9 +222,12 @@ Values used:
 | $10^{-5}$ | TENO5 default | Takagi et al., §4; Liang et al., §2.2; Huang et al., §2 ("by spectral analysis") |
 | $10^{-4}$ | removes a small contact overshoot of TENO-THINC on the blast wave at very high resolution | Takagi et al., §4.5, Fig. 9 |
 | $10^{-4}$ | needed for TENO5 to run stably on the Woodward–Colella blast wave ($N_x=400$) | Liang et al., §4.3 |
-| $10^{-5}$; $10^{-7}$ | TENO-M; TENO6 and TENO8 (following Fu et al. 2018) | Hong et al., §4.3, §5 |
+| $10^{-5}$; $10^{-7}$ | TENO-M; TENO6 and TENO8 (following Fu et al. 2018, J. Comput. Phys. 374) | Hong et al., §4.3, §5 |
 | $10^{-6}$ | unstructured finite-volume TENO3–6, both selection steps | Ji et al., §3.3 |
 | $10^{-6}$ | default of the optimized TENO6 of TENO-HY (after Fu 2019) | Li et al., §4 |
+| $10^{-6}$ | fourth-order optimized TENO6, nonlinear branch of the hybrid TENO "according to spectral analysis and numerical experiment"; agrees with Li et al.'s row above | [Fu (2019b)](/sources/fu-2019-b.md), §2.2.3 |
+| $5\times10^{-4}$ | TENO-based discontinuity indicator, four equal stencils, $\gamma_k=(\beta_k+\epsilon)^{-6}$ ([TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)) | Fu (2019b), §4.2 |
+| $10^{-10},\dots,10^{-5}$; $10^{-10},\dots,10^{-6}$, adaptive | TENO5-A; TENO6-A, $C_T=10^{-\lfloor b\rfloor}$ ([adaptive TENO](/methods/adaptive-teno.md); ranges a compiler check from the printed $b_1$, $b_2$) | [Fu et al. (2019d)](/sources/fu-2019-d.md), §III.B, Eqs. (20)–(22) |
 | $10^{-5}$; $0.1$ | TENO-HY on the blast wave; TENO-HY and optimized TENO6 fail on Sedov "even with" $C_T=0.1$ | Li et al., §4.2 |
 | $10^{-6}$–$10^{-8}$ | Rayleigh–Taylor: smaller resolves more small scales, $10^{-8}$ matches ninth-order WENO references | Ye et al., §4.7, Fig. 8 |
 | $5\times10^{-4}$ | TENO-based discontinuity indicator | Fu 2023, §3.4 |
@@ -297,7 +329,12 @@ An adaptive, locally varying $C_T$ is the subject of
 - **Cost.** Fu et al. (2016, §6) state that TENO's arithmetic operations are
   "similar to" those of classical WENO, "although not specially studied".
   TENO6-A costs 17% more than WENO5-JS on GPU and 47% more on CPU
-  (Fu 2023, §5.4); TENO5 costs 810 ms against 696 ms for WENO5-Z per step on a
+  (Fu 2023, §5.4); in the original TENO-A paper, on a $512\times128$ double Mach
+  reflection, "the computing time is 222, 256, 361 and 527 s for WENO5-JS, WENO-CU6,
+  TENO5-A and TENO6-A" ([Fu et al. (2019d)](/sources/fu-2019-d.md), §V.D), i.e. +137 %
+  for TENO6-A on CPU *(compiler check: $527/222=2.37$)*, a different measurement whose
+  code and hardware are not stated in either source, so recorded as a difference of
+  conditions, not a contradiction; TENO5 costs 810 ms against 696 ms for WENO5-Z per step on a
   $512\times128$ double Mach reflection (Takagi et al., Table 3), but 55.10 s
   against 54.99 s in the timing of Huang et al. (Table 3, same grid, hardware not
   stated). The cost of wide TENO lies in the large-stencil indicators and the
@@ -356,10 +393,14 @@ Recorded here because they have no page of their own:
 - **TENO with additional limiters** (Fu 2023, §3.3): non-smooth candidates are
   filtered by an MP or TVD limiter instead of being dropped, and all candidates are
   combined linearly.
-- **Hybrid TENO** (Fu 2023, §3.4, Eqs. (21)–(24)): a four-stencil TENO indicator
-  with $\gamma_k=1/(\beta_k+\epsilon)^q$, $q=6$, $C_T=5\times10^{-4}$, switches to
-  the linear scheme without characteristic decomposition where all stencils are
-  smooth, improving efficiency "by a factor of four"; see
+- **Hybrid TENO** ([Fu (2019b)](/sources/fu-2019-b.md), §4–5, Eqs. (4.1)–(5.2),
+  Algorithm 1; recalled by Fu 2023, §3.4, Eqs. (21)–(24)): a TENO-type indicator on four
+  equal three-point stencils with $\gamma_k=1/(\beta_k+\epsilon)^q$, $q=6$, threshold
+  $5\times10^{-4}$ ([TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md))
+  switches to the fifth-order upwind flux with global Lax–Friedrichs dissipation, without
+  characteristic decomposition, where all stencils are smooth, and to the characteristic-wise
+  fourth-order TENO6 above elsewhere; the CPU time falls 3.2–3.84 times against TENO6 (Table 1),
+  which Fu (2023) recalls as "the optimal linear scheme" and a gain "by a factor of four"; see
   [hybrid central–WENO schemes](/methods/hybrid-weno.md).
   **TENO-S** ([Liang & Fu (2024b)](/sources/liang-2024-b.md), §§3.1–3.2,
   Eqs. (31)–(35), Algorithm 1) takes the same route with an eight-point
@@ -395,7 +436,8 @@ Recorded here because they have no page of their own:
   $C_T$) on sine waves and find it correct only below the reduced wavenumber $0.64$, against
   $2.06$ for their modified Ren detector; on double Mach reflection its detection is
   "obviously better" than in Fu's own paper, which they attribute to their normalization of
-  the detector inputs (§4.3.1), and the TENO-HY hybrid (upwind-5 plus an optimized TENO6) fails
+  the detector inputs (§4.3.1), and the TENO-HY hybrid (upwind-5 plus an optimized TENO6, as in
+  Fu 2019b, Eqs. (2.17), (5.1)) fails
   on the Sedov problem even with $C_T=0.1$ (§4.2).
 - **TENO-M** ([Hong, Ye & Ye (2022)](/sources/hong-2022.md), §§3–4, Eqs. (21)–(30),
   Tables 1–3): a cheaper route to six- and eight-point TENO. Wide TENO with
@@ -732,6 +774,8 @@ primitive variables and applies an HLLC flux (arXiv v2). Chamarthi reports:
   the dissipation-optimized backgrounds they use; in the founding paper the TENO6 with
   $d=(9,6,1,4)/20$ is sixth order and only TENO6-opt is fifth order (Fu et al. 2016,
   Table 5, §5.1), so the name TENO6 denotes different backgrounds in the two sources.
+  The TENO6 of [Fu (2019b)](/sources/fu-2019-b.md) (§1, §2.2.3) is a third: "the fourth-order
+  TENO6 scheme", whose background is that of TENO6-A (step 4 above).
   TENO5-A is third order ([adaptive TENO](/methods/adaptive-teno.md)). *(Compiler check, not in
   the sources: in TENO-M8 the target schemes on the seven-point unions adjacent to a
   discontinuity, $\hat f_1$ and $\hat f_7$ of Hong et al.'s Eq. (30), are seventh
@@ -846,8 +890,10 @@ at the critical point.
 
 # Citations
 
-- [Fu, Hu & Adams (2016)](/sources/fu-2016.md) — §1; §3, Eqs. (21)–(29), Tables 1–2, Figs. 1–4; §4, Eq. (31), Tables 3–5; §5, Figs. 10–23; §6; App. A, Eqs. (A.1)–(A.3): the founding paper: stencils, scale separation, cut-off, formal-order condition, TENO5/TENO6 and optimized backgrounds, tests.
+- [Fu et al. (2016)](/sources/fu-2016.md) — §1; §3, Eqs. (21)–(29), Tables 1–2, Figs. 1–4; §4, Eq. (31), Tables 3–5; §5, Figs. 10–23; §6; App. A, Eqs. (A.1)–(A.3): the founding paper: stencils, scale separation, cut-off, formal-order condition, TENO5/TENO6 and optimized backgrounds, tests.
 - [Fu (2023)](/sources/fu-2023.md) — §§1–5, Eqs. (2)–(33), Figs. 1–9: the review of the family.
+- [Fu (2019b)](/sources/fu-2019-b.md) — §2, Eqs. (2.8)–(2.17), Figs. 1–2; §4–5, Eqs. (4.1)–(5.2), Algorithm 1; §6, Table 1: fourth-order optimized TENO6 ($\epsilon$, $C$, $q$, $\tau_6$, $\beta_6$, $d_k$, $C_T=10^{-6}$), TENO-based indicator and hybrid TENO.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §III.A.2, Eqs. (13)–(15); §III.B, Eqs. (20)–(22); §IV.B, Eqs. (31)–(40); §V.D: recipe with printed parameters, sixth-order $\tau_K$ rationale, adaptive cut-off range, TENO6-A background, DMR timings (Article in Advance).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.2, Eqs. (5)–(14), Table 2, Table 3: TENO5 recipe, order, cost.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §2, Eqs. (1)–(10); §3.3–3.5, Eqs. (24)–(39); §4.5, §4.7: stencils, $\tau_K$, $q$ and $C_T$ tests.
 - [Fu (2021)](/sources/fu-2021.md) — §§2–3.4: TENO background, dissipation of fixed-cut-off TENO.

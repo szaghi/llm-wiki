@@ -5,7 +5,7 @@ description: "Implicit shock tracking makes the mesh geometry an unknown and mov
 status: established
 aliases: [MDG-ICE, MDG+ICE, HOIST, space-time HOIST, slab-based HOIST, high-order implicit shock tracking, moving discontinuous Galerkin with interface condition enforcement, moving discontinuous Galerkin with interface conservation enforcement, implicit discontinuity tracking, shock fitting by optimization]
 tags: [shock-tracking, dg, numerical-flux]
-timestamp: 2026-10-30T08:44:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # Implicit shock tracking and moving DG (MDG-ICE)
@@ -357,6 +357,16 @@ Tables 1). No test compares with a shock-capturing scheme.
   theirs; this bundle holds unstructured WENO-type reconstructions
   ([WLS-ENO](/methods/wls-eno.md),
   [unstructured gradient reconstruction](/methods/unstructured-gradient-reconstruction.md)).
+  The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) makes the same claim earlier, with a
+  mechanism and a scope: "even (nominally) uniformly high-order schemes yield first-order accurate
+  solutions downstream of moving shocks", because shocks have zero measure and their location "is only
+  known to $O(\Delta x)$" (§3.5); shock-capturing methods "are always globally first-order accurate for
+  unsteady problems" (Summary 5). It rests the claim on scalar shock–sound model problems (Casper &
+  Carpenter 1998; Engquist & Sjögreen 1998, as recalled) and states that only subcell resolution or
+  shock fitting removes it (§3.5, §6), while calling shock fitting "only feasible in cases in which the
+  shock topology is extremely simple and no shock wave forms during the calculation" (§3) — the
+  limitation that implicit tracking, which fits shocks without prescribing their topology, is designed
+  to lift. See [order of accuracy behind shocks](/results/order-of-accuracy-behind-shocks.md).
 - **Positivity during the iterations.** Huang & Zahr state that accepted
   iterates cannot have negative density or pressure because the line
   search guarantees a sufficient decrease of the merit function
@@ -390,7 +400,9 @@ Tables 1). No test compares with a shock-capturing scheme.
 - **First-order claim.** Naudet & Zahr state that shock-capturing
   methods reduce the accuracy "near discontinuities, and therefore
   globally, to first-order", and that their accuracy "will always be
-  limited to first-order" (§1), without naming a norm or a region. The
+  limited to first-order" (§1), without naming a norm or a region; the
+  review of Pirozzoli (2011a, Summary 5) restricts the corresponding claim to
+  unsteady problems. The
   reconstruction pages of this bundle report design-order convergence on
   smooth solutions (e.g. [WENO-JS](/methods/weno-js-reconstruction.md)).
 - **Printed slips in Naudet & Zahr.** The accelerating-shock initial
@@ -410,4 +422,5 @@ Tables 1). No test compares with a shock-capturing scheme.
 
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §I, §3.1–3.5 Eqs. (3.1)–(3.17), Lemmas 1–2, Figs. 2–7, §IV.A–E Figs. 8–28, Tables 1, §V (author manuscript).
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §1, §2.2 Eqs. (7)–(17), §3 Eqs. (29)–(35), Remarks 9–10, §4 Eqs. (36)–(45), Algorithm 1, §5 Figs. 9–21, §6.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3; §3.5; §6; Summary 5: first order behind moving shocks, feasibility of shock fitting (review).
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §1, §2–3 Eqs. (1)–(26), §4 Eqs. (27)–(37), Remarks 5–8, §5.1 Eqs. (38)–(55), Remarks 9–11, §5.2 Eqs. (56)–(70), Remarks 13–20, §5.3 Remark 22, §6 Eqs. (78)–(87), Tables 2–3, Figs. 13–34, App. A Table A.4 (arXiv v2).

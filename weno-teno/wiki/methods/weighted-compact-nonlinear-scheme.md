@@ -5,7 +5,7 @@ description: "WCNS are finite-difference shock-capturing schemes in three steps 
 status: established
 aliases: [WCNS, WCNS3-MR-NN, WCNS3-MR, WCNS3-JS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS, WCNS-SA, WCNS-opt, WCNS-LD, ONL6, WCNS-MR, WCNS7M, MND scheme, WCNS-EXP, hybrid MR-WCNS]
 tags: [compact-scheme, finite-difference, weno, teno, numerical-flux, multiphase]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # Weighted compact nonlinear schemes (WCNS)
@@ -303,6 +303,11 @@ costs about as much as WCNS3-MR (Table 5). The authors state that the method ext
 
 ## Members recalled in the sources
 
+- **The original WCNS (Deng & Zhang 2000)**: the review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md)
+  (§3.1) recalls it as an attempt "to conjugate the spectral-like resolution properties of compact
+  schemes with the shock-capturing properties of WENO", by "coupling WENO interpolation of conservative
+  variables to the intermediate nodes and compact conservative approximation of the flux derivatives at
+  the grid nodes" — the three-step structure of the opening paragraph, with a compact last step.
 - **WCNS-JS and WCNS-Z**: interpolation weighted with Jiang–Shu or WENO-Z weights; WCNS-Z beats
   WCNS-JS (Fu 2023, §3.7).
 - **TCNS** (targeted compact nonlinear schemes): WCNS with the [TENO](/methods/targeted-eno.md)
@@ -444,3 +449,4 @@ et al. for periodic grids only.)*
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §1; §3, Eqs. (3.2)–(3.24); §5, Table 5.1: hybrid MR-WCNS.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.2, Eq. (5); §§2.3–2.6, Eqs. (6)–(25), Tables 1–6, Fig. 1; §3, Figs. 2–9; §4; App., Fig. A.1: WCNS-T and WCNS-JS at orders 5–11.
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §2, Eqs. (2)–(18); §3; §4, Tables 2–5, Figs. 6–18: staggered third-order WCNS3-JS, WCNS3-MR and the learned WCNS3-MR-NN.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1: Deng & Zhang's WCNS as recalled (review).

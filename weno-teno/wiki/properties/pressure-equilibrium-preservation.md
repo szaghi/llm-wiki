@@ -3,9 +3,9 @@ type: Property
 title: "Pressure-equilibrium preservation"
 description: "A discretization is pressure-equilibrium preserving when initial data with constant velocity and pressure keep them constant; the page gives the discrete conditions for split-form central schemes and two-point fluxes, the schemes and algebraic fluxes that meet them, the incompatibility with a KEP internal-energy splitting, and the multicomponent and multiphase interface-equilibrium constructions."
 status: established
-aliases: [PEP, pressure equilibrium preserving, KEEP-PE, interface equilibrium, preservation of constant velocity and pressure, compatibility condition, FC/PE scheme]
+aliases: [PEP, pressure equilibrium preserving, interface equilibrium, preservation of constant velocity and pressure, compatibility condition, FC/PE scheme]
 tags: [kinetic-energy-preserving, finite-difference, central-scheme, multiphase, turbulence]
-timestamp: 2026-10-23T19:58:00Z
+timestamp: 2026-11-17T08:43:12Z
 ---
 
 # Pressure-equilibrium preservation
@@ -18,6 +18,31 @@ $p$ constant whenever they are constant initially
 ([De Michele & Coppola (2023a)](/sources/demichele-2023.md), §4.2.2). The
 property is stated for shock-free central discretizations, where nothing
 damps a spurious pressure perturbation created at a density jump.
+
+For split-form central schemes,
+[Shima et al. (2021)](/sources/shima-2021.md), who know of no earlier
+study of the property (§1), derive the discrete
+pressure and velocity equations that the mass, momentum and total-energy
+fluxes of the second-order KEP (Jameson, Pirozzoli) and KEEP (Kuya et al.)
+schemes induce (§2.2). For KEEP the discrete product rule of the
+pressure-work flux leaves an internal-energy equation with the cubic-split
+flux $\{\!\{\rho\}\!\}\{\!\{e\}\!\}\{\!\{v\}\!\}$ (Eqs. (12)–(13)); with
+$\rho e=p/(\gamma-1)$, at constant $v_0$, $p_0$ it gives the pressure rate
+
+$$\frac{dp_i}{dt}=-\frac{v_0p_0}2\Big[\frac1{\rho_i}\frac{\rho_{i+1}-\rho_{i-1}}{2\Delta x}+\rho_i\frac{\rho_{i+1}^{-1}-\rho_{i-1}^{-1}}{2\Delta x}\Big],$$
+
+nonzero for a generic density (Eq. (15)). Its leading term is
+$-\tfrac12v_0p_0\Delta x^2(\ln\rho)'(\ln\rho)''$, so the error is second order
+and vanishes where $\ln\rho$ is locally linear *(compiler check, not in the
+sources)*. The KEP enthalpy flux contains the same internal-energy part and
+fails too (Eq. (16)). Replacing the internal-energy flux by the quadratic
+split $\{\!\{\rho e\}\!\}\{\!\{v\}\!\}=\{\!\{p\}\!\}\{\!\{v\}\!\}/(\gamma-1)$
+(Eq. (17)) makes the induced pressure rate vanish identically at equilibrium
+(Eqs. (18)–(19)): this is the
+[KEEP-PE scheme](/methods/keep-scheme.md). All three schemes share mass,
+momentum and pressure fluxes, so the velocity condition holds for each, and
+KEEP and KEP lose velocity equilibrium only through their pressure error
+(Eqs. (21)–(23)).
 
 ## Setting
 
@@ -62,7 +87,7 @@ discretized:
 - **Internal energy.** Since $p=(\gamma-1)\rho e$, it holds when the
   convective term averages only the divergence and the $v$-advective forms,
   $C_{\rho e}=\chi\,\frac{\delta\rho ve}{\delta x}+(1-\chi)\big(v\frac{\delta\rho e}{\delta x}+\rho e\frac{\delta v}{\delta x}\big)$
-  (Eq. (51)). Shima et al. use $\chi=\tfrac12$; $\chi=1$ is the new
+  (Eq. (51)). Shima et al. use $\chi=\tfrac12$ (their Eq. (20)); $\chi=1$ is the new
   $(\rho e)_{\mathrm{div}}$ form.
 - **Total energy.** The condition becomes
   $C_{\rho E}-C_{\rho\kappa}+P_{\rho E}=0$ for constant $v,p$ (Eq. (54)). The
@@ -80,7 +105,8 @@ flux $\overline e\,m$, makes $\rho e^2$ a conserved quadratic. A splitting
 that satisfies Eq. (51) cannot be of that type, so a PEP internal-energy
 discretization cannot preserve $\rho e^2$ (§4.2.2). The KEEP scheme of Kuya
 et al., equivalent for exact time integration to the KGP internal-energy
-scheme, is therefore not PEP (Table 2).
+scheme, is therefore not PEP (Table 2), as Shima et al. show directly
+(Eq. (15)).
 
 ## Which schemes have it
 
@@ -90,7 +116,7 @@ mass and momentum (Table 2). Only three are PEP:
 | scheme | convective flux of the energy variable | pressure term | from |
 |---|---|---|---|
 | $(\rho E)_{\mathrm{PEP}}$ | $\overline{\rho e}\,\overline v+m\,\overline\kappa_{\mathrm s}$ | $[\![\overline v\,\overline p]\!]$ | Singh & Chandrashekar |
-| $(\rho e)_{\mathrm{PEP}}$ | $\overline{\rho e}\,\overline v$ | $p\,\delta v/\delta x$ | Shima et al. |
+| $(\rho e)_{\mathrm{PEP}}$ | $\overline{\rho e}\,\overline v$ | $p\,\delta v/\delta x$ | [Shima et al. (2021)](/sources/shima-2021.md) (KEEP-PE) |
 | $(\rho e)_{\mathrm{div}}$ | $\overline{\rho ve}$ | $p\,\delta v/\delta x$ | new |
 
 Here $\kappa_{\mathrm s}=\tfrac12\lvert v\rvert^2$ is the specific kinetic
@@ -100,7 +126,9 @@ two new ones), the three total-enthalpy schemes and the three entropy
 schemes are not PEP.
 
 In DG, [Ranocha et al. (2023)](/sources/ranocha-2023.md) state, citing the
-literature, that the directional Shima et al. flux is kinetic-energy and
+literature, that the directional Shima et al. flux, the two-point form of
+the [KEEP-PE](/methods/keep-scheme.md) face fluxes (Shima et al. Table 2),
+is kinetic-energy and
 pressure-equilibrium preserving but not entropy-conservative, and that the
 Ranocha flux is entropy-conservative, kinetic-energy preserving and
 pressure-equilibrium preserving (§3.2, Eqs. (3.7), (3.10); formulas on
@@ -145,6 +173,15 @@ $v=p=1$, 61 points, RK4, CFL 0.01 (§5). Aρ-Ae diverges at $t\approx22$,
 Aρ-He and Gρ-Ge run to $t=100$, and KEEP(1) shows spurious pressure and
 velocity oscillations at $t=30$ (Fig. 1b plots $p-p_0$ on a $10^{-7}$ scale)
 where AEC(1) shows none (Fig. 1).
+Shima et al.'s density wave, $\rho_0=2+\sin2\pi x$, $v=p=1$, 41 points,
+RK4 at CFL ≈ 0.1, isolates the property for the KEEP family: KEEP-PE keeps
+$v$ and $p$ uniform, while KEEP and KEP develop growing pressure
+oscillations, which feed the velocity through the pressure gradient and
+then the density through the mass equation, and diverge at $t\approx12.9$
+and $11.1$ (§3.1, Fig. 1). A rerun with these settings (41 points with both periodic ends, 40
+unknowns) diverges at
+$t=12.89$ and $11.16$, and KEEP-PE holds $\lvert p-1\rvert\approx4\times10^{-14}$
+to $t=20$ *(compiler check, not in the sources)*.
 This complements the isentropic-vortex evidence below, in which the non-PEP
 $(\rho e)$ scheme never blows up: the vortex has no density variation at
 constant pressure, the density wave has nothing else *(compiler check, not
@@ -218,7 +255,7 @@ source's $\phi^\pm$ and node index $m$) built from the mixture molar mass
 $\bar W$ and the density; $\mathsf w^\pm\to1$ where the composition is
 uniform (Eqs. (34)–(49)). Two second-order central
 schemes follow (Table 1): **FC/PE (S)**, a split form that reduces to the
-KEEP-PE scheme of Shima et al. for one component, and **FC/PE (D)**, a
+[KEEP-PE scheme](/methods/keep-scheme.md) of Shima et al. for one component, and **FC/PE (D)**, a
 divergence form that reduces to the standard divergence scheme. Both
 solve only the conservation laws, with no extra transport equation, and
 preserve equilibrium at the initial state. With a non-uniform velocity
@@ -419,6 +456,25 @@ and [multicomponent Euler equations](/definitions/multicomponent-euler-equations
 
 ## Qualifications
 
+- Shima et al.'s analysis is semi-discrete, second order, on a uniform
+  grid, for a single-component ideal gas with constant $\gamma$: the proof
+  that KEEP-PE is PEP needs $\rho e$ linear in $p$. For a variable $\gamma$ or
+  a general equation of state, Fujiwara et al. and Terashima et al. above
+  take over. The equilibrium of KEEP-PE survives every explicit
+  Runge–Kutta stage, because at $v_0$, $p_0$ its momentum and energy
+  residuals are $v_0$ and $\tfrac12v_0^2$ times the mass residual
+  *(compiler check, not in the sources)*.
+- Shima et al.'s "superior numerical stability" of KEEP-PE (abstract, §4)
+  rests on the density wave; in their inviscid Taylor–Green vortex KEEP
+  and KEEP-PE are equally stable and KEEP-PE loses slightly more entropy
+  (§3.2, Fig. 2), and in De Michele & Coppola's Table 3 the PEP
+  $(\rho e)_{\mathrm{div}}$ blows up early. Their statement that "the
+  existing linear schemes based on the split convective forms, such as
+  used in the KEP and KEEP schemes, do not maintain the pressure
+  equilibrium" (§2.2.2) is scoped to the forms they analyse; the PEP split
+  forms of the table above, $(\rho E)_{\mathrm{PEP}}$ and
+  $(\rho e)_{\mathrm{div}}$, are not covered by it
+  ([KEEP and KEEP-PE schemes](/methods/keep-scheme.md)).
 - Scope of "conservative formulations cannot preserve pressure
   equilibrium". [Trojak & Dzanic (2024)](/sources/trojak-2024.md) state it
   in passing, citing Abgrall and others (§1), and Gaburro et al. (2024)
@@ -466,6 +522,7 @@ and [multicomponent Euler equations](/definitions/multicomponent-euler-equations
 
 # Citations
 
+- [Shima et al. (2021)](/sources/shima-2021.md) — §1, §2.1 Eqs. (1)–(7), §2.2 Eqs. (8)–(23), Tables 1–2, §3.1 Fig. 1, §3.2 Fig. 2, §4.
 - [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §2.2, §3.1 Eqs. (12)–(16), §3.3 Eqs. (23)–(25), §4.2.1, §4.2.2 Eqs. (45)–(54), Table 2, §5.1 Table 3, §5.2 Fig. 10 (arXiv v1).
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §3.2 Eqs. (3.7), (3.10).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3.3 Lemma 3.1, §4.1.2 (arXiv v1).

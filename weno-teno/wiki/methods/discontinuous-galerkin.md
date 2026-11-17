@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-30T08:43:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # Discontinuous Galerkin method
@@ -34,6 +34,16 @@ state of the art for limiters is less advanced than the WENO procedure"; Hermite
 WENO and WENO limiters are the two ways Shu records of combining the methods
 ([Hermite WENO](/methods/hermite-weno.md),
 [WENO limiters for DG](/methods/weno-limiter-dg.md)).
+
+The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§4.1), written for DNS and LES of
+compressible turbulence, groups spectral-volume and DG methods (after Wang 2007) as alternatives for
+uniform high accuracy in complex geometry, but judges that, because they "require the storage of
+several degrees of freedom per cell", they "seem to be too demanding currently in terms of memory
+requirements for large-scale turbulence computations". It points instead to the $P_NP_M$ framework of
+Dumbser et al. (2008, as recalled), which contains finite volumes ($N=0$) and DG ($N=M$; $M$ page-local,
+the degree of the flux polynomials) as members ([ADER schemes](/methods/ader-scheme.md)), and lists
+efficient low-dissipation methods for unstructured meshes as an open issue (§6, Future Issue 5). The
+judgement is dated (2010) and is not a measurement.
 
 ## Semi-discrete weak form
 
@@ -878,6 +888,7 @@ $N=1,2,3$ (§6.2, Table 10).
 # Citations
 
 - [Shu (2009a)](/sources/shu-2009.md) — §5.1, Eq. (5.1): DG as a generalized finite-volume scheme; robustness of DG limiting.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §4.1; §6, Future Issue 5: DG memory cost for large-scale turbulence, $P_NP_M$ (review).
 - [Zhang & Shu (2010b)](/sources/zhang-2010-b.md) — §§2–3, Table 2.1; §4: positivity-preserving RKDG for Euler, TVB limiter before the positivity limiter.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — §2.1 Eq. (2.2), Eq. (3.3), Prop. 4.6, Thm 4.1, §5.1 Table 1.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — Eq. (1.5), Eq. (7.2), Thm 7.1, Remark 7.7, Table 1, §8.

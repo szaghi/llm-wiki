@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-11-01T18:40:00Z
+timestamp: 2026-11-17T08:30:16Z
 ---
 
 # Conservative finite-difference scheme
@@ -250,7 +250,19 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   into the flux-difference forms", and give the implied interface flux of an eighth-order explicit
   midpoint-and-node scheme; their positivity limiters then act on that flux, so the limited scheme
   stays conservative ([WCNS](/methods/weighted-compact-nonlinear-scheme.md), whose conservation is
-  disputed there).
+  disputed there). Earlier, [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§2, Eqs. (11)–(13)) gave
+  the implied flux of Lele's explicit and compact family
+  $\sum_{m=-n_a}^{n_a}\mathsf p_m(\delta f)_{i+m}=\frac1{\Delta x}\sum_{l=-n_b}^{n_b}\mathsf q_lf_{i+l}$
+  (page-local coefficients $\mathsf p_m$, $\mathsf q_l$, $\mathsf g_l$, half-widths $n_a$, $n_b$ and
+  derivative $(\delta f)_i$): with $(\delta f)_i=(\hat f_{i+1/2}-\hat f_{i-1/2})/\Delta x$,
+  $$\sum_{m=-n_a}^{n_a}\mathsf p_m\hat f_{i+1/2+m}=\sum_{l=-n_b+1}^{n_b}\mathsf g_lf_{i+l},\qquad \mathsf g_{-n_b+1}=-\mathsf q_{-n_b},\quad \mathsf g_l=\mathsf g_{l-1}-\mathsf q_{l-1},$$
+  so for a compact scheme the fluxes solve a banded system. The review prints the recurrence with
+  the left-hand coefficients $a$ in place of the right-hand $b$ (its symbols), which cannot be
+  right *(compiler check, not in the sources: substituting the flux form gives
+  $\mathsf g_l-\mathsf g_{l+1}=\mathsf q_l$, hence the recurrence above, which closes because
+  $\sum_l\mathsf q_l=0$; for an explicit scheme, $\mathsf p_0=1$ and $n_a=0$, it is the tail-sum rule of Abgrall & Nassajian
+  Mojarrad below)*. It adds that explicit, "even nonlinear", consistent fluxes of this type conserve
+  by telescoping and satisfy the hypotheses of the [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md).
 - **Fluctuation form.** For systems with non-conservative products, Balsara et al. (2024, Eq. (4.1))
   replace the flux difference by an internal term plus boundary fluctuations,
   $\frac{du_i}{dt}=-A(u_i)\frac{u^-_{i+1/2}-u^+_{i-1/2}}{\Delta x}-\frac1{\Delta x}\big(D^-_{i+1/2}+D^+_{i-1/2}\big)$,
@@ -306,6 +318,18 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   regrouped into vertex residuals, which keeps local conservation and allows element-wise a posteriori
   recomputation ([deferred correction](/methods/deferred-correction.md),
   [discrete kinetic relaxation](/methods/discrete-kinetic-relaxation-scheme.md)).
+- **Split central derivatives of any order.** Non-dissipative central fluxes are conservative FD
+  fluxes too. [Pirozzoli (2010)](/sources/pirozzoli-2010.md) (§2, Eqs. (2), (11)–(17)) shows that the
+  Feiereisen, Blaisdell and Kennedy–Gruber split forms of $\partial_x(\rho v\phi)$, differenced with an
+  explicit central formula of half-width $L_{\mathrm s}$ (order $2L_{\mathrm s}$ for maximum-order
+  weights), are exactly $\frac1{\Delta x}(\hat f_{i+1/2}-\hat f_{i-1/2})$ with a face flux that is a
+  double sum of two-point products of arithmetic means, so point-value conservation and the
+  Lax–Wendroff property hold without upwinding
+  ([conservative split central derivative](/operators/conservative-split-derivative.md),
+  [split convective forms](/methods/split-convective-forms.md)). On stretched grids the paper applies
+  the flux form in computational space through the chain rule; whether such a scheme counts as
+  conservative is an open contradiction on
+  [local conservation and flux form](/results/local-conservation-flux-form.md).
 - **Split forms on a collocated grid.** Jain & Moin (2022, §3, Eqs. (31)–(42)) call their two-phase
   scheme finite-volume, but its unknowns are collocated point values and its face fluxes are products
   of two-point arithmetic averages (quadratic, cubic, and new quartic and quintic splits), i.e. a
@@ -410,3 +434,5 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §3.2–3.5, Eqs. (55)–(65); §4.1, Table 1 (arXiv v3).
 - [Yang & Qiu (2026)](/sources/yang-2026.md) — §2.1, Eqs. (2.1)–(2.6): double-average implicit function for $\partial_x^2g(u)$.
 - [Zhang et al. (2026a)](/sources/zhang-2026.md) — §2, Eqs. (2.1)–(2.3).
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2, Eqs. (10)–(13) (pp. 166–167).
+- [Pirozzoli (2010)](/sources/pirozzoli-2010.md) — §2, Eqs. (2), (11)–(17); §3.2.

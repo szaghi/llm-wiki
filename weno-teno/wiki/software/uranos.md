@@ -5,7 +5,7 @@ description: "URANOS is a BSD-licensed Fortran 90, OpenACC and MPI finite-differ
 status: established
 aliases: [Unsteady Robust All-around Navier-StOkes Solver, URANOS GPU]
 tags: [software, gpu, finite-difference, teno, turbulence, immersed-boundary]
-timestamp: 2026-10-24T06:38:53Z
+timestamp: 2026-11-17T08:43:20Z
 ---
 
 # URANOS
@@ -37,7 +37,8 @@ form (De Vanna et al. 2023b §3.1; De Vanna et al. 2023a §3.1):
   in the incompressible inviscid limit on uniform and non-uniform
   Cartesian meshes, has nominally zero numerical dissipation, and "cannot
   stably develop shocks/shocklets" (no split form is printed; see
-  [split convective forms](/methods/split-convective-forms.md) and
+  [split convective forms](/methods/split-convective-forms.md),
+  [conservative split central derivative](/operators/conservative-split-derivative.md) and
   [kinetic energy preservation](/properties/kinetic-energy-preservation.md));
 - [WENO-Z](/methods/weno-z.md) of orders 3, 5 and 7 in the arbitrary-order
   form of Castro, Costa & Don, with the regularization set to
@@ -235,6 +236,20 @@ the mechanism they propose.
   (Table 2); they also cite a "roughly doubled computing cost" of TENO
   against EP from earlier work, which their own table does not show
   (§4.3.2).
+- The claim that the EP scheme preserves kinetic energy "on uniform and
+  non-uniform Cartesian meshes" goes beyond the arbitrary-order split fluxes as
+  first published: [Pirozzoli (2010)](/sources/pirozzoli-2010.md) states the
+  kinetic-energy property for uniform grids, applies the conservative flux form
+  in computational space through the chain rule on stretched grids, and writes,
+  after Ducros et al. (2000), that full conservation of the split form "is not
+  possible on a mesh with variable spacing" and that local conservation "cannot
+  be proved on non-uniform grids" (§3.2, §4). Coppola & Veldman's metric-weighted
+  control volumes support the URANOS statement; the disagreement between the
+  two sources is open on
+  [local conservation and flux form](/results/local-conservation-flux-form.md).
+  Pirozzoli's non-uniform-grid statements concern conservation of the linear
+  invariants; kinetic energy on non-uniform grids is not discussed there.
+  Which Pirozzoli paper URANOS follows is not stated beyond the name.
 - The thresholds $\Psi^*$ belong to this non-squared,
   compression-only sensor and its regularization; they are not
   transferable to the classical squared Ducros ratio.
@@ -252,3 +267,4 @@ the mechanism they propose.
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — program summary; §2.1–2.3; §3.1–3.4, Eqs. (8)–(16); §4.1–4.2, Algorithms 1–5, Figs. 1–3; §5.1–5.2, Tables 1–2; App. A.1–A.4, Figs. 11–14.
 - [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §2.2, Eqs. (4)–(8); §3.1–3.4, Eq. (9); §4.2–4.4, Tables 1–4; §6.
 - [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §2.3, Eqs. (9), (15)–(18); §3.1–3.6, Eqs. (13), (19)–(25); §4.3–4.4.
+- [Pirozzoli (2010)](/sources/pirozzoli-2010.md) — §2 p. 7183, §3.2, §4.

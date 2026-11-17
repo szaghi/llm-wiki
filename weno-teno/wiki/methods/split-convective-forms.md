@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Split convective forms"
-description: "Split forms write the convective terms of mass and momentum as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and conditions, Edoh's rotational forms, De Michele and Coppola's flux form and energy splittings, the Burgers split of DG and FR, an optimized eight-point cubic split in a TENO hybrid, and face and two-point fluxes."
+description: "Split forms write the convective terms of mass and momentum as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and conditions, the Feiereisen, Blaisdell and Kennedy–Gruber splits with their kinetic-energy status and conservative fluxes of any order, Ducros's product of means, Edoh's rotational forms, De Michele and Coppola's flux form and energy splittings, the Burgers split of DG and FR, an optimized eight-point cubic split in a TENO hybrid, and face and two-point fluxes."
 status: established
-aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split, Jameson–Pirozzoli form, KEEP scheme, energy-equation splitting]
+aliases: [split forms, skew-symmetric form, Feiereisen splitting, Blaisdell splitting, Kennedy–Gruber splitting, KGP splitting, FE-SF, BL-SF, KG-SF, density-weighted split, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split, Jameson–Pirozzoli form, energy-equation splitting]
 tags: [kinetic-energy-preserving, finite-difference, finite-volume, multiphase, turbulence, low-dissipation]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-11-17T08:43:20Z
 ---
 
 # Split convective forms
@@ -63,7 +63,138 @@ members have $\mu_L=0$:
 
 All three take the momentum flux
 $(m\phi)_{i+1/2}=\tfrac12m_{i+1/2}(\phi_i+\phi_{i+1})$. The case $\zeta=\mu_D=1$,
-with the rest zero, is the pure conservation form (§2.2).
+with the rest zero, is the pure conservation form (§2.2). The attribution of
+the $\zeta=\tfrac12$ row agrees with Pirozzoli's papers, which state that the
+Kennedy–Gruber split preserves kinetic energy for weights
+$\alpha_{\mathrm{KG}}=\beta_{\mathrm{KG}}=\tfrac14$ applied to continuity and
+momentum alike ([Pirozzoli (2010)](/sources/pirozzoli-2010.md), §2 p. 7183;
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md), §2.3 Eq. (20)); only
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) (§2.1) writes "only" for that case. The 2010 paper
+writes "one can easily prove" and prints no proof. The next section gives the
+weights.
+
+## Feiereisen, Blaisdell and Kennedy–Gruber splits
+
+[Pirozzoli (2010)](/sources/pirozzoli-2010.md) (§2, Eqs. (3)–(4), (15)) names three
+splits of $\partial_x(\rho v\phi)$, for $\phi=1$, $v$ or $H$, which the review
+([Pirozzoli (2011a)](/sources/pirozzoli-2011.md), §2.3, Eqs. (18)–(20)) and the
+curvilinear paper ([Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md), §2.1,
+Eqs. (6)–(8)) repeat:
+
+- **Feiereisen** (FE-SF):
+  $\tfrac12\partial_x(\rho v\phi)+\tfrac12\phi\,\partial_x(\rho v)+\tfrac12\rho v\,\partial_x\phi$;
+- **Blaisdell** (BL-SF):
+  $\tfrac12\partial_x(\rho v\phi)+\tfrac12v\,\partial_x(\rho\phi)+\tfrac12\rho\phi\,\partial_xv$;
+- **Kennedy–Gruber** (KG-SF), with page-local weights $\alpha_{\mathrm{KG}}$, $\beta_{\mathrm{KG}}$:
+  $\alpha_{\mathrm{KG}}\partial_x(\rho v\phi)+\beta_{\mathrm{KG}}\big(v\,\partial_x(\rho\phi)+\rho\,\partial_x(v\phi)+\phi\,\partial_x(\rho v)\big)+(1-\alpha_{\mathrm{KG}}-2\beta_{\mathrm{KG}})\big(\rho v\,\partial_x\phi+\rho\phi\,\partial_xv+v\phi\,\partial_x\rho\big)$.
+
+The three papers state the same kinetic-energy picture: semi-discrete
+preservation holds for FE-SF, and for KG-SF at
+$\alpha_{\mathrm{KG}}=\beta_{\mathrm{KG}}=\tfrac14$ ("only" for that case in 2011b), when continuity and momentum are
+split by the same rule (after Honein & Moin); BL-SF stabilizes through reduced
+aliasing instead (2010, p. 7181; 2011a, §2.3; 2011b, §2.1). The review adds that
+the proof needs summation-by-parts difference operators, which central
+approximations, explicit or implicit, of any order are on periodic grids (after
+Mansour et al.), and 2011b prints the proof for FE-SF (Eqs. (9)–(12);
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
+
+*(Compiler check, not in the sources.)* With $\phi=1$ every advective member
+of the family above reduces to $M^A$, so each split fixes its own mass weight.
+FE-SF is $\tfrac12C^D+\tfrac12C^\phi$ with $\zeta=1$, the Feiereisen row. BL-SF is
+$\tfrac12C^D+\tfrac12C^v$, whose mass equation is $\tfrac12M^D+\tfrac12M^A$
+($\zeta=\tfrac12$): $\mu_\phi=0\ne\tfrac12\zeta$, so it violates Eq. (10), although with
+$\mu_L=0$ it conserves momentum. Because the $\beta_{\mathrm{KG}}$ bracket equals
+$C^\phi+C^v+C^\rho-C^L$, KG-SF is
+$\alpha_{\mathrm{KG}}C^D+\beta_{\mathrm{KG}}(C^\phi+C^v+C^\rho)+(1-\alpha_{\mathrm{KG}}-3\beta_{\mathrm{KG}})C^L$
+with mass weight $\zeta=\alpha_{\mathrm{KG}}+\beta_{\mathrm{KG}}$. Momentum is conserved on
+the line $\alpha_{\mathrm{KG}}+3\beta_{\mathrm{KG}}=1$ ($\mu_L=0$), and Eq. (10) then
+forces $\alpha_{\mathrm{KG}}=\beta_{\mathrm{KG}}=\tfrac14$, $\zeta=\tfrac12$, the KGP row. On a
+periodic 17-point grid with fourth-order central differences and random
+$\rho>0$, $v$, FE-SF and KG-SF$(\tfrac14,\tfrac14)$ conserve mass, momentum and
+kinetic energy to round-off, BL-SF and the members
+$(\alpha_{\mathrm{KG}},\beta_{\mathrm{KG}})=(\tfrac12,\tfrac16)$, $(1,0)$ conserve mass and
+momentum but produce kinetic energy, and members off the line lose momentum. If
+the mass split is chosen independently of the momentum split, the KEP members
+of the KG form are the line $\alpha_{\mathrm{KG}}+\beta_{\mathrm{KG}}=\tfrac12$ with
+$\zeta=2\beta_{\mathrm{KG}}$, and only its point $(\tfrac14,\tfrac14)$ conserves momentum.
+
+**Conservative fluxes of any order.** Discretized with an explicit central
+derivative of any half-width, each of the three splits is exactly a flux
+difference: Pirozzoli (2010) derives the face fluxes, double sums of
+$\{\!\{\rho v\}\!\}\{\!\{\phi\}\!\}$ (FE-SF), $\{\!\{\rho\phi\}\!\}\{\!\{v\}\!\}$ (BL-SF)
+or, for KG-SF at $\tfrac14,\tfrac14$, the triple product
+$\{\!\{\rho\}\!\}\{\!\{v\}\!\}\{\!\{\phi\}\!\}$ over pairs of nodes that straddle the
+face (Eqs. (11)–(17); [conservative split central derivative](/operators/conservative-split-derivative.md)).
+Ducros et al. (2000, not ingested) had found such fluxes up to sixth order, as
+both Pirozzoli papers recall (2010, §1; 2011a, §2.3). For KG-SF, Pirozzoli
+writes that conservative approximations exist "only under particular
+circumstances", namely $\tfrac14,\tfrac14$ (p. 7182); by the check above every
+member of the line $\alpha_{\mathrm{KG}}+3\beta_{\mathrm{KG}}=1$ conserves momentum,
+hence is locally conservative ([local conservation and flux
+form](/results/local-conservation-flux-form.md)), and $\tfrac14,\tfrac14$ is the
+only kinetic-energy-preserving one, the case the paper derives. With compact
+derivatives, "apparently", no conservative form exists (2010, §4; 2011a, §2.3; no
+proof).
+
+**Robustness.** On inviscid decaying isotropic turbulence ($32^3$, orders 2 to 10,
+divergence form divergent within one eddy-turnover time) Pirozzoli (2010)
+finds (§3.1, Figs. 2–3; [compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)):
+
+- at $M_{t,0}=0.07$ all three splits keep the kinetic energy, FE-SF and KG-SF
+  within 0.6 %, with a long-time drift of the rms density;
+- at $M_{t,0}=0.3$ FE-SF diverges within a few eddy-turnover times, BL-SF later
+  (its fourth-order run reaching $t/\tau\approx245$), and KG-SF runs to
+  $t/\tau=270$ at every order (read from Fig. 3a/c; the text says both standard
+  splits diverge, see the [Source page](/sources/pirozzoli-2010.md)).
+
+The review's sixth-order runs of the same test agree: at $M_{t,0}=0.3$ only
+the Kennedy–Gruber split (K6) and Tadmor's second-order entropy-conserving
+scheme survive, the Blaisdell split (S6) failing (2011a, §2.5, Fig. 1). In
+under-resolved Mach 2 boundary layers the three splits give similar statistics
+and FE-SF is the least robust (2010, §3.2, Figs. 6–7;
+[supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md)).
+2011b attributes the greater robustness of KG over FE to the form of its flux,
+in which "density variations are more effectively averaged out" (§2.2), and the
+review recommends the expanded Kennedy–Gruber form for flows with large density
+variations (Summary Point 4).
+
+**Non-uniform grids.** On its stretched boundary-layer grid Pirozzoli (2010)
+applies the flux form in computational space through the chain rule, stating
+after Ducros et al. (2000) that a fully conservative split discretization "is
+not possible on a mesh with variable spacing" (§3.2, §4). Coppola & Veldman's
+result below extends conservation to non-uniform grids; the disagreement is an
+open contradiction recorded on
+[local conservation and flux form](/results/local-conservation-flux-form.md).
+
+## Product of means as a second-order split (Ducros et al.)
+
+[Ducros et al. (1999)](/sources/ducros-1999.md) (§3, Eqs. (14)–(21)) take the model
+law $\partial_ta+\partial_x(ab)=0$ (page-local scalars $a$, $b$) in a second-order
+collocated finite-volume scheme on a uniform grid. The mean of the fluxes,
+$\hat f_{i+1/2}=\{\!\{ab\}\!\}_{i+1/2}$, gives the centred divergence form; the flux of
+the means, $\hat f_{i+1/2}=\{\!\{a\}\!\}_{i+1/2}\{\!\{b\}\!\}_{i+1/2}$, gives
+
+$$\frac{da_i}{dt}+\frac12\,\frac{(ab)_{i+1}-(ab)_{i-1}}{2\Delta x}+\frac12\,a_i\,\frac{b_{i+1}-b_{i-1}}{2\Delta x}+\frac12\,b_i\,\frac{a_{i+1}-a_{i-1}}{2\Delta x}=0,$$
+
+the second-order "skew-symmetric form", which they recall reduces aliasing and
+conserves kinetic energy for incompressible flow, while staying "compatible with
+the conservative discretization", "a property of crucial importance to ensure
+the shock capturing capability". *(Compiler check, not in the source: this is
+$\{\!\{a\}\!\}\{\!\{b\}\!\}=\tfrac12\{\!\{ab\}\!\}+\tfrac12(\!(a;b)\!)$, Edoh's identity on
+[flux differencing](/methods/flux-differencing.md), and the $L_{\mathrm s}=1$ case
+of the [conservative split central derivative](/operators/conservative-split-derivative.md).)*
+For compressible momentum they set both factors to $\rho v$ and divide the flux
+by the mean density, i.e. $\{\!\{\rho v_k\}\!\}\{\!\{\rho v_l\}\!\}/\{\!\{\rho\}\!\}$
+(p. 524; the printed formula has index and factor-½ slips, see the
+[Source page](/sources/ducros-1999.md)). *(Compiler check, not in the source:
+this is the mass flux $\{\!\{\rho v_l\}\!\}$ times the density-weighted mean
+$\{\!\{\rho v_k\}\!\}/\{\!\{\rho\}\!\}$, not the equal-weight mean, so it is not
+the KEP face flux of [kinetic energy preservation](/properties/kinetic-energy-preservation.md)
+unless $\rho$ is uniform; on random periodic data it produces kinetic energy.)*
+Without dissipation or subgrid model the scheme diverges in their inviscid
+decaying compressible turbulence on $32^3$ (THI-5, §4.1), "the skew-symmetric form
+by itself is not sufficient". The high-order "skew-symmetric-like" fluxes of
+Ducros et al. (2000) are a different, not ingested, paper.
 
 ## Discrete conditions in matrix form
 
@@ -159,6 +290,36 @@ violate it and diverge at density ratio 10 (Lemma 3.1, §4.1.2;
 The full rule is that each internal-energy and enthalpy flux take the
 same split as the mass or regularization flux it pairs with.
 
+## KEEP, KEEP-PE and KEP face fluxes
+
+The KEEP schemes of Kuya et al. and the KEEP-PE scheme of
+[Shima et al. (2021)](/sources/shima-2021.md) are second-order sets of split face
+fluxes for mass, momentum and total energy; their full flux tables, induced
+equations and tests are on [KEEP and KEEP-PE schemes](/methods/keep-scheme.md). In
+the terms of this page (Shima et al., Tables 1–2, Eqs. (17), (20)):
+
+- mass and momentum are the KGP pair, $\overline\rho\,\overline v$ and
+  $\overline\rho\,\overline v\,\overline v$ with $\overline p$, and the kinetic-energy
+  flux is $\overline\rho\,\overline v\,\tfrac12v_iv_{i+1}$, in KEEP and KEEP-PE alike;
+- KEEP takes the cubic split $\overline\rho\,\overline e\,\overline v$ for the
+  internal energy and the product mean $\tfrac12(v_ip_{i+1}+v_{i+1}p_i)$ for the
+  pressure work;
+- KEEP-PE replaces only the internal-energy flux by the quadratic split
+  $\overline{\rho e}\,\overline v=\overline p\,\overline v/(\gamma-1)$, pointwise
+  $\tfrac12\big(\delta(\rho ev)+v\,\delta(\rho e)+\rho e\,\delta v\big)$ with $\delta$
+  a discrete derivative, which keeps a uniform pressure and velocity uniform
+  ([pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md));
+- the KEP scheme of Jameson and Pirozzoli shares mass and momentum but carries a
+  total-enthalpy flux $\overline\rho\,\overline h\,\overline v$ and the kinetic
+  energy $\overline\rho\,\overline{\tfrac12v^2}\,\overline v$ (Table 1), together the
+  second-order Kennedy–Gruber flux of Pirozzoli (2010) with $\phi=H$, since
+  $\overline H=\overline h+\overline{\tfrac12v^2}$ *(compiler check, not in the sources)*.
+
+Shima et al.'s statement that "the existing linear schemes based on the split
+convective forms, such as used in the KEP and KEEP schemes, do not maintain the
+pressure equilibrium" (§2.2.2) is scoped to the forms they analyse; later
+pressure-equilibrium-preserving split forms are on that property's page.
+
 ## Multi-component split and divergence forms (Fujiwara et al.)
 
 [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) carry the
@@ -182,7 +343,10 @@ two flux sets are (Table 1):
 The weights $\mathsf w^\pm$, built from the mixture molar mass and the density,
 come from their pressure-equilibrium compatibility condition and tend to 1
 where the composition is uniform; there the split set reduces to the
-KEEP-PE scheme of Shima et al. and the divergence set to the standard
+[KEEP-PE scheme](/methods/keep-scheme.md) of [Shima et al. (2021)](/sources/shima-2021.md)
+*(compiler check, not in the sources: with $\mathsf w^\pm=1$ and constant
+$\mathsf G$, $\overline{p\mathsf G}\,\overline v=\overline p\,\overline v/(\gamma-1)$,
+Shima et al.'s Eq. (17))* and the divergence set to the standard
 divergence scheme, with no sensor switching between them (§3.4). Its
 kinetic-energy and momentum fluxes have the KEP structure
 $\hat M=\hat C\,\overline v$, with $\hat C=\hat\rho\,\overline v$ the total mass flux, and kinetic-energy face flux $\hat K=\hat C\,\tfrac12v_iv_{i+1}$ of the
@@ -379,6 +543,10 @@ integration (Eq. (30)). From it (§4.2, Tables 1–2):
   as the duality relations above *(compiler check, not in the sources)*;
 - the KEEP scheme of Kuya et al. is, for exact time integration, the
   Kennedy–Gruber–Pirozzoli discretization of the internal-energy equation;
+  [Shima et al. (2021)](/sources/shima-2021.md) derive the same split of the
+  discrete total-energy equation into the kinetic-energy equation and an
+  internal-energy equation from the discrete product rule of the pressure work
+  (Eqs. (12)–(13); [KEEP and KEEP-PE schemes](/methods/keep-scheme.md));
 - no $\rho E$, $\rho e$, $p$, $\rho H$ or $\rho c$ scheme conserves entropy exactly;
   a direct entropy discretization (Honein–Moin) conserves $\rho s$ but loses
   $\rho E$ (Eqs. (73)–(77));
@@ -397,7 +565,14 @@ The KGP sound-speed scheme never diverges and Kok's Feiereisen version does
 (at $t\approx46$ in the Taylor–Green vortex; §5.2). They conclude that a
 KEP treatment of the energy variable itself, the customary choice that
 also preserves $\rho E^2$, $\rho e^2$ or $\rho s^2$, is "not necessarily the
-best option" (§6).
+best option" (§6). [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) keeps the
+total-energy equation as baseline and names the internal-energy and entropy
+equations (Honein & Moin) and the sound-speed equation (Kok) as routes to
+further robustness (§2.2), consistent with this ranking;
+[Pirozzoli (2010)](/sources/pirozzoli-2010.md) likewise expects better long-time
+results from the internal-energy or entropy equations, from fully discrete
+energy preservation or from suitable time integrators, and does not pursue them
+(§3.1).
 
 **As a non-dissipative reference.** [Bielawski et al. (2023)](/sources/bielawski-2023.md)
 use a skew-symmetric central scheme, after Honein–Moin and Pirozzoli's
@@ -422,7 +597,10 @@ TENO (§3.1, §4.3.1, §4.4).
 (Feiereisen) and cubic (Kennedy–Gruber) split forms of
 $\partial_x(\rho v\phi)$ for $\phi\in\{1,v_1,v_2,v_3,E/\rho\}$, call the cubic
 one the more robust, and use Pirozzoli's locally conservative form of it
-(§2.3, Eqs. (21)–(26)):
+(§2.3, Eqs. (21)–(26)), the triple-mean flux of
+[Pirozzoli (2010)](/sources/pirozzoli-2010.md) (Eq. (16)), restated for
+curvilinear meshes in [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md)
+(Eqs. (25)–(26); [conservative split central derivative](/operators/conservative-split-derivative.md)):
 
 $$\hat f^{\mathrm{skew}}_{i+1/2}=2\sum_{\ell=1}^{4}\mathsf a_\ell\sum_{m=0}^{\ell-1}\tfrac18\big(\rho_{i-m}+\rho_{i-m+\ell}\big)\big(\phi_{i-m}+\phi_{i-m+\ell}\big)\big(v_{i-m}+v_{i-m+\ell}\big),$$
 
@@ -526,13 +704,30 @@ scheme behaves as follows (§8.2, Fig. 4):
   profile "nicely fits in between" the oscillating second-order central
   scheme and the smeared upwind scheme, with no artificial dissipation.
 
+## Curvilinear coordinates
+
+On curvilinear meshes the Jacobian must be absorbed into the density or into the
+contravariant velocity, not into $\phi$, for the split continuity and momentum
+equations to combine into a kinetic-energy identity; both choices preserve the
+volume-weighted total $\sum_iJ_i\kappa_i$, and
+[Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) retains the Kennedy–Gruber split
+with the Jacobian in the velocity (KG-U/J), written in the flux form above (§2.2–2.3;
+[kinetic-energy-preserving split forms in curvilinear coordinates](/methods/curvilinear-kinetic-energy-preserving-split-forms.md)).
+
 ## Relation to flux-differencing DG
 
 In nodal DG the same split forms arise from the choice of the symmetric
 two-point volume flux in [flux differencing](/methods/flux-differencing.md)
 ([Ranocha et al. (2023)](/sources/ranocha-2023.md), §2, citing
-Gassner–Winters–Kopriva). The Shima et al. flux yields a "standard split form
-discretization" (§9). Coppola & Veldman remark that all prior studies of
+Gassner–Winters–Kopriva). The Shima et al. flux, the KEEP-PE face-flux set in
+two-point form ([KEEP and KEEP-PE schemes](/methods/keep-scheme.md)), yields a
+"standard split form discretization" (§9). The finite-difference counterpart,
+a double sum of two-point products of means that makes a central split
+derivative of any order a flux difference, is
+[Pirozzoli (2010)](/sources/pirozzoli-2010.md) (Eqs. (11)–(17);
+[conservative split central derivative](/operators/conservative-split-derivative.md)),
+which predates the flux-differencing restatement of
+[De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) (App. A). Coppola & Veldman remark that all prior studies of
 split forms assumed central discretization, and that biased operators are
 admissible once they satisfy the duality relations (§5.4). See
 [entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)
@@ -572,6 +767,31 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
   periodic uniform meshes; their remark that finer and higher-order runs
   blow up earlier compares runs that differ in mesh and order at once
   (§5.1).
+- **"Not strictly skew-symmetric."** Pirozzoli (2010, p. 7181) calls the usual
+  label of FE-SF and BL-SF "not strictly correct", and Pirozzoli (2011b, §2.1)
+  says the same of "these convective split forms", the Kennedy–Gruber one included,
+  because the inner product of the operators with $\phi$ does not vanish and
+  "the integral of $\rho\varphi^2$ (i.e. the generalized energy) is not
+  preserved"; the review calls the Feiereisen form "often improperly referred
+  to as skew-symmetric" (2011a, §2.3). Coppola & Veldman's criterion states
+  conservation of exactly that quadratic $\tfrac12\rho\phi^2$ when continuity is
+  split consistently, and 2011b's own derivation (Eqs. (9)–(11)) never uses
+  $\phi=v$. The remark is therefore terminological: it concerns the
+  skew-symmetry of the convective operator alone, not the conservation that the
+  consistent mass split restores *(compiler check, not in the sources)*.
+- Pirozzoli's tests of the three splits are inviscid periodic turbulence and
+  one boundary layer on a stretched grid, all shock-free. In the 2010 paper the
+  text says BL-SF and FE-SF "lead to divergence" at $M_{t,0}=0.3$, while its
+  Fig. 3a shows the fourth-order BL-SF run reaching $t/\tau\approx245$; its
+  conclusion's "significant advantage of the BL-SF and KG-SF" under
+  compressibility is supported by that figure for KG-SF only (§3.1, §4). The
+  review's Summary Point 3, that split forms are nonlinearly stable for smooth
+  flows at infinite Reynolds number, sits beside its own Fig. 1, where the
+  Blaisdell split fails at $M_{t,0}=0.3$ (2011a, §2.5).
+- Ducros et al. (1999)'s exact identity holds for the model product $ab$; their
+  compressible adaptation divides by the mean density and loses it (see the
+  section above), and they defend second order against Ghosal's analysis
+  without testing higher orders (§3).
 
 # Citations
 
@@ -589,3 +809,8 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 - [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §2 Eqs. (1)–(8), §3 Table 1.
 - [Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) — §2.8 Eqs. (35)–(40), §3.1–3.2.
 - [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §3.2.3 Eqs. (9)–(10), §3.5, §4.5 (arXiv v1).
+- [Pirozzoli (2010)](/sources/pirozzoli-2010.md) — §1, §2 Eqs. (1)–(17) pp. 7181–7183, §3.1 Figs. 2–3, §3.2 Figs. 6–7, §4.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §2.3 Eqs. (18)–(20), §2.5 Fig. 1, Summary Points 3–4.
+- [Pirozzoli (2011b)](/sources/pirozzoli-2011-b.md) — §2.1 Eqs. (6)–(12), §2.2–2.3 Eqs. (13)–(30).
+- [Ducros et al. (1999)](/sources/ducros-1999.md) — §3 Eqs. (14)–(21) p. 524, §4.1 Table I.
+- [Shima et al. (2021)](/sources/shima-2021.md) — §2.2 Eqs. (12)–(20), Tables 1–2.

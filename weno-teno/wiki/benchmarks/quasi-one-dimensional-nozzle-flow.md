@@ -5,7 +5,7 @@ description: "Euler flow through a duct of variable cross-section with a standin
 status: established
 aliases: [quasi-1D nozzle, quasi-1-D nozzle flow, nozzle flow problem, steady nozzle flow, quasi-one-dimensional Euler equations, converging-diverging nozzle, divergent nozzle]
 tags: [benchmark, finite-volume, finite-difference, weno, well-balanced, shock-tracking]
-timestamp: 2026-10-30T08:38:00Z
+timestamp: 2026-11-17T08:44:05Z
 ---
 
 # Quasi-one-dimensional nozzle flow
@@ -101,7 +101,8 @@ the $L^1$ orders are 3.90, 4.93, 4.43, 4.40, 4.38, with regular integration 1.99
 the loss by characteristics of other fields crossing the shock and carrying its error downstream,
 which a subcell resolution technique in shock cells prevents, and adds that even when the
 downstream order degenerates, "the magnitude of the errors is typically still much smaller than
-that of a lower order scheme on the same mesh".
+that of a lower order scheme on the same mesh". The general statement for moving shocks, and this steady case as a
+contrast, are on [order of accuracy behind captured shocks](/results/order-of-accuracy-behind-shocks.md).
 
 **Tracking against capturing.** Huang & Zahr (2022, §6.3) find their tracking solution at $N=2$ on
 12 elements "indistinguishable from the exact solution", whereas the

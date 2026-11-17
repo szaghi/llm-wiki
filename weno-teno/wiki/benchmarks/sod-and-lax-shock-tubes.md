@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-11-01T18:55:00Z
+timestamp: 2026-11-17T08:22:59Z
 ---
 
 # Sod and Lax shock tubes
@@ -33,6 +33,8 @@ the right half.
 | [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.2 Ex. 1 | 101 points, CFL 0.6 (figure headers) | 2.0 (figure headers) | domain not printed in the text; WENO-RF-3, WENO-RF-5, WENO-LF-5-PS, WENO-LF-5-A |
 | [Borges et al. (2008)](/sources/borges-2008.md) §5.2.1, Eq. (48) | 200 | 2 | mirrored, on $[-5,5]$: $(0.125,0,0.1)$ on $[-5,0)$, $(1,0,1)$ on $[0,5)$; [WENO-Z](/methods/weno-z.md) vs mapped WENO, WENO-JS |
 | [Fu et al. (2016)](/sources/fu-2016.md) §5.2 | 100 | 0.2 | on $[0,1]$; [TENO](/methods/targeted-eno.md) TENO5, TENO6 and their optimized versions vs WENO-JS, WENO-Z, WENO-CU6, WENO-CU6-M |
+| [Fu et al. (2019d)](/sources/fu-2019-d.md) §V.A, Eq. (41) | 100 | 0.2 | on $[0,1]$; [TENO5-A, TENO6-A](/methods/adaptive-teno.md) against the exact solution |
+| [Fu (2019b)](/sources/fu-2019-b.md) §6.3, Eq. (6.6) | 200, 400, 800 | 0.2 | on $[0,1]$; exact Riemann reference; [hybrid](/methods/hybrid-weno.md) fifth-order upwind/TENO6 scheme switched by the [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md), flags compared with the MP indicator |
 | [Fu (2021)](/sources/fu-2021.md) §5.3 | 96 points | 0.2 | exact Riemann reference; [TENO-AA](/methods/adaptive-teno.md) |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.3 | 100 | 0.2 | exact reference; [TENO-THINC](/methods/teno-thinc.md) |
 | [Ye et al. (2022)](/sources/ye-2022.md) §4.3, Eq. (43) | 200 | 0.2 | mirrored: $(0.125,0,0.1)$ on the left, $(1,0,1)$ on the right; [AFTENO](/methods/afteno.md) |
@@ -146,6 +148,8 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.2 Ex. 1 | not printed in the text | 101 points, CFL 0.6 (figure headers) | 1.3 (figure headers) | right pressure printed $0.571$ |
 | [Borges et al. (2008)](/sources/borges-2008.md) §5.2.1, Eq. (49) | $[-5,5]$ | 200 | 1.3 | left pressure printed $0.3528$, right $0.5710$ |
 | [Fu et al. (2016)](/sources/fu-2016.md) §5.2 | $[0,1]$ | 100 | 0.14 | left velocity printed $0.689$, right pressure $0.5710$ |
+| [Fu et al. (2019d)](/sources/fu-2019-d.md) §V.A, Eq. (42) | $[0,1]$ | 100 | 0.14 | right pressure printed $0.5710$ |
+| [Fu (2019b)](/sources/fu-2019-b.md) §6.3, Eq. (6.5) | $[0,1]$ | 200, 400, 800 | 0.14 | left velocity printed $0.689$, right pressure $0.5710$ |
 | [Fu (2021)](/sources/fu-2021.md) §5.3 | $[0,1]$ | 96 | 0.14 | right pressure printed $0.5710$ |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.3 | $[0,1]$ | 100 | 0.14 | same |
 | [Deng (2023)](/sources/deng-2023.md) App. A.5 | $[0,1]$ | 200 cells | 0.16 | |
@@ -242,7 +246,17 @@ Borges et al. find WENO-Z and mapped WENO more accurate than WENO-JS
 WENO-Z, TENO5 and TENO5-opt resolving the Sod contact better than
 WENO-JS, WENO-CU6-M slightly oscillating at it and TENO6 and TENO6-opt
 as good as WENO-CU6 (Fig. 11); on Lax WENO-JS is marginally more
-dissipative and WENO-CU6-M overshoots at the contact (Fig. 12).
+dissipative and WENO-CU6-M overshoots at the contact (Fig. 12). Fu et
+al. (2019d) find TENO5-A and TENO6-A resolving both contacts and shocks
+sharply; on Lax TENO6-A leaves a one-point density overshoot near the
+contact, which they report "also observed with other low-dissipation
+schemes" and much smaller for WENO5-JS (§V.A, Fig. 3). Fu (2019b) use
+the tubes to grade [troubled-cell indicators](/definitions/troubled-cell-indicator.md):
+the TENO-based indicator flags the shock, the contact and the expansion,
+flags fewer cells as the grid is refined, and flags far fewer than the
+monotonicity-preserving indicator; the comparison with KXRCF, Harten's
+and multiwavelet indicators is quoted from Vuik & Ryan, not run (§6.3,
+Figs. 7–9).
 
 **Contact resolution separates the schemes.** On Sod all schemes agree
 with the exact solution, and differences lie at the contact: AFTENO best
@@ -834,12 +848,12 @@ single-gas Euler equations.
   reflective ones; Hong, Ye & Ye zero-gradient ones.
 - Luo & Wu print the left Lax pressure as $0.3528$ (Eq. (16)), as do
   Borges et al. (Eq. (49)), where Harten et al. (1987a), Liu et al.,
-  Jiang & Shu, Fu et al. (2016),
+  Jiang & Shu, Fu et al. (2016), Fu et al. (2019d), Fu (2019b),
   Fu (2021), Takagi et al., Li et al. (2022b), Deng, Huang et al. (2026), Peng et
   al., Li, Shu & Qiu, Fan, Zhang & Qiu, Fan et al. (2025a) and Sciacovelli et al. print $3.528$;
   neither paper's text shows which value was run.
-- Fu et al. (2016) print the left Lax velocity as $0.689$, the other
-  sources $0.698$.
+- Fu et al. (2016) and Fu (2019b) print the left Lax velocity as
+  $0.689$, the other sources $0.698$.
 - Names: Harten (1983a) names neither problem; Harten et al. (1987a)
   call the Lax data those "used by Lax" and attribute Sod's problem to
   "Sod in [23]", where their [23] is a paper of Osher and Sod's survey is
@@ -919,6 +933,8 @@ single-gas Euler equations.
 - [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.2, Ex. 1, Fig. 4 (author preprint).
 - [Borges et al. (2008)](/sources/borges-2008.md) — §5.2.1, Eqs. (48)–(49), Fig. 6.
 - [Fu et al. (2016)](/sources/fu-2016.md) — §5.2, Figs. 11–12.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §V.A, Eqs. (41)–(42), Fig. 3.
+- [Fu (2019b)](/sources/fu-2019-b.md) — §6.3, Eqs. (6.5)–(6.6), Figs. 7–9.
 - [Fu (2021)](/sources/fu-2021.md) — §5.3 (arXiv v1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.3, Figs. 4–5.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.3, Eq. (43), Fig. 3.

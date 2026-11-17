@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-11-01T18:55:00Z
+timestamp: 2026-11-17T08:24:56Z
 ---
 
 # Double Mach reflection
@@ -45,6 +45,9 @@ likewise by [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.6,
 [Liang et al. (2022)](/sources/liang-2022.md) §4.5,
 [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.5, Eq. (4.10) and
 [Huang et al. (2025a)](/sources/huang-2025.md) §5.5, Eq. (47), and
+[Fu et al. (2019d)](/sources/fu-2019-d.md) §V.D, Eq. (45) (boundaries
+not printed) and [Fu (2019b)](/sources/fu-2019-b.md) §6.7, Eq. (6.12)
+(boundaries "the same with" those of Fu et al. 2016), and
 [Fu et al. (2016)](/sources/fu-2016.md) §5.5, Eq. (40), in
 $(\rho,v_1,v_2,p)$:
 
@@ -275,6 +278,8 @@ describe one configuration *(compiler check, not in the sources)*.
 |---|---|---|---|
 | [Jiang & Shu (1996)](/sources/jiang-1996.md) §8.3 Ex. 3 | finite-difference [WENO](/methods/weno-js-reconstruction.md) WENO-LF-4, WENO-LF-5 vs ENO-LF-4, RK-3, $\Delta t=0.6\Delta x$; WENO-LF-5-PS (pressure–entropy weights) also tried | $[0,4]\times[0,1]$, $240\times59$, $480\times119$; plotted $[0,3]\times[0,1]$ | 30 contours 1.731–20.92 (author preprint) |
 | [Fu et al. (2016)](/sources/fu-2016.md) §5.5 | [TENO](/methods/targeted-eno.md) TENO5, TENO5-opt, TENO6, TENO6-opt vs WENO-JS, WENO-Z, [WENO-CU6](/methods/weno-cu6.md), WENO-CU6-M; Roe-averaged characteristic decomposition, global LF splitting, CFL 0.6 | $[0,4]\times[0,1]$, wavelet adaptive multiresolution, effective $1024\times256$ ($\Delta x=\Delta y=1/256$) | plotted $[2,3]\times[0,0.9]$; 43 contours 1.887–20.9 |
+| [Fu et al. (2019d)](/sources/fu-2019-d.md) §V.D | [TENO5-A, TENO6-A](/methods/adaptive-teno.md) vs WENO5-JS, [WENO-CU6](/methods/weno-cu6.md); Roe-averaged characteristic decomposition, Rusanov splitting, SSP-RK3 at CFL 0.4 | $[0,4]\times[0,1]$, $512\times128$; WENO5-JS also $1024\times256$ | 43 contours 1.887–20.9; CPU times |
+| [Fu (2019b)](/sources/fu-2019-b.md) §6.7 | [hybrid](/methods/hybrid-weno.md) fifth-order upwind/TENO6 scheme switched by the [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md) on density, dimension by dimension; SSP-RK3 at CFL 0.4 | $[0,4]\times[0,1]$, $800\times200$ | 43 contours 1.887–20.9; flag maps and share of linear cells |
 | [Fu (2021)](/sources/fu-2021.md) §5.5.1 | [very-high-order TENO](/methods/adaptive-teno.md) (TENO8-AA, TENO10-AA) vs [WENO-CU6](/methods/weno-cu6.md) | $[0,4]\times[0,1]$; TENO $512\times128$, $800\times200$; WENO-CU6 $512\times128$, $1024\times256$ | 43 density contours 1.887–20.9 |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.6 | [TENO-THINC](/methods/teno-thinc.md) vs WENO5-Z, TENO5, TENO6 | $512\times128$, $1024\times256$ | cost table; CFL and $\epsilon$ sensitivity |
 | [Ye et al. (2022)](/sources/ye-2022.md) §4.8 | [AFTENO](/methods/afteno.md) and AFWENO | $1024\times256$ ($h=1/256$) | zoom $[2,3]\times[0,0.8]$ |
@@ -517,7 +522,18 @@ $\Delta x=\Delta y=1/960$ in Fig. 1 of Shi, Zhang & Shu (2003), followed by
 TENO5; among the six-point schemes TENO6 produces "the richest small-scale
 structures", comparable to ninth-order WENO-JS at $1/960$ in the same
 figure, and TENO6-opt slightly fewer, its result "still much better" than WENO-CU6's
-(§5.5, Figs. 17–18).
+(§5.5, Figs. 17–18). Fu et al. (2019d) find TENO5-A and TENO6-A "significantly
+better" than WENO-CU6 at the density fluctuations around the Mach stem
+on $512\times128$, TENO6-A finer than TENO5-A, and, comparing across
+papers, both better than eleventh-order WENO-Z on $800\times200$ and
+comparable to ninth-order WENO-Z on $1600\times400$ (Fig. 10 of Castro,
+Costa & Don); TENO5-A on $512\times128$ resolves the small scales
+"much better" than WENO5-JS on $1024\times256$ (§V.D, Figs. 6–7).
+In Fu (2019b) the TENO-based indicator flags the discontinuities and
+more than 90 % of the cells take the linear flux; on $800\times200$
+the small scales are finer than those of nine-point WENO-Z and
+comparable to eleven-point WENO-Z at the same resolution in Castro et
+al.'s Fig. 9 (§6.7, Figs. 24–25).
 
 **Robustness and stability margin.** The strong shock is also a
 robustness test. Luo & Wu must lower the CFL number to 0.1 for every
@@ -633,7 +649,14 @@ step (§8.6, Table 3). The ratios $15{,}578/3856=4.04$ and
 $15{,}578/6569=2.37$ match their "a factor 4" and "almost a factor 2.5"
 *(compiler check, not in the sources)*.
 
-**Cost.** Takagi et al. report cost per step (Table 3, hardware not
+**Cost.** Fu et al. (2019d) time the $512\times128$ run (hardware not
+stated): 222 s for WENO5-JS, 256 s for WENO-CU6, 361 s for TENO5-A and
+527 s for TENO6-A, and 2042 s for WENO5-JS on $1024\times256$ (§V.D);
+TENO6-A thus costs 2.37 times WENO5-JS on the same grid *(compiler check,
+not in the sources)*. [Fu (2023)](/sources/fu-2023.md) (§5.4) gives a smaller
+overhead for TENO6-A, 17 % on GPU and 47 % on CPU, without tying it to
+this run; the conditions differ, so the figures are not one measurement
+(see [adaptive TENO](/methods/adaptive-teno.md)). Takagi et al. report cost per step (Table 3, hardware not
 stated): WENO5-Z 696 / 2802 ms, TENO5 810 / 3255 ms, TENO-THINC 946 /
 3810 ms, TENO6 867 / 3330 ms at $512\times128$ / $1024\times256$, i.e.
 TENO-THINC costs 16.8 % (17.1 %) more than TENO5. Bezgin et al. time
@@ -866,10 +889,12 @@ grid, not an exact solution.
 
 - [Jiang & Shu (1996)](/sources/jiang-1996.md) — §8.3 Ex. 3 and Remark, Figs. 12–13 (author preprint).
 - [Fu et al. (2016)](/sources/fu-2016.md) — §5, §5.3, §5.5, Eq. (40), Table 5, Figs. 17–18.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §V, §V.D, Eq. (45), Figs. 6–7.
+- [Fu (2019b)](/sources/fu-2019-b.md) — §6, §6.7, Eq. (6.12), Figs. 24–25.
 - [Fu (2021)](/sources/fu-2021.md) — §5.5.1, Figs. 7–8.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.6, Table 3, Fig. 10.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.8, Eq. (48), Fig. 9.
-- [Fu (2023)](/sources/fu-2023.md) — Figs. 8 and 11 (reproduced).
+- [Fu (2023)](/sources/fu-2023.md) — Figs. 8 and 11 (reproduced); §5.4 (cost of TENO6-A).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.3.3, Fig. 15.
 - [Deng (2023)](/sources/deng-2023.md) — App. A.11, Figs. 25, 36.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.7, Eq. (6.9), Fig. 12.

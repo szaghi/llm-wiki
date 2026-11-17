@@ -5,7 +5,7 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-30T07:53:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # ENO property
@@ -37,6 +37,15 @@ Two founding papers state the property as an inequality.
   their paper II, not in this one (Eq. (3.5b)), and holds under the separation assumption above. For
   the scalar scheme they conjecture $TV(v^{n+1})\le TV(v^n)+O(\Delta x^{p+1})$, $p>0$, "based on
   heuristic analysis and extensive numerical experimentation" (Eq. (1.22)).
+  The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.1) recalls the scheme-level bound
+  as a guarantee: "ENO reconstructions of order $r$ guarantee that $TV(u^{n+1})\le TV(u^n)+O(\Delta x^r)$,
+  which implies uniform boundedness of the total variation". The two statements stand side by side:
+  the bound between consecutive time levels is, in the founding paper, a requirement on the
+  reconstruction (Eq. (1.9c)), a one-step property from exact data (Eq. (1.13b)), and for the scalar
+  scheme a conjecture with exponent $p+1$ (Eq. (1.22)); the review cites no proof of it.
+  *(Compiler check, not in the sources: a per-step increase $O(\Delta x^r)$ summed over
+  $T/\Delta t=O(1/\Delta x)$ steps at fixed CFL number is $O(\Delta x^{r-1})$, so the review's
+  "implies" holds for $r\ge1$ once the per-step bound is granted.)*
 - **Weights (WENO).** [Liu et al. (1994)](/sources/liu-1994.md) (§3.3, Definition 1, Eq. (3.8)) say
   that a weighted reconstruction has the "ENO property" if the normalized weight of a stencil in a
   smooth region is $O(1)$ and that of a stencil in a discontinuous region is at most $O(\Delta x^r)$;
@@ -200,3 +209,4 @@ to deliver them.
 - [Ren et al. (2025)](/sources/ren-2025.md) — §4.1.3, Table 3: all WENO-Z weights $O(1)$ inside the numerical shock structure; ENO choice still unstable.
 - [Liang et al. (2025)](/sources/liang-2025.md) — §3.3.3, Eqs. (22)–(27): two-level unstructured TENO-E selection.
 - [Liang & Fu (2026)](/sources/liang-2026.md) — §3.2.4, Eqs. (25)–(26): prioritized CENO reconstruction.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1: the ENO total-variation bound recalled as guaranteed.

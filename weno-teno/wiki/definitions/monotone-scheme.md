@@ -5,7 +5,7 @@ description: "A monotone scheme is nondecreasing in each argument of its update;
 status: established
 aliases: [monotone scheme, monotone flux, monotone numerical flux, E-flux, monotonicity preserving scheme, Godunov's theorem]
 tags: [numerical-flux, limiting, riemann-solver, finite-volume]
-timestamp: 2026-10-30T08:09:00Z
+timestamp: 2026-11-17T08:26:33Z
 ---
 
 # Monotone schemes and monotone numerical fluxes
@@ -65,6 +65,14 @@ schemes are "necessarily only first-order accurate at local extrema", and a stri
 non-oscillatory scheme (no increase in the number of extrema) is limited to second order
 (citing their paper II), which is why ENO replaces both by the
 [ENO property](/definitions/eno-property.md).
+
+The review of [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.1) states the same chain from the
+side of the entropy solution. It names **monotonicity** the order preservation of entropy solutions,
+$u(x,0)\le w(x,0)$ for all $x$ implies $u(x,t)\le w(x,t)$ for all $x,t$ ($w$ page-local, a second
+entropy solution), as distinct from monotonicity preservation (monotone data stay monotone) and TVD.
+It recalls the convergence of monotone schemes "to the (unique) entropy solution" and that "monotone
+schemes are at most first-order accurate", both from Harten, Hyman & Lax (printed "Harten et al.
+1986"; the paper is of 1976), as the reason TVD schemes took over.
 
 ## Monotone two-point fluxes
 
@@ -135,3 +143,4 @@ are not smooth at sonic points.
 - [Liu et al. (1994)](/sources/liu-1994.md) — §2 (Eqs. (2.4)–(2.7b)).
 - [Jiang & Shu (1996)](/sources/jiang-1996.md) — §2 (Eqs. (2.4)–(2.6)), §6 (Eq. (6.1)) (author preprint).
 - [Shu & Osher (1988)](/sources/shu-1988.md) — §III (Eqs. (3.20)–(3.21), p. 20) (ICASE Report 87-33).
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1: monotonicity of entropy solutions, convergence and first-order limit of monotone schemes (review, after Harten, Hyman & Lax).

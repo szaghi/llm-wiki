@@ -5,7 +5,7 @@ description: "Four-quadrant Riemann problems of the two-dimensional Euler equati
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-11-01T18:55:00Z
+timestamp: 2026-11-17T08:24:25Z
 ---
 
 # Two-dimensional Riemann problems
@@ -14,7 +14,7 @@ A two-dimensional Riemann problem divides the square into four
 quadrants, each with a constant state; the sources that number the
 configurations follow Lax & Liu (cited by Takagi et al., Luo & Wu,
 Deng, Huang et al. (2026) and Zhong et al.; Wang et al. (2023b) and Chertock et al. take
-configuration 3, and Fu 2023 configuration 12, from Kurganov & Tadmor;
+configuration 3, Fu (2019b) configurations 3 and 12, and Fu 2023 configuration 12, from Kurganov & Tadmor;
 Boscarino et al., Hong, Ye & Ye and Liang et al. (2022) cite Lax & Liu or
 Schulz-Rinne et al.; Huang et al. (2025a) and Liang et al. (2025) take
 configurations 7, 8 and 16 from Kurganov & Tadmor). The bundle uses
@@ -52,6 +52,7 @@ The sources use three placements and several final times:
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.15 (their "second Riemann problem") | $[0,1]^2$, $(0.5,0.5)$, outflow | $320\times320$ | 0.35 | [OEDG](/methods/oedg.md), third order, data scaled by $\lambda\in\{1,100\}$ |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.6 ("four shocks") | $[0,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.6 | 0.8 | [multi-resolution WENO](/methods/multi-resolution-weno.md) vs WENO-JS5, WENO-AO5 |
 | [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(a) ("modified" configuration 3) | $[-1,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.25 | 0.8 | [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) WENO S4T3 at Mach-scaling parameter $\varepsilon=1$ (page-local), reconstruction approaches A1–A3, S2T2 |
+| [Fu (2019b)](/sources/fu-2019-b.md) §6.6, Eq. (6.11) | $[0,1]^2$, $(0.5,0.5)$ | $512\times512$; timing also on $256^2$ and $1024^2$; SSP-RK3 at CFL 0.4 | 0.3 | [hybrid](/methods/hybrid-weno.md) fifth-order upwind/TENO6 scheme switched by the [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md), vs MP and TVB indicators; 43 density contours |
 | [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.7 ("four-shock configuration") | $[0,1]^2$, $(0.5,0.5)$ | $512\times512$, van Leer flux | 0.3 | TENO-M6/M8 ([TENO](/methods/targeted-eno.md) with stencil extension) vs TENO, WENO; timing |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.6 | $[0,1]^2$, split not recorded | $512^2$, $1024^2$ | 0.3 | [TENO-THINC](/methods/teno-thinc.md)-family scheme vs TENO5-THINC, TENO5, WENO5-Z |
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.7 | $[0,1]^2$, $(0.8,0.8)$, non-reflective | $400\times400$, CFL 0.2 | 0.8 | [gradient-based](/methods/gradient-based-reconstruction.md) MIG4, MIG4-base, MEG6 vs TENO5, primitive variables (arXiv v2) |
@@ -170,6 +171,23 @@ discontinuities on $x=0.5$ are slip lines; across $y=0.5$ the pressure
 falls from 1 to 0.4 *(compiler check, not in the sources)*. Zhong et
 al. use the slip line as the dissipation gauge.
 
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.1–3.2, Fig. 3)
+illustrates shock-capturing schemes on "Lax & Liu's (1998) test case 13"
+with mesh spacing $1/1200$ in both directions, SSP-RK3 at Courant
+number 0.6, and 14 equally spaced density contours from 0.6 to 2.3 over
+the central part of the domain; the states, the domain and the final
+time are not printed. The solution has "a complex shock diffraction
+pattern leading to the formation of a Mach stem and Kelvin-Helmholtz
+roll-up of the vertical slip line". A second-order TVD scheme with the
+van Leer limiter, WENO5 and WENO7 all capture the shock pattern without
+significant spurious oscillations; the slip line rolls up on finer
+scales with WENO, and WENO7 forms secondary vortex cores. Pirozzoli's
+conservative hybrid of a fifth-order compact upwind flux and WENO7
+(2002), with WENO switched on at $x_{i+1/2}$ and two nodes on each side
+wherever $\lvert\rho_{i+1}-\rho_i\rvert\ge0.2$, adds discrete vortices in the
+shear layer but "some spurious wiggles near shocks", at about half the
+cost of WENO7 ([hybrid schemes](/methods/hybrid-weno.md)).
+
 ## Configuration 12
 
 | Quadrant | State |
@@ -197,9 +215,13 @@ Tadmor for "Case 12", print the same decimal states, make the problem
 periodic by tiling it on $[-0.5,2.5]^2$, and run nodal DG with
 ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md)
 on triangles with $h=1/160$ to $t=0.25$ (30 contours 0.515–1.665).
-[Fu (2023)](/sources/fu-2023.md) Fig. 7 reproduces a configuration-12
-run showing the density with the TENO discontinuity flags in $x$ and $y$
-(43 contours).
+[Fu (2019b)](/sources/fu-2019-b.md) §6.6, Eq. (6.10), citing Kurganov &
+Tadmor, print the decimal states of the table above, split at
+$(0.5,0.5)$ of $[0,1]^2$, and run them on $512\times512$ to $t=0.25$
+(43 density contours, with the maps of $\mathrm{Flag}_x$ and
+$\mathrm{Flag}_y$ of their TENO-based indicator, Fig. 18).
+[Fu (2023)](/sources/fu-2023.md) Fig. 7, "adapted from" Fu (2019b),
+reproduces that run.
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.15 name neither a
 configuration number nor Lax & Liu; they call their two problems the
 "first" ($320\times320$, $t=0.25$) and "second" ($t=0.35$) Riemann
@@ -433,10 +455,20 @@ only at $N_\ell=6$. The comparison is visual, and the mesh motion is
 random, not solution-adaptive. See
 [conservative remapping](/methods/conservative-remapping.md).
 
-**Discontinuity location.** Fu (2023) uses configuration 12 to show
-that the TENO stencil-selection flags locate the discontinuities, the
-basis of the hybrid TENO scheme with a TENO-based indicator (§3.4,
-Fig. 7).
+**Discontinuity location.** [Fu (2019b)](/sources/fu-2019-b.md) (§6.6,
+Figs. 18–23, Table 1) introduced the
+[TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)
+on configurations 12 and 3: the flags, computed on density dimension by
+dimension, locate the shocks and contacts with no visible oscillation,
+and more than 98 % of the cells take the linear flux in both problems.
+The monotonicity-preserving indicator flags many more cells (for
+configuration 3 it also has to examine the total energy for
+robustness), and the TVB indicator depends strongly on $M_{\mathrm{TVB}}$.
+Against characteristic-wise TENO6 on configuration 3 the hybrid runs
+3.3, 3.2 and 3.84 times faster on $256^2$, $512^2$ and $1024^2$
+(69.75 s against 21.15 s, 593.7 s against 186 s, 5752.1 s against
+1499.5 s, on an unnamed desktop workstation). Fu (2023) recalls the
+result with configuration 12, as a factor-of-four gain (§3.4, Fig. 7).
 
 **Adaptive linear weights in Hermite WENO.** On the four-contact
 states, Zhang et al. (2026b) find that their sixth-order finite-volume
@@ -675,6 +707,8 @@ entropy-stable DG with oscillation-eliminating damping gives results
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §5.2, Ex. 5, Fig. 5.5 (arXiv v2).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.8, Figs. 18–19.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.11, Ex. 5.15, Figs. 10–11 (arXiv v1).
+- [Fu (2019b)](/sources/fu-2019-b.md) — §6, §6.6, Eqs. (6.10)–(6.11), Figs. 18–23, Table 1.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.1, §3.2, Fig. 3.
 - [Fu (2023)](/sources/fu-2023.md) — §3.4, Fig. 7 (reproduced).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — Example 4, Table 9 (arXiv v1).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §X.b, Table XIV.

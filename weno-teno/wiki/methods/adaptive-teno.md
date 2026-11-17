@@ -5,7 +5,7 @@ description: "Adaptive TENO varies the TENO cut-off locally through a discontinu
 status: established
 aliases: [TENO-A, TENO-AA, TENO-E, TENO5-E, TENO6-E, TENO7-E, TENO5-A, TENO6-A, TENO8-AA, TENO10-AA, TENO-AZ, TENO-LAD, TENO6-SA, scale-adaptive TENO, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)
@@ -23,8 +23,15 @@ wavenumber [scale sensor](/definitions/scale-sensor.md) instead of the
 discontinuity measure ([Huang, Liang & Fu (2023)](/sources/huang-2023-b.md), §3),
 and the six-point TENO6-SA switches both the linear background and the cut-off
 by wavenumber bands ([Zhang et al. (2024b)](/sources/zhang-2024-b.md), §5).
+The adaptive cut-off was introduced for five and six points, as TENO5-A and
+TENO6-A, by [Fu et al. (2019d)](/sources/fu-2019-d.md) (AIAA J., online
+December 2018, so that several sources print it as 2018), together with a
+sixth-order five-point global indicator and spectrally optimized backgrounds.
+A different paper of the same authors, the adaptive TENO paper in J. Comput.
+Phys. 374 (Fu, Hu & Adams 2018, not ingested), is what several later sources
+mean by "Fu et al. (2018)"; each recollection below names the paper it cites.
 As recalled by [Hong, Ye & Ye (2022)](/sources/hong-2022.md) (abstract, §1, §2.5),
-the adaptive TENO paper of Fu et al. (2018) is also the origin of the
+that J. Comput. Phys. paper is also the origin of the
 hierarchical voting of nested stencils, of explicit discontinuity-location
 detection and of the dissipation-optimized six- and eight-point background
 schemes that other TENO variants reuse (see the TENO-M variant on
@@ -60,16 +67,33 @@ paper does. The regularization differs:
 Fu (2021) uses $\epsilon_\sigma=10^{-40}$ and $C_r=0.265$; Fu (2023) writes
 $\epsilon_\sigma=\frac{0.9C_r}{1-0.9C_r}\,\xi_{\mathrm A}^2$ with scheme-dependent
 constants $C_r$, $\xi_{\mathrm A}$ (page-local) whose values it does not give.
+The original TENO-A paper ([Fu et al. (2019d)](/sources/fu-2019-d.md), §III.B,
+Eqs. (20)–(22)) prints the measure "following" Ren, Liu and Zhang, this
+$\epsilon_\sigma$ form with $\xi_{\mathrm A}=10^{-3}$, and scheme-dependent constants:
+the three-point minimum $\sigma_{i+1/2}=\min(\sigma_{i-1},\sigma_i,\sigma_{i+1})$ with
+$C_r=0.24$ for the five-point TENO5-A, and the four-point minimum above with $C_r=0.17$
+for the six-point TENO6-A. It does not define $\Delta f_{i+1/2}$.
+*(Compiler check, not in the sources: $\epsilon_\sigma=2.755\times10^{-7}$ for TENO5-A
+and $1.806\times10^{-7}$ for TENO6-A. If one of the two neighbouring differences
+vanishes and the other is $\delta$, then $\sigma_i=\epsilon_\sigma/(\delta^2+\epsilon_\sigma)$,
+and $\sigma_i\ge0.9C_r$, i.e. $\mu_d\le0.1$ for an isolated step, holds exactly when
+$\lvert\delta\rvert\le\xi_{\mathrm A}$: $\xi_{\mathrm A}$ is an absolute jump amplitude in the
+units of the reconstructed variable, below which a step is treated as smooth. The
+measure, and through it $C_T$, therefore depends on the amplitude of the data for jumps
+of order $\xi_{\mathrm A}$ or smaller; see [scale invariance](/properties/scale-invariance.md).
+The source gives no such interpretation.)*
 
-**Variant of the sensor stencil and constant in TENO5-A.** For the five-point
+**Sensor stencil and constant of TENO5-A.** For the five-point
 TENO5-A, [Huang et al. (2023)](/sources/huang-2023-b.md) (§3.1, Eq. (19) and the
 following line) print the same $\epsilon_\sigma$ form as Fu (2023) with
 $\xi_{\mathrm A}=10^{-3}$ and $C_r=0.24$, and a **three-point** minimum,
 $\sigma_{i+1/2}=\min(\sigma_{i-1},\sigma_i,\sigma_{i+1})$, where the two Fu
 papers (on TENO-A of various orders and on TENO-AA) use the four-point minimum
-above and Fu (2021) $C_r=0.265$. No source states that the other's stencil or
-constant is wrong; the values are recorded as variants, possibly scheme-dependent
-(five-point against wider schemes), which none of the sources discusses. In a
+above and Fu (2021) $C_r=0.265$. The original makes the minimum and $C_r$
+scheme-dependent by construction (three points and $0.24$ for five points, four
+points and $0.17$ for six; [Fu et al. (2019d)](/sources/fu-2019-d.md), §III.B), so
+Huang et al. reproduce the five-point original, and the four-point minimum that
+Fu (2021, 2023) use for wider schemes is the original's six-point choice. In a
 different use, the shock detector of hybrid schemes,
 [Li, Chen & Ren (2022a)](/sources/li-2022.md) (§3.2, Eqs. (48)–(54)) recall
 Ren's original as a two-point minimum
@@ -84,22 +108,33 @@ $$\varphi(\mu_d)=(1-\mu_d)^4(1+4\mu_d),\qquad b=b_1-b_2\big(1-\varphi(\mu_d)\big
 
 ([Fu (2023)](/sources/fu-2023.md), Eq. (33); [Fu (2021)](/sources/fu-2021.md),
 Eq. (19); [Huang et al. (2023)](/sources/huang-2023-b.md), Eq. (20), with
-$\lfloor\cdot\rfloor$ the "Gauss bracket"). At a discontinuity, $\varphi\approx0$ and
+$\lfloor\cdot\rfloor$ the "Gauss bracket"; first printed by
+[Fu et al. (2019d)](/sources/fu-2019-d.md), Eq. (22), where $\varphi$ is "a
+smoothing-kernel-based mapping function with fast decay" after Dehnen and Aly).
+The original reads the two limits as "typical for robust shock capturing with
+strong nonlinear adaptation" and "suitable for resolving the high-wave-number
+physical fluctuations" (§III.B). At a discontinuity, $\varphi\approx0$ and
 $C_T\to10^{-\lfloor b_1-b_2\rfloor}$ (robust shock capturing); in smooth regions,
 $\varphi\approx1$ and $C_T\approx10^{-\lfloor b_1\rfloor}$ (near-linear). Fu
 (2023, Fig. 13) interprets $10^{-\lfloor b_1\rfloor}$ as separating low from high
 wavenumbers and $10^{-\lfloor b_1-b_2\rfloor}$ as separating high wavenumbers
 from discontinuities. TENO-AA uses $b_1=14$, $b_2=6.4$, so $C_T$ moves between
 $10^{-7}$ and $10^{-14}$ (Fu 2021, §3.4); TENO5-A uses $b_1=10$, $b_2=5$, so
-$C_T$ moves between $10^{-5}$ and $10^{-10}$ (Huang et al. 2023, Eq. (20));
-Fu (2023) calls $b_1$, $b_2$ case-independent but does not print them. Variants
+$C_T$ moves between $10^{-5}$ and $10^{-10}$ (Huang et al. 2023, Eq. (20)), the
+original's values; TENO6-A uses $b_1=10.5$, $b_2=4.5$ (Fu et al. 2019d, §III.B).
+Fu (2023) calls $b_1$, $b_2$ case-independent but does not print them; the
+original calls all its parameters "problem independent" (abstract, §V).
+*(Compiler check, not in the sources: for TENO6-A $b\in[6,10.5]$, so $C_T$ takes the
+values $10^{-10},\dots,10^{-6}$, and the original's statement that $C_T\approx10^{-b_1}$ in smooth
+regions means $10^{-10}$, not $10^{-10.5}$.)* Variants
 recalled by Fu (2023, §4.1): TCNS with adaptive dissipation, TENO6-A with a
 [modified Ducros sensor](/definitions/ducros-shock-sensor.md) in place of $\mu_d$, and a cheaper adaptive control of
 Peng et al.; the family runs from TENO5-A to TENO8-A, plus TENO10-A with a
 positivity-preserving limiter.
 
-**TENO5-A ingredients besides the cut-off** (as recalled and used by Huang et al.
-2023, §3.2, Eqs. (32)–(35)): TENO5 stencils and Jiang–Shu $\beta_k$, $C=1$,
+**TENO5-A ingredients besides the cut-off** (original:
+[Fu et al. (2019d)](/sources/fu-2019-d.md), §IV.A, Eqs. (23)–(27); as recalled and
+used by Huang et al. 2023, §3.2, Eqs. (32)–(35)): TENO5 stencils and Jiang–Shu $\beta_k$, $C=1$,
 $q=6$, the spectrally optimized linear weights $d_0=0.5065006634$,
 $d_1=0.3699651429$, $d_2=0.1235341937$ (the small-stencil weights of TENO-AA
 below), and a global indicator $\tau_5$ printed as a quadratic form in
@@ -108,15 +143,73 @@ different from the $\tau_5$ of classical TENO5 ($\lvert\beta_0-\beta_2\rvert$ in
 registry's stencil numbering).
 *(Compiler check, not in the sources: the printed form is mirror-symmetric under
 $i\pm m\leftrightarrow i\mp m$ and vanishes on samples of polynomials of degree
-at most 2, so on smooth data it is $O(\Delta x^6)$, consistent with the name.)*
+at most 2, so on smooth data it is $O(\Delta x^6)$, consistent with the name. Exactly,
+by symbolic expansion of the original's Eq. (25), it is
+$\beta_5-\tfrac16(\beta_1+\beta_2+4\beta_0)$ term by term, with $\beta_5$ the Jiang–Shu
+indicator of the degree-4 interpolant on the five points: the TENO global indicator
+$\tau_K=\lvert\beta_K-\tfrac16(\beta_1+\beta_2+4\beta_0)\rvert$ that the original states "for
+any $K$th-order TENO scheme (higher than fourth order)" (§III.A.2, Eq. (15)), here at $K=5$.
+Eq. (25) prints the form without the absolute value, and the form is indefinite (one
+eigenvalue $-0.0186$), so the bars are needed. With $\phi$ the Shu–Osher primitive of the
+flux, $\tau_5=\Delta x^6\big\lvert\tfrac{481}{720}(\phi''')^2-\tfrac{49}{90}\phi''\phi''''\big\rvert+O(\Delta x^7)$
+at $x_i$.)* The original motivates sixth order, after Fu et al. (2017), as "necessary to
+enable the TENO scheme robust for shock capturing" with SSP-RK3 at CFL numbers above 0.4
+(§III.A.2), and concludes that the sixth-order $\tau_5$ and $\tau_6$ "enable a stable
+computation of all the presented benchmark cases" (§VI).
 With these weights the background linear scheme is third order, and Huang et
 al. measure exactly third order for both TENO5-A and their variant on
 $\partial_tu+\partial_xu=0$, $u_0=\sin(\pi x)$, with identical errors (e.g.
 $L_1=7.37\times10^{-8}$, $L_\infty=1.16\times10^{-7}$ at $N_x=640$; §4.1,
 Table 2): the "five-point" of the name is the stencil, not the order.
 
+**Linear backgrounds of the original** ([Fu et al. (2019d)](/sources/fu-2019-d.md),
+§IV, Eqs. (26)–(40); formulas on the
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+The TENO5-A weights above minimize the Arshed–Hoffmann objective, a weighted blend of
+dispersion error and distance of the dissipation from a small anti-dissipative target,
+so that the background is "slightly" anti-dissipative at low wavenumbers and its
+dissipation is "delayed to wave numbers at which the dispersion error is large".
+*(Compiler check, not in the sources: the background has $\tilde\vartheta_i>0$ on
+$0<\vartheta<1.016$, at most $2.59\times10^{-3}$, and a 1% dispersion bandwidth of 1.267
+against 1.100 for the fifth-order upwind scheme; the printed weights are not reproduced
+by minimizing the printed objective with the printed parameters, see the Source page.)*
+The TENO6-A background splits the six-point operator into a dispersive part
+(fourth-order constraints plus the minimum of the weighted error integral, weight
+exponent 6) and a dissipative part with $\tilde\vartheta_i=\tfrac25b_0(\cos\vartheta-1)^3$,
+$b_0=0.025$ from the dispersion–dissipation condition $\zeta\approx O(10)$; it is
+fourth order. *(Compiler check, not in the sources: the printed $d_k$ are reproduced to
+$2\times10^{-15}$, and the background is the fourth-order
+[MDCD](/methods/mdcd-scheme.md) member with $c_{\mathrm{disp}}=0.0545$ and
+$c_{\mathrm{diss}}=0.0025$.)* By the ADR, both schemes keep the spectra of their
+backgrounds "up to wave number 1.7", while [WENO-CU6](/methods/weno-cu6.md) departs from
+its own "at a very low wave number" (§IV.C, Fig. 2).
+
+**Evidence in the original paper** (Fu et al. 2019d, §V; Roe-averaged characteristic
+decomposition, Rusanov splitting by default, SSP-RK3 at CFL 0.4, one parameter set):
+sharp [Sod and Lax](/benchmarks/sod-and-lax-shock-tubes.md) solutions with a one-point
+density overshoot of TENO6-A at the Lax contact; [Shu–Osher](/benchmarks/shu-osher-problem.md)
+on par with WENO-CU6; a better [blast-wave](/benchmarks/woodward-colella-blast-wave.md)
+density peak than WENO-CU6; finer [double Mach reflection](/benchmarks/double-mach-reflection.md)
+structure than WENO-CU6 and WENO5-JS, TENO6-A finer than TENO5-A; on
+[Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) both perform "significantly better than
+the WENO5-Z scheme", TENO5-A is "comparable to that from WENO-CU6" and TENO6-A "resolves much finer
+small-scale vortical structures" (§V.E); TENO6-A as implicit LES keeps the
+Kolmogorov $k_w^{-5/3}$ range of the inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+on $64^3$ up to $t=80$, and its viscous dissipation rate at Re 100–3000 is "comparable to
+that of ALDM" and better in the laminar phase; on
+[compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)
+both schemes beat WENO-CU6 and are comparable to the LAD-D2-0 scheme of Kawai et al.; on a
+[steady shock reflection](/benchmarks/steady-shock-problems.md) the residual behaves "similar
+to" WENO5-JS's *(compiler check, not in the sources: in Fig. 15 every residual stalls,
+between about $10^{-0.4}$ for TENO6-A and $10^{-1.4}$)*. The comparators never include TENO5
+or TENO6 with a fixed cut-off, so the paper does not separate the effect of the adaptive
+cut-off from that of the new backgrounds and $\tau_5$.
+
 **Parameters in two later uses.** [Liang & Fu (2024b)](/sources/liang-2024-b.md)
-(§3.3.2, Eqs. (47)–(49)) take the TENO-A cut-off of Fu et al. (2018)
+(§3.3.2, Eqs. (47)–(49)) take the TENO-A cut-off, with the measure cited to three 2019
+papers of Fu's group (their refs. [49], [46], [62]: the implicit-model TENO paper in
+Commun. Comput. Phys., the original [Fu et al. (2019d)](/sources/fu-2019-d.md), and Fu's
+very-high-order TENO in Comput. Phys. Commun.), not to a 2018 paper,
 for the eight-point TENO branch of their hybrid TENO-S scheme (see
 [targeted ENO](/methods/targeted-eno.md)) with the four-point minimum,
 $\xi_{\mathrm A}=10^{-3}$, $C_r=0.23$, $b_1=10.5$, $b_2=3.5$, so that
@@ -124,16 +217,19 @@ $C_T$ moves between $10^{-7}$ at discontinuities and $10^{-10}$ in
 smooth regions. [Tang (2024)](/sources/tang-2024.md) (§2, Eqs.
 (15)–(16)) recalls TENO-A for the fifth-order scheme with the three-point
 minimum, $\xi_{\mathrm A}=10^{-3}$, $C_r=0.24$, $b_1=10$, $b_2=5$,
-Huang et al.'s TENO5-A values.
+Huang et al.'s TENO5-A values and those of the original; Tang attributes TENO-A to
+Fu et al.'s J. Comput. Phys. 374 paper (their ref. [27]), not to the AIAA original.
 
 **Parameters of TENO6-A as a comparator.** [Zhang et al. (2024b)](/sources/zhang-2024-b.md)
-(§2.5, Eq. (17)) recall the six-point TENO6-A of Fu et al. (2018) with the
+(§2.5, Eq. (17)) recall the six-point TENO6-A of the AIAA original (their ref. [52],
+printed with the year 2018; [Fu et al. (2019d)](/sources/fu-2019-d.md)) with the
 TENO-A cut-off $C_T=10^{-\lfloor b\rfloor}$, a measure written
-$\mu_d=1-\min(1,\sigma_{i+1/2}/C_r)$ (which minimum defines $\sigma_{i+1/2}$ is
-not printed), $\xi_{\mathrm A}=10^{-3}$, $C_r=0.17$, $b_1=10.5$, $b_2=4.5$,
+$\mu_d=1-\min(1,\sigma_{i+1/2}/C_r)$ (they do not print which minimum defines
+$\sigma_{i+1/2}$; the original uses the four-point one, §III.B), $\xi_{\mathrm A}=10^{-3}$, $C_r=0.17$, $b_1=10.5$, $b_2=4.5$,
 and the spectrally optimized linear weights $d_0=0.4294317718960898$,
 $d_1=0.1727270875843552$, $d_2=0.0855682281039113$, $d_3=0.312272912415645$
-(TENO stencil order: central, downwind, upwind, four-point downwind).
+(TENO stencil order: central, downwind, upwind, four-point downwind), all as
+printed in the original (§III.B, §IV.B).
 *(Compiler check, not in the sources: $b$ runs over $[6,10.5]$, so $C_T$ takes the
 values $10^{-10},\dots,10^{-6}$.)* With these weights TENO6-A converges at fourth
 order on smooth advection ($L_1=2.13\times10^{-10}$ at $N_x=1600$, order 4.00,
@@ -196,7 +292,7 @@ $\lambda_{\mathrm s}=3+3\big(1-\varphi(\mu_d)\big)$ with a three-point minimum o
 $\sigma$, $C_r=0.4$ and $\epsilon_\sigma=10^{-40}$, so that the kernel is flat in
 smooth regions and sharp at high-wavenumber content. Their stencil arrangement,
 which picks one target stencil of 5, 4 or 3 points from the three TENO5 flags, is
-"motivated by" the adaptive TENO of Fu et al. (2018) (§3.1; see
+"motivated by" the adaptive TENO of Fu, Hu & Adams (2018; J. Comput. Phys. 374, their ref. [23]) (§3.1; see
 [targeted ENO](/methods/targeted-eno.md)).
 
 ## Band-wise linear schemes and cut-offs (TENO6-SA)
@@ -415,7 +511,10 @@ characteristic-wise is not stated):
 
 **A widened range and a geometric override.** [Chen & Chen (2026)](/sources/chen-2026.md)
 (§2.3.2, Eqs. (23)–(26), Fig. 3) use the five-point finite-difference TENO5 of Fu, Hu & Adams
-(2017) with the TENO-A cut-off of Fu, Hu & Adams (2018), in a solver with a ghost-cell
+(2017) with the TENO-A cut-off of Fu, Hu & Adams (2018; J. Comput. Phys. 374, their ref. [58],
+to which they also attribute $\xi_{\mathrm A}$ and $C_r=0.24$, the TENO5-A values of the AIAA
+original; their introduction cites the original, ref. [64], [Fu et al. (2019d)](/sources/fu-2019-d.md),
+for the adaptation by a first-order smoothness indicator), in a solver with a ghost-cell
 [immersed boundary method](/methods/immersed-boundary-method.md). They print the measure with
 $\xi_{\mathrm A}=10^{-3}$ and $C_r=0.24$, the mapping $\varphi$ above and $b_1=9$, $b_2=8$, so that
 $C_T=10^{-\lfloor b\rfloor}$ ranges over $[10^{-9},10^{-1}]$, "notably broader" than the range
@@ -539,7 +638,8 @@ switched against a sixth-order kinetic-energy-preserving central scheme by a
 
 **Parameters.** [De Vanna et al. (2023a)](/sources/devanna-2023.md) (§3.1)
 and [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) (§3.1) set them
-"according to" Fu et al. (2018). $C_T$ "ranges between $10^{-7}$ and
+"according to" Fu et al. (2018), the J. Comput. Phys. 374 paper (the AIAA original
+is not in their reference lists). $C_T$ "ranges between $10^{-7}$ and
 $10^{-10}$ given $\alpha_1=10.5$, $\alpha_2=3.5$, $C_r=0.25$ and
 $\xi=10^{-3}$", against the fixed $C_T=10^{-7}$ of their TENO5. No formula is
 printed. *(Compiler check, not in the sources: read as $b_1=10.5$ and
@@ -547,7 +647,8 @@ $b_2=3.5$ in the cut-off $C_T=10^{-\lfloor b\rfloor}$ above, $b$ runs over
 $[7,10.5]$ and $C_T$ over $10^{-10},\dots,10^{-7}$, the printed range, and
 $\xi$ is then $\xi_{\mathrm A}$; the sources do not state this
 identification of the symbols.)* The constant $C_r=0.25$ is a third value next to Fu
-(2021)'s $0.265$ and Huang et al.'s $0.24$. De Vanna et al. (2023a, §3.1)
+(2021)'s $0.265$ and Huang et al.'s $0.24$, and $b_2=3.5$ differs from both parameter
+sets of the original ($5$ and $4.5$). De Vanna et al. (2023a, §3.1)
 credit the shock-sensor adaptation of $C_T$ to two later works (Hamzehloo et
 al.; Peng et al.) and only the parameters to Fu et al. (2018). In the
 immersed-boundary work,
@@ -627,9 +728,16 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
   scheme. Printing the URANOS weights would decide it.
 - Five values of $C_r$ are recorded for nominally the same TENO-A recipe:
   $0.265$ (Fu 2021), $0.24$ (Huang et al. 2023; Tang 2024), $0.25$ (De
-  Vanna et al. 2023a, 2023b, both attributing the value to Fu et al.
-  2018), $0.23$ (Liang & Fu 2024b, citing Fu et al. 2018) and $0.17$
-  (Zhang et al. 2024b, for TENO6-A); Chen & Chen (2026) use $0.24$. No source discusses the difference.
+  Vanna et al. 2023a, 2023b, both attributing the value to Fu, Hu & Adams
+  2018, J. Comput. Phys. 374), $0.23$ (Liang & Fu 2024b, citing three 2019
+  papers including the original) and $0.17$ (Zhang et al. 2024b, for TENO6-A);
+  Chen & Chen (2026) use $0.24$. The original prints two of them, scheme by
+  scheme: $0.24$ for TENO5-A and $0.17$ for TENO6-A
+  ([Fu et al. (2019d)](/sources/fu-2019-d.md), §III.B). No source discusses the
+  other values.
+- The original states that "all necessary parameters are determined by spectral
+  analyses" (abstract). That holds for the linear weights and $b_0$; $C_r$,
+  $\xi_{\mathrm A}$, $b_1$ and $b_2$ are printed without derivation (§III.B).
 - Chen & Chen (2026, Eq. (23)) print the minimum of the measure as $\min(\sigma_{i-1},\sigma_i,\sigma_{i+2})$,
   without $\sigma_{i+1}$, where Huang et al. (2023) and Tang (2024) print the three-point minimum
   $\min(\sigma_{i-1},\sigma_i,\sigma_{i+1})$ and the Fu papers the four-point one; the gap is not discussed.
@@ -684,17 +792,25 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
 - The GPU argument of Fu (2021, §4.4), that wide stencils are not the parallel
   bottleneck, rests on other codes (HTR, 96.6% weak-scaling efficiency on 512
   GPUs); no TENO-AA timing is given. TENO6-A costs 17% more than WENO5-JS on GPU,
-  47% on CPU (Fu 2023, §5.4); TENO5-A costs 42% more than TENO5 per run at
+  47% on CPU (Fu 2023, §5.4). The original's only timing, on double Mach reflection
+  at $512\times128$ (hardware, step count and parallel setup not stated), is
+  "222, 256, 361 and 527 s for WENO5-JS, WENO-CU6, TENO5-A and TENO6-A"
+  ([Fu et al. (2019d)](/sources/fu-2019-d.md), §V.D) *(compiler check, not in the
+  sources: TENO6-A $+137\%$ and TENO5-A $+63\%$ over WENO5-JS, TENO6-A $2.06$ times
+  WENO-CU6)*. The two TENO6-A figures stand side by side: the measurement conditions
+  (code, hardware, test) are not shown to be the same, so they are not recorded as a
+  contradiction. TENO5-A costs 42% more than TENO5 per run at
   $512\times128$ in Huang et al.'s timing (78.47 s against 55.10 s, Table 3).
   *(Compiler check, not in the sources: the 42% is the ratio of the printed times,
   $78.47/55.10=1.424$.)*
 
 # Citations
 
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §III.A.2, Eq. (15); §III.B, Eqs. (20)–(22); §IV, Eqs. (23)–(40), Fig. 2; §V, Figs. 3–15; §VI: TENO5-A and TENO6-A, the original (AIAA J. Article in Advance).
 - [Fu (2021)](/sources/fu-2021.md) — §§3–5, Eqs. (11)–(29), Remarks 3.1–3.3, Figs. 1–15: TENO-AA.
 - [Fu (2023)](/sources/fu-2023.md) — §3.1, Eq. (19); §4, Eqs. (31)–(33), Figs. 12–17; §5.4: TENO-A and its evidence.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §3.1, Eqs. (18)–(31), Fig. 2; §3.2, Eqs. (32)–(35), Fig. 3; §4, Tables 2–3, Figs. 4–11: TENO5-A parameters and the scale-sensor variant (arXiv v1).
-- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — abstract, §1, §2.5: adaptive TENO of Fu et al. (2018) as the origin of hierarchical voting and optimized backgrounds.
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — abstract, §1, §2.5: adaptive TENO of Fu, Hu & Adams (2018, J. Comput. Phys. 374) as the origin of hierarchical voting and optimized backgrounds.
 - [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §1, §3.2, Eqs. (48)–(54): Ren's detector, two- and four-point minimum.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1: TENO-A recalled.
 - [Tang (2024)](/sources/tang-2024.md) — §§2–4, Eqs. (15)–(20), Tables 1–6, Figs. 1–17: TENO-A and TENO-LAD recalled, TENO-AZ and its evidence.

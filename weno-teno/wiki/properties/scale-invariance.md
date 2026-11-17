@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-11-01T18:54:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Scale and affine invariance
@@ -79,6 +79,24 @@ of WENO made for analysis that destroy self-similarity.
 - Li et al. (2022b, §4.1) object to the WENO-Z variant with $\epsilon=\Delta x^m$ of Don & Borges
   that $\beta_k$ and $\Delta x$ have different dimensions, so the solution depends on the reference
   values used to nondimensionalize the problem.
+- **Adaptive TENO cut-offs.** The discontinuity measure that drives the cut-off of TENO5-A and
+  TENO6-A ([Fu et al. (2019d)](/sources/fu-2019-d.md), §III.B, Eq. (21); symbols as on
+  [adaptive TENO](/methods/adaptive-teno.md); $\sigma_i$ is this measure, not the affine scaling $\sigma$
+  of the map $f\mapsto\sigma f$ used below),
+  $\sigma_i=\big(\lvert2\Delta f_{i+1/2}\Delta f_{i-1/2}\rvert+\epsilon_\sigma\big)/\big((\Delta f_{i+1/2})^2+(\Delta f_{i-1/2})^2+\epsilon_\sigma\big)$
+  with $\epsilon_\sigma=\frac{0.9C_r}{1-0.9C_r}\xi_{\mathrm A}^2$ and $\xi_{\mathrm A}=10^{-3}$, is of degree 0 in the
+  differences except for $\epsilon_\sigma$. *(Compiler check, not in the sources: an isolated step of
+  height $\delta$ gives $\sigma_i=\epsilon_\sigma/(\delta^2+\epsilon_\sigma)$, which reaches $0.9C_r$, i.e. a measure
+  $\mu_d\le0.1$, exactly at $\lvert\delta\rvert=\xi_{\mathrm A}$; so $\xi_{\mathrm A}$ is an absolute amplitude in
+  the units of the data, below which a step counts as smooth, and under $f\mapsto\sigma f$ the
+  measure and the cut-off $C_T$ it sets change for jumps of order $\xi_{\mathrm A}/\sigma$. For jumps
+  much larger than $\xi_{\mathrm A}$ the measure is scale-invariant up to $\epsilon_\sigma$; Fu (2021)'s
+  $\epsilon_\sigma=10^{-40}$ removes the scale altogether.)* The paper does not discuss invariance.
+  Two other TENO switches carry an absolute scale for the same reason: TENO-AZ's cut-off
+  $\min(10^{-5},\tau_{\mathrm{AZ}})$ with $\tau_{\mathrm{AZ}}\mapsto\sigma^2\tau_{\mathrm{AZ}}$ (compiler check on
+  [adaptive TENO](/methods/adaptive-teno.md)), and the troubled-cell flag of
+  [Fu (2019b)](/sources/fu-2019-b.md), whose $\gamma_k=1/(\beta_k+\epsilon)^q$ has a fixed $\epsilon$ of
+  $10^{-4}$ or $10^{-3}$ against $\beta_k\mapsto\sigma^2\beta_k$ *(compiler check, not in the sources)*.
 
 - **Exponential weights.** Chen & Deng (2023, §5) describe their weights
   $d_k\exp(-\beta_k^{\lambda_{\mathrm E}}/\lambda_{\mathrm E})$ as built "without using any dimensional
@@ -377,6 +395,8 @@ problem scaled by 100 OF-HWENO "excessively smears" (Ex. 9, Fig. 3.8).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — §1; §2, Eqs. (2.6), (2.13)–(2.14), Theorems 2.6, 2.10, Remarks 2.8–2.12; Ex. 5.6–5.8.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §2.2; §3.2, Eq. (3.10); §3.4.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §4.1.
+- [Fu et al. (2019d)](/sources/fu-2019-d.md) — §III.B, Eqs. (20)–(22): absolute amplitude $\xi_{\mathrm A}$ in the TENO-A discontinuity measure.
+- [Fu (2019b)](/sources/fu-2019-b.md) — §4, Eqs. (4.2)–(4.4): fixed $\epsilon$ of the TENO troubled-cell flag.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — §2, Eqs. (13)–(14), Prop. 2.1; §3.2.1, Eqs. (32)–(34), Lemma 3.1, Remark 3.3; §3.6, Theorem 3.2; Examples 4.4–4.5.
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.2, Eqs. (14)–(15).
 - [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §5, Eqs. (24)–(26).

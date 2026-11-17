@@ -3,9 +3,9 @@ type: Definition
 title: "Troubled-cell and shock indicators"
 description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme is limited, blended or switched; the page defines modal, KXRCF-type, TVB, minmod-jump, BVD, admissibility, time-reversibility, residual, WENO- and TENO-type, undivided-difference, derivative-ratio, divergence and physical (discontinuity-feedback) indicators, with parameters and limits."
 status: established
-aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor, minmod-based smoothness indicator, weak local residual, relaxed BVD indicator, discontinuity feedback factor, PAD, NAD, extreme-point indicator, simplified troubled-cell indicator]
+aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, MP indicator, TVB discontinuity indicator, Hill–Pullin sensor, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor, minmod-based smoothness indicator, weak local residual, relaxed BVD indicator, discontinuity feedback factor, PAD, NAD, extreme-point indicator, simplified troubled-cell indicator]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-11-01T18:56:00Z
+timestamp: 2026-11-17T08:52:09Z
 ---
 
 # Troubled-cell and shock indicators
@@ -552,6 +552,85 @@ $\varphi_{\mathrm D}=1+O(\Delta x^5)$ on the blended flux together with $\Delta 
 $r\le2$, and $\varphi_{\mathrm D}=1+O(\Delta x^4)$ in the redistribution. Here 1 means
 smooth.
 
+**MP and TVB flags (finite difference).** [Fu (2019b)](/sources/fu-2019-b.md)
+(§3, Eqs. (3.1)–(3.16)) turn two limiters into binary flags on an interface
+value $u^{\mathrm{lin}}_{i+1/2}$ (page-local, as on the MP page), as
+comparators of the TENO-based switch above:
+- the [monotonicity-preserving](/methods/monotonicity-preserving-limiter.md)
+  clip, with $\xi_{\mathrm{MP}}=2$ in $u^{\mathrm{UL}}$, the large-curvature
+  constant 4 and the four-argument limited curvature for both $u^{\mathrm{MD}}$
+  and $u^{\mathrm{LC}}$, applied to the value of TENO6's linear scheme without
+  the MP test stage: $\mathrm{Flag}_i=1$ whenever the clip changes the value,
+  "as indicated in" Qiu & Shu (2005), as a flag "with weak dependence on
+  parameter tuning" (Eq. (3.11));
+- a TVB-corrected minmod of $u^{\mathrm{lin}}_{i+1/2}-u_i$ against
+  $u_i-u_{i-1}$ and $u_{i+1}-u_i$, which returns its first argument if it is
+  at most $M_{\mathrm{TVB}}\Delta x^2$ in magnitude and the sign-agreeing
+  minmod otherwise, here with $u^{\mathrm{lin}}_{i+1/2}$ the third-order value
+  on $\{i-1,i,i+1\}$; $\mathrm{Flag}_i=1$ when the value changes (Eqs.
+  (3.12)–(3.16)). Unlike the RKDG form of Huang & Fu above, only the right
+  interface value is tested.
+
+On Burgers the MP flag is the best of the three indicators, monotone and with
+the fewest flags (§6.2); on the shock tubes, Shu–Osher, 2D Riemann problems and
+the implosion it flags many more cells than the TENO switch (Figs. 9, 11, 20–21,
+27, 29). It also fires on constant data (Shu–Osher at 800 points, Fig. 12);
+requiring the change to exceed $10^{-10}$ cures this (Eq. (6.8)), but the
+improved flag "does not identify the shocklets and sharp features as accurate
+as" the TENO switch. The TVB flag depends strongly on $M_{\mathrm{TVB}}\in\{10,100,1000\}$:
+it oscillates on Burgers for all three values (§6.2), flags too many cells
+for small $M_{\mathrm{TVB}}$ and oscillates for large ones on Shu–Osher, where
+at 400 points it "fails to distinguish the physical fluctuations from the
+shock discontinuities" (Fig. 15), and is best with $M_{\mathrm{TVB}}=1000$ on
+the implosion (§6.8). The trade-off, small $M_{\mathrm{TVB}}$ close to the
+minmod limiter and large $M_{\mathrm{TVB}}$ missing troubled cells with Gibbs
+oscillations, is stated after Qiu & Shu (§3.2).
+
+**Simple sensors of central/WENO hybrids and nonlinear filters.**
+[Pirozzoli (2011a)](/sources/pirozzoli-2011.md) (§3.2, §3.3) reviews the
+sensors that switch [hybrid schemes](/methods/hybrid-weno.md) and nonlinear
+filters for compressible turbulence:
+- Jameson's pressure sensor in its original role, the switch of the
+  second-order JST dissipation (Eqs. (30)–(32), after Jameson et al. 1981):
+  $\varphi_{\mathrm J,i}=\lvert p_{i+1}-2p_i+p_{i-1}\rvert/\lvert p_{i+1}+2p_i+p_{i-1}\rvert$,
+  face value $\varphi_{\mathrm J,i+1/2}=\max(\varphi_{\mathrm J,i},\varphi_{\mathrm J,i+1})$,
+  printed with "$0\le\varphi_{\mathrm J}\le1$", which holds for positive data
+  such as the pressure it is applied to ([artificial viscosity](/methods/artificial-viscosity.md));
+- Harten's (1978) switch $\theta_{\mathrm{AC}}$, near one at shocks and near
+  zero in smooth regions, which scales the TVD artificial flux of Yee et
+  al.'s (1999) characteristic-based filter (Eqs. (27)–(28));
+- Hill & Pullin's ratio of the largest to the smallest WENO indicator,
+  $\lambda_{\mathrm{HP}}=\max_k\beta_k/(\min_k\beta_k+\epsilon)$ (registry §10,
+  the source's $\lambda$), large "whenever one or more WENO substencils are
+  crossed by discontinuities";
+- Adams & Shariff's (1996) switch on the local gradient of the flux
+  components, with flagged cells padded by buffer cells on each side;
+  Pirozzoli's (2002) density-jump switch, WENO at $x_{i+1/2}$ and two
+  neighbouring nodes on each side whenever $\lvert\rho_{i+1}-\rho_i\rvert\ge0.2$
+  (Fig. 3d);
+- the [Ducros sensor](/definitions/ducros-shock-sensor.md), the sensors of
+  Visbal & Gaitonde (2005) and Larsson et al. (2007), "a modification of the
+  Ducros sensor", and the multiresolution-wavelet sensors of Sjögreen & Yee
+  (2000) and Yee & Sjögreen (2007), recalled without formulas.
+
+**Comparison on a shock/boundary-layer interaction** (Pirozzoli 2011a, §3.2,
+Fig. 4). On an instantaneous field of transonic shock/boundary-layer DNS, with
+thresholds "selected in such a way that a similar representation of the shock
+system is obtained" and the Jameson, Hill–Pullin and Visbal–Gaitonde sensors
+evaluated on pressure, the original Ducros ratio $\Phi_{\mathrm D}$ "does not
+perform properly outside of the wall layer (where $\nabla\times v\approx0$), due
+to excessive sensitivity to dilatational fluctuations". With
+$\epsilon_{\mathrm D}=(v_\infty/\delta_0)^2$, so that it activates only "when the
+local dilatation becomes larger than a typical large-scale velocity gradient",
+the review's "modified Ducros sensor" isolates "genuine shocks", whereas the
+other simple sensors "also mark smooth regions populated by vortical
+structures". The review's "modified" sensor keeps the square of $\Phi_{\mathrm D}$
+and is not the compression-only $\Psi_{\mathrm D}$ of later sources (naming
+note on the [Ducros sensor](/definitions/ducros-shock-sensor.md) page). Its
+recommendation (§6): the Ducros sensor "was found to perform reasonably well in
+many shock/turbulence interaction problems, particularly with some minor
+case-by-case modification and tuning of the threshold value".
+
 **Physical shock sensor (central scheme with artificial dissipation).**
 [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) (§3, Eq. (36))
 switch the low-order dissipation of their
@@ -572,6 +651,19 @@ improves the entropy waves of the
 [Shu–Osher problem](/benchmarks/shu-osher-problem.md) by suppressing
 spurious activations of the pressure sensor (§4.3); on a reacting 9000 K
 shock tube it had to be switched off for robustness (§4.4).
+The product of the two last factors originates in
+[Ducros et al. (1999)](/sources/ducros-1999.md) (§3, Eqs. (22)–(24)), where the
+squared ratio $\Phi_{\mathrm D}$, with $\epsilon_{\mathrm D}=10^{-30}$, multiplies
+Jameson's pressure sensor in the second-order JST coefficient,
+$\varepsilon_{2,i+1/2}=k_2\max\big(\varphi_{\mathrm J,i}\Phi_{\mathrm D,i},\ \varphi_{\mathrm J,i+1}\Phi_{\mathrm D,i+1}\big)$,
+the face value being the maximum of the two cell products, with the spectral
+radius $a_{i+1/2}$ factored out of the dissipation term as on the
+[artificial-viscosity](/methods/artificial-viscosity.md) page (Ducros et al. write
+it inside the coefficient; the flux is the same); $\Xi_i$ adds the
+Bhagatwala–Lele factor to that product. Ducros et al. note that the ratio keeps the
+Galilean invariance of the sensor while the scheme is "no longer Galilean invariant due to the
+artificial viscosity" *(compiler check, not in the source: through the spectral radius
+$\lvert v\rvert+c$)*, so their coefficients hold in the shock frame (§3, pp. 524–525).
 
 **Jameson–Ducros product (flux blending in Active Flux).**
 [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) (arXiv v3,
@@ -746,17 +838,33 @@ convergence, rates 6.0–6.7 on the finest grids (Table 1).
 
 **TENO-flag indicators.** The binary cut-off flags
 $\delta_k$ of [TENO](/methods/targeted-eno.md) already say which candidate
-stencils are crossed by a discontinuity, and two sources build indicators
-from them.
-- *Hybrid switch* ([Fu (2023)](/sources/fu-2023.md), §3.4, Eqs. (21)–(24),
-  recalled from Fu's hybrid TENO). On four candidate stencils, with the
-  simplified measure $\gamma_k=1/(\beta_k+\epsilon)^q$, $q=6$, and
-  $\chi_k=\gamma_k/\sum_l\gamma_l$: Flag $=0$ (smooth) if $\chi_k>C_T$ for
-  all $k$, else 1, with $C_T=5\times10^{-4}$. Where Flag $=0$ the optimal
-  linear scheme is used without characteristic decomposition, which makes
-  the scheme about four times faster ([hybrid schemes](/methods/hybrid-weno.md)).
-  The review calls the indicator "more universal" than physical sensors such
-  as Ducros', because it separates non-smooth scales in spectral space.
+stencils are crossed by a discontinuity, and two families of indicators are
+built from them: thresholds on the normalized measure $\chi_k$ of equal
+stencils, which have their own page,
+[TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)
+(definitions, variants, evidence and the hybrid they drive; summarized
+below), and location detectors that read patterns of TENO5 flags.
+- *Hybrid switch* ([Fu (2019b)](/sources/fu-2019-b.md), §4, Eqs. (4.1)–(4.4),
+  Fig. 3; recalled by [Fu (2023)](/sources/fu-2023.md), §3.4, Eqs. (21)–(24)).
+  Four **equal** three-point stencils cover $x_{i-2},\dots,x_{i+3}$, the six
+  points of the flux at $x_{i+1/2}$, each $\beta_k$ the Jiang–Shu integral over
+  the target cell ([smoothness indicators](/definitions/smoothness-indicator.md));
+  with $\gamma_k=(\beta_k+\epsilon)^{-6}$, $\epsilon=10^{-4}$ in 1D and
+  $10^{-3}$ in multi-D, and $\chi_k=\gamma_k/\sum_l\gamma_l$, the flag
+  $\mathrm{Flag}_i$ is 0 (smooth) iff $\chi_k>C_T=5\times10^{-4}$ for all $k$,
+  else 1 (troubled). It reads density and total energy in 1D and density alone
+  in 2D, in physical space, dimension by dimension. Where $\mathrm{Flag}_i=0$
+  Fu's hybrid takes the fifth-order upwind flux with global Lax–Friedrichs
+  dissipation without characteristic decomposition, elsewhere the
+  characteristic-wise TENO6, and runs 3.2–3.84 times faster than TENO6 on 2D
+  Riemann configuration 3 (§5, Eq. (5.1), Table 1;
+  [hybrid schemes](/methods/hybrid-weno.md)). Fu (2023) recalls the linear
+  branch as "the optimal linear scheme" and the gain as "a factor of four",
+  and calls the indicator "more universal" than physical sensors such as
+  Ducros', because it separates non-smooth scales in spectral space. Fu
+  (2019b) argues that $C_T$ is a cut-off wavenumber and hence case-independent,
+  citing the approximate dispersion relation of five-point TENO (Fig. 2), not
+  an analysis of this indicator.
 - *Discontinuity-location detector* ([Takagi et al. (2022)](/sources/takagi-2022.md),
   §3.1, Eqs. (18)–(20)). With the TENO5 flags of the downwind- and
   upwind-side stencils, a cell flag $\zeta_i\in\{2,1,-1,0\}$ is set to 2 if
@@ -795,38 +903,37 @@ from them.
 - *Eight-point switch with equal stencils* ([Liang & Fu (2024b)](/sources/liang-2024-b.md),
   §3.1, Eqs. 31–34). For the hybrid TENO-S scheme
   ([hybrid schemes](/methods/hybrid-weno.md)) six three-point stencils of
-  equal size cover $x_{i-3},\dots,x_{i+4}$: the three classical ones
-  $S_0=\{i-1,i,i+1\}$, $S_1=\{i,i+1,i+2\}$, $S_2=\{i-2,i-1,i\}$ and three
-  that do not contain $x_i$, $S_3=\{i+1,i+2,i+3\}$, $S_4=\{i-3,i-2,i-1\}$,
-  $S_5=\{i+2,i+3,i+4\}$ (source numbering). Each $\beta_k$ is the
-  Jiang–Shu integral over the target cell $[x_{i-1/2},x_{i+1/2}]$, which
-  lies outside the last three stencils (e.g.
-  $\beta_3=\tfrac13\lvert10f_{i+3}^2-49f_{i+2}f_{i+3}+29f_{i+1}f_{i+3}+61f_{i+2}^2-73f_{i+1}f_{i+2}+22f_{i+1}^2\rvert$,
-  Eq. 31). Then $\gamma_k=1/(\beta_k+\epsilon)^6$,
-  $\chi_k=\gamma_k/\sum_l\gamma_l$, and the cell is smooth iff
-  $\chi_k>10^{-6}$ for all six $k$, with $\epsilon=10^{-4}$ in 1D and
-  $10^{-2}$ in multi-D. The indicator reads conserved variables in
-  physical space, density and total energy in 1D and density alone in
-  multi-D, dimension by dimension, without characteristic decomposition,
-  so the costly characteristic TENO path runs only in flagged cells.
-  Equal sizes keep the indicators cheap. The authors state that "more
-  than 90%" of the cells of the double Mach reflection take the
-  non-dissipative central flux (§4.6, no count shown) and call the
-  indicator "more universal" than physical sensors such as Ducros' (§3.1),
-  without a comparison. Against Fu's hybrid switch above it uses six
-  equal stencils instead of four incremental ones and a cut-off
-  $10^{-6}$ instead of $5\times10^{-4}$.
+  equal size cover $x_{i-3},\dots,x_{i+4}$, three of which do not contain
+  $x_i$; each $\beta_k$ is the Jiang–Shu integral over the target cell (their
+  $\beta_3$, Eq. 31, is Fu (2019b)'s Eq. (4.1), printed inside redundant
+  absolute-value bars), $\gamma_k=1/(\beta_k+\epsilon)^6$, and the cell is
+  smooth iff $\chi_k>10^{-6}$ for all six $k$, with $\epsilon=10^{-4}$ in 1D
+  and $10^{-2}$ in multi-D, on density and total energy in 1D and density
+  alone in multi-D, dimension by dimension, without characteristic
+  decomposition (full form on the
+  [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)
+  page). The authors state that "more than 90%" of the cells of the double
+  Mach reflection take the non-dissipative central flux (§4.6, no count
+  shown) and call the indicator "more universal" than physical sensors such
+  as Ducros' (§3.1), without a comparison. Against Fu's hybrid switch above
+  it uses six equal stencils instead of four equal ones (Fu 2019b, §4.1,
+  Fig. 3: "four equal-sized stencils") and a cut-off $10^{-6}$ instead of
+  $5\times10^{-4}$.
 - *Compact DG indicator* ([Huang & Fu (2024)](/sources/huang-2024.md),
   §4.3, Eqs. 32–35; §5.1). For RKDG the candidates are the DG
-  polynomials of the cells themselves: on $I_{i-1}$, $I_i$, $I_{i+1}$,
-  $\beta_n=\sum_{l=1}^{2}\int_{I_n}\Delta x^{2l-1}\big(\partial_x^lu_h\vert_{I_n}\big)^2dx$,
-  $\gamma_n=1/(\beta_n+\epsilon)^q$ with $\epsilon=10^{-3}$, $q=6$,
-  $\chi_n=\gamma_n/\sum_l\gamma_l$, and cell $i$ is troubled iff its own
-  $\chi_i<C_T=10^{-4}$; only the target's flag is tested. The authors
-  present it as a compact version of Fu's finite-difference discontinuity
-  indicator, which needs four candidate stencils over six points; in 2D it
-  is applied in $x$ and $y$ separately and a cell is troubled if flagged
-  in either direction, the strategy of Fu's hybrid TENO. The same
+  polynomials of $I_{i-1}$, $I_i$, $I_{i+1}$ themselves, $\epsilon=10^{-3}$,
+  $q=6$, and cell $i$ is troubled iff its own $\chi_i<C_T=10^{-4}$; only the
+  target's flag is tested (full form on the
+  [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)
+  page). The authors present it as a compact version of Fu's
+  finite-difference discontinuity indicator, which needs four candidate
+  stencils over six points; in 2D it is applied in $x$ and $y$ separately
+  and a cell is troubled if flagged in either direction, a strategy they
+  state "has been adopted" in Fu's hybrid TENO, whereas Fu (2019b, §6) names
+  $\max(\mathrm{Flag}_x,\mathrm{Flag}_y)$ only as a remedy "if deemed
+  necessary" and runs with separate $\mathrm{Flag}_x$, $\mathrm{Flag}_y$
+  (Figs. 18–28; a recollection differing from the original, recorded as a
+  qualification). The same
   constants serve all their tests, "without tuning". On the
   [density wave](/benchmarks/density-wave-advection.md) it flags no cell, so
   the limited errors equal the unlimited ones (Tables 1, 3); on the
@@ -855,7 +962,9 @@ from them.
   34681 cells, 9.63 % of the domain (§5.5, Fig. 6).
 
 - *Direction-wise indicator for spectral difference* ([Chen & Fu (2024)](/sources/chen-2024.md),
-  §4.2, Eqs. (15)–(20)). For the nodal
+  §4.2, Eqs. (15)–(20); also on the
+  [TENO-based discontinuity indicator](/methods/teno-discontinuity-indicator.md)
+  page). For the nodal
   [spectral difference method](/methods/spectral-difference-method.md)
   the candidates are again the cells' own polynomials, on $I_{i-1}$,
   $I_i$, $I_{i+1}$, with Jiang–Shu indicators of all derivatives up to the
@@ -1232,7 +1341,11 @@ Several sources use an indicator without defining or analysing it:
   parameter-free, while their own blast-wave refinement shows that $C_T$
   affects overshoots at contacts
   (§4.5, Fig. 9). Rueda-Ramírez et al. (2022) call the modal-energy
-  indicator heuristic (§2.4).
+  indicator heuristic (§2.4). Earlier, [Fu (2019b)](/sources/fu-2019-b.md)
+  (§1) called the minmod-TVB, Harten subcell-resolution and average-total-variation
+  indicators "mostly case-sensitive due to the fact that only low-order
+  information is examined and problem-dependent parameters are typically
+  involved", the argument for a TENO-based switch.
 - **Parameter-free claims.** Huang & Fu (2024) state that TVB and KXRCF
   "generally rely on a critical parameter that is dependent on the
   solution" and must be tuned case by case, while their indicator "adopts
@@ -1247,8 +1360,10 @@ Several sources use an indicator without defining or analysing it:
   against TVB and KXRCF without running either (Abstract, §1), and Liang
   et al. (2025) state that their density threshold $10^{-3}$, found
   "sufficient" by "extensive numerical experiments", needs no
-  case-sensitive tuning (§3.3.2). In all five, "parameter-free" means
-  fixed across the authors' tests.
+  case-sensitive tuning (§3.3.2). Fu (2019b) claims better performance "with
+  a fixed set of parameters for all considered benchmarks" (Abstract, §7)
+  while $\epsilon$ is $10^{-4}$ in 1D and $10^{-3}$ in multi-D (§4.2). In all
+  six, "parameter-free" means fixed across the authors' tests.
 - **Thresholds that remain.** Zuo & Zhu (2024a) test the bounds against
   the margin $\pm\Delta x$, a length compared with a quantity of the size
   of the density differences, so the test changes under a rescaling of
@@ -1266,7 +1381,22 @@ Several sources use an indicator without defining or analysing it:
   agree that the Ducros ratio alone activates spuriously in irrotational
   flow, note that tuning its $\epsilon$ to the flow scales costs
   generality, and repair it by multiplication with two other factors
-  instead (§3, §5.1).
+  instead (§3, §5.1). In its original, [Ducros et al. (1999)](/sources/ducros-1999.md)
+  (§3, Eqs. (22)–(24)) never use the ratio alone: it multiplies Jameson's
+  pressure sensor in the JST coefficient (above), and they note that the
+  resulting scheme is not Galilean invariant "due to the artificial
+  viscosity", the range of $k_2$, $k_4$ being valid in the shock frame,
+  while the ratio itself is. Pirozzoli (2011a, §3.2) instead tunes
+  $\epsilon_{\mathrm D}$ to the flow scales (above) and recommends the sensor
+  with "some minor case-by-case modification and tuning of the threshold
+  value" (§6).
+- **Smooth or sharp switching.** Pirozzoli (2011a, §3.2) finds, "in the
+  author's experience", that blending functions giving a smooth transition
+  between the two schemes of a hybrid (e.g. Ren et al. 2003) do "not add much
+  to the stability and accuracy"; Wan & Xia (2022, §3.2) call the smooth
+  transition region "essential for the steady-state convergence" of their
+  hybrid. The regimes differ (unsteady DNS and LES against steady residuals),
+  so the two are recorded as positions, not as a contradiction.
 - **Avoiding the indicator.** [Peng, Sun & Wu (2024)](/sources/peng-2024.md)
   call troubled-cell limiters "problem-dependent" and liable to alter
   desirable properties of the DG scheme (§1). Their
@@ -1458,6 +1588,15 @@ Several sources use an indicator without defining or analysing it:
 - Chamarthi (2023b) attributes the "original" detector once to Li &
   Jaberi (2012) and once to Li, Chen & Ren (2022) (§2.4, refs. [52] and
   [53]).
+- Fu (2019b)'s statements about KXRCF, Harten's and the multiwavelet
+  indicators on the Sod, Lax and Shu–Osher problems are quoted from Vuik &
+  Ryan (2014), and those about the TVB, KXRCF and Harten indicators on double
+  Mach reflection from Qiu & Shu (2005, Fig. 3.18), both DG studies; Fu runs
+  only the MP and TVB flags against the TENO switch (§6.3, §6.4, §6.7).
+- Fu (2019b) prints the MP stability condition as "CFL $\le1/(1+\alpha)$"
+  (a glyph misprint "ff" for $\alpha$), i.e. $1/3$ for $\xi_{\mathrm{MP}}=2$,
+  while all runs use CFL 0.4 (§3.1, §6); the MP limiter there only flags and
+  never modifies the solution.
 
 # Citations
 
@@ -1471,6 +1610,9 @@ Several sources use an indicator without defining or analysing it:
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — arXiv v1: §3 (Eq. (36)); §4.3–§4.4; §5.1 (Fig. 8).
 - [Fu (2021)](/sources/fu-2021.md) — arXiv v1: §3.4, Eqs. (17)–(19).
 - [Fu (2023)](/sources/fu-2023.md) — §3.4 (Eqs. (21)–(24)); §4.1 (Eqs. (31)–(33)).
+- [Fu (2019b)](/sources/fu-2019-b.md) — Abstract; §1; §3, Eqs. (3.1)–(3.16); §4, Eqs. (4.1)–(4.4), Figs. 2–3; §5, Eq. (5.1), Algorithm 1, Table 1; §6, Eq. (6.8), Figs. 4–29; §7: TENO-based switch, MP and TVB flags, comparison.
+- [Ducros et al. (1999)](/sources/ducros-1999.md) — §3, Eqs. (10)–(13), (22)–(24), pp. 524–525: squared Ducros ratio as a factor of Jameson's sensor in the JST coefficient, face rule, frame dependence.
+- [Pirozzoli (2011a)](/sources/pirozzoli-2011.md) — §3.2, Eqs. (27)–(29), Figs. 3d, 4; §3.3, Eqs. (30)–(32); §6: simple sensors of hybrids and filters, sensor comparison on a shock/boundary-layer interaction, smooth blending.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1; §3.1 (Eqs. (18)–(20), Table 1); §3.2; §4.5 (Fig. 9).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §III (Eq. (3.8)); §VIII.b.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §4 (Ex. 4.2–4.7, Table 4.2); §5.

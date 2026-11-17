@@ -6,6 +6,141 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 14 — central and hybrid schemes: the Ducros sensor, conservative and curvilinear KEP split forms, KEEP-PE, the TENO indicator and TENO-A (2026-11-17)
+
+Sources (7): ducros-1999, pirozzoli-2010, pirozzoli-2011 (Annu. Rev. Fluid Mech. review),
+pirozzoli-2011-b, fu-2019-b, fu-2019-d, shima-2021. Downloaded by the human and filed into the
+archive by `mosaic import` on 2026-11-17 (231 files). A byte-identical second copy of the ARFM
+review was left out of the archive. All seven were already bibliography keys (cited by earlier
+sources); the keys became the Source slugs. Compiled unattended under the night protocol
+(compile agents per page family, then six read-only auditors), not staged: the human commits.
+
+### Contradictions opened
+
+- **Conservation of split forms on non-uniform grids** ([local conservation](/results/local-conservation-flux-form.md),
+  *Open*): Pirozzoli (2010, §3.2, §4, after Ducros et al. 2000) states that a fully conservative
+  finite-difference discretization of the split form "is not possible on a mesh with variable
+  spacing"; Coppola & Veldman (2023) prove conservation on periodic non-uniform grids under the
+  duality relations with $V=\mathrm{diag}(D\mathbf x)$. The compiler's reading (the two may differ in
+  what is summed: unweighted against metric-weighted totals) is recorded as a hypothesis and does
+  not close it. Nine contradictions are now open.
+
+Candidate contradictions decided otherwise (bundle practice of chunk 12: a later recollection of an
+original stands side by side with it, attributed):
+- Ducros sensor: the original (1999, Eq. (22)) is the **squared** ratio, never used alone — it
+  multiplies Jameson's pressure sensor in the JST coefficient, face value the maximum of the two cell
+  products (Eq. (24)). The page's narrative of a later "repair by multiplication" was a **wiki error**,
+  corrected. Duronio & Di Mascio's "classical sensor" (compression-only, unsquared), De Vanna et al.
+  (2023c)'s citation of Ducros 1999 for WMLES, Pirozzoli (2011a)'s "modified Ducros sensor" (the
+  squared ratio with $\epsilon_{\mathrm D}=(v_\infty/\delta_0)^2$) and Pirozzoli (2011a)'s recollection of
+  Ducros 1999 as a characteristic-based nonlinear filter: qualifications and naming notes.
+- Fu (2019b)'s hybrid: the linear branch is the fifth-order upwind flux with global Lax–Friedrichs
+  splitting (Eq. (5.1)), not "the optimal linear scheme" — **wiki error** on hybrid-weno, troubled-cell,
+  characteristic-decomposition and targeted-eno, corrected; Fu (2023)'s recollection ("optimal linear
+  scheme", "factor of four" against Table 1's 3.2–3.84) kept attributed. "Four incremental" stencils
+  of the indicator: **wiki error**, four equal three-point stencils (§4.1, Fig. 3). The 2D rule
+  $\max(\mathrm{Flag}_x,\mathrm{Flag}_y)$ that Huang & Fu (2024) attribute to Fu: Fu names it only as an
+  optional remedy and runs with separate flags — qualification.
+- ENO total-variation bound: Pirozzoli (2011a) "guarantee" against Harten et al. (1987a)'s requirement
+  on the reconstruction and conjecture for the scheme — qualification on eno-property.
+- Spectral resolution of nonlinear weights (Pirozzoli 2011a "never achieved ... unless frozen" against
+  Luo & Wu's WENO-Z+M beating UD5): different claims, positions.
+- TENO6-A cost: +137 % over WENO5-JS on CPU (Fu et al. 2019d, §V.D) against Fu (2023)'s +17 % GPU /
+  +47 % CPU — conditions differ, qualification.
+- adaptive-teno: Liang & Fu (2024b) cite their TENO-A measure to fu-2019-c, fu-2019-d and fu-2019-g, not to
+  a 2018 paper — **wiki error**, corrected; other "Fu et al. (2018)" mentions checked against the
+  citing papers' reference lists (fu-2018-b, J. Comput. Phys. 374). The page's "possibly
+  scheme-dependent, no source discusses" on the TENO-A stencil and $C_r$ is superseded by the original
+  (three points and 0.24 for TENO5-A, four points and 0.17 for TENO6-A).
+- Pirozzoli (2011b) "not strictly skew-symmetric ... $\int\rho\phi^2$ not preserved" (terminology),
+  Shima et al.'s "superior stability" (density wave only) and "existing split forms do not maintain
+  pressure equilibrium" (scoped to KEP/KEEP): qualifications.
+
+### Printed inconsistencies (recorded on the Source pages)
+
+- **ducros-1999:** the flux of Eqs. (5)–(7) carries a minus sign under which the dissipation of Eq. (8)
+  would be anti-dissipative; Eq. (7) $\partial T/\partial x_j$ for $x_i$; SGS heat flux defined with
+  $C_p$, modelled with $C_v$; wrong equation references (Eqs. (13), (9)); the compressible adaptation
+  (p. 524) prints both factors identically and the mean density without ½; grid index $j\to i$;
+  inverted units of the enstrophy-peak time; Eq. (29)'s $k_c^{-2}$ absent from the text; §4.4 "A
+  Posteriori" against "a priori" elsewhere; ref. [54] used for the LIA values where the Table IV note
+  uses [7]; Fig. 11 plateaus 4–7 % below $\rho_2/\rho_1$ at Mach 1.4 and 1.7 against "quantitatively
+  recovered". Reference-list slips: [19] given name and surname swapped (Oran), [42] AIAA 81-1250 for
+  81-1259, [24], [35] years, [56] volume.
+- **pirozzoli-2010:** the C-KG-SF operation count printed $1+\tfrac92L+\tfrac12L^2$ where Fig. 1 and the
+  text require $1+\tfrac{11}2L+\tfrac12L^2$ (compiler check); App. A sum; "C-FE-BL"; "faster than KG-SF"
+  for D-KG-SF; the text says BL-SF diverges while Fig. 3 shows its fourth-order run reaching
+  $t/\tau\approx245$; $\Delta x^+$ 4.5 against 4.4 (Table 1); Lilly (1965) printed in J. Comput. Phys.
+- **pirozzoli-2011 (review):** Eq. (13) recurrence prints $a$ for $b$ (verified on fourth-order central);
+  Eq. (26) inner sum from $n=1$; Eq. (34) $\beta$ for $\beta^*$; wrong equation references in §3.4 and §5;
+  $K=\int\rho u^2$ without ½; SSP-RK3 cited to 1989; "Harten et al. 1986" for Harten, Hyman & Lax
+  1976; Summary Point 3 (split forms nonlinearly stable) against its own Fig. 1 (S6 diverges).
+  Reference list: Roe 1981 vol. 34 (43), Jiang & Yu 1996 (1998), Kawai & Lele 2007 (2008), Lilly and
+  Lund et al. in the wrong journals, Bogey & Bailly pages.
+- **pirozzoli-2011-b:** pressure metric printed without $1/J$ in Eqs. (21), (22), (28), (30), (31);
+  Fig. 9 caption $M_{\mathrm v}=0.012$ for 0.0012; the dipole mapping lacks its linear term; announced
+  dotted curves of Figs. 4–5 not visible; "Eq. (35)" cited twice in §4.
+- **fu-2019-b:** Eq. (5.1) prints $f_{i+2}$ for $f_{i-2}$ (verified: UD5 with global LF splitting);
+  Eq. (2.6) upper limit; Fig. 3 labels permuted against §4.1; "CFL ≤ 1/(1+ff)" (1/3, below the CFL 0.4
+  used); no Shu–Osher final time; "hybrid WENO5" undefined; the implosion attributed to Liska &
+  Wendroff is a square, not their diamond (a different problem); "a fixed set of parameters" while
+  $\epsilon$ changes between 1D and multi-D; Fig. 2 is five-point evidence for a six-point indicator.
+- **fu-2019-d:** the sign of $\tilde\vartheta_i$ switches within §IV (Eq. (27) against Eqs. (39)–(40), Fig. 2);
+  Eq. (25) lacks the absolute value of Eq. (15); the TENO5-A weights cannot be reproduced from Eq. (27)
+  with the printed parameters (compiler check); §VI "same full-stencil points" as WENO5-JS for the
+  six-point TENO6-A; WENO5-Z announced, WENO5-JS used; "Yee et al. [38]" for Kotov et al.
+- **shima-2021:** Eq. (16)'s underbrace reuses $\tilde P_j$ for a different flux; Eq. (15) "$\ne0$" holds
+  for a generic density; Eq. (21) unindexed $u$; Appendix $\Delta x^+\approx10$, $\Delta z^+\approx5$
+  inconsistent with the printed domain and point counts; "algolithms" (ref. [13]).
+
+### Identity and metadata
+
+- ducros-1999: the bibliography entry listed six authors "and others"; completed with Poinsot T.
+  from page 1 (FIXUP). Page 1 prints only the article ID; the DOI is the Academic Press one.
+- fu-2019-d: read as the AIAA J. Article in Advance (16 pp.); identity AIAA J. 57(3):1143–1158 (2019),
+  doi:10.2514/1.J057370. Later sources print it as 2018 (the online year).
+- Bibliography: one alias (`pirozzoli-2011-b:colonius-2004` → `colonius-2004-b`, Colonius & Lele,
+  Prog. Aerosp. Sci. 40, distinct from Colonius's ARFM review cited by pirozzoli-2011) and seven
+  verified silences: Garnier et al. ICFD 1998, JCP 1999 and the in-press form printed by ducros-1999
+  ("J. Comput. Fluid Dyn.", kept distinct, `garnier-1999-b`); Spyropoulos & Blaisdell AIAA Paper
+  95-0355 against the AIAA J. paper; the in-press form `pirozzoli-2010-c` of Pirozzoli, Bernardini &
+  Grasso (JFM 657); the submitted form `kuya-2020-b` of Kuya & Kawai (JCP 2021); a DOI printed in
+  upper case (Gottlieb, Shu & Tadmor). The `--dupes` sweep finds two new title+year groups, both these
+  deliberate pre-publication forms.
+- In-text citation without a list entry: pirozzoli-2011 cites "Bernardini, Pirozzoli & Grasso,
+  submitted manuscript" (§5, Fig. 6) — no title printed, no entry made.
+
+### Bundle fit
+
+- pirozzoli-2011-b (KEP split forms in generalized curvilinear coordinates, metric treatment) also
+  fits curvilinear-metric-discretization; ingested here as a split-form central scheme.
+- ducros-1999's LES/SGS material would fit a turbulence-modelling bundle; recorded only as context.
+- The pre-2021 papers (1999–2019) are founding or older works added by the human after the archive
+  phase, like chunk 12; ingested because the bundle's pages already rested on them through later
+  recollections.
+
+### Decisions for the human
+
+1. **Status of [order of accuracy behind captured shocks](/results/order-of-accuracy-behind-shocks.md):**
+   first written `hypothesis` on trust grounds (no ingested proof), corrected in the deep lint to
+   `established`: `status` is claim-kind, and the claim as the review scopes it (first order downstream
+   of *moving* shocks, after Casper & Carpenter and Engquist & Sjögreen) is published and
+   peer-reviewed; the review's "always globally" stays attributed, and steady-shock data are kept as a
+   scoped contrast. Confirm, or overrule.
+2. **The non-uniform-grid contradiction:** keep open until a source settles which totals are
+   conserved, or close by fiat with the definitional reading.
+3. **New pages (9)** accepted under the granularity rule by the compiler: shock–turbulence
+   interaction, TENO-based discontinuity indicator, KEEP and KEEP-PE, conservative split central
+   derivative, curvilinear KEP split forms, compact low-pass filter, localized artificial diffusivity,
+   order of accuracy behind shocks, implicit LES. `definitions/strong-conservation-form.md` was declined
+   (kept inline on the curvilinear page). Confirm, or fold any back into its parent.
+4. **ENO total-variation bound:** recorded as a qualification (review's "guarantee" against Harten et
+   al.'s conjecture), not an open contradiction; promote it if you read it as a conflict of fact.
+5. **Duplicate alias** "split-form DGSEM" on methods/dgsem.md and methods/flux-differencing.md predates
+   this chunk (found by the deep lint); choose its page.
+6. **Kept alias:** `KEEP` stays on kinetic energy preservation (Jain & Moin's property sense), while the
+   KEEP and KEEP-PE schemes now have their own page; rename if the two senses confuse.
+
 ## Chunk 13 — Hermite and multi-resolution WENO, moving-mesh transport exactness (2026-11-01)
 
 Sources (5): zhang-2026, zhang-2026-b, yang-2026, luo-2026, cai-2026. Added by the
